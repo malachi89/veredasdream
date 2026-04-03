@@ -1,0 +1,39 @@
+# Carpetas de compilación
+/build/
+/output/
+/compiled/
+/bin/
+
+# Caché de GameMaker
+/.cache/
+/cache/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración local (puede variar por usuario)
+*.yyz
+*.yyp.backup
+
+# Archivos de usuario/editor
+*.user
+*.prefs
+
+# Opcional: excluir assets pesados si los manejas aparte
+# /sprites/*.png
+# /audio/*.wav
+
+# Runtime descargado (no necesario subir)
+/runtime/
+
+# Archivos de exportación
+*.exe
+*.zip
+*.apk
+*.aab
