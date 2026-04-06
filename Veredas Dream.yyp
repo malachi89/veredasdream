@@ -8,8 +8,12 @@
     "children":[],
     "name":"Default",
   },
-  "defaultScriptType":0,
-  "Folders":[],
+  "defaultScriptType":1,
+  "Folders":[
+    {"$GMFolder":"","%Name":"tilesets","folderPath":"folders/tilesets.yy","name":"tilesets","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"objects","folderPath":"folders/objects.yy","name":"objects","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"sprites","folderPath":"folders/sprites.yy","name":"sprites","resourceType":"GMFolder","resourceVersion":"2.0",},
+  ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[],
   "isEcma":false,
@@ -19,12 +23,16 @@
   },
   "name":"Veredas Dream",
   "resources":[
-    {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
+    {"id":{"name":"farm","path":"rooms/farm/farm.yy",},},
+    {"id":{"name":"player_sprite1","path":"sprites/player_sprite1/player_sprite1.yy",},},
+    {"id":{"name":"tile_collision","path":"sprites/tile_collision/tile_collision.yy",},},
+    {"id":{"name":"tileset_collision","path":"tilesets/tileset_collision/tileset_collision.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"roomId":{"name":"farm","path":"rooms/farm/farm.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

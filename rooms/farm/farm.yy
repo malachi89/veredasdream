@@ -1,6 +1,6 @@
 {
   "$GMRoom":"v1",
-  "%Name":"Room1",
+  "%Name":"farm",
   "creationCodeFile":"",
   "inheritCode":false,
   "inheritCreationOrder":false,
@@ -9,9 +9,17 @@
   "isDnd":false,
   "layers":[
     {"$GMRInstanceLayer":"","%Name":"Instances","depth":0,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[],"layers":[],"name":"Instances","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
-    {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":15.0,"animationSpeedType":0,"colour":4278190080,"depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":null,"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":true,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
+    {"$GMRTileLayer":"","%Name":"Tiles_Collision_Layer","depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_Collision_Layer","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":48,"SerialiseWidth":86,"TileCompressedData":[
+          -526,-2147483648,-50,6,-36,-2147483648,-50,6,-294,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,
+          -3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,
+          -3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,
+          -3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,
+          -3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,-3,6,-83,-2147483648,
+          -3,6,-83,-2147483648,-3,6,-1191,-2147483648,
+        ],"TileDataFormat":1,},"tilesetId":{"name":"tileset_collision","path":"tilesets/tileset_collision/tileset_collision.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+    {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":30.0,"animationSpeedType":0,"colour":4294967295,"depth":200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":{"name":"player_sprite1","path":"sprites/player_sprite1/player_sprite1.yy",},"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":true,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
   ],
-  "name":"Room1",
+  "name":"farm",
   "parent":{
     "name":"Veredas Dream",
     "path":"Veredas Dream.yyp",
