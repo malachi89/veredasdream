@@ -1,2 +1,3 @@
 move_speed = 2;
-tile_col = layer_tilemap_get_id("tile_collision");
+move_speed_run = 4; 
+input_run = keyboard_check(vk_shift);

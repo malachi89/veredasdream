@@ -1,12 +1,9 @@
 {
   "$GMObject":"",
-  "%Name":"obj_player",
-  "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-  ],
+  "%Name":"obj_collision",
+  "eventList":[],
   "managed":true,
-  "name":"obj_player",
+  "name":"obj_collision",
   "overriddenProperties":[],
   "parent":{
     "name":"objects",
@@ -31,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sprite_player",
-    "path":"sprites/sprite_player/sprite_player.yy",
+    "name":"tile_collision",
+    "path":"sprites/tile_collision/tile_collision.yy",
   },
   "spriteMaskId":null,
   "visible":true,
