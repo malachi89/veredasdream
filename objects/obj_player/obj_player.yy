@@ -31,8 +31,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sprite_player",
-    "path":"sprites/sprite_player/sprite_player.yy",
+    "name":"female_idle_left",
+    "path":"sprites/female_idle_left/female_idle_left.yy",
   },
   "spriteMaskId":null,
   "visible":true,
