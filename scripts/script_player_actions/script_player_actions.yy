@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"script_player_actions",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"script_player_actions",
+  "parent":{
+    "name":"scripts",
+    "path":"folders/scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
