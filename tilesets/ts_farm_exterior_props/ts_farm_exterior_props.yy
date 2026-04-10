@@ -1,16 +1,14 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_farm_spring",
-  "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[57,29,30,10,53,32,58,8,54,33,59,11,81,80,83,0,],},
-  ],
+  "%Name":"ts_farm_exterior_props",
+  "autoTileSets":[],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_farm_spring",
-  "out_columns":31,
+  "name":"ts_farm_exterior_props",
+  "out_columns":19,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -20,8 +18,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"sprite_tileset_farm_spring",
-    "path":"sprites/sprite_tileset_farm_spring/sprite_tileset_farm_spring.yy",
+    "name":"sprite_farm_exterior_props",
+    "path":"sprites/sprite_farm_exterior_props/sprite_farm_exterior_props.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{
@@ -36,5 +34,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":960,
+  "tile_count":352,
 }

@@ -1,16 +1,16 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_farm_spring",
+  "%Name":"ts_tilled_watered_soil",
   "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[57,29,30,10,53,32,58,8,54,33,59,11,81,80,83,0,],},
+    {"$GMAutoTileSet":"","%Name":"autotile_tilled","closed_edge":false,"name":"autotile_tilled","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[72,29,30,10,53,32,58,8,54,33,59,11,81,80,83,0,],},
   ],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_farm_spring",
-  "out_columns":31,
+  "name":"ts_tilled_watered_soil",
+  "out_columns":14,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -20,8 +20,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"sprite_tileset_farm_spring",
-    "path":"sprites/sprite_tileset_farm_spring/sprite_tileset_farm_spring.yy",
+    "name":"sprite_tilled_watered_soil",
+    "path":"sprites/sprite_tilled_watered_soil/sprite_tilled_watered_soil.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{
@@ -36,5 +36,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":960,
+  "tile_count":192,
 }

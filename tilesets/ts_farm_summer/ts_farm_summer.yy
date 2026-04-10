@@ -1,15 +1,13 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_farm_spring",
-  "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[57,29,30,10,53,32,58,8,54,33,59,11,81,80,83,0,],},
-  ],
+  "%Name":"ts_farm_summer",
+  "autoTileSets":[],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_farm_spring",
+  "name":"ts_farm_summer",
   "out_columns":31,
   "out_tilehborder":2,
   "out_tilevborder":2,
@@ -20,8 +18,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"sprite_tileset_farm_spring",
-    "path":"sprites/sprite_tileset_farm_spring/sprite_tileset_farm_spring.yy",
+    "name":"sprite_tileset_farm_summer",
+    "path":"sprites/sprite_tileset_farm_summer/sprite_tileset_farm_summer.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{

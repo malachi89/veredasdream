@@ -1,4 +1,4 @@
-// -------- FUNCIÓN AUXILIAR --------
+
 function get_sprite_set(_idle, _walk, _run)
 {
     switch (state)
@@ -9,10 +9,10 @@ function get_sprite_set(_idle, _walk, _run)
     }
 }
 
-// -------- CUERPO --------
+
 draw_self();
 
-// -------- OBTENER SPRITES SEGÚN ESTADO --------
+
 var clothes_sprite = get_sprite_set(
     sprite_player_clothes_idle,
     sprite_player_clothes_walk,
@@ -31,7 +31,7 @@ var eyes_sprite = get_sprite_set(
     sprite_player_eyes_run
 );
 
-// -------- DIBUJO EN CAPAS --------
+
 draw_sprite(clothes_sprite, image_index, x, y);
 draw_sprite(eyes_sprite, image_index, x, y);
 draw_sprite(hair_sprite, image_index, x, y);
