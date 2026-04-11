@@ -5,19 +5,17 @@ slot_size = 32 * gui_scale;
 spacing = 2 * gui_scale;    
 margin_bottom = 10 * gui_scale; 
 
-// AHORA: Guardamos los NOMBRES (keys) de los objetos de datos
-// He añadido herramientas y 3 semillas de prueba
 inventory_array = [
     "watering_can", 
     "pickaxe", 
     "axe", 
     "sickle", 
     "hoe", 
-    "cherry_seeds", 
-    "parsnip_seeds", 
-    "potato_seeds", 
-    -1, 
-    -1
+    "bow", 
+    "shovel", 
+    "sword", 
+    "bugnet", 
+    "tomato_seeds"
 ]; 
 
 total_slots = array_length(inventory_array);

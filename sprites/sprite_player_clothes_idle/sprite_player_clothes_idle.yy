@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"clothes",
-    "path":"folders/sprites/player/clothes.yy",
+    "path":"folders/sprites/player/basic_movement/clothes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

@@ -57,7 +57,7 @@
   "origin":0,
   "parent":{
     "name":"hair",
-    "path":"folders/sprites/player/hair.yy",
+    "path":"folders/sprites/player/basic_movement/hair.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

@@ -33,7 +33,7 @@
   "origin":0,
   "parent":{
     "name":"spring",
-    "path":"folders/sprites/crops/spring.yy",
+    "path":"folders/sprites/farm_crops/spring.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

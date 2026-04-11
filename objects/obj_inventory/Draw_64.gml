@@ -18,14 +18,16 @@ for (var i = 0; i < total_slots; i++) {
     
     if (_item_key != -1) {
         var _data = undefined;
-        var _is_seed = false;
+        var _is_tool = false;
 
-        // ¿Es una herramienta o una semilla? Buscamos en los datos globales
+        // --- BÚSQUEDA TRIPLE ---
         if (variable_struct_exists(global.tool_data, _item_key)) {
             _data = global.tool_data[$ _item_key];
+            _is_tool = true;
         } else if (variable_struct_exists(global.seed_data, _item_key)) {
             _data = global.seed_data[$ _item_key];
-            _is_seed = true;
+        } else if (variable_struct_exists(global.crop_data, _item_key)) {
+            _data = global.crop_data[$ _item_key];
         }
 
         if (_data != undefined) {
@@ -33,15 +35,17 @@ for (var i = 0; i < total_slots; i++) {
             var _draw_x = _cx + _center;
             var _draw_y = _cy + _center;
             
-            // Calculamos el frame
-            var _frame = _data.subimg;
+            // Lógica de Frame:
+            // Si tiene 'row', calculamos el frame basado en la fila del sprite (crops)
+            // Si no, usamos 'subimg' directamente (tools)
+            var _frame = variable_struct_exists(_data, "row") ? (_data.row * 3) + _data.subimg : _data.subimg;
             
-            // Si es herramienta y está seleccionada, aplicamos tu efecto de +9 frames
-            if (!_is_seed && i == selected_slot) {
-                _frame += 9;
+            // Efecto visual para herramientas seleccionadas
+            if (_is_tool && i == selected_slot) {
+                // Solo aplicar si el sprite es el de herramientas (evita errores con la red de bichos)
+                if (_data.sprite == sprite_tools) _frame += 9;
             }
 
-            // Dibujamos el ítem usando sus propios datos de la DB
             draw_sprite_ext(_data.sprite, _frame, _draw_x - _offset, _draw_y - _offset, _icon_scale, _icon_scale, 0, c_white, 1);
         }
     }

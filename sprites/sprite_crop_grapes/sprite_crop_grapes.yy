@@ -33,7 +33,7 @@
   "origin":0,
   "parent":{
     "name":"fall",
-    "path":"folders/sprites/crops/fall.yy",
+    "path":"folders/sprites/farm_crops/fall.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

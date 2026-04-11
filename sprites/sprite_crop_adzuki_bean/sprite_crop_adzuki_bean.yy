@@ -33,7 +33,7 @@
   "origin":0,
   "parent":{
     "name":"summer",
-    "path":"folders/sprites/crops/summer.yy",
+    "path":"folders/sprites/farm_crops/summer.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

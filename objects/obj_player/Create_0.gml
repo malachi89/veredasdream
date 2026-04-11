@@ -8,8 +8,17 @@ enum DIR {
 enum STATE {
     IDLE,
     WALK,
-    RUN
+    RUN,
+    ACTING // Nuevo estado para usar herramientas
 }
+
+// Variables para controlar la animación de acción
+action_sprite_skin = -1;
+action_sprite_tool = -1;
+action_sprite_hair = -1;
+action_sprite_clothes = -1;
+action_sprite_eyes = -1;
+frames_action = 6;
 
 dir = DIR.DOWN;
 state = STATE.IDLE;

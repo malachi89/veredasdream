@@ -17,7 +17,11 @@ enum TOOL_TYPE {
     SICKLE,
     HOE,
     WATERING_CAN,
-    FISHING_ROD
+    FISHING_ROD,
+    SHOVEL,
+    BUGNET,
+    SWORD,
+    BOW
 }
 
 enum SEASON {
@@ -38,48 +42,42 @@ enum QUALITY {
 
 global.seed_data = {
     // --- PRIMAVERA ---
-    cherry_seeds:        { name: "Semilla de Cereza",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 0,  subimg: 0 },
-    apricot_seeds:       { name: "Semilla de Chabacano",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 1,  subimg: 0 },
-    strawberry_seeds:    { name: "Semilla de Fresa",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 2,  subimg: 0 },
-    spring_onion_seeds:  { name: "Semilla de Cebolleta",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 3,  subimg: 0 },
-    potato_seeds:        { name: "Semilla de Papa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 4,  subimg: 0 },
-    onion_seeds:         { name: "Semilla de Cebolla",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 5,  subimg: 0 },
-    carrot_seeds:        { name: "Semilla de Zanahoria",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 6,  subimg: 0 },
-    blueberry_seeds:     { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 7,  subimg: 0 },
-    parsnip_seeds:       { name: "Semilla de Chirivía",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 8,  subimg: 0 },
-    cabbage_seeds:       { name: "Semilla de Repollo",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 9,  subimg: 0 },
-    cauliflower_seeds:   { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 10, subimg: 0 },
-    rice_seeds:          { name: "Semilla de Arroz",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 11, subimg: 0 },
-    broccoli_seeds:      { name: "Semilla de Brócoli",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 12, subimg: 0 },
-    asparagus_seeds:     { name: "Semilla de Espárrago",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 13, subimg: 0 },
+    cherry_seeds:       { name: "Semilla de Cereza",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 0,   growth_time: 6, crop_base_name: "cherry" },
+    apricot_seeds:      { name: "Semilla de Chabacano",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 8,   growth_time: 6, crop_base_name: "apricot" },
+    strawberry_seeds:   { name: "Semilla de Fresa",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 16,  growth_time: 6, crop_base_name: "strawberry" },
+    spring_onion_seeds: { name: "Semilla de Cebolleta",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 24,  growth_time: 6, crop_base_name: "spring_onion" },
+    potato_seeds:       { name: "Semilla de Papa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 32,  growth_time: 6, crop_base_name: "potato" },
+    onion_seeds:        { name: "Semilla de Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 40,  growth_time: 6, crop_base_name: "onion" },
+    carrot_seeds:       { name: "Semilla de Zanahoria",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 48,  growth_time: 6, crop_base_name: "carrot" },
+    blueberry_seeds:    { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 56,  growth_time: 6, crop_base_name: "blueberry" },
+    parsnip_seeds:      { name: "Semilla de Chirivía",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 64,  growth_time: 5, crop_base_name: "parsnip" },
+    cabbage_seeds:      { name: "Semilla de Repollo",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 72,  growth_time: 7, crop_base_name: "cabbage" },
+    cauliflower_seeds:  { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 80,  growth_time: 6, crop_base_name: "cauliflower" },
+    rice_seeds:         { name: "Semilla de Arroz",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 88,  growth_time: 6, crop_base_name: "rice" },
+    broccoli_seeds:     { name: "Semilla de Brócoli",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 96,  growth_time: 5, crop_base_name: "broccoli" },
+    asparagus_seeds:    { name: "Semilla de Espárrago",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 104, growth_time: 5, crop_base_name: "asparagus" },
 
     // --- VERANO ---
-    banana_seeds:        { name: "Semilla de Plátano",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 14, subimg: 0 },
-    orange_seeds:        { name: "Semilla de Naranja",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 15, subimg: 0 },
-    mango_seeds:         { name: "Semilla de Mango",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 16, subimg: 0 },
-    peach_seeds:         { name: "Semilla de Durazno",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 17, subimg: 0 },
-    tomato_seeds:        { name: "Semilla de Tomate",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 18, subimg: 0 },
-    sunflower_seeds:     { name: "Semilla de Girasol",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 19, subimg: 0 },
-    hot_pepper_seeds:    { name: "Semilla de Chile",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 20, subimg: 0 },
-    corn_seeds:          { name: "Semilla de Maíz",        seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 21, subimg: 0 },
-    green_pepper_seeds:  { name: "Semilla de Pimiento V.", seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 22, subimg: 0 },
-    red_pepper_seeds:    { name: "Semilla de Pimiento R.", seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 23, subimg: 0 },
-    yellow_pepper_seeds: { name: "Semilla de Pimiento A.", seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 24, subimg: 0 },
-    melon_seeds:         { name: "Semilla de Melón",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 25, subimg: 0 },
-    watermelon_seeds:    { name: "Semilla de Sandía",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 26, subimg: 0 },
-    cucumber_seeds:      { name: "Semilla de Pepino",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 27, subimg: 0 },
-    eggplant_seeds:      { name: "Semilla de Berenjena",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 28, subimg: 0 },
-    pineapple_seeds:     { name: "Semilla de Piña",        seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 29, subimg: 0 },
-    green_beans_seeds:   { name: "Semilla de Ejote",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 30, subimg: 0 },
-    adzuki_bean_seeds:   { name: "Semilla de Frijol A.",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 31, subimg: 0 },
-    wild_berry_seeds:    { name: "Semilla de Mora Silv.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 32, subimg: 0 },
-    wheat_seeds:         { name: "Semilla de Trigo",       seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 33, subimg: 0 },
-    aloe_seeds:          { name: "Semilla de Aloe",        seasons: [SEASON.SUMMER, SEASON.ALL],  type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 34, subimg: 0 },
+    tomato_seeds:        { name: "Semilla de Tomate",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 144, growth_time: 5, crop_base_name: "tomato" },
+    sunflower_seeds:     { name: "Semilla de Girasol",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 152, growth_time: 6, crop_base_name: "sunflower" },
+    hot_pepper_seeds:    { name: "Semilla de Chile",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 160, growth_time: 7, crop_base_name: "hot_pepper" },
+    corn_seeds:          { name: "Semilla de Maíz",        seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 168, growth_time: 8, crop_base_name: "corn" },
+    green_pepper_seeds:  { name: "Semilla de Pimiento V.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 176, growth_time: 6, crop_base_name: "green_pepper" },
+    melon_seeds:         { name: "Semilla de Melón",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 200, growth_time: 6, crop_base_name: "melon" },
+    watermelon_seeds:    { name: "Semilla de Sandía",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 208, growth_time: 8, crop_base_name: "watermelon" },
+    cucumber_seeds:      { name: "Semilla de Pepino",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 216, growth_time: 6, crop_base_name: "cucumber" },
+    eggplant_seeds:      { name: "Semilla de Berenjena",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 224, growth_time: 6, crop_base_name: "eggplant" },
+    pineapple_seeds:     { name: "Semilla de Piña",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 232, growth_time: 6, crop_base_name: "pineapple" },
+    green_beans_seeds:   { name: "Semilla de Ejote",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 240, growth_time: 7, crop_base_name: "green_beans" },
+    adzuki_bean_seeds:   { name: "Semilla de Frijol A.",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 248, growth_time: 7, crop_base_name: "adzuki_bean" },
+    wild_berry_seeds:    { name: "Semilla de Mora Silv.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 256, growth_time: 7, crop_base_name: "wild_berry" },
+    wheat_seeds:         { name: "Semilla de Trigo",       seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 264, growth_time: 6, crop_base_name: "wheat" },
+    aloe_seeds:          { name: "Semilla de Aloe",        seasons: [SEASON.SUMMER, SEASON.ALL],  type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 272, growth_time: 6, crop_base_name: "aloe" },
 
     // --- OTOÑO ---
-    beetroot_seeds:      { name: "Semilla de Betabel",     seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 35, subimg: 0 },
-    pumpkin_seeds:       { name: "Semilla de Calabaza",    seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 36, subimg: 0 },
-    grapes_seeds:        { name: "Semilla de Uva",         seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, row: 37, subimg: 0 }
+    beetroot_seeds:      { name: "Semilla de Betabel",   seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 280, growth_time: 6, crop_base_name: "beetroot" },
+    pumpkin_seeds:       { name: "Semilla de Calabaza",   seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 288, growth_time: 6, crop_base_name: "pumpkin" },
+    grapes_seeds:        { name: "Semilla de Uva",         seasons: [SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 296, growth_time: 6, crop_base_name: "grapes" }
 };
 
 global.crop_data = {
@@ -136,7 +134,7 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.WATERING_CAN, 
         sprite: sprite_tools, 
-        subimg: 0 // Frame 1 - 1
+        subimg: 0 // Frame 1
     },
     
     pickaxe: { 
@@ -144,15 +142,15 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.PICKAXE,      
         sprite: sprite_tools, 
-        subimg: 1 // Frame 2 - 1
+        subimg: 1 // Frame 2
     },
     
     sword: { 
         name: "Espada",      
-        type: ITEM_TYPE.WEAPON, 
-        tool_type: TOOL_TYPE.NONE,         
+        type: ITEM_TYPE.TOOL,   // Cambiado a TOOL
+        tool_type: TOOL_TYPE.SWORD,         
         sprite: sprite_tools, 
-        subimg: 2 // Frame 3 - 1
+        subimg: 2 // Frame 3
     },
     
     axe: { 
@@ -160,23 +158,15 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.AXE,          
         sprite: sprite_tools, 
-        subimg: 3 // Frame 4 - 1
+        subimg: 3 // Frame 4
     },
     
     bow: { 
         name: "Arco",        
-        type: ITEM_TYPE.WEAPON, 
-        tool_type: TOOL_TYPE.NONE,         
+        type: ITEM_TYPE.TOOL,   // Cambiado a TOOL
+        tool_type: TOOL_TYPE.BOW,         
         sprite: sprite_tools, 
-        subimg: 4 // Frame 5 - 1
-    },
-    
-    sickle: { 
-        name: "Hoz", 
-        type: ITEM_TYPE.TOOL,   
-        tool_type: TOOL_TYPE.SICKLE, 
-        sprite: sprite_tools, 
-        subimg: 6 // Frame 7 - 1 (Cuidado aquí, si el frame es 7, el índice es 6)
+        subimg: 4 // Frame 5
     },
     
     hoe: { 
@@ -184,6 +174,38 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.HOE, 
         sprite: sprite_tools, 
-        subimg: 7 // Frame 8 - 1
+        subimg: 6 // Frame 7 (El 6 era la flecha, saltamos al 7)
+    },
+
+    shovel: { 
+        name: "Pala", 
+        type: ITEM_TYPE.TOOL,   
+        tool_type: TOOL_TYPE.SHOVEL, 
+        sprite: sprite_tools, 
+        subimg: 7 // Frame 8
+    },
+    
+    sickle: { 
+        name: "Hoz", 
+        type: ITEM_TYPE.TOOL,   
+        tool_type: TOOL_TYPE.SICKLE, 
+        sprite: sprite_tools, 
+        subimg: 8 // Frame 9
+    },
+
+    fishing_rod: {
+        name: "Caña de pescar",
+        type: ITEM_TYPE.TOOL,
+        tool_type: TOOL_TYPE.FISHING_ROD,
+        sprite: sprite_tools,
+        subimg: 22 // Frame 23
+    },
+
+    bugnet: { 
+        name: "Red de bichos", 
+        type: ITEM_TYPE.TOOL,   
+        tool_type: TOOL_TYPE.BUGNET,
+        sprite: sprite_bugnet,    
+        subimg: 0                 
     }
 };

@@ -49,7 +49,7 @@
   "origin":0,
   "parent":{
     "name":"body",
-    "path":"folders/sprites/player/body.yy",
+    "path":"folders/sprites/player/basic_movement/body.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

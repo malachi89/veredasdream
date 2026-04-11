@@ -49,7 +49,7 @@
   "origin":0,
   "parent":{
     "name":"eyes",
-    "path":"folders/sprites/player/eyes.yy",
+    "path":"folders/sprites/player/basic_movement/eyes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
