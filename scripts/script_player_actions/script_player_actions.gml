@@ -1,5 +1,6 @@
+
 function scr_use_item(_item_key, _gx, _gy) {
-    
+
     if (_item_key == undefined || _item_key == -1) return;
 
     // --- 1. DEFINICIÓN DE VARIABLES (Esto es lo que faltaba o fallaba) ---

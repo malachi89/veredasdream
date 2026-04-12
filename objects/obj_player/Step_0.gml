@@ -23,7 +23,12 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     // Si está cerca O es el arco, ejecutamos la acción
     if (_actual_dist <= _dist_max || _selected_item == "bow") {
         
-        scr_use_item(_selected_item, _gx, _gy);
+            
+    if (instance_exists(obj_inventory)) {
+        if (obj_inventory.show_backpack) exit; 
+    }
+
+    scr_use_item(_selected_item, _gx, _gy);
         
     }
 }

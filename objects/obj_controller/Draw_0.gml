@@ -1,6 +1,7 @@
 // --- EVENTO DRAW DEL OBJ_CONTROLLER ---
 
-// 1. Cálculos de posición de rejilla (Grid)
+if (instance_exists(obj_inventory) && obj_inventory.show_backpack) exit;
+
 var _tile_size = 16;
 var _gx = floor(mouse_x / _tile_size) * _tile_size;
 var _gy = floor(mouse_y / _tile_size) * _tile_size;
