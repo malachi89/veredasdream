@@ -1,22 +1,17 @@
-/// @description Atributos base de cualquier ítem
+/// @description Contenedor físico del ítem
+item_key = "";     // Ejemplo: "onion_seeds"
+quantity = 1;      // Cuántos hay en este montoncito
+float_timer = irandom(100);
 
-// Identificación
-item_id = -1;           // ID numérica o string para la base de datos
-item_name = "";         // Nombre para mostrar
-item_description = "";  // Texto de ayuda
-item_sprite = noone;    // El sprite que se dibujará
-item_quality = "";
+// Variables de dibujo que se llenarán solas
+item_sprite = noone;
+row = 0;
+subimg = 0;
+is_initialized = false;
 
-// Clasificación (Reglas)
-item_type = "material"; // "tool", "seed", "food", "weapon"
-is_stackable = true;    // ¿Se pueden tener muchos en un mismo slot?
-quantity = 1;           // Cantidad actual
+// Guardamos la Y inicial para el "suelo" de la física de caída
+ystart_pos = y;
 
-// Comportamiento (Flags)
-can_be_dropped = true;  // ¿Se puede tirar al suelo?
-can_be_sold = true;     // ¿El mercader lo acepta?
-item_price = 0;         // Valor en monedas
-
-// Estadísticas de uso (opcional, según el tipo)
-energy_restore = 0;     // Si es comida
-tool_power = 0;         // Si es herramienta (ej: nivel de hacha)
+// Tiempo de espera antes de que se pueda recoger (en frames, 60 fps aprox)
+collect_delay = 15; 
+magnetic_range = 24; // Radio de atracción magnética

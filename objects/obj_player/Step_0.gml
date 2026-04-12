@@ -1,13 +1,14 @@
-// 1. ENTRADAS (INPUTS)
+// 1. INPUTS
 var _h   = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var _v   = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 var _run = keyboard_check(vk_shift);
 var _mag = point_distance(0, 0, _h, _v);
 var _prev_state = state;
 
-// 2. LÓGICA DE INTERACCIÓN (Clic Izquierdo)
+// 2. INTERACCIÓN
 if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     var _selected_item = obj_inventory.inventory_array[obj_inventory.selected_slot];
+    var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     
     var _tile_size = 16;
     var _gx = floor(mouse_x / _tile_size) * _tile_size;
@@ -16,24 +17,16 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     var _p_cx = (bbox_left + bbox_right) / 2;
     var _p_cy = (bbox_top + bbox_bottom) / 2;
 
-    // Calculamos la distancia actual una sola vez para que sea más limpio
     var _actual_dist = point_distance(_p_cx, _p_cy, _gx + 8, _gy + 8);
 
-    // --- LA CONDICIÓN MÁGICA ---
-    // Si está cerca O es el arco, ejecutamos la acción
-    if (_actual_dist <= _dist_max || _selected_item == "bow") {
-        
-            
-    if (instance_exists(obj_inventory)) {
-        if (obj_inventory.show_backpack) exit; 
-    }
-
-    scr_use_item(_selected_item, _gx, _gy);
-        
+    if (_actual_dist <= _dist_max || _item_key == "bow") {
+        if (!obj_inventory.show_backpack) {
+            scr_use_item(_selected_item, _gx, _gy);
+        }
     }
 }
 
-// 3. ESTADO Y MOVIMIENTO (Bloqueado si está actuando)
+// 3. ESTADO Y MOVIMIENTO
 var _mx = 0;
 var _my = 0;
 
@@ -53,7 +46,7 @@ if (state != STATE.ACTING) {
 
 move_and_collide(_mx, _my, obj_collision, 4, 0, 0, -1, -1);
 
-// 4. LÓGICA DE ANIMACIÓN
+// 4. ANIMACIÓN
 if (state != _prev_state) frame_anim = 0;
 
 if (state == STATE.ACTING) {
@@ -81,3 +74,4 @@ if (state == STATE.ACTING) {
 }
 
 image_speed = 0;
+depth = -y;

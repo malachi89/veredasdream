@@ -25,46 +25,83 @@ menu_y_start = display_get_gui_height() - slot_size - margin_bottom;
 
 // --- FUNCIONES DEL SISTEMA ---
 
-function add_item(_item_key) {
+function add_item(_item_key, _qty = 1) {
+    // --- 1. Determinar si es stackable ---
+    var _is_stackable = false;
+    if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
+    // Las herramientas no entran aquí, por lo que _is_stackable será false para ellas.
+
+    // --- 2. Si es stackable, buscar si ya existe para sumar ---
+    if (_is_stackable) {
+        // Buscar en Hotbar
+        for (var i = 0; i < total_slots; i++) {
+            if (is_struct(inventory_array[i]) && inventory_array[i].key == _item_key) {
+                if (inventory_array[i].quantity + _qty <= 999) {
+                    inventory_array[i].quantity += _qty;
+                    return true;
+                }
+            }
+        }
+        // Buscar en Mochila
+        for (var i = 0; i < max_backpack_slots; i++) {
+            if (is_struct(backpack_array[i]) && backpack_array[i].key == _item_key) {
+                if (backpack_array[i].quantity + _qty <= 999) {
+                    backpack_array[i].quantity += _qty;
+                    return true;
+                }
+            }
+        }
+    }
+
+    // --- 3. Si no es stackable o no se encontró espacio para sumar, buscar slot vacío ---
+    var _new_struct = { key: _item_key, quantity: _qty };
+
     // Intentar en Barra Rápida
     for (var i = 0; i < total_slots; i++) {
         if (inventory_array[i] == -1) {
-            inventory_array[i] = _item_key;
+            inventory_array[i] = _new_struct;
             return true; 
         }
     }
     // Intentar en Mochila
     for (var i = 0; i < max_backpack_slots; i++) {
         if (backpack_array[i] == -1) {
-            backpack_array[i] = _item_key;
+            backpack_array[i] = _new_struct;
             return true;
         }
     }
-    return false;
+    
+    return false; // Inventario lleno
 }
 
 function scr_inventory_swap(_target_array, _index) {
-    // Si la mano está vacía, agarramos lo que hay en el slot
-    if (held_item == -1) {
-        if (_target_array[_index] != -1) {
-            held_item = _target_array[_index];
-            _target_array[_index] = -1;
-            show_debug_message("Agarré ítem: " + string(held_item));
+    var _item_en_slot = _target_array[_index];
+
+    // Caso especial: Stacking al soltar
+    if (held_item != -1 && is_struct(_item_en_slot)) {
+        if (held_item.key == _item_en_slot.key) {
+            // Es el mismo item, sumamos
+            var _total = _item_en_slot.quantity + held_item.quantity;
+            if (_total <= 999) {
+                _item_en_slot.quantity = _total;
+                held_item = -1;
+                return;
+            }
         }
-    } 
-    // Si la mano tiene algo, lo intercambiamos
-    else {
-        var _temp = _target_array[_index];
-        _target_array[_index] = held_item;
-        held_item = _temp;
-        show_debug_message("Solté/Intercambié ítem");
     }
+
+    // Si no es el mismo item, hacemos el intercambio normal que ya tenías
+    var _temp = _target_array[_index];
+    _target_array[_index] = held_item;
+    held_item = _temp;
 }
 
+
 // --- CARGA INICIAL (EQUIPO) ---
-add_item("watering_can");
-add_item("pickaxe");
-add_item("axe");
-add_item("sickle");
-add_item("hoe");
-add_item("onion_seeds");
+add_item("watering_can",1);
+add_item("pickaxe",1);
+add_item("axe",1);
+add_item("sickle",1);
+add_item("hoe",1);
+add_item("tomato_seeds",40);

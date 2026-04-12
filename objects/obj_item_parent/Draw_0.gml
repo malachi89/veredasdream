@@ -1,10 +1,11 @@
-/// @description Dibujo automático del icono
-if (item_sprite != noone) {
-    draw_sprite(item_sprite, 0, x, y);
-}
-
-// Opcional: Dibujar la cantidad si es más de 1
-if (is_stackable && quantity > 1) {
-    draw_set_halign(fa_right);
-    draw_text(x + 8, y + 8, string(quantity));
+if (is_initialized) {
+    var _y_offset = row * 16;
+    
+    // Dibujamos la parte de 16x16 que corresponde sin offset de flotación
+    draw_sprite_part_ext(
+        item_sprite, subimg,
+        0, _y_offset, 16, 16,
+        x - 8, y - 8,
+        1, 1, c_white, 1
+    );
 }
