@@ -5,16 +5,37 @@ var _run = keyboard_check(vk_shift);
 var _mag = point_distance(0, 0, _h, _v);
 var _prev_state = state;
 
-if (keyboard_check_pressed(ord("M"))) {
-    is_riding = !is_riding;
+if (keyboard_check_pressed(ord("E"))) {
     if (is_riding) {
-        frames_idle = 2;
-        frames_walk = 4;
-        frames_run  = 6;
-    } else {
+        is_riding = false;
         frames_idle = 4;
         frames_walk = 6;
         frames_run  = 8;
+        var _ox = 0;
+        var _oy = 0;
+        if (dir == DIR.LEFT) _ox = 16;
+        if (dir == DIR.LEFT) _oy = -24; 
+        if (dir == DIR.RIGHT) _ox = 16;
+        if (dir == DIR.RIGHT) _oy = -24;
+        
+        // Invertimos Arriba/Abajo para que el caballo mire hacia el lado correcto
+        var _h_dir = dir;
+        if (dir == DIR.UP) _h_dir = DIR.DOWN;
+        else if (dir == DIR.DOWN) _h_dir = DIR.UP;
+        
+        var _horse_inst = instance_create_layer(x + _ox, y + _oy, "Instances", obj_horse1);
+        _horse_inst.dir = _h_dir; 
+        _horse_inst.x_start = x + _ox;
+        _horse_inst.y_start = y + _oy;
+    } else {
+        var _horse = instance_nearest(x, y, obj_horse1);
+        if (_horse != noone && point_distance(x, y, _horse.x, _horse.y) < 40) {
+            is_riding = true;
+            frames_idle = 2;
+            frames_walk = 4;
+            frames_run  = 6;
+            instance_destroy(_horse);
+        }
     }
 }
 
@@ -57,7 +78,12 @@ if (state != STATE.ACTING) {
         else                   dir = (_v > 0) ? DIR.DOWN  : DIR.UP;
     }
 
-    var _spd = (state == STATE.RUN) ? move_speed_run : move_speed;
+    var _spd = move_speed;
+    if (is_riding) {
+        _spd = (state == STATE.RUN) ? move_speed_run * 1.8 : move_speed_run * 1.2;
+    } else {
+        _spd = (state == STATE.RUN) ? move_speed_run : move_speed;
+    }
     _mx = (_mag != 0) ? (_h / _mag) * _spd : 0;
     _my = (_mag != 0) ? (_v / _mag) * _spd : 0;
 }

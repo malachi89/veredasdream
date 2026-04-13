@@ -1,5 +1,6 @@
 // --- CONFIGURACIÓN DE TIEMPO (Load from INI) ---
 ini_open("settings.ini");
+
 global.time_multiplier = ini_read_real("Time", "TimeSpeedMultiplier", 1.0);
 global.days_per_season = ini_read_real("Time", "DaysPerSeason", 28);
 ini_close();
