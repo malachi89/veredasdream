@@ -1,3 +1,8 @@
+if (instance_number(obj_camera) > 1) {
+    instance_destroy();
+    exit;
+}
+
 // target (a quién sigue)
 target = obj_player;
 
@@ -19,7 +24,16 @@ window_set_size(1280, 720);
 smooth = 0.1;
 
 // crear cámara
-cam = camera_create_view(0, 0, cam_width, cam_height, 0, -1, -1, -1, -1);
+// Iniciarla centrada en el jugador de una vez
+var _start_x = 0;
+var _start_y = 0;
+
+if (instance_exists(target)) {
+    _start_x = clamp(target.x - cam_width/2, 0, room_width - cam_width);
+    _start_y = clamp(target.y - cam_height/2, 0, room_height - cam_height);
+}
+
+cam = camera_create_view(_start_x, _start_y, cam_width, cam_height, 0, -1, -1, -1, -1);
 
 // asignar al viewport
 view_enabled = true;

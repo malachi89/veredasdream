@@ -1,14 +1,14 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_interior_",
+  "%Name":"ts_interior_decorations",
   "autoTileSets":[],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_interior_",
-  "out_columns":0,
+  "name":"ts_interior_decorations",
+  "out_columns":14,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -17,7 +17,10 @@
   },
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
-  "spriteId":null,
+  "spriteId":{
+    "name":"sprite_interior_decorations",
+    "path":"sprites/sprite_interior_decorations/sprite_interior_decorations.yy",
+  },
   "spriteNoExport":false,
   "textureGroupId":{
     "name":"Default",
@@ -31,5 +34,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":0,
+  "tile_count":204,
 }

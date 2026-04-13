@@ -29,6 +29,11 @@ function start_new_day() {
         global.season_index = (global.season_index + 1) mod 4;
         global.season = global.season_list[global.season_index];
         update_tilesets();
+        
+        // Cambio de año si terminaron las 4 estaciones
+        if (global.season_index == 0) {
+            global.year += 1;
+        }
     }
     
     // Crecimiento de cultivos
@@ -42,7 +47,7 @@ function start_new_day() {
         if (_tile == 168) tilemap_set_at_pixel(_map_id, 72, x, y);
     }
     
-    show_debug_message("Nuevo día: " + string(global.day) + " de " + global.season_names[$ global.season]);
+    show_debug_message("Nuevo día: " + string(global.day) + " de " + global.season_names[$ global.season] + " Año " + string(global.year));
 }
 
 function update_tilesets() {
@@ -66,6 +71,8 @@ global.season_names = {
     fall:   "Otoño",
     winter: "Invierno"
 };
+
+global.day_names = ["Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sab.", "Dom."];
 
 // Variables para el selector de rango (UI)
 gx = 0;

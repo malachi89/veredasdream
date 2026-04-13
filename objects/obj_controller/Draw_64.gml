@@ -6,7 +6,14 @@ var _min_str = string(global.game_minute);
 if (global.game_minute < 10) _min_str = "0" + _min_str;
 
 var _time_text = _hour_str + ":" + _min_str;
-var _date_text = global.season_names[$ global.season] + ", Dia " + string(global.day);
+
+// Calcular día de la semana (Empezando en Lunes para Año 1, Día 1)
+// Total de días = (Año - 1) * 4 estaciones * días_por_estación + (Estación_index) * días_por_estación + (Día actual)
+var _total_days = ((global.year - 1) * 4 * global.days_per_season) + (global.season_index * global.days_per_season) + global.day;
+var _day_of_week_index = (_total_days - 1) mod 7;
+var _day_name = global.day_names[_day_of_week_index];
+
+var _date_text = global.season_names[$ global.season] + " " + string(global.day) + " " + _day_name;
 var _money_text = "MXN$ " + string(global.money);
 
 draw_set_font(-1);
