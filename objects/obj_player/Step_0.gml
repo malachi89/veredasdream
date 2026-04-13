@@ -101,16 +101,13 @@ if (state == STATE.ACTING) {
             _dir_idx = dir;
         } else {
             // Walk/Run montando: 0:Arriba, 1:Abajo, 2:Derecha, 3:Izquierda (Invertido respecto a DIR)
-            if (dir == DIR.DOWN) _dir_idx = 1;
-            else if (dir == DIR.UP) _dir_idx = 0;
+            if (dir == DIR.DOWN) _dir_idx = 0;
+            else if (dir == DIR.UP) _dir_idx = 1;
         }
     }
     
     image_index = (_dir_idx * _current[2]) + floor(frame_anim);
 
-    if (is_riding) {
-        show_debug_message("RIDING: State=" + string(state) + " DirEnum=" + string(dir) + " DirIdx=" + string(_dir_idx) + " ImgIdx=" + string(image_index) + " Sprite=" + sprite_get_name(sprite_index));
-    }
 }
 
 image_speed = 0;

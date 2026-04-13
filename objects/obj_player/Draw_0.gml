@@ -20,7 +20,7 @@ if (is_riding) {
     _skin_s    = get_sprite_set(sprite_player_horse1_body_idle,    sprite_player_horse1_body_walk,    sprite_player_horse1_body_run,    -1);
     _clothes_s = get_sprite_set(sprite_player_horse1_clothes_idle, sprite_player_horse1_clothes_walk, sprite_player_horse1_clothes_run, -1);
     _eyes_s    = get_sprite_set(sprite_player_horse1_eyes_idle,    sprite_player_horse1_eyes_walk,    sprite_player_horse1_eyes_run,    -1);
-    _hair_s    = get_sprite_set(sprite_player_horse1_hair_idle,    sprite_player_hair_walk,    sprite_player_hair_run,    -1); // Note: typo here as well, needs fix later
+    _hair_s    = get_sprite_set(sprite_player_horse1_hair_idle,    sprite_player_horse1_hair_walk,    sprite_player_horse1_hair_run,    -1);
     _horse_s   = get_sprite_set(sprite_player_horse1_horse_idle,   sprite_player_horse1_horse_walk,   sprite_player_horse1_horse_run,   -1);
     _saddle_s  = get_sprite_set(sprite_player_horse1_saddle_idle,  sprite_player_horse1_saddle_walk,  sprite_player_horse1_saddle_run,  -1);
 } else {
