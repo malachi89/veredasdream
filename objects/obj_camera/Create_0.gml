@@ -17,9 +17,6 @@ view_hport[0] = 720;
 // 🔥 MUY IMPORTANTE: igualar application_surface
 surface_resize(application_surface, 1280, 720);
 
-// opcional pero recomendado: tamaño de ventana
-window_set_size(1280, 720);
-
 // suavizado
 smooth = 0.1;
 

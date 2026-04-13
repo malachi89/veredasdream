@@ -22,19 +22,21 @@ held_item     = -1;
 max_shipping_slots = 32;
 shipping_array     = array_create(max_shipping_slots, -1);
 
-// --- CÁLCULO DE POSICIÓN (HOTBAR) ---
-var _menu_w  = (total_slots * slot_size) + ((total_slots - 1) * spacing);
-menu_x_start = (display_get_gui_width() / 2) - (_menu_w / 2);
-menu_y_start = display_get_gui_height() - slot_size - margin_bottom;
-
 // --- FUNCIONES DEL SISTEMA ---
+function update_gui_positions() {
+    // --- CÁLCULO DE POSICIÓN (HOTBAR) ---
+    var _menu_w  = (total_slots * slot_size) + ((total_slots - 1) * spacing);
+    menu_x_start = (display_get_gui_width() / 2) - (_menu_w / 2);
+    menu_y_start = display_get_gui_height() - slot_size - margin_bottom;
+}
+
+update_gui_positions();
 
 function add_item(_item_key, _qty = 1) {
     // --- 1. Determinar si es stackable ---
     var _is_stackable = false;
     if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
-    // Las herramientas no entran aquí, por lo que _is_stackable será false para ellas.
 
     // --- 2. Si es stackable, buscar si ya existe para sumar ---
     if (_is_stackable) {
@@ -95,7 +97,7 @@ function scr_inventory_swap(_target_array, _index) {
         }
     }
 
-    // Si no es el mismo item, hacemos el intercambio normal que ya tenías
+    // Si no es el mismo item, hacemos el intercambio normal
     var _temp = _target_array[_index];
     _target_array[_index] = held_item;
     held_item = _temp;

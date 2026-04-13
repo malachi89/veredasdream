@@ -1,3 +1,9 @@
+// Actualizar posiciones de la GUI cuando la ventana cambia de tamaño
+if (display_get_gui_width() != window_get_width() || display_get_gui_height() != window_get_height()) {
+    display_set_gui_size(window_get_width(), window_get_height());
+    update_gui_positions();
+}
+
 // --- 1. SELECCIÓN DE SLOT (TECLADO) ---
 for (var i = 0; i < 9; i++) {
     if (keyboard_check_pressed(ord(string(i + 1)))) selected_slot = i;
@@ -38,7 +44,7 @@ if (_press_open) {
 var _mx = device_mouse_x_to_gui(0);
 var _my = device_mouse_y_to_gui(0);
 
-// Cálculos de layout (Iguales a Draw_64)
+// Cálculos de layout (para mantener consistencia)
 var _cols = 8;
 var _grid_slot_size = 32 * gui_scale;
 var _grid_sp = 2;
@@ -120,7 +126,7 @@ if (mouse_check_button_pressed(mb_left)) {
 }
 
 // --- 4. RUEDA DEL RATÓN Y TECLA DE SOLTAR (Solo si la mochila está cerrada) ---
-if (!show_backpack) {
+if (!show_backpack && !show_shipping) {
     if (mouse_wheel_up())   selected_slot = (selected_slot - 1 + total_slots) % total_slots;
     if (mouse_wheel_down()) selected_slot = (selected_slot + 1) % total_slots;
 
