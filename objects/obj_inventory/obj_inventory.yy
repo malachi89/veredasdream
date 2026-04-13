@@ -10,8 +10,8 @@
   "name":"obj_inventory",
   "overriddenProperties":[],
   "parent":{
-    "name":"meta",
-    "path":"folders/objects/meta.yy",
+    "name":"mechanics",
+    "path":"folders/objects/farm/mechanics.yy",
   },
   "parentObjectId":null,
   "persistent":false,

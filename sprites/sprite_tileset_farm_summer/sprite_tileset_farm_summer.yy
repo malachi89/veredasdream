@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"farm",
-    "path":"folders/sprites/tilesets/farm.yy",
+    "path":"folders/sprites/tilesets_sprites/farm.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

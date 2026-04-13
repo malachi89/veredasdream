@@ -138,8 +138,8 @@
   ],
   "name":"farm",
   "parent":{
-    "name":"Veredas Dream",
-    "path":"Veredas Dream.yyp",
+    "name":"rooms",
+    "path":"folders/rooms.yy",
   },
   "parentRoom":null,
   "physicsSettings":{
