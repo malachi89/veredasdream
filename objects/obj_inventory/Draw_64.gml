@@ -8,8 +8,8 @@ var _c_sel    = c_white;
 var _alpha    = 0.6;
 var _rad      = 8 * gui_scale;
 
-// === 1. FONDO OSCURO (Si la mochila está abierta) ===
-if (show_backpack) {
+// === 1. FONDO OSCURO (Si la mochila o el shipping están abiertos) ===
+if (show_backpack || show_shipping) {
     draw_set_alpha(0.7);
     draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
     draw_set_alpha(1.0);
@@ -61,52 +61,114 @@ for (var i = 0; i < total_slots; i++) {
     }
 }
 
+// === CÁLCULOS DE POSICIÓN PARA GRIDS ===
+var _cols = 8;
+var _grid_slot_size = 32 * gui_scale;
+var _grid_sp = 2;
+var _grid_w = (_cols * _grid_slot_size) + ((_cols - 1) * _grid_sp);
+
+var _gap = 40 * gui_scale; // Espacio entre mochila y shipping bin
+var _total_w = _grid_w;
+if (show_shipping) _total_w = (_grid_w * 2) + _gap;
+
+var _base_x = (display_get_gui_width() / 2) - (_total_w / 2);
+var _base_y = (display_get_gui_height() * 0.45);
+
 // === 3. CUADRÍCULA DE LA MOCHILA ===
 if (show_backpack) {
-    var _cols = 16;
     var _rows = ceil(max_backpack_slots / _cols);
-    var _bp_s = 32 * gui_scale; 
-    var _sp   = 2;
-    var _bw = (_cols * _bp_s) + ((_cols - 1) * _sp);
-    var _bh = (_rows * _bp_s) + ((_rows - 1) * _sp);
-    var _bx = (display_get_gui_width() / 2) - (_bw / 2);
-    var _by = (display_get_gui_height() * 0.45) - (_bh / 2);
+    var _bh = (_rows * _grid_slot_size) + ((_rows - 1) * _grid_sp);
+    var _bx = _base_x;
+    var _by = _base_y - (_bh / 2);
+
+    // Título Mochila
+    draw_set_halign(fa_center);
+    var _title_y = (display_get_gui_height() * 0.45) - (_bh / 2) - 50;
+    draw_text_transformed(_bx + _grid_w/2, _title_y, "MOCHILA", 1.5, 1.5, 0);
 
     for (var i = 0; i < max_backpack_slots; i++) {
-        var _sx = _bx + (i % _cols * (_bp_s + _sp));
-        var _sy = _by + (i div _cols * (_bp_s + _sp));
-        var _b_hover = (_mx >= _sx && _mx <= _sx + _bp_s && _my >= _sy && _my <= _sy + _bp_s);
+        var _sx = _bx + (i % _cols * (_grid_slot_size + _grid_sp));
+        var _sy = _by + (i div _cols * (_grid_slot_size + _grid_sp));
+        var _b_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
         var _bg_col = (_b_hover) ? c_gray : _c_base;
         var _bd_col = (_b_hover) ? c_white : _c_border;
         var _bp_alpha = (_b_hover) ? 0.9 : _alpha;
     
         draw_set_alpha(_bp_alpha);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _bp_s, _sy + _bp_s, 6, 6, _bg_col, _bg_col, false);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 6, 6, _bg_col, _bg_col, false);
         draw_set_alpha(1.0);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _bp_s, _sy + _bp_s, 6, 6, _bd_col, _bd_col, true);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 6, 6, _bd_col, _bd_col, true);
         
-        // --- LÓGICA DE STRUCT ---
         var _b_slot = backpack_array[i];
         if (is_struct(_b_slot)) {
             var _b_key = _b_slot.key;
             var _b_qty = _b_slot.quantity;
-            
             var _b_data = undefined;
             if (variable_struct_exists(global.tool_data, _b_key)) _b_data = global.tool_data[$ _b_key];
             else if (variable_struct_exists(global.seed_data, _b_key)) _b_data = global.seed_data[$ _b_key];
             else if (variable_struct_exists(global.crop_data, _b_key)) _b_data = global.crop_data[$ _b_key];
 
             if (_b_data != undefined) {
-                var _iscl = (_bp_s / 32) * 1.6;
+                var _iscl = (_grid_slot_size / 32) * 1.6;
                 var _ioff = 7.2 * _iscl;
                 var _f    = variable_struct_exists(_b_data, "row") ? (_b_data.row * 3) + _b_data.subimg : _b_data.subimg;
-                draw_sprite_ext(_b_data.sprite, _f, _sx + (_bp_s/2) - _ioff, _sy + (_bp_s/2) - _ioff, _iscl, _iscl, 0, c_white, 1);
+                draw_sprite_ext(_b_data.sprite, _f, _sx + (_grid_slot_size/2) - _ioff, _sy + (_grid_slot_size/2) - _ioff, _iscl, _iscl, 0, c_white, 1);
                 
-                // DIBUJAR CANTIDAD
                 if (_b_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
-                    draw_text_transformed(_sx + _bp_s - 2, _sy + _bp_s - 2, string(_b_qty), 0.8, 0.8, 0);
+                    draw_text_transformed(_sx + _grid_slot_size - 2, _sy + _grid_slot_size - 2, string(_b_qty), 0.8, 0.8, 0);
+                }
+            }
+        }
+    }
+}
+
+// === 3.5 CUADRÍCULA DEL SHIPPING BIN ===
+if (show_shipping) {
+    var _s_rows = 4;
+    var _sh = (_s_rows * _grid_slot_size) + ((_s_rows - 1) * _grid_sp);
+    var _sx_base = _base_x + _grid_w + _gap;
+    var _sy_base = _base_y - (_sh / 2);
+
+    // Título Contenedor de Envíos
+    draw_set_halign(fa_center);
+    var _s_title_y = (display_get_gui_height() * 0.45) - (_sh / 2) - 50;
+    draw_text_transformed(_sx_base + _grid_w/2, _s_title_y, "CONTENEDOR DE ENVIOS", 1.5, 1.5, 0);
+
+    for (var i = 0; i < max_shipping_slots; i++) {
+        var _sx = _sx_base + (i % _cols * (_grid_slot_size + _grid_sp));
+        var _sy = _sy_base + (i div _cols * (_grid_slot_size + _grid_sp));
+        
+        var _s_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
+        var _bg_col = (_s_hover) ? c_gray : _c_base;
+        var _bd_col = (_s_hover) ? c_white : _c_border;
+        var _s_alpha = (_s_hover) ? 0.9 : _alpha;
+
+        draw_set_alpha(_s_alpha);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 8, 8, _bg_col, _bg_col, false);
+        draw_set_alpha(1.0);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 8, 8, _bd_col, _bd_col, true);
+
+        var _s_slot = shipping_array[i];
+        if (is_struct(_s_slot)) {
+            var _s_key = _s_slot.key;
+            var _s_qty = _s_slot.quantity;
+            var _s_data = undefined;
+            if (variable_struct_exists(global.tool_data, _s_key)) _s_data = global.tool_data[$ _s_key];
+            else if (variable_struct_exists(global.seed_data, _s_key)) _s_data = global.seed_data[$ _s_key];
+            else if (variable_struct_exists(global.crop_data, _s_key)) _s_data = global.crop_data[$ _s_key];
+
+            if (_s_data != undefined) {
+                var _iscl = (_grid_slot_size / 32) * 1.6;
+                var _ioff = 7.2 * _iscl;
+                var _f    = variable_struct_exists(_s_data, "row") ? (_s_data.row * 3) + _s_data.subimg : _s_data.subimg;
+                draw_sprite_ext(_s_data.sprite, _f, _sx + (_grid_slot_size/2) - _ioff, _sy + (_grid_slot_size/2) - _ioff, _iscl, _iscl, 0, c_white, 1);
+                
+                if (_s_qty > 1) {
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_bottom);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 4, string(_s_qty), 1, 1, 0);
                 }
             }
         }
@@ -132,6 +194,7 @@ if (is_struct(held_item)) {
         // DIBUJAR CANTIDAD EN MANO
         if (_h_qty > 1) {
             draw_set_halign(fa_right);
+            draw_set_valign(fa_bottom);
             draw_text(_mx + 10, _my + 10, string(_h_qty));
         }
     }
@@ -143,7 +206,7 @@ if (instance_exists(obj_controller)) {
     var _yy = display_get_gui_height() * 0.7;
     var _xx = 20;
 
-    draw_set_font(-1);
+    draw_set_font(fnt_pixel_operator);
     draw_set_halign(fa_left);
     draw_set_valign(fa_bottom);
 

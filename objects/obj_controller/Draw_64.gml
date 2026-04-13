@@ -16,7 +16,7 @@ var _day_name = global.day_names[_day_of_week_index];
 var _date_text = global.season_names[$ global.season] + " " + string(global.day) + " " + _day_name;
 var _money_text = "MXN$ " + string(global.money);
 
-draw_set_font(-1);
+draw_set_font(fnt_pixel_operator);
 draw_set_halign(fa_right);
 draw_set_valign(fa_top);
 

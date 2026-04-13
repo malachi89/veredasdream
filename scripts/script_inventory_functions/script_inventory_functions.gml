@@ -28,3 +28,34 @@ function scr_notify(_text) {
     }
 }
 
+/// @function scr_draw_interact_prompt(x, y, text)
+function scr_draw_interact_prompt(_x, _y, _text) {
+    draw_set_font(fnt_pixel_operator);
+    var _tw = string_width(_text);
+    var _th = string_height(_text);
+    var _pad = 4;
+    
+    var _x1 = _x - (_tw / 2) - _pad;
+    var _y1 = _y - _th - (_pad * 2) - 8; // Elevado un poco
+    var _x2 = _x + (_tw / 2) + _pad;
+    var _y2 = _y - 8;
+    
+    // Dibujar fondo del globo
+    draw_set_alpha(0.8);
+    draw_roundrect_color_ext(_x1, _y1, _x2, _y2, 8, 8, c_black, c_black, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_x1, _y1, _x2, _y2, 8, 8, c_white, c_white, true);
+    
+    // Dibujar el pequeño triángulo (cola del globo)
+    draw_primitive_begin(pr_trianglelist);
+    draw_vertex_color(_x - 4, _y2, c_black, 0.8);
+    draw_vertex_color(_x + 4, _y2, c_black, 0.8);
+    draw_vertex_color(_x, _y2 + 6, c_black, 0.8);
+    draw_primitive_end();
+    
+    // Dibujar texto
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_text_color(_x, (_y1 + _y2) / 2, _text, c_white, c_white, c_white, c_white, 1.0);
+}
+

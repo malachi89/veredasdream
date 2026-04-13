@@ -20,7 +20,7 @@ if (item_sprite != noone) {
 
 // Dibujar cantidad (Copiado del padre o mejorado)
 if (quantity > 1) {
-    draw_set_font(-1); // Usa la fuente por defecto
+    draw_set_font(fnt_pixel_operator); // Usa la fuente pixelada personalizada
     draw_set_halign(fa_right);
     draw_text(x + 8, y, string(quantity));
 }

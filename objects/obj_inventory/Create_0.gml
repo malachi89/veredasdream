@@ -8,7 +8,7 @@ margin_bottom  = 10 * gui_scale;
 
 // --- ESTRUCTURA DE DATOS ---
 total_slots        = 10;
-max_backpack_slots = 112; 
+max_backpack_slots = 64; 
 
 inventory_array = array_create(total_slots, -1); 
 backpack_array  = array_create(max_backpack_slots, -1);
@@ -16,7 +16,11 @@ backpack_array  = array_create(max_backpack_slots, -1);
 // --- VARIABLES DE ESTADO ---
 selected_slot = 0; 
 show_backpack = false;
+show_shipping = false;
 held_item     = -1;
+
+max_shipping_slots = 32;
+shipping_array     = array_create(max_shipping_slots, -1);
 
 // --- CÁLCULO DE POSICIÓN (HOTBAR) ---
 var _menu_w  = (total_slots * slot_size) + ((total_slots - 1) * spacing);
