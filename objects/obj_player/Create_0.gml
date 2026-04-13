@@ -1,18 +1,5 @@
-enum DIR {
-    DOWN = 0,
-    UP = 1,
-    RIGHT = 2,
-    LEFT = 3
-}
-
-enum STATE {
-    IDLE,
-    WALK,
-    RUN,
-    ACTING // Nuevo estado para usar herramientas
-}
-
 // Variables para controlar la animación de acción
+is_riding = false;
 action_sprite_skin = -1;
 action_sprite_tool = -1;
 action_sprite_hair = -1;

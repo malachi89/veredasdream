@@ -1,4 +1,34 @@
 
+enum DIR {
+    DOWN = 0,
+    UP = 1,
+    RIGHT = 2,
+    LEFT = 3
+}
+
+enum STATE {
+    IDLE,
+    WALK,
+    RUN,
+    ACTING // Nuevo estado para usar herramientas
+}
+
+// Estados del caballo
+enum HORSE_STATE {
+    IDLE,
+    PACING,
+    PREPARING_TO_EAT,
+    EATING
+}
+
+// Direcciones del caballo
+enum HORSE_DIR {
+    DOWN = 0,
+    UP = 1,
+    RIGHT = 2,
+    LEFT = 3
+}
+
 enum ITEM_TYPE {
     MATERIAL,   // Madera, piedra, basura
     TOOL,       // Hacha, pico, regadera

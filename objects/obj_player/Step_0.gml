@@ -5,6 +5,19 @@ var _run = keyboard_check(vk_shift);
 var _mag = point_distance(0, 0, _h, _v);
 var _prev_state = state;
 
+if (keyboard_check_pressed(ord("M"))) {
+    is_riding = !is_riding;
+    if (is_riding) {
+        frames_idle = 2;
+        frames_walk = 4;
+        frames_run  = 6;
+    } else {
+        frames_idle = 4;
+        frames_walk = 6;
+        frames_run  = 8;
+    }
+}
+
 // 2. INTERACCIÓN
 if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     var _selected_item = obj_inventory.inventory_array[obj_inventory.selected_slot];
@@ -34,7 +47,12 @@ if (state != STATE.ACTING) {
     if (_mag == 0) {
         state = STATE.IDLE;
     } else {
-        state = _run ? STATE.RUN : STATE.WALK;
+        if (is_riding) {
+            state = _run ? STATE.WALK : STATE.RUN;
+        } else {
+            state = _run ? STATE.RUN : STATE.WALK;
+        }
+        
         if (abs(_h) > abs(_v)) dir = (_h > 0) ? DIR.RIGHT : DIR.LEFT;
         else                   dir = (_v > 0) ? DIR.DOWN  : DIR.UP;
     }
@@ -59,10 +77,14 @@ if (state == STATE.ACTING) {
     }
     image_index = (dir * frames_action) + floor(frame_anim);
 } else {
+    var _s_idle  = is_riding ? sprite_player_horse1_body_idle : sprite_player_idle;
+    var _s_walk  = is_riding ? sprite_player_horse1_body_walk : sprite_player_walk;
+    var _s_run   = is_riding ? sprite_player_horse1_body_run : sprite_player_run;
+
     var _anim_data = [
-        [sprite_player_idle, 0.1,  frames_idle],
-        [sprite_player_walk, 0.15, frames_walk],
-        [sprite_player_run,  0.25, frames_run]
+        [_s_idle, 0.1,  frames_idle],
+        [_s_walk, 0.15, frames_walk],
+        [_s_run,  0.25, frames_run]
     ];
 
     var _current = _anim_data[state];
@@ -70,7 +92,25 @@ if (state == STATE.ACTING) {
     frame_anim += _current[1];
     
     if (frame_anim >= _current[2]) frame_anim = 0;
-    image_index = (dir * _current[2]) + floor(frame_anim);
+    
+    var _dir_idx = dir;
+    if (is_riding) {
+        // Mapeo condicional según el estado
+        if (state == STATE.IDLE) {
+            // Idle montando: 0:Abajo, 1:Arriba, 2:Derecha, 3:Izquierda (Igual que enum DIR)
+            _dir_idx = dir;
+        } else {
+            // Walk/Run montando: 0:Arriba, 1:Abajo, 2:Derecha, 3:Izquierda (Invertido respecto a DIR)
+            if (dir == DIR.DOWN) _dir_idx = 1;
+            else if (dir == DIR.UP) _dir_idx = 0;
+        }
+    }
+    
+    image_index = (_dir_idx * _current[2]) + floor(frame_anim);
+
+    if (is_riding) {
+        show_debug_message("RIDING: State=" + string(state) + " DirEnum=" + string(dir) + " DirIdx=" + string(_dir_idx) + " ImgIdx=" + string(image_index) + " Sprite=" + sprite_get_name(sprite_index));
+    }
 }
 
 image_speed = 0;
