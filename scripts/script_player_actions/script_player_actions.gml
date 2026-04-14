@@ -73,6 +73,12 @@ function scr_use_item(_item_data, _gx, _gy) {
 
             case "watering_can":
                 if (tilemap_get_at_pixel(_map_id, _gx, _gy) == 72) tilemap_set_at_pixel(_map_id, 168, _gx, _gy);
+                
+                var _watered_crop = instance_position(_gx + 8, _gy + 8, obj_crop);
+                if (_watered_crop != noone) {
+                    _watered_crop.is_watered = true;
+                }
+
                 other.frames_action = 8;
                 other.action_sprite_tool = sprite_player_watering_can_watering;
                 scr_set_player_action_sprites(sprite_player_skin_watering, sprite_player_hair_watering, sprite_player_clothes_watering, sprite_player_eyes_watering);

@@ -1,15 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"obj_collision",
-  "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-  ],
+  "%Name":"obj_bed",
+  "eventList":[],
   "managed":true,
-  "name":"obj_collision",
+  "name":"obj_bed",
   "overriddenProperties":[],
   "parent":{
-    "name":"game_control",
-    "path":"folders/objects/game_control.yy",
+    "name":"mechanics",
+    "path":"folders/objects/farm/mechanics.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -30,9 +28,9 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"tile_collision",
-    "path":"sprites/tile_collision/tile_collision.yy",
+    "name":"tile_bed",
+    "path":"sprites/tile_bed/tile_bed.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

@@ -1,20 +1,25 @@
-// --- CONFIGURACIÓN VISUAL ---
+if (instance_number(obj_inventory) > 1) {
+    instance_destroy();
+    exit;
+}
+
+// --- CONFIGURACION VISUAL ---
 display_set_gui_size(window_get_width(), window_get_height());
 
-gui_scale      = 1.7; 
-slot_size      = 32 * gui_scale; 
-spacing        = 2 * gui_scale;      
-margin_bottom  = 10 * gui_scale; 
+gui_scale      = 1.7;
+slot_size      = 32 * gui_scale;
+spacing        = 2 * gui_scale;
+margin_bottom  = 10 * gui_scale;
 
 // --- ESTRUCTURA DE DATOS ---
 total_slots        = 10;
-max_backpack_slots = 64; 
+max_backpack_slots = 64;
 
-inventory_array = array_create(total_slots, -1); 
+inventory_array = array_create(total_slots, -1);
 backpack_array  = array_create(max_backpack_slots, -1);
 
 // --- VARIABLES DE ESTADO ---
-selected_slot = 0; 
+selected_slot = 0;
 show_backpack = false;
 show_shipping = false;
 held_item     = -1;
@@ -24,7 +29,7 @@ shipping_array     = array_create(max_shipping_slots, -1);
 
 // --- FUNCIONES DEL SISTEMA ---
 function update_gui_positions() {
-    // --- CÁLCULO DE POSICIÓN (HOTBAR) ---
+    // --- CALCULO DE POSICION (HOTBAR) ---
     var _menu_w  = (total_slots * slot_size) + ((total_slots - 1) * spacing);
     menu_x_start = (display_get_gui_width() / 2) - (_menu_w / 2);
     menu_y_start = display_get_gui_height() - slot_size - margin_bottom;
@@ -60,14 +65,14 @@ function add_item(_item_key, _qty = 1) {
         }
     }
 
-    // --- 3. Si no es stackable o no se encontró espacio para sumar, buscar slot vacío ---
+    // --- 3. Si no es stackable o no se encontro espacio para sumar, buscar slot vacio ---
     var _new_struct = { key: _item_key, quantity: _qty };
 
-    // Intentar en Barra Rápida
+    // Intentar en Barra Rapida
     for (var i = 0; i < total_slots; i++) {
         if (inventory_array[i] == -1) {
             inventory_array[i] = _new_struct;
-            return true; 
+            return true;
         }
     }
     // Intentar en Mochila
@@ -77,7 +82,7 @@ function add_item(_item_key, _qty = 1) {
             return true;
         }
     }
-    
+
     return false; // Inventario lleno
 }
 
@@ -103,11 +108,10 @@ function scr_inventory_swap(_target_array, _index) {
     held_item = _temp;
 }
 
-
 // --- CARGA INICIAL (EQUIPO) ---
-add_item("watering_can",1);
-add_item("pickaxe",1);
-add_item("axe",1);
-add_item("sickle",1);
-add_item("hoe",1);
-add_item("tomato_seeds",40);
+add_item("watering_can", 1);
+add_item("pickaxe", 1);
+add_item("axe", 1);
+add_item("sickle", 1);
+add_item("hoe", 1);
+add_item("tomato_seeds", 40);
