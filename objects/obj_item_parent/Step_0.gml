@@ -4,11 +4,14 @@ if (!is_initialized && item_key != "") {
     if (variable_struct_exists(global.tool_data, item_key)) _data = global.tool_data[$ item_key];
     else if (variable_struct_exists(global.seed_data, item_key)) _data = global.seed_data[$ item_key];
     else if (variable_struct_exists(global.crop_data, item_key)) _data = global.crop_data[$ item_key];
+    else if (variable_struct_exists(global.storage_data, item_key)) _data = global.storage_data[$ item_key];
 
     if (_data != undefined) {
         item_sprite = _data.sprite;
         row = variable_struct_exists(_data, "row") ? _data.row : 0;
         subimg = _data.subimg;
+        col_offset = variable_struct_exists(_data, "offset_x") ? _data.offset_x : 0;
+        row_offset = variable_struct_exists(_data, "offset_y") ? _data.offset_y : 0;
     }
     is_initialized = true;
 }
@@ -44,6 +47,7 @@ if (collect_delay > 0) {
                 if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
                 else if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;
+                else if (variable_struct_exists(global.storage_data, item_key)) _name = global.storage_data[$ item_key].name;
 
                 scr_notify("+" + string(quantity) + " " + _name);
                 instance_destroy();
@@ -53,3 +57,4 @@ if (collect_delay > 0) {
 }
 
 scr_update_room_drop(id);
+depth = -bbox_bottom;

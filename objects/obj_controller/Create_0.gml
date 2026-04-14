@@ -95,29 +95,11 @@ sleep_menu_open = false;
 sleep_menu_selection = 0;
 bed_overlap_previous = false;
 
+// Variables para el resumen de ventas
+shipping_summary_open = false;
+shipping_summary_data = { items: [], total: 0 };
+shipping_summary_scroll = 0; // Por si hay muchos items
+
 current_room_name = room_get_name(room);
 pending_loaded_game = scr_read_save_game();
 load_needs_apply = is_struct(pending_loaded_game);
-
-if (!load_needs_apply) {
-    global.room_states[$ "farm"] = {
-        crops: [
-            { x: 688, y: 112, crop_type: "tomato", days_passed: 0, growth_stage: 0, is_watered: true, skip_blank_frame: false, days_to_grow: 5, max_stages: 5, image_index: 0 },
-            { x: 704, y: 112, crop_type: "onion", days_passed: 2, growth_stage: 2, is_watered: true, skip_blank_frame: false, days_to_grow: 6, max_stages: 6, image_index: 2 },
-            { x: 720, y: 112, crop_type: "cabbage", days_passed: 4, growth_stage: 4, is_watered: false, skip_blank_frame: false, days_to_grow: 7, max_stages: 7, image_index: 4 },
-            { x: 736, y: 112, crop_type: "hot_pepper", days_passed: 6, growth_stage: 6, is_watered: true, skip_blank_frame: false, days_to_grow: 7, max_stages: 7, image_index: 6 },
-            { x: 752, y: 112, crop_type: "pumpkin", days_passed: 3, growth_stage: 3, is_watered: true, skip_blank_frame: true, days_to_grow: 6, max_stages: 6, image_index: 3 }
-        ],
-        tilled_tiles: [
-            { x: 688, y: 112, tile: 168 },
-            { x: 704, y: 112, tile: 168 },
-            { x: 720, y: 112, tile: 72 },
-            { x: 736, y: 112, tile: 168 },
-            { x: 752, y: 112, tile: 168 }
-        ]
-    };
-
-    if (current_room_name == "farm") {
-        scr_restore_room_state("farm");
-    }
-}

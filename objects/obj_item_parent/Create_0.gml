@@ -7,6 +7,8 @@ float_timer = irandom(100);
 item_sprite = noone;
 row = 0;
 subimg = 0;
+col_offset = 0;
+row_offset = 0;
 is_initialized = false;
 
 // Guardamos la Y inicial para el "suelo" de la fisica de caida

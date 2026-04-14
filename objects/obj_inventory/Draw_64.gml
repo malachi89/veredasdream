@@ -8,14 +8,14 @@ var _c_sel    = c_white;
 var _alpha    = 0.6;
 var _rad      = 8 * gui_scale;
 
-// === 1. FONDO OSCURO (Si la mochila o el shipping están abiertos) ===
+// === 1. FONDO OSCURO (Si la mochila o el shipping estan abiertos) ===
 if (show_backpack || show_shipping) {
     draw_set_alpha(0.7);
     draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
     draw_set_alpha(1.0);
 }
 
-// === 2. BARRA RÁPIDA (HOTBAR) ===
+// === 2. BARRA RAPIDA (HOTBAR) ===
 var _icon_scale = gui_scale * 1.8; 
 var _off        = 7.2 * _icon_scale; 
 
@@ -33,57 +33,60 @@ for (var i = 0; i < total_slots; i++) {
     draw_set_alpha(1.0);
     draw_roundrect_color_ext(_cx, _cy, _cx + slot_size, _cy + slot_size, _rad, _rad, _col_border, _col_border, true);
     
-    // --- LÓGICA DE STRUCT ---
+    // --- LOGICA DE STRUCT ---
     var _slot_data = inventory_array[i];
     if (is_struct(_slot_data)) {
         var _key = _slot_data.key;
         var _qty = _slot_data.quantity;
         
-        var _data = undefined;
-        var _is_t = false;
-        if (variable_struct_exists(global.tool_data, _key)) { _data = global.tool_data[$ _key]; _is_t = true; }
-        else if (variable_struct_exists(global.seed_data, _key)) { _data = global.seed_data[$ _key]; }
-        else if (variable_struct_exists(global.crop_data, _key)) { _data = global.crop_data[$ _key]; }
+        var _data = scr_get_item_data(_key);
+        var _is_t = variable_struct_exists(global.tool_data, _key);
 
         if (_data != undefined) {
             var _f = variable_struct_exists(_data, "row") ? (_data.row * 3) + _data.subimg : _data.subimg;
             if (_is_t && i == selected_slot && _data.sprite == sprite_tools) _f += 9;
             var _cc = slot_size / 2;
-            draw_sprite_ext(_data.sprite, _f, _cx + _cc - _off, _cy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+            
+            // Ajuste especial para el cofre que esta desplazado en su sprite
+            var _draw_off_x = _off;
+            if (_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
+            
+            draw_sprite_ext(_data.sprite, _f, _cx + _cc - _draw_off_x, _cy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
             
             // DIBUJAR CANTIDAD
             if (_qty > 1) {
                 draw_set_halign(fa_right);
                 draw_set_valign(fa_bottom);
-                draw_text_transformed(_cx + slot_size - 4, _cy + slot_size - 2, string(_qty), 1, 1, 0);
+                draw_set_color(c_white);
+                draw_text_transformed(_cx + slot_size - 4, _cy + slot_size - 2, string(_qty), 1.2, 1.2, 0);
             }
         }
     }
 }
 
-// === CÁLCULOS DE POSICIÓN PARA GRIDS ===
+// === CALCULOS DE POSICION PARA GRIDS ===
 var _cols = 8;
-var _grid_slot_size = 32 * gui_scale;
-var _grid_sp = 2;
+var _grid_slot_size = slot_size; // Usar el mismo que la Hotbar
+var _grid_sp = spacing;         // Usar el mismo que la Hotbar
 var _grid_w = (_cols * _grid_slot_size) + ((_cols - 1) * _grid_sp);
 
 var _gap = 40 * gui_scale; // Espacio entre mochila y shipping bin
 var _total_w = _grid_w;
-if (show_shipping) _total_w = (_grid_w * 2) + _gap;
+if (show_shipping || show_chest) _total_w = (_grid_w * 2) + _gap;
 
 var _base_x = (display_get_gui_width() / 2) - (_total_w / 2);
 var _base_y = (display_get_gui_height() * 0.45);
 
-// === 3. CUADRÍCULA DE LA MOCHILA ===
+// === 3. CUADRICULA DE LA MOCHILA ===
 if (show_backpack) {
     var _rows = ceil(max_backpack_slots / _cols);
     var _bh = (_rows * _grid_slot_size) + ((_rows - 1) * _grid_sp);
     var _bx = _base_x;
     var _by = _base_y - (_bh / 2);
 
-    // Título Mochila
+    // Titulo Mochila
     draw_set_halign(fa_center);
-    var _title_y = (display_get_gui_height() * 0.45) - (_bh / 2) - 50;
+    var _title_y = _by - 40;
     draw_text_transformed(_bx + _grid_w/2, _title_y, "MOCHILA", 1.5, 1.5, 0);
 
     for (var i = 0; i < max_backpack_slots; i++) {
@@ -95,48 +98,50 @@ if (show_backpack) {
         var _bp_alpha = (_b_hover) ? 0.9 : _alpha;
     
         draw_set_alpha(_bp_alpha);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 6, 6, _bg_col, _bg_col, false);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bg_col, _bg_col, false);
         draw_set_alpha(1.0);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 6, 6, _bd_col, _bd_col, true);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bd_col, _bd_col, true);
         
         var _b_slot = backpack_array[i];
         if (is_struct(_b_slot)) {
             var _b_key = _b_slot.key;
             var _b_qty = _b_slot.quantity;
-            var _b_data = undefined;
-            if (variable_struct_exists(global.tool_data, _b_key)) _b_data = global.tool_data[$ _b_key];
-            else if (variable_struct_exists(global.seed_data, _b_key)) _b_data = global.seed_data[$ _b_key];
-            else if (variable_struct_exists(global.crop_data, _b_key)) _b_data = global.crop_data[$ _b_key];
+            var _b_data = scr_get_item_data(_b_key);
 
             if (_b_data != undefined) {
-                var _iscl = (_grid_slot_size / 32) * 1.6;
-                var _ioff = 7.2 * _iscl;
                 var _f    = variable_struct_exists(_b_data, "row") ? (_b_data.row * 3) + _b_data.subimg : _b_data.subimg;
-                draw_sprite_ext(_b_data.sprite, _f, _sx + (_grid_slot_size/2) - _ioff, _sy + (_grid_slot_size/2) - _ioff, _iscl, _iscl, 0, c_white, 1);
+                var _cc = _grid_slot_size / 2;
+                
+                var _draw_off_x = _off;
+                if (_b_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
+                
+                draw_sprite_ext(_b_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
                 
                 if (_b_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
-                    draw_text_transformed(_sx + _grid_slot_size - 2, _sy + _grid_slot_size - 2, string(_b_qty), 0.8, 0.8, 0);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, string(_b_qty), 1.1, 1.1, 0);
                 }
             }
         }
     }
 }
 
-// === 3.5 CUADRÍCULA DEL SHIPPING BIN ===
+// === 3.5 CUADRICULA DEL SHIPPING BIN ===
 if (show_shipping) {
-    var _s_rows = 4;
+    var _s_rows = 8;
     var _sh = (_s_rows * _grid_slot_size) + ((_s_rows - 1) * _grid_sp);
     var _sx_base = _base_x + _grid_w + _gap;
     var _sy_base = _base_y - (_sh / 2);
 
-    // Título Contenedor de Envíos
+    // Titulo Contenedor de Envios
     draw_set_halign(fa_center);
-    var _s_title_y = (display_get_gui_height() * 0.45) - (_sh / 2) - 50;
-    draw_text_transformed(_sx_base + _grid_w/2, _s_title_y, "CONTENEDOR DE ENVIOS", 1.5, 1.5, 0);
+    var _title_y = _sy_base - 40;
+    draw_text_transformed(_sx_base + _grid_w/2, _title_y, "CONTENEDOR DE ENVIOS", 1.5, 1.5, 0);
 
-    for (var i = 0; i < max_shipping_slots; i++) {
+    var _len = array_length(shipping_array);
+    for (var i = 0; i < _len; i++) {
         var _sx = _sx_base + (i % _cols * (_grid_slot_size + _grid_sp));
         var _sy = _sy_base + (i div _cols * (_grid_slot_size + _grid_sp));
         
@@ -146,56 +151,113 @@ if (show_shipping) {
         var _s_alpha = (_s_hover) ? 0.9 : _alpha;
 
         draw_set_alpha(_s_alpha);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 8, 8, _bg_col, _bg_col, false);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bg_col, _bg_col, false);
         draw_set_alpha(1.0);
-        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, 8, 8, _bd_col, _bd_col, true);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bd_col, _bd_col, true);
 
         var _s_slot = shipping_array[i];
         if (is_struct(_s_slot)) {
             var _s_key = _s_slot.key;
             var _s_qty = _s_slot.quantity;
-            var _s_data = undefined;
-            if (variable_struct_exists(global.tool_data, _s_key)) _s_data = global.tool_data[$ _s_key];
-            else if (variable_struct_exists(global.seed_data, _s_key)) _s_data = global.seed_data[$ _s_key];
-            else if (variable_struct_exists(global.crop_data, _s_key)) _s_data = global.crop_data[$ _s_key];
+            var _s_data = scr_get_item_data(_s_key);
 
             if (_s_data != undefined) {
-                var _iscl = (_grid_slot_size / 32) * 1.6;
-                var _ioff = 7.2 * _iscl;
                 var _f    = variable_struct_exists(_s_data, "row") ? (_s_data.row * 3) + _s_data.subimg : _s_data.subimg;
-                draw_sprite_ext(_s_data.sprite, _f, _sx + (_grid_slot_size/2) - _ioff, _sy + (_grid_slot_size/2) - _ioff, _iscl, _iscl, 0, c_white, 1);
+                var _cc = _grid_slot_size / 2;
+
+                var _draw_off_x = _off;
+                if (_s_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
+
+                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+
                 
                 if (_s_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
-                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 4, string(_s_qty), 1, 1, 0);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, string(_s_qty), 1.1, 1.1, 0);
                 }
             }
         }
     }
 }
 
-// === 4. ÍTEM EN MANO ===
+// === 3.6 CUADRICULA DEL COFRE ===
+if (show_chest && instance_exists(current_chest_id)) {
+    var _c_rows = 8;
+    var _ch = (_c_rows * _grid_slot_size) + ((_c_rows - 1) * _grid_sp);
+    var _cx_base = _base_x + _grid_w + _gap;
+    var _cy_base = _base_y - (_ch / 2);
+
+    // Titulo Cofre
+    draw_set_halign(fa_center);
+    var _c_title_y = _cy_base - 40;
+    draw_text_transformed(_cx_base + _grid_w/2, _c_title_y, "COFRE", 1.5, 1.5, 0);
+
+    for (var i = 0; i < 64; i++) {
+        var _sx = _cx_base + (i % _cols * (_grid_slot_size + _grid_sp));
+        var _sy = _cy_base + (i div _cols * (_grid_slot_size + _grid_sp));
+        
+        var _c_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
+        var _bg_col = (_c_hover) ? c_gray : _c_base;
+        var _bd_col = (_c_hover) ? c_white : _c_border;
+        var _c_alpha = (_c_hover) ? 0.9 : _alpha;
+
+        draw_set_alpha(_c_alpha);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bg_col, _bg_col, false);
+        draw_set_alpha(1.0);
+        draw_roundrect_color_ext(_sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size, _rad, _rad, _bd_col, _bd_col, true);
+
+        var _s_slot = current_chest_id.storage_array[i];
+        if (is_struct(_s_slot)) {
+            var _s_key = _s_slot.key;
+            var _s_qty = _s_slot.quantity;
+            var _s_data = scr_get_item_data(_s_key);
+
+            if (_s_data != undefined) {
+                var _f    = variable_struct_exists(_s_data, "row") ? (_s_data.row * 3) + _s_data.subimg : _s_data.subimg;
+                var _cc = _grid_slot_size / 2;
+
+                var _draw_off_x = _off;
+                if (_s_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
+
+                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+
+                
+                if (_s_qty > 1) {
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_bottom);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, string(_s_qty), 1.1, 1.1, 0);
+                }
+            }
+        }
+    }
+}
+
+// === 4. ITEM EN MANO ===
 if (is_struct(held_item)) {
     var _h_key = held_item.key;
     var _h_qty = held_item.quantity;
     
-    var _h_data = undefined;
-    if (variable_struct_exists(global.tool_data, _h_key)) _h_data = global.tool_data[$ _h_key];
-    else if (variable_struct_exists(global.seed_data, _h_key)) _h_data = global.seed_data[$ _h_key];
-    else if (variable_struct_exists(global.crop_data, _h_key)) _h_data = global.crop_data[$ _h_key];
+    var _h_data = scr_get_item_data(_h_key);
 
     if (_h_data != undefined) {
         var _h_scl = gui_scale * 1.8;
         var _h_off = 7.2 * _h_scl;
         var _f     = variable_struct_exists(_h_data, "row") ? (_h_data.row * 3) + _h_data.subimg : _h_data.subimg;
-        draw_sprite_ext(_h_data.sprite, _f, _mx - _h_off, _my - _h_off, _h_scl, _h_scl, 0, c_white, 0.8);
+        
+        var _draw_h_off_x = _h_off;
+        if (_h_data.sprite == sprite_farm_chests) _draw_h_off_x += (8 * _h_scl);
+        
+        draw_sprite_ext(_h_data.sprite, _f, _mx - _draw_h_off_x, _my - _h_off, _h_scl, _h_scl, 0, c_white, 0.8);
         
         // DIBUJAR CANTIDAD EN MANO
         if (_h_qty > 1) {
             draw_set_halign(fa_right);
             draw_set_valign(fa_bottom);
-            draw_text(_mx + 10, _my + 10, string(_h_qty));
+            draw_set_color(c_white);
+            draw_text_transformed(_mx + 15, _my + 15, string(_h_qty), 1.1, 1.1, 0);
         }
     }
 }

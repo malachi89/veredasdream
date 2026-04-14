@@ -79,13 +79,13 @@ function scr_restore_room_drops(_room_name) {
 }
 
 function scr_get_room_state(_room_name) {
-    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [] };
+    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [] };
     return global.room_states[$ _room_name];
 }
 
 function scr_capture_current_room_state() {
     var _room_name = room_get_name(room);
-    var _state = { crops: [], tilled_tiles: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [] };
     for (var i = 0; i < instance_number(obj_crop); i++) {
         var _crop = instance_find(obj_crop, i);
         var _idx = array_length(_state.crops);
@@ -95,6 +95,19 @@ function scr_capture_current_room_state() {
             days_to_grow: _crop.days_to_grow, max_stages: _crop.max_stages, image_index: _crop.image_index
         };
     }
+    
+    // Capturar Cofres
+    for (var i = 0; i < instance_number(obj_chest); i++) {
+        var _chest = instance_find(obj_chest, i);
+        // Verificar que el cofre esté inicializado antes de capturar
+        if (variable_instance_exists(_chest, "storage_array")) {
+            var _c_idx = array_length(_state.chests);
+            _state.chests[_c_idx] = {
+                x: _chest.x, y: _chest.y, storage_array: _chest.storage_array
+            };
+        }
+    }
+
     var _layer_id = layer_get_id("Tiles_tilled_watered");
     if (_layer_id != -1) {
         var _map_id = layer_tilemap_get_id(_layer_id);
@@ -143,6 +156,17 @@ function scr_restore_room_state(_room_name) {
                 image_index = _crop_data.image_index;
                 image_speed = 0;
             }
+        }
+    }
+    
+    // Restaurar Cofres
+    if (variable_struct_exists(_state, "chests")) {
+        for (var i = 0; i < array_length(_state.chests); i++) {
+            var _c_data = _state.chests[i];
+            var _chest = instance_create_layer(_c_data.x, _c_data.y, "Instances", obj_chest);
+            _chest.storage_array = _c_data.storage_array;
+            _chest.image_speed = 0;
+            _chest.image_index = 0;
         }
     }
 }
@@ -232,6 +256,13 @@ function scr_apply_loaded_game(_save_data) {
     obj_inventory.inventory_array = _save_data.inventory.inventory_array;
     obj_inventory.backpack_array = _save_data.inventory.backpack_array;
     obj_inventory.shipping_array = _save_data.inventory.shipping_array;
+    
+    // Asegurar que el shipping_array tenga el tamaño correcto si se cargó un guardado viejo
+    if (array_length(obj_inventory.shipping_array) < obj_inventory.max_shipping_slots) {
+        var _extra = obj_inventory.max_shipping_slots - array_length(obj_inventory.shipping_array);
+        for (var i = 0; i < _extra; i++) array_push(obj_inventory.shipping_array, -1);
+    }
+    
     obj_inventory.held_item = _save_data.inventory.held_item;
     obj_inventory.show_backpack = false;
     obj_inventory.show_shipping = false;
@@ -262,8 +293,71 @@ function scr_sleep_and_save() {
     obj_player.dir = DIR.RIGHT;
     obj_player.x = _bed.x + 40;
     obj_player.y = _bed.y + 18;
-    start_new_day();
-    scr_save_game();
+    
+    // Procesar ventas y obtener datos para el resumen
+    var _summary = scr_process_shipping();
+    
+    // Si hubo ventas, mostrar resumen antes de avanzar
+    if (array_length(_summary.items) > 0) {
+        if (instance_exists(obj_controller)) {
+            obj_controller.shipping_summary_data = _summary;
+            obj_controller.shipping_summary_open = true;
+        }
+    } else {
+        // Si no hay ventas, avanzar dia directamente
+        start_new_day();
+        scr_save_game();
+        scr_notify("Dia terminado");
+    }
+}
+
+function scr_process_shipping() {
+    var _summary = { items: [], total: 0 };
+    if (!instance_exists(obj_inventory)) return _summary;
+    
+    var _shipping_array = obj_inventory.shipping_array;
+    
+    for (var i = 0; i < array_length(_shipping_array); i++) {
+        var _item = _shipping_array[i];
+        if (is_struct(_item)) {
+            var _data = scr_get_item_data(_item.key);
+            if (is_struct(_data) && variable_struct_exists(_data, "base_sell_price")) {
+                var _subtotal = _data.base_sell_price * _item.quantity;
+                _summary.total += _subtotal;
+                
+                // Buscar si ya lo agregamos al resumen para agruparlo
+                var _found = false;
+                for (var j = 0; j < array_length(_summary.items); j++) {
+                    if (_summary.items[j].key == _item.key) {
+                        _summary.items[j].quantity += _item.quantity;
+                        _summary.items[j].subtotal += _subtotal;
+                        _found = true;
+                        break;
+                    }
+                }
+                
+                if (!_found) {
+                    array_push(_summary.items, {
+                        key: _item.key,
+                        name: _data.name,
+                        quantity: _item.quantity,
+                        unit_price: _data.base_sell_price,
+                        subtotal: _subtotal,
+                        sprite: _data.sprite,
+                        subimg: _data.subimg
+                    });
+                }
+            }
+            // Limpiar slot del shipping bin
+            _shipping_array[i] = -1;
+        }
+    }
+    
+    if (_summary.total > 0) {
+        global.money += _summary.total;
+    }
+    
+    return _summary;
 }
 
 function scr_notify(_text) {
@@ -294,4 +388,12 @@ function scr_draw_interact_prompt(_x, _y, _text) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_text_color(_x, (_y1 + _y2) / 2, _text, c_white, c_white, c_white, c_white, 1.0);
+}
+
+function scr_get_item_data(_key) {
+    if (variable_struct_exists(global.seed_data, _key)) return global.seed_data[$ _key];
+    if (variable_struct_exists(global.crop_data, _key)) return global.crop_data[$ _key];
+    if (variable_struct_exists(global.tool_data, _key)) return global.tool_data[$ _key];
+    if (variable_struct_exists(global.storage_data, _key)) return global.storage_data[$ _key];
+    return undefined;
 }

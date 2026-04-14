@@ -103,6 +103,41 @@ if (sleep_menu_open) {
     if (keyboard_check_pressed(vk_escape)) sleep_menu_open = false;
 }
 
+if (shipping_summary_open) {
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _cx = display_get_gui_width() * 0.5;
+    var _cy = display_get_gui_height() * 0.5;
+    
+    // Boton "Continuar" (Debe coincidir EXACTAMENTE con el Draw Event)
+    var _tw = 450;
+    var _th = 550;
+    var _ty2 = _cy + (_th / 2) - 40;
+    
+    var _btn_w = 240;
+    var _btn_h = 60;
+    var _btn_x1 = _cx - (_btn_w / 2);
+    var _btn_y1 = _ty2 + 40;
+    var _btn_x2 = _cx + (_btn_w / 2);
+    var _btn_y2 = _btn_y1 + _btn_h;
+    
+    if (mouse_check_button_pressed(mb_left)) {
+        if (point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2)) {
+            shipping_summary_open = false;
+            start_new_day();
+            scr_save_game();
+            scr_notify("Nuevo dia comenzado");
+        }
+    }
+    
+    if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E")) || keyboard_check_pressed(vk_space)) {
+        shipping_summary_open = false;
+        start_new_day();
+        scr_save_game();
+        scr_notify("Nuevo día comenzado");
+    }
+}
+
 gx = floor(mouse_x / 16) * 16;
 gy = floor(mouse_y / 16) * 16;
 show_selector = false;

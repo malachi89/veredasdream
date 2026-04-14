@@ -2,7 +2,7 @@ if (instance_exists(obj_controller) && obj_controller.sleep_menu_open) {
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
-    depth = -y;
+    depth = -bbox_bottom;
     exit;
 }
 
@@ -76,7 +76,7 @@ if (state != STATE.ACTING) {
     _my = (_mag != 0) ? (_v / _mag) * _spd : 0;
 }
 
-move_and_collide(_mx, _my, obj_collision, 4, 0, 0, -1, -1);
+move_and_collide(_mx, _my, [obj_collision, obj_chest], 4, 0, 0, -1, -1);
 
 if (state != _prev_state) frame_anim = 0;
 
@@ -112,4 +112,4 @@ if (state == STATE.ACTING) {
 }
 
 image_speed = 0;
-depth = -y;
+depth = -bbox_bottom;

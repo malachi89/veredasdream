@@ -85,9 +85,38 @@ function scr_use_item(_item_data, _gx, _gy) {
             break;
 
             case "axe":
+            case "pickaxe":
+                // Lógica para quitar cofres
+                var _chest_to_remove = instance_position(_target_x, _target_y, obj_chest);
+                if (_chest_to_remove != noone) {
+                    var _is_empty = true;
+                    for (var i = 0; i < 64; i++) {
+                        if (_chest_to_remove.storage_array[i] != -1) {
+                            _is_empty = false;
+                            break;
+                        }
+                    }
+                    
+                    if (_is_empty) {
+                        inventory_drop_item("chest", 1, _chest_to_remove.x + 8, _chest_to_remove.y + 8);
+                        instance_destroy(_chest_to_remove);
+                    } else {
+                        scr_notify("No se pueden quitar cofres con articulos adentro");
+                    }
+                }
+
+                other.frames_action = 6;
+                other.action_sprite_tool = (_item_key == "axe") ? sprite_player_axe_axe_sickle : sprite_player_pickaxe_pickaxe_hoe_insects;
+                if (_item_key == "axe") {
+                    scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
+                } else {
+                    scr_set_player_action_sprites(sprite_player_skin_pickaxe_hoe_insects, sprite_player_hair_pickaxe_hoe_insects, sprite_player_clothes_pickaxe_hoe_insects, sprite_player_eyes_pickaxe_hoe_insects);
+                }
+            break;
+
             case "sickle":
                 other.frames_action = 6;
-                other.action_sprite_tool = (_item_key == "axe") ? sprite_player_axe_axe_sickle : sprite_player_sickle_axe_sickle;
+                other.action_sprite_tool = sprite_player_sickle_axe_sickle;
                 scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
             break;
 
@@ -103,10 +132,9 @@ function scr_use_item(_item_data, _gx, _gy) {
                 scr_set_player_action_sprites(sprite_player_skin_archer, sprite_player_hair_archer, sprite_player_clothes_archer, sprite_player_eyes_archer);
             break;
 
-            case "pickaxe":
             case "bugnet":
                 other.frames_action = 6;
-                other.action_sprite_tool = (_item_key == "pickaxe") ? sprite_player_pickaxe_pickaxe_hoe_insects : sprite_player_bugnet_pickaxe_hoe_insects;
+                other.action_sprite_tool = sprite_player_bugnet_pickaxe_hoe_insects;
                 scr_set_player_action_sprites(sprite_player_skin_pickaxe_hoe_insects, sprite_player_hair_pickaxe_hoe_insects, sprite_player_clothes_pickaxe_hoe_insects, sprite_player_eyes_pickaxe_hoe_insects);
             break;
             
@@ -146,6 +174,20 @@ function scr_use_item(_item_data, _gx, _gy) {
                     _inv_slot.quantity -= 1;
                     if (_inv_slot.quantity <= 0) obj_inventory.inventory_array[obj_inventory.selected_slot] = -1;
                 }
+            }
+        }
+    }
+
+    // --- C. LÓGICA DE ALMACENAMIENTO (Cofres) ---
+    else if (_item_key != "" && variable_struct_exists(global.storage_data, _item_key)) {
+        if (!instance_position(_gx + 8, _gy + 8, obj_collision) && !instance_position(_gx + 8, _gy + 8, obj_crop) && !instance_position(_gx + 8, _gy + 8, obj_item_parent)) {
+            var _chest = instance_create_layer(_gx, _gy, "Instances", obj_chest);
+            
+            // Gastar item del inventario
+            var _inv_slot = obj_inventory.inventory_array[obj_inventory.selected_slot];
+            if (is_struct(_inv_slot)) {
+                _inv_slot.quantity -= 1;
+                if (_inv_slot.quantity <= 0) obj_inventory.inventory_array[obj_inventory.selected_slot] = -1;
             }
         }
     }

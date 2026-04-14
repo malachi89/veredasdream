@@ -55,4 +55,4 @@ switch (state) {
     break;
 }
 
-depth = -y;
+depth = -bbox_bottom;
