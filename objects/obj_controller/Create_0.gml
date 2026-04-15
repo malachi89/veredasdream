@@ -29,6 +29,9 @@ time_tick_counter = 0;
 time_frames_per_minute = (360 / global.time_multiplier);
 
 function start_new_day() {
+    fade_alpha = 1.0;
+    is_fading_in = true;
+
     global.game_minute = 0;
     global.game_hour = 6;
     global.day += 1;
@@ -39,6 +42,15 @@ function start_new_day() {
         global.season = global.season_list[global.season_index];
         update_tilesets();
         if (global.season_index == 0) global.year += 1;
+
+        // NEW: Remove fruit trees in winter
+        if (global.season == "winter") { // Use the string from global.season
+            with(obj_crop) {
+                if (is_fruit_tree) {
+                    instance_destroy();
+                }
+            }
+        }
     }
 
     scr_advance_stored_room_states(room_get_name(room));
@@ -60,10 +72,15 @@ function start_new_day() {
 
 function update_tilesets() {
     var _tilesets = [ts_farm_spring, ts_farm_summer, ts_farm_fall, ts_farm_winter];
+    var _props_tilesets = [ts_props_exterior_spring, ts_props_exterior_summer, ts_props_exterior_fall, ts_props_exterior_winter];
+    
     var _bg_layer = layer_get_id("Tiles_background");
     var _details_layer = layer_get_id("Tiles_details");
+    var _props_layer = layer_get_id("Tiles_seasonal_props"); // New layer for seasonal props
+    
     if (_bg_layer != -1) tilemap_tileset(layer_tilemap_get_id(_bg_layer), _tilesets[global.season_index]);
     if (_details_layer != -1) tilemap_tileset(layer_tilemap_get_id(_details_layer), _tilesets[global.season_index]);
+    if (_props_layer != -1) tilemap_tileset(layer_tilemap_get_id(_props_layer), _props_tilesets[global.season_index]);
 }
 
 global.season_list = ["spring", "summer", "fall", "winter"];
@@ -108,3 +125,8 @@ chat_history = []; // Optional: to store previous commands
 current_room_name = room_get_name(room);
 pending_loaded_game = scr_read_save_game();
 load_needs_apply = is_struct(pending_loaded_game);
+
+// Fade variables for day start
+fade_alpha = 1.0;
+fade_speed = 1.0 / (room_speed * 1.5); // 1.5 seconds fade duration
+is_fading_in = true;

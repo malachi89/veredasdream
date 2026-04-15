@@ -12,7 +12,7 @@ var _run = keyboard_check(vk_shift);
 var _mag = point_distance(0, 0, _h, _v);
 var _prev_state = state;
 
-if (keyboard_check_pressed(ord("E"))) {
+if (keyboard_check_pressed(ord("F"))) {
     if (is_riding) {
         is_riding = false;
         frames_idle = 4;

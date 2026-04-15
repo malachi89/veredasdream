@@ -163,10 +163,13 @@ function scr_restore_room_state(_room_name) {
     if (variable_struct_exists(_state, "chests")) {
         for (var i = 0; i < array_length(_state.chests); i++) {
             var _c_data = _state.chests[i];
-            var _chest = instance_create_layer(_c_data.x, _c_data.y, "Instances", obj_chest);
-            _chest.storage_array = _c_data.storage_array;
-            _chest.image_speed = 0;
-            _chest.image_index = 0;
+            // Verificar que las coordenadas estén dentro de los límites de la habitación
+            if (_c_data.x >= 0 && _c_data.y >= 0 && _c_data.x < room_width - 16 && _c_data.y < room_height - 16) {
+                var _chest = instance_create_layer(_c_data.x, _c_data.y, "Instances", obj_chest);
+                _chest.storage_array = _c_data.storage_array;
+                _chest.image_speed = 0;
+                _chest.image_index = 0;
+            }
         }
     }
 }

@@ -33,6 +33,18 @@ if (time_tick_counter >= time_frames_per_minute) {
     }
 }
 
+    }
+}
+
+// Fade in effect
+if (is_fading_in) {
+    fade_alpha -= fade_speed;
+    if (fade_alpha <= 0) {
+        fade_alpha = 0;
+        is_fading_in = false;
+    }
+}
+
 // --- DEBUG CONSOLE / CHAT ---
 if (keyboard_check_pressed(vk_enter) && !chat_open && !sleep_menu_open && !shipping_summary_open) {
     chat_open = true;
@@ -194,21 +206,72 @@ if (instance_exists(obj_inventory) && !sleep_menu_open && !obj_inventory.show_ba
                 var _p_cx = (obj_player.bbox_left + obj_player.bbox_right) / 2;
                 var _p_cy = (obj_player.bbox_top + obj_player.bbox_bottom) / 2;
                 var _actual_dist = point_distance(_p_cx, _p_cy, gx + 8, gy + 8);
-                selector_color = (_actual_dist <= 32 || _is_placeable) ? c_green : c_red;
                 
-                // Si la distancia es correcta (o es colocable), verificar si el lugar está ocupado
-                if (selector_color == c_green) {
+                // --- Re-fetch map IDs, as they might be -1 if not in the room ---
+                var _layer_tilled = layer_get_id("Tiles_tilled_watered");
+                var _map_id = (_layer_tilled != -1) ? layer_tilemap_get_id(_layer_tilled) : -1;
+                var _layer_details = layer_get_id("Tiles_details");
+                var _map_id_details = (_layer_details != -1) ? layer_tilemap_get_id(_layer_details) : -1;
+                // --- End Re-fetch ---
+
+                // NEW: Check if the seed is for a tree
+                var _selected_item_data = (is_struct(_slot_content)) ? scr_get_item_data(_item_key) : undefined;
+                var _is_fruit_tree_seed = variable_struct_exists(_selected_item_data, "is_fruit_tree") && _selected_item_data.is_fruit_tree;
+
+                var _can_actually_place = false;
+
+                if (_is_fruit_tree_seed) {
+                    // For trees, check 2x3 area
+                    var _tree_width_tiles = 2; // 32px / 16px
+                    var _tree_height_tiles = 3; // 48px / 16px
+
+                    var _gx_end = gx + (_tree_width_tiles * 16) - 1;
+                    var _gy_end = gy + (_tree_height_tiles * 16) - 1;
+
+                    // Check boundaries and collisions in the 2x3 area
+                    var _tree_area_in_bounds = gx >= 0 && gy >= 0 && _gx_end < room_width && _gy_end < room_height;
+                    var _tree_area_clear = _tree_area_in_bounds;
+
+                    if (_tree_area_clear) {
+                        for (var xx = gx; xx < gx + (_tree_width_tiles * 16); xx += 16) {
+                            for (var yy = gy; yy < gy + (_tree_height_tiles * 16); yy += 16) {
+                                if (instance_position(xx + 8, yy + 8, obj_crop) ||
+                                    instance_position(xx + 8, yy + 8, obj_collision) ||
+                                    instance_position(xx + 8, yy + 8, obj_item_parent) ||
+                                    collision_rectangle(xx, yy, xx + 15, yy + 15, obj_player, false, true) || // Player collision in each tile
+                                    (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, xx, yy) != 0)) {
+                                    _tree_area_clear = false;
+                                    break;
+                                }
+                            }
+                            if (!_tree_area_clear) break;
+                        }
+                    }
+                    _can_actually_place = _tree_area_clear && (_actual_dist <= 32); // Add distance check for trees
+                } else {
+                    // Existing logic for normal crops and placeable objects
                     var _occupied = instance_position(gx + 8, gy + 8, obj_collision) || 
                                     instance_position(gx + 8, gy + 8, obj_crop) || 
                                     instance_position(gx + 8, gy + 8, obj_item_parent);
-                                    
-                    if (!_occupied && _is_placeable) {
-                        if (collision_rectangle(gx, gy, gx + 15, gy + 15, obj_player, false, true)) {
-                            _occupied = true;
-                        }
-                    }
                     
-                    if (_occupied) selector_color = c_red;
+                    var _collides_with_player = collision_rectangle(gx, gy, gx + 15, gy + 15, obj_player, false, true);
+                    
+                    var _in_bounds = gx >= 0 && gy >= 0 && gx < room_width - 16 && gy < room_height - 16;
+                    
+                    var _current_tile_at_gxgy = tilemap_get_at_pixel(_map_id, gx, gy); // Use _gx, _gy directly
+                    var _is_tillable_ground = (_map_id != -1 && (_current_tile_at_gxgy == 72 || _current_tile_at_gxgy == 168)) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, gx, gy) == 0);
+                    
+                    _can_actually_place = (_actual_dist <= 32 || _is_placeable) && !_occupied && !_collides_with_player && _in_bounds;
+                    
+                    if (_is_seed) { // Only if it's a normal seed, it needs tilled soil
+                        _can_actually_place = _can_actually_place && _is_tillable_ground;
+                    }
+                }
+                
+                if (_is_seed || _is_placeable) { // Selector only applies to seeds and placeables
+                    selector_color = _can_actually_place ? c_green : c_red;
+                } else {
+                    selector_color = c_green; // Other tools always show green
                 }
             }
         }

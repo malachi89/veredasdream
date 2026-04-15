@@ -3,7 +3,7 @@ if (!is_initialized && item_key != "") {
     var _data = undefined;
     if (variable_struct_exists(global.tool_data, item_key)) _data = global.tool_data[$ item_key];
     else if (variable_struct_exists(global.crop_data, item_key)) _data = global.crop_data[$ item_key];
-    else if (variable_struct_exists(global.tool_data, item_key)) _data = global.tool_data[$ item_key];
+    else if (variable_struct_exists(global.seed_data, item_key)) _data = global.seed_data[$ item_key];
     else if (variable_struct_exists(global.placeable_data, item_key)) _data = global.placeable_data[$ item_key];
 
     if (_data != undefined) {
@@ -45,9 +45,9 @@ if (collect_delay > 0) {
                 scr_remove_room_drop(source_room_name, persistent_drop_id);
 
                 var _name = "Item";
-                if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
-                else if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
+                if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;
+                else if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
                 else if (variable_struct_exists(global.placeable_data, item_key)) _name = global.placeable_data[$ item_key].name;
 
                 scr_notify("+" + string(quantity) + " " + _name);
