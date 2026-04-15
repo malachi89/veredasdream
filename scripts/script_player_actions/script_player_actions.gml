@@ -178,10 +178,28 @@ function scr_use_item(_item_data, _gx, _gy) {
         }
     }
 
-    // --- C. LÓGICA DE ALMACENAMIENTO (Cofres) ---
-    else if (_item_key != "" && variable_struct_exists(global.storage_data, _item_key)) {
-        if (!instance_position(_gx + 8, _gy + 8, obj_collision) && !instance_position(_gx + 8, _gy + 8, obj_crop) && !instance_position(_gx + 8, _gy + 8, obj_item_parent)) {
-            var _chest = instance_create_layer(_gx, _gy, "Instances", obj_chest);
+    // --- C. LÓGICA DE OBJETOS COLOCABLES (Cofres, etc.) ---
+    else if (_item_key != "" && variable_struct_exists(global.placeable_data, _item_key)) {
+        // Bloquear si el selector está en rojo (distancia o colisión con jugador)
+        if (instance_exists(obj_controller) && obj_controller.selector_color == c_red) exit;
+
+        var _can_place = !instance_position(_gx + 8, _gy + 8, obj_collision) && 
+                         !instance_position(_gx + 8, _gy + 8, obj_crop) && 
+                         !instance_position(_gx + 8, _gy + 8, obj_item_parent);
+                         
+        // Verificar que el jugador no esté en el camino
+        if (_can_place && instance_exists(obj_player)) {
+            if (collision_rectangle(_gx, _gy, _gx + 15, _gy + 15, obj_player, false, true)) {
+                _can_place = false;
+            }
+        }
+
+        if (_can_place) {
+            var _data = global.placeable_data[$ _item_key];
+            var _off_x = variable_struct_exists(_data, "place_offset_x") ? _data.place_offset_x : 0;
+            var _off_y = variable_struct_exists(_data, "place_offset_y") ? _data.place_offset_y : 0;
+            
+            var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
             
             // Gastar item del inventario
             var _inv_slot = obj_inventory.inventory_array[obj_inventory.selected_slot];

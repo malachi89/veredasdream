@@ -100,6 +100,11 @@ shipping_summary_open = false;
 shipping_summary_data = { items: [], total: 0 };
 shipping_summary_scroll = 0; // Por si hay muchos items
 
+// Debug Console / Chat Window
+chat_open = false;
+chat_text = "";
+chat_history = []; // Optional: to store previous commands
+
 current_room_name = room_get_name(room);
 pending_loaded_game = scr_read_save_game();
 load_needs_apply = is_struct(pending_loaded_game);

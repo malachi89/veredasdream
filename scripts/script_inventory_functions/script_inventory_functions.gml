@@ -394,6 +394,6 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.seed_data, _key)) return global.seed_data[$ _key];
     if (variable_struct_exists(global.crop_data, _key)) return global.crop_data[$ _key];
     if (variable_struct_exists(global.tool_data, _key)) return global.tool_data[$ _key];
-    if (variable_struct_exists(global.storage_data, _key)) return global.storage_data[$ _key];
+    if (variable_struct_exists(global.placeable_data, _key)) return global.placeable_data[$ _key];
     return undefined;
 }

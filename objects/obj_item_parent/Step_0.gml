@@ -2,11 +2,12 @@
 if (!is_initialized && item_key != "") {
     var _data = undefined;
     if (variable_struct_exists(global.tool_data, item_key)) _data = global.tool_data[$ item_key];
-    else if (variable_struct_exists(global.seed_data, item_key)) _data = global.seed_data[$ item_key];
     else if (variable_struct_exists(global.crop_data, item_key)) _data = global.crop_data[$ item_key];
-    else if (variable_struct_exists(global.storage_data, item_key)) _data = global.storage_data[$ item_key];
+    else if (variable_struct_exists(global.tool_data, item_key)) _data = global.tool_data[$ item_key];
+    else if (variable_struct_exists(global.placeable_data, item_key)) _data = global.placeable_data[$ item_key];
 
     if (_data != undefined) {
+
         item_sprite = _data.sprite;
         row = variable_struct_exists(_data, "row") ? _data.row : 0;
         subimg = _data.subimg;
@@ -47,7 +48,7 @@ if (collect_delay > 0) {
                 if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
                 else if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;
-                else if (variable_struct_exists(global.storage_data, item_key)) _name = global.storage_data[$ item_key].name;
+                else if (variable_struct_exists(global.placeable_data, item_key)) _name = global.placeable_data[$ item_key].name;
 
                 scr_notify("+" + string(quantity) + " " + _name);
                 instance_destroy();

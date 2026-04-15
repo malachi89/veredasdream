@@ -1,4 +1,4 @@
-if (instance_exists(obj_controller) && obj_controller.sleep_menu_open) {
+if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open)) {
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
@@ -51,7 +51,10 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     var _p_cx = (bbox_left + bbox_right) / 2;
     var _p_cy = (bbox_top + bbox_bottom) / 2;
     var _actual_dist = point_distance(_p_cx, _p_cy, _gx + 8, _gy + 8);
-    if ((_actual_dist <= 32 || _item_key == "bow") && !obj_inventory.show_backpack) {
+    
+    var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
+    
+    if ((_actual_dist <= 32 || _item_key == "bow" || _is_placeable) && !obj_inventory.show_backpack) {
         scr_use_item(_selected_item, _gx, _gy);
     }
 }

@@ -166,5 +166,4 @@ add_item("pickaxe", 1);
 add_item("axe", 1);
 add_item("sickle", 1);
 add_item("hoe", 1);
-add_item("tomato_seeds", 40);
-add_item("chest", 50);
+add_item("tomato_seeds", 10);

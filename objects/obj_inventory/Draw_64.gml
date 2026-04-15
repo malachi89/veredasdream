@@ -47,9 +47,8 @@ for (var i = 0; i < total_slots; i++) {
             if (_is_t && i == selected_slot && _data.sprite == sprite_tools) _f += 9;
             var _cc = slot_size / 2;
             
-            // Ajuste especial para el cofre que esta desplazado en su sprite
+            // Ajuste para centrar el icono
             var _draw_off_x = _off;
-            if (_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
             
             draw_sprite_ext(_data.sprite, _f, _cx + _cc - _draw_off_x, _cy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
             
@@ -113,7 +112,6 @@ if (show_backpack) {
                 var _cc = _grid_slot_size / 2;
                 
                 var _draw_off_x = _off;
-                if (_b_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
                 
                 draw_sprite_ext(_b_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
                 
@@ -166,7 +164,6 @@ if (show_shipping) {
                 var _cc = _grid_slot_size / 2;
 
                 var _draw_off_x = _off;
-                if (_s_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
 
                 draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
 
@@ -219,7 +216,6 @@ if (show_chest && instance_exists(current_chest_id)) {
                 var _cc = _grid_slot_size / 2;
 
                 var _draw_off_x = _off;
-                if (_s_data.sprite == sprite_farm_chests) _draw_off_x += (8 * _icon_scale);
 
                 draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
 
@@ -248,7 +244,6 @@ if (is_struct(held_item)) {
         var _f     = variable_struct_exists(_h_data, "row") ? (_h_data.row * 3) + _h_data.subimg : _h_data.subimg;
         
         var _draw_h_off_x = _h_off;
-        if (_h_data.sprite == sprite_farm_chests) _draw_h_off_x += (8 * _h_scl);
         
         draw_sprite_ext(_h_data.sprite, _f, _mx - _draw_h_off_x, _my - _h_off, _h_scl, _h_scl, 0, c_white, 0.8);
         

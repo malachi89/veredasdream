@@ -1,4 +1,4 @@
-if (instance_exists(obj_controller) && obj_controller.sleep_menu_open) {
+if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open)) {
     exit;
 }
 

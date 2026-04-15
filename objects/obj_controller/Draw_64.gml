@@ -150,3 +150,25 @@ for (var i = 0; i < ds_list_size(notifications); i++) {
     var _ny = 20 + (i * 30);
     draw_text_transformed_color(20, _ny, _notif.text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, _notif.alpha);
 }
+
+// --- DEBUG CONSOLE / CHAT ---
+if (chat_open) {
+    var _cw = display_get_gui_width();
+    var _ch = display_get_gui_height();
+    var _box_w = 400;
+    var _box_h = 40;
+    var _box_x = 20;
+    var _box_y = _ch - 100; // Un poco arriba de la hotbar si es necesario
+
+    draw_set_alpha(0.8);
+    draw_rectangle_color(_box_x, _box_y, _box_x + _box_w, _box_y + _box_h, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+    draw_rectangle_color(_box_x, _box_y, _box_x + _box_w, _box_y + _box_h, c_white, c_white, c_white, c_white, true);
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_middle);
+    var _display_text = "> " + chat_text;
+    if (current_time mod 1000 < 500) _display_text += "|";
+
+    draw_text_transformed_color(_box_x + 10, _box_y + (_box_h / 2), _display_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+}

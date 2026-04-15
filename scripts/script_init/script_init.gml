@@ -37,7 +37,7 @@ enum ITEM_TYPE {
     WEAPON,     // Espadas, arcos
     CROP,       // El fruto ya cosechado (el tomate, el trigo)
     FISH,       // Peces capturados
-    STORAGE     // Cofres, barriles, etc.
+    PLACEABLE   // Objetos que se pueden colocar: cofres, decoracion, etc.
 }
 
 enum TOOL_TYPE {
@@ -254,13 +254,14 @@ global.tool_data = {
     }
 };
 
-global.storage_data = {
+global.placeable_data = {
     chest: {
         name: "Cofre",
-        type: ITEM_TYPE.STORAGE,
+        type: ITEM_TYPE.PLACEABLE,
         sprite: sprite_farm_chests,
         subimg: 0,
         offset_x: 8,
+        place_offset_x: 0,
         sellable: true,
         droppable: true,
         base_buy_price: 100,

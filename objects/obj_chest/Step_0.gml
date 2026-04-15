@@ -1,8 +1,8 @@
 /// @description Interaccion con el cofre
 if (instance_exists(obj_player)) {
-    var _dist = point_distance(x + 8, y + 8, obj_player.x, obj_player.y);
+    var _dist = point_distance(x + 16, y + 8, obj_player.x, obj_player.y);
     
-    if (_dist < 32) {
+    if (_dist < 40) {
         // Abrir/Cerrar con E
         if (keyboard_check_pressed(ord("E"))) {
             is_open = !is_open;

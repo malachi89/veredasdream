@@ -33,6 +33,44 @@ if (time_tick_counter >= time_frames_per_minute) {
     }
 }
 
+// --- DEBUG CONSOLE / CHAT ---
+if (keyboard_check_pressed(vk_enter) && !chat_open && !sleep_menu_open && !shipping_summary_open) {
+    chat_open = true;
+    keyboard_string = "";
+    chat_text = "";
+}
+else if (chat_open) {
+    chat_text = keyboard_string;
+    if (keyboard_check_pressed(vk_enter)) {
+        var _input = string_trim(chat_text);
+        if (_input != "") {
+            var _parts = string_split(_input, " ");
+            var _cmd = _parts[0];
+            
+            if (_cmd == "add_item" && array_length(_parts) >= 3) {
+                var _item = _parts[1];
+                var _qty = real(_parts[2]);
+                if (instance_exists(obj_inventory)) {
+                    if (obj_inventory.add_item(_item, _qty)) {
+                        scr_notify("Agregado: " + string(_qty) + " " + _item);
+                    } else {
+                        scr_notify("Inventario lleno");
+                    }
+                }
+            } else {
+                scr_notify("Comando desconocido: " + _cmd);
+            }
+        }
+        chat_open = false;
+        keyboard_string = "";
+    }
+    if (keyboard_check_pressed(vk_escape)) {
+        chat_open = false;
+        keyboard_string = "";
+    }
+    exit; // Skip further input processing while chat is open
+}
+
 if (keyboard_check_pressed(ord("P"))) {
     global.season_index = (global.season_index + 1) mod 4;
     global.season = global.season_list[global.season_index];
@@ -148,13 +186,30 @@ if (instance_exists(obj_inventory) && !sleep_menu_open && !obj_inventory.show_ba
     if (_item_key != -1 && _item_key != "") {
         var _is_tool = variable_struct_exists(global.tool_data, _item_key);
         var _is_seed = variable_struct_exists(global.seed_data, _item_key);
-        if (_is_seed || (_is_tool && (_item_key == "hoe" || _item_key == "watering_can" || _item_key == "shovel"))) {
+        var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
+        
+        if (_is_seed || _is_placeable || (_is_tool && (_item_key == "hoe" || _item_key == "watering_can" || _item_key == "shovel"))) {
             show_selector = true;
             if (instance_exists(obj_player)) {
                 var _p_cx = (obj_player.bbox_left + obj_player.bbox_right) / 2;
                 var _p_cy = (obj_player.bbox_top + obj_player.bbox_bottom) / 2;
                 var _actual_dist = point_distance(_p_cx, _p_cy, gx + 8, gy + 8);
-                selector_color = (_actual_dist <= 32) ? c_green : c_red;
+                selector_color = (_actual_dist <= 32 || _is_placeable) ? c_green : c_red;
+                
+                // Si la distancia es correcta (o es colocable), verificar si el lugar está ocupado
+                if (selector_color == c_green) {
+                    var _occupied = instance_position(gx + 8, gy + 8, obj_collision) || 
+                                    instance_position(gx + 8, gy + 8, obj_crop) || 
+                                    instance_position(gx + 8, gy + 8, obj_item_parent);
+                                    
+                    if (!_occupied && _is_placeable) {
+                        if (collision_rectangle(gx, gy, gx + 15, gy + 15, obj_player, false, true)) {
+                            _occupied = true;
+                        }
+                    }
+                    
+                    if (_occupied) selector_color = c_red;
+                }
             }
         }
     }
