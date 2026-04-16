@@ -28,60 +28,52 @@ function scr_use_item(_item_data, _gx, _gy) {
     var _map_id_details = (_layer_details != -1) ? layer_tilemap_get_id(_layer_details) : -1;
 
     // --- LÓGICA DE COSECHA (Hoz o Mano) ---
-    var _crop_instance_found = instance_position(_target_x, _target_y, obj_crop); // Use a new variable name to avoid conflict
-    if (_crop_instance_found != noone) {
-        // Check if it's a fruit tree
-        if (_crop_instance_found.is_fruit_tree) {
-            if (_crop_instance_found.has_fruit) {
-                // Only harvest fruit if it's a fruit tree and has fruit
-                if (_item_key == "" || _item_key == "sickle") {
-                    // If it's the sickle, activate animation
-                    if (_item_key == "sickle") {
-                        other.state = STATE.ACTING;
-                        other.frame_anim = 0;
-                        other.frames_action = 6;
-                        other.action_sprite_tool = sprite_player_sickle_axe_sickle;
-                        scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
-                    }
+    var _is_harvesting = false;
+    var _harvest_range = (_item_key == "sickle") ? 1 : 0; // 1 means 3x3 area (range of 1 tile around target), 0 means 1x1
 
-                    // Drop the fruit item
-                    inventory_drop_item(_crop_instance_found.fruit_item, 1, _crop_instance_found.x + 16, _crop_instance_found.y + 32); // Drop fruit in the bottom center of the tree
-                    
-                    // Reset fruit cycle
-                    _crop_instance_found.has_fruit = false;
-                    _crop_instance_found.days_since_harvest = 0;
-                    // image_index will be updated in the Draw event
-                    
-                    exit; // Exit to not try to "use" the item in the same click
+    for (var dx = -_harvest_range; dx <= _harvest_range; dx++) {
+        for (var dy = -_harvest_range; dy <= _harvest_range; dy++) {
+            var _tx = _target_x + (dx * 16);
+            var _ty = _target_y + (dy * 16);
+            
+            // Search for both crops and trees
+            var _crop_inst = instance_position(_tx, _ty, obj_crop);
+            var _tree_inst = instance_position(_tx, _ty, obj_tree);
+            
+            // Handle Tree Harvest
+            if (_tree_inst != noone) {
+                if (_tree_inst.has_fruit) {
+                    if (_item_key == "" || _item_key == "sickle") {
+                        _is_harvesting = true;
+                        inventory_drop_item(_tree_inst.fruit_item, 1, _tree_inst.x, _tree_inst.y);
+                        _tree_inst.has_fruit = false;
+                        _tree_inst.days_since_harvest = 0;
+                    }
                 }
             }
-        } else { // Existing logic for regular crops
-            // A crop is mature if growth_stage reached its maximum (days_to_grow/max_stages)
-            // According to obj_crop, growth_stage is clamped to max_stages.
-            if (_crop_instance_found.growth_stage >= _crop_instance_found.max_stages) {
-                // Only harvest with hand (empty) or sickle
-                if (_item_key == "" || _item_key == "sickle") {
-                    // If it's the sickle, activate animation
-                    if (_item_key == "sickle") {
-                        other.state = STATE.ACTING;
-                        other.frame_anim = 0;
-                        other.frames_action = 6;
-                        other.action_sprite_tool = sprite_player_sickle_axe_sickle;
-                        scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
+            
+            // Handle Regular Crop Harvest
+            if (_crop_inst != noone) {
+                if (_crop_inst.growth_stage >= _crop_inst.max_stages) {
+                    if (_item_key == "" || _item_key == "sickle") {
+                        _is_harvesting = true;
+                        inventory_drop_item(_crop_inst.crop_type, 1, _crop_inst.x + 8, _crop_inst.y + 8);
+                        instance_destroy(_crop_inst);
                     }
-
-                    // Drop the fruit item
-                    inventory_drop_item(_crop_instance_found.crop_type, 1, _crop_instance_found.x + 8, _crop_instance_found.y + 8);
-                    
-                    // Destroy plant
-                    instance_destroy(_crop_instance_found);
-                    
-                    // (Optional) The soil goes back to tilled but dry (72) this is already done by advancing the day if it was watered
-                    // but if harvested the same day it was watered, we can force it or leave it.
-                    exit; // Exit to not try to "use" the item in the same click
                 }
             }
         }
+    }
+
+    if (_is_harvesting) {
+        if (_item_key == "sickle") {
+            other.state = STATE.ACTING;
+            other.frame_anim = 0;
+            other.frames_action = 6;
+            other.action_sprite_tool = sprite_player_sickle_axe_sickle;
+            scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
+        }
+        exit;
     }
 
     // --- A. LÓGICA DE HERRAMIENTAS ---
@@ -135,28 +127,11 @@ function scr_use_item(_item_data, _gx, _gy) {
                     }
                 } else {
                     // NEW: Logic to remove fruit trees with axe
-                    var _fruit_tree_to_remove = noone;
-                    var _bbox_left = _target_x - 8; // Convert to top-left corner coord of the tile
-                    var _bbox_top = _target_y - 8;
-                    var _bbox_right = _target_x + 8;
-                    var _bbox_bottom = _target_y + 8;
+                    var _tree_to_remove = instance_position(_target_x, _target_y, obj_tree);
 
-                    // Search for a fruit tree that overlaps with the clicked tile
-                    with (obj_crop) {
-                        if (is_fruit_tree) {
-                            // Tree's coordinates are its top-left corner
-                            // Its area is x,y to x+31, y+47
-                            if (bbox_left < _bbox_right && bbox_right > _bbox_left &&
-                                bbox_top < _bbox_bottom && bbox_bottom > _bbox_top) {
-                                _fruit_tree_to_remove = id;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (_fruit_tree_to_remove != noone) {
-                        inventory_drop_item("wood", 1, _fruit_tree_to_remove.x + 16, _fruit_tree_to_remove.y + 32); // Drop wood when chopping down tree
-                        instance_destroy(_fruit_tree_to_remove);
+                    if (_tree_to_remove != noone) {
+                        inventory_drop_item("wood", 1, _tree_to_remove.x, _tree_to_remove.y);
+                        instance_destroy(_tree_to_remove);
                     }
                 }
 
@@ -206,26 +181,23 @@ function scr_use_item(_item_data, _gx, _gy) {
         var _seed_info = global.seed_data[$ _item_key];
         var _is_fruit_tree_seed = variable_struct_exists(_seed_info, "is_fruit_tree") && _seed_info.is_fruit_tree;
 
-        var _can_plant_here = false; // Flag to determine if planting is allowed at _gx, _gy
+        var _can_plant_here = false;
 
         if (_is_fruit_tree_seed) {
             // Check for fruit tree placement (2x3 area)
-            var _tree_width_tiles = 2; // 32px / 16px
-            var _tree_height_tiles = 3; // 48px / 16px
+            var _tree_width_tiles = 2; 
+            var _tree_height_tiles = 3; 
 
             var _gx_end = _gx + (_tree_width_tiles * 16) - 1;
             var _gy_end = _gy + (_tree_height_tiles * 16) - 1;
 
-            // Check if entire 2x3 area is within room boundaries
-            var _in_bounds = _gx >= 0 && _gy >= 0 && _gx_end < room_width && _gy_end < room_height;
-            
-            _can_plant_here = _in_bounds;
+            _can_plant_here = _gx >= 0 && _gy >= 0 && _gx_end < room_width && _gy_end < room_height;
 
             if (_can_plant_here) {
-                // Check if all 2x3 tiles are clear of collisions, crops, items, and Tiles_details
                 for (var xx = _gx; xx < _gx + (_tree_width_tiles * 16); xx += 16) {
                     for (var yy = _gy; yy < _gy + (_tree_height_tiles * 16); yy += 16) {
-                        if (instance_position(xx + 8, yy + 8, obj_crop) || // Check center of the tile
+                        if (instance_position(xx + 8, yy + 8, obj_crop) || 
+                            instance_position(xx + 8, yy + 8, obj_tree) || 
                             instance_position(xx + 8, yy + 8, obj_collision) ||
                             instance_position(xx + 8, yy + 8, obj_item_parent) ||
                             (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, xx, yy) != 0)) {
@@ -237,41 +209,29 @@ function scr_use_item(_item_data, _gx, _gy) {
                 }
             }
         } else {
-            // Existing logic for regular crops (1x1 area)
-            var _current_tile_at_gxgy = tilemap_get_at_pixel(_map_id, _gx, _gy); // Use _gx, _gy directly
-            // Tilled soil (72) or watered (168) and no tile on Tiles_details
-            _can_plant_here = ((_current_tile_at_gxgy == 72 || _current_tile_at_gxgy == 168) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _gx, _gy) == 0));
+            var _current_tile_at_gxgy = tilemap_get_at_pixel(_map_id, _gx, _gy);
+            _can_plant_here = ((_current_tile_at_gxgy == 72 || _current_tile_at_gxgy == 168) && 
+                               (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _gx, _gy) == 0) &&
+                               !instance_position(_gx + 8, _gy + 8, obj_crop) &&
+                               !instance_position(_gx + 8, _gy + 8, obj_tree));
         }
 
         if (_can_plant_here) {
-            var _new_crop  = instance_create_layer(_gx, _gy, "Instances_Crops", obj_crop);
+            var _obj_to_create = _is_fruit_tree_seed ? obj_tree : obj_crop;
+            var _new_inst  = instance_create_layer(_gx, _gy, "Instances_Crops", _obj_to_create);
             
-            with(_new_crop) {
+            with(_new_inst) {
                 crop_type    = _seed_info.crop_base_name;
                 days_to_grow = _seed_info.growth_time;
                 max_stages   = _seed_info.growth_time; 
-                is_fruit_tree = _is_fruit_tree_seed; // Pass the flag to the crop instance
-                fruit_item = _seed_info.fruit_item; // Ensure fruit_item is copied if it exists in seed_info
-
-                // Sprite assignment logic
-                if (is_fruit_tree) {
-                    // Tree sprites will be updated seasonally in the Draw event
-                    // Here, only initialize with the current season's sprite
-                    var _tree_sprite_name = "sprite_" + crop_type + "_" + global.season; // e.g., sprite_orange_tree_summer
-                    sprite_index = asset_get_index(_tree_sprite_name);
-                    image_index = 0; // Default to first frame (non-fruiting)
-                    image_speed = 0;
-                    // Additional tree-specific setup
-                    fruit_cycle_days = 2; // Fruits every 2 days after maturing
-                    days_since_harvest = 0; // Days since last harvest (or initial planting)
-                    has_fruit = false; // Initial state: no fruit
-                    // sprite_width and sprite_height properties will be read from global.crop_data in Draw
+                
+                if (_is_fruit_tree_seed) {
+                    fruit_item = crop_type;
+                    fruit_cycle_days = 2;
+                    days_since_harvest = 0;
+                    has_fruit = false;
                 } else {
-                    var _asset_name = "sprite_crop_" + _seed_info.crop_base_name;
-                    sprite_index = asset_get_index(_asset_name);
-                    if (_seed_info.crop_base_name == "pumpkin" || _seed_info.crop_base_name == "grapes") skip_blank_frame = true;
-                    image_index = 0;
-                    image_speed = 0;
+                    if (crop_type == "pumpkin" || crop_type == "grapes") skip_blank_frame = true;
                 }
             }
             
@@ -291,6 +251,7 @@ function scr_use_item(_item_data, _gx, _gy) {
 
         var _can_place = !instance_position(_gx + 8, _gy + 8, obj_collision) && 
                          !instance_position(_gx + 8, _gy + 8, obj_crop) && 
+                         !instance_position(_gx + 8, _gy + 8, obj_tree) && 
                          !instance_position(_gx + 8, _gy + 8, obj_item_parent) &&
                          _gx >= 0 && _gy >= 0 && _gx < room_width - 16 && _gy < room_height - 16;
                          

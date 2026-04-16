@@ -92,6 +92,7 @@
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_shipping_bin","path":"objects/obj_shipping_bin/obj_shipping_bin.yy",},},
     {"id":{"name":"obj_transition","path":"objects/obj_transition/obj_transition.yy",},},
+    {"id":{"name":"obj_tree","path":"objects/obj_tree/obj_tree.yy",},},
     {"id":{"name":"farm_house","path":"rooms/farm_house/farm_house.yy",},},
     {"id":{"name":"farm","path":"rooms/farm/farm.yy",},},
     {"id":{"name":"script_init","path":"scripts/script_init/script_init.yy",},},

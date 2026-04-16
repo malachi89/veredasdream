@@ -44,11 +44,9 @@ function start_new_day() {
         if (global.season_index == 0) global.year += 1;
 
         // NEW: Remove fruit trees in winter
-        if (global.season == "winter") { // Use the string from global.season
-            with(obj_crop) {
-                if (is_fruit_tree) {
-                    instance_destroy();
-                }
+        if (global.season == "winter") { 
+            with(obj_tree) {
+                instance_destroy();
             }
         }
     }
@@ -58,11 +56,18 @@ function start_new_day() {
     var _lay_id = layer_get_id("Tiles_tilled_watered");
     if (_lay_id != -1) {
         var _map_id = layer_tilemap_get_id(_lay_id);
+        
+        // Advance Regular Crops
         with (obj_crop) {
             var _tile = tilemap_get_at_pixel(_map_id, x, y);
             if (_tile == 168) is_watered = true;
             grow();
             if (_tile == 168) tilemap_set_at_pixel(_map_id, 72, x, y);
+        }
+        
+        // Advance Trees (Independent of watered soil)
+        with (obj_tree) {
+            grow();
         }
     }
 

@@ -86,13 +86,31 @@ function scr_get_room_state(_room_name) {
 function scr_capture_current_room_state() {
     var _room_name = room_get_name(room);
     var _state = { crops: [], tilled_tiles: [], chests: [] };
+    
+    // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
-        var _crop = instance_find(obj_crop, i);
+        var _inst = instance_find(obj_crop, i);
         var _idx = array_length(_state.crops);
         _state.crops[_idx] = {
-            x: _crop.x, y: _crop.y, crop_type: _crop.crop_type, days_passed: _crop.days_passed,
-            growth_stage: _crop.growth_stage, is_watered: _crop.is_watered, skip_blank_frame: _crop.skip_blank_frame,
-            days_to_grow: _crop.days_to_grow, max_stages: _crop.max_stages, image_index: _crop.image_index
+            type: "crop",
+            x: _inst.x, y: _inst.y, crop_type: _inst.crop_type, days_passed: _inst.days_passed,
+            growth_stage: _inst.growth_stage, is_watered: _inst.is_watered, skip_blank_frame: _inst.skip_blank_frame,
+            days_to_grow: _inst.days_to_grow, max_stages: _inst.max_stages, image_index: _inst.image_index
+        };
+    }
+    
+    // Capture Trees
+    for (var i = 0; i < instance_number(obj_tree); i++) {
+        var _inst = instance_find(obj_tree, i);
+        var _idx = array_length(_state.crops);
+        _state.crops[_idx] = {
+            type: "tree",
+            x: _inst.x, y: _inst.y, crop_type: _inst.crop_type, days_passed: _inst.days_passed,
+            days_to_grow: _inst.days_to_grow, max_stages: _inst.max_stages,
+            fruit_cycle_days: _inst.fruit_cycle_days,
+            days_since_harvest: _inst.days_since_harvest,
+            has_fruit: _inst.has_fruit,
+            fruit_item: _inst.fruit_item
         };
     }
     
@@ -141,19 +159,41 @@ function scr_restore_room_state(_room_name) {
     }
     if (layer_get_id("Instances_Crops") != -1) {
         for (var i = 0; i < array_length(_state.crops); i++) {
-            var _crop_data = _state.crops[i];
-            var _crop = instance_create_layer(_crop_data.x, _crop_data.y, "Instances_Crops", obj_crop);
-            var _asset_name = "sprite_crop_" + _crop_data.crop_type;
-            with (_crop) {
-                sprite_index = asset_get_index(_asset_name);
-                crop_type = _crop_data.crop_type;
-                days_passed = _crop_data.days_passed;
-                growth_stage = _crop_data.growth_stage;
-                is_watered = _crop_data.is_watered;
-                skip_blank_frame = _crop_data.skip_blank_frame;
-                days_to_grow = _crop_data.days_to_grow;
-                max_stages = _crop_data.max_stages;
-                image_index = _crop_data.image_index;
+            var _c_data = _state.crops[i];
+            
+            // Determine object type (with backward compatibility)
+            var _is_tree = false;
+            if (variable_struct_exists(_c_data, "type")) {
+                _is_tree = (_c_data.type == "tree");
+            } else if (variable_struct_exists(_c_data, "is_fruit_tree")) {
+                _is_tree = _c_data.is_fruit_tree;
+            } else {
+                var _c_info = global.crop_data[$ _c_data.crop_type];
+                if (_c_info != undefined && variable_struct_exists(_c_info, "is_fruit_tree")) {
+                    _is_tree = _c_info.is_fruit_tree;
+                }
+            }
+            
+            var _obj_type = _is_tree ? obj_tree : obj_crop;
+            var _inst = instance_create_layer(_c_data.x, _c_data.y, "Instances_Crops", _obj_type);
+            
+            with (_inst) {
+                crop_type = _c_data.crop_type;
+                days_passed = _c_data.days_passed;
+                days_to_grow = _c_data.days_to_grow;
+                max_stages = _c_data.max_stages;
+                
+                if (_is_tree) {
+                    fruit_cycle_days = variable_struct_exists(_c_data, "fruit_cycle_days") ? _c_data.fruit_cycle_days : 2;
+                    days_since_harvest = variable_struct_exists(_c_data, "days_since_harvest") ? _c_data.days_since_harvest : 0;
+                    has_fruit = variable_struct_exists(_c_data, "has_fruit") ? _c_data.has_fruit : false;
+                    fruit_item = variable_struct_exists(_c_data, "fruit_item") ? _c_data.fruit_item : crop_type;
+                } else {
+                    growth_stage = _c_data.growth_stage;
+                    is_watered = _c_data.is_watered;
+                    skip_blank_frame = _c_data.skip_blank_frame;
+                    image_index = _c_data.image_index;
+                }
                 image_speed = 0;
             }
         }
@@ -181,14 +221,44 @@ function scr_advance_stored_room_states(_exclude_room_name) {
         if (_room_name == _exclude_room_name) continue;
         var _state = global.room_states[$ _room_name];
         for (var i = 0; i < array_length(_state.crops); i++) {
-            var _crop = _state.crops[i];
-            if (_crop.is_watered) {
-                _crop.days_passed += 1;
-                var _ideal = floor((_crop.days_passed / _crop.days_to_grow) * _crop.max_stages);
-                _crop.growth_stage = clamp(_ideal, 0, _crop.max_stages);
-                _crop.image_index = (_crop.skip_blank_frame && _crop.growth_stage == 1) ? 0 : _crop.growth_stage;
-                _crop.is_watered = false;
-                _state.crops[i] = _crop;
+            var _c_data = _state.crops[i];
+            
+            // Determine type
+            var _is_tree = false;
+            if (variable_struct_exists(_c_data, "type")) {
+                _is_tree = (_c_data.type == "tree");
+            } else if (variable_struct_exists(_c_data, "is_fruit_tree")) {
+                _is_tree = _c_data.is_fruit_tree;
+            } else {
+                var _c_info = global.crop_data[$ _c_data.crop_type];
+                if (_c_info != undefined && variable_struct_exists(_c_info, "is_fruit_tree")) {
+                    _is_tree = _c_info.is_fruit_tree;
+                }
+            }
+
+            if (_is_tree) {
+                // Tree growth and fruiting logic
+                if (_c_data.days_passed < _c_data.max_stages) {
+                    _c_data.days_passed += 1;
+                } else {
+                    if (!variable_struct_exists(_c_data, "days_since_harvest")) _c_data.days_since_harvest = 0;
+                    if (!variable_struct_exists(_c_data, "fruit_cycle_days")) _c_data.fruit_cycle_days = 2;
+                    if (!variable_struct_exists(_c_data, "has_fruit")) _c_data.has_fruit = false;
+                    
+                    _c_data.days_since_harvest += 1;
+                    if (!_c_data.has_fruit && _c_data.days_since_harvest >= _c_data.fruit_cycle_days) {
+                        _c_data.has_fruit = true;
+                    }
+                }
+                _state.crops[i] = _c_data;
+            } else if (_c_data.is_watered) {
+                // Regular crop growth logic
+                _c_data.days_passed += 1;
+                var _ideal = floor((_c_data.days_passed / _c_data.days_to_grow) * _c_data.max_stages);
+                _c_data.growth_stage = clamp(_ideal, 0, _c_data.max_stages);
+                _c_data.image_index = (_c_data.skip_blank_frame && _c_data.growth_stage == 1) ? 0 : _c_data.growth_stage;
+                _c_data.is_watered = false;
+                _state.crops[i] = _c_data;
             }
         }
         for (var j = 0; j < array_length(_state.tilled_tiles); j++) {

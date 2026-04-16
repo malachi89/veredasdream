@@ -33,8 +33,6 @@ if (time_tick_counter >= time_frames_per_minute) {
     }
 }
 
-    }
-}
 
 // Fade in effect
 if (is_fading_in) {
@@ -236,6 +234,7 @@ if (instance_exists(obj_inventory) && !sleep_menu_open && !obj_inventory.show_ba
                         for (var xx = gx; xx < gx + (_tree_width_tiles * 16); xx += 16) {
                             for (var yy = gy; yy < gy + (_tree_height_tiles * 16); yy += 16) {
                                 if (instance_position(xx + 8, yy + 8, obj_crop) ||
+instance_position(xx + 8, yy + 8, obj_tree) ||
                                     instance_position(xx + 8, yy + 8, obj_collision) ||
                                     instance_position(xx + 8, yy + 8, obj_item_parent) ||
                                     collision_rectangle(xx, yy, xx + 15, yy + 15, obj_player, false, true) || // Player collision in each tile
@@ -252,6 +251,7 @@ if (instance_exists(obj_inventory) && !sleep_menu_open && !obj_inventory.show_ba
                     // Existing logic for normal crops and placeable objects
                     var _occupied = instance_position(gx + 8, gy + 8, obj_collision) || 
                                     instance_position(gx + 8, gy + 8, obj_crop) || 
+                                    instance_position(gx + 8, gy + 8, obj_tree) || 
                                     instance_position(gx + 8, gy + 8, obj_item_parent);
                     
                     var _collides_with_player = collision_rectangle(gx, gy, gx + 15, gy + 15, obj_player, false, true);
