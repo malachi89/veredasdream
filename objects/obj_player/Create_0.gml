@@ -5,6 +5,7 @@ action_sprite_tool = -1;
 action_sprite_hair = -1;
 action_sprite_clothes = -1;
 action_sprite_eyes = -1;
+action_quality = 0;
 frames_action = 6;
 
 dir = DIR.DOWN;

@@ -67,6 +67,9 @@ else if (chat_open) {
                         scr_notify("Inventario lleno");
                     }
                 }
+            } else if (_cmd == "upgrade_tool" && array_length(_parts) >= 2) {
+                var _item = _parts[1];
+                scr_upgrade_tool(_item);
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }

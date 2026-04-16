@@ -74,6 +74,11 @@ function add_item(_item_key, _qty = 1) {
 
     // --- 3. Si no es stackable o no se encontro espacio para sumar, buscar slot vacio ---
     var _new_struct = { key: _item_key, quantity: _qty };
+    
+    // Si es una herramienta, agregar calidad inicial
+    if (variable_struct_exists(global.tool_data, _item_key)) {
+        _new_struct.quality = global.tool_data[$ _item_key].quality;
+    }
 
     // Intentar en Barra Rapida
     for (var i = 0; i < total_slots; i++) {

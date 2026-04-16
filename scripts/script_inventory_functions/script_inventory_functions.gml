@@ -470,3 +470,49 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.placeable_data, _key)) return global.placeable_data[$ _key];
     return undefined;
 }
+function scr_upgrade_tool(_tool_key) {
+    var _found = false;
+
+    // Buscar en Hotbar
+    for (var i = 0; i < obj_inventory.total_slots; i++) {
+        var _item = obj_inventory.inventory_array[i];
+        if (is_struct(_item) && _item.key == _tool_key) {
+            // Si no tiene calidad (partida vieja), se la asignamos de la base de datos
+            if (!variable_struct_exists(_item, "quality")) {
+                if (variable_struct_exists(global.tool_data, _tool_key)) {
+                    _item.quality = global.tool_data[$ _tool_key].quality;
+                } else {
+                    _item.quality = 0;
+                }
+            }
+            _item.quality += 1;
+            _found = true;
+            break;
+        }
+    }
+
+    if (!_found) {
+        // Buscar en Mochila
+        for (var i = 0; i < obj_inventory.max_backpack_slots; i++) {
+            var _item = obj_inventory.backpack_array[i];
+            if (is_struct(_item) && _item.key == _tool_key) {
+                if (!variable_struct_exists(_item, "quality")) {
+                    if (variable_struct_exists(global.tool_data, _tool_key)) {
+                        _item.quality = global.tool_data[$ _tool_key].quality;
+                    } else {
+                        _item.quality = 0;
+                    }
+                }
+                _item.quality += 1;
+                _found = true;
+                break;
+            }
+        }
+    }
+    
+    if (_found) {
+        scr_notify("¡Herramienta mejorada!");
+    } else {
+        scr_notify("No se encontró la herramienta para mejorar");
+    }
+}

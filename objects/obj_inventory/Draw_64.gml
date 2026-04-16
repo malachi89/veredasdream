@@ -44,6 +44,12 @@ for (var i = 0; i < total_slots; i++) {
 
         if (_data != undefined) {
             var _f = variable_struct_exists(_data, "row") ? (_data.row * 3) + _data.subimg : _data.subimg;
+            
+            // Si es herramienta (y no es espada/arco), aplicar offset de calidad
+            if (_is_t && _key != "sword" && _key != "bow" && variable_struct_exists(_slot_data, "quality")) {
+                _f += _slot_data.quality;
+            }
+
             if (_is_t && i == selected_slot && _data.sprite == sprite_tools) _f += 9;
             var _cc = slot_size / 2;
             
@@ -108,7 +114,13 @@ if (show_backpack) {
             var _b_data = scr_get_item_data(_b_key);
 
             if (_b_data != undefined) {
-                var _f    = variable_struct_exists(_b_data, "row") ? (_b_data.row * 3) + _b_data.subimg : _b_data.subimg;
+                var _f = variable_struct_exists(_b_data, "row") ? (_b_data.row * 3) + _b_data.subimg : _b_data.subimg;
+
+                // Offset de calidad para herramientas
+                if (_is_tool && _b_key != "sword" && _b_key != "bow" && variable_struct_exists(_b_slot, "quality")) {
+                    _f += _b_slot.quality;
+                }
+
                 var _cc = _grid_slot_size / 2;
                 
                 var _draw_off_x = _off;
@@ -161,6 +173,13 @@ if (show_shipping) {
 
             if (_s_data != undefined) {
                 var _f    = variable_struct_exists(_s_data, "row") ? (_s_data.row * 3) + _s_data.subimg : _s_data.subimg;
+                
+                // Offset de calidad
+                var _is_tool_s = variable_struct_exists(global.tool_data, _s_key);
+                if (_is_tool_s && _s_key != "sword" && _s_key != "bow" && variable_struct_exists(_s_slot, "quality")) {
+                    _f += _s_slot.quality;
+                }
+
                 var _cc = _grid_slot_size / 2;
 
                 var _draw_off_x = _off;
@@ -213,6 +232,13 @@ if (show_chest && instance_exists(current_chest_id)) {
 
             if (_s_data != undefined) {
                 var _f    = variable_struct_exists(_s_data, "row") ? (_s_data.row * 3) + _s_data.subimg : _s_data.subimg;
+                
+                // Offset de calidad
+                var _is_tool_s = variable_struct_exists(global.tool_data, _s_key);
+                if (_is_tool_s && _s_key != "sword" && _s_key != "bow" && variable_struct_exists(_s_slot, "quality")) {
+                    _f += _s_slot.quality;
+                }
+
                 var _cc = _grid_slot_size / 2;
 
                 var _draw_off_x = _off;
@@ -243,6 +269,12 @@ if (is_struct(held_item)) {
         var _h_off = 7.2 * _h_scl;
         var _f     = variable_struct_exists(_h_data, "row") ? (_h_data.row * 3) + _h_data.subimg : _h_data.subimg;
         
+        // Offset de calidad
+        var _is_tool_h = variable_struct_exists(global.tool_data, _h_key);
+        if (_is_tool_h && _h_key != "sword" && _h_key != "bow" && variable_struct_exists(held_item, "quality")) {
+            _f += held_item.quality;
+        }
+
         var _draw_h_off_x = _h_off;
         
         draw_sprite_ext(_h_data.sprite, _f, _mx - _draw_h_off_x, _my - _h_off, _h_scl, _h_scl, 0, c_white, 0.8);

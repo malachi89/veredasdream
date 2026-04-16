@@ -89,7 +89,10 @@ if (state == STATE.ACTING) {
         state = STATE.IDLE;
         frame_anim = 0;
     }
-    image_index = (dir * frames_action) + floor(frame_anim);
+    
+    // Cada calidad desplaza el sprite 4 direcciones completas hacia abajo
+    var _quality_offset = action_quality * (4 * frames_action);
+    image_index = _quality_offset + (dir * frames_action) + floor(frame_anim);
 } else {
     var _s_idle = is_riding ? sprite_player_horse1_body_idle : sprite_player_idle;
     var _s_walk = is_riding ? sprite_player_horse1_body_walk : sprite_player_walk;

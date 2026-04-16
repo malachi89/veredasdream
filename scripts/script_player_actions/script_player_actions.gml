@@ -80,6 +80,13 @@ function scr_use_item(_item_data, _gx, _gy) {
     if (_item_key != "" && variable_struct_exists(global.tool_data, _item_key)) {
         other.state = STATE.ACTING; 
         other.frame_anim = 0;
+        
+        // Guardar calidad para la animación (excepto espada/arco)
+        if (_item_key != "sword" && _item_key != "bow" && is_struct(_item_data) && variable_struct_exists(_item_data, "quality")) {
+            other.action_quality = _item_data.quality;
+        } else {
+            other.action_quality = 0;
+        }
 
         switch (_item_key) {
             case "hoe":

@@ -68,10 +68,15 @@ enum SEASON {
     
 // --- ENUMS DE APOYO ---
 enum QUALITY {
-    NORMAL,
+    OXIDADO,
+    BRONCE,
     PLATA,
     ORO,
-    BRONCASTANIO // Metal fantastico unico para Veredas Dream
+    BRONCASTANIO,
+    CHUBESTANIO ,
+    PICASTANIO,
+    HITLERSTANIO,
+    VITOLANIO 
 }
 
 global.seed_data = {
@@ -168,107 +173,137 @@ global.crop_data = {
     apple:         { name: "Manzana",  seasons: [SEASON.FALL], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 282, base_buy_price: 120, base_sell_price: 90, is_fruit_tree: true, sprite_width: 32, sprite_height: 48 }
 };
 
-// --- BASE DE DATOS DE HERRAMIENTAS Y ARMAS (CORREGIDA) ---
+// --- BASE DE DATOS DE HERRAMIENTAS Y ARMAS
 global.tool_data = {
     
     watering_can: { 
         name: "Regadera",    
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.WATERING_CAN, 
-        sprite: sprite_tools, 
-        subimg: 0, // Frame 1
+        sprite: sprite_tools_v2, 
+        subimg: 18,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     pickaxe: { 
         name: "Pico",        
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.PICKAXE,      
-        sprite: sprite_tools, 
-        subimg: 1, // Frame 2
+        sprite: sprite_tools_v2, 
+        subimg: 27,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     sword: { 
         name: "Espada",      
-        type: ITEM_TYPE.TOOL,   // Cambiado a TOOL
+        type: ITEM_TYPE.TOOL,
         tool_type: TOOL_TYPE.SWORD,         
-        sprite: sprite_tools, 
-        subimg: 2, // Frame 3
+        sprite: sprite_tools_v2, 
+        subimg: 2,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     axe: { 
         name: "Hacha",       
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.AXE,          
-        sprite: sprite_tools, 
-        subimg: 3, // Frame 4
+        sprite: sprite_tools_v2, 
+        subimg: 36,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     bow: { 
         name: "Arco",        
-        type: ITEM_TYPE.TOOL,   // Cambiado a TOOL
+        type: ITEM_TYPE.TOOL,
         tool_type: TOOL_TYPE.BOW,         
         sprite: sprite_tools, 
-        subimg: 4, // Frame 5
+        subimg: 4,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     hoe: { 
         name: "Azada", 
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.HOE, 
-        sprite: sprite_tools, 
-        subimg: 6, // Frame 7 (El 6 era la flecha, saltamos al 7)
+        sprite: sprite_tools_v2, 
+        subimg: 0,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
 
     shovel: { 
         name: "Pala", 
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.SHOVEL, 
-        sprite: sprite_tools, 
-        subimg: 7, // Frame 8
+        sprite: sprite_tools_v2, 
+        subimg: 9,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
     
     sickle: { 
         name: "Hoz", 
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.SICKLE, 
-        sprite: sprite_tools, 
-        subimg: 8, // Frame 9
+        sprite: sprite_tools_v2, 
+        subimg: 63,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
 
     fishing_rod: {
         name: "Cana de pescar",
         type: ITEM_TYPE.TOOL,
         tool_type: TOOL_TYPE.FISHING_ROD,
-        sprite: sprite_tools,
-        subimg: 22, // Frame 23
+        sprite: sprite_tools_v2,
+        subimg: 55,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     },
 
     bugnet: { 
         name: "Red de bichos", 
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.BUGNET,
-        sprite: sprite_bugnet,    
-        subimg: 0,
+        sprite: sprite_tools_v2,    
+        subimg: 46,
         sellable: false,
-        droppable: false
+        droppable: false,
+
+        quality: QUALITY.OXIDADO,
+        level: QUALITY.OXIDADO + 1
     }
 };
 
@@ -285,4 +320,4 @@ global.placeable_data = {
         base_buy_price: 100,
         base_sell_price: 50
     }
-};;
+};

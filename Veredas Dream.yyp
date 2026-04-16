@@ -235,6 +235,7 @@
     {"id":{"name":"sprite_tileset_interior_house","path":"sprites/sprite_tileset_interior_house/sprite_tileset_interior_house.yy",},},
     {"id":{"name":"sprite_tileset_seasonal_props_spring","path":"sprites/sprite_tileset_seasonal_props_spring/sprite_tileset_seasonal_props_spring.yy",},},
     {"id":{"name":"sprite_tilled_watered_soil","path":"sprites/sprite_tilled_watered_soil/sprite_tilled_watered_soil.yy",},},
+    {"id":{"name":"sprite_tools_v2","path":"sprites/sprite_tools_v2/sprite_tools_v2.yy",},},
     {"id":{"name":"sprite_tools","path":"sprites/sprite_tools/sprite_tools.yy",},},
     {"id":{"name":"sprite_tree_apple","path":"sprites/sprite_tree_apple/sprite_tree_apple.yy",},},
     {"id":{"name":"sprite_tree_apricot","path":"sprites/sprite_tree_apricot/sprite_tree_apricot.yy",},},
