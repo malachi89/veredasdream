@@ -27,6 +27,9 @@ held_item     = -1;
 show_chest       = false;
 current_chest_id = noone;
 
+hovered_item_data = undefined;
+hovered_item_slot_data = undefined;
+
 max_shipping_slots = 64;
 shipping_array     = array_create(max_shipping_slots, -1);
 

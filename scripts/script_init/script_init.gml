@@ -79,6 +79,8 @@ enum QUALITY {
     VITOLANIO 
 }
 
+global.quality_names = ["Oxidado", "Bronce", "Plata", "Oro", "Broncastanio", "Chubestanio", "Picastanio", "Hitlerstanio", "Vitolanio"];
+
 global.seed_data = {
     // --- PRIMAVERA ---
     cherry_seeds:       { name: "Semilla de Cereza",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 0,   growth_time: 6, crop_base_name: "cherry",       base_buy_price: 30, base_sell_price: 15, is_fruit_tree: true },

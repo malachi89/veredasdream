@@ -1,6 +1,9 @@
 var _mx = device_mouse_x_to_gui(0);
 var _my = device_mouse_y_to_gui(0);
 
+hovered_item_data = undefined;
+hovered_item_slot_data = undefined;
+
 // --- ESTILO VISUAL ---
 var _c_base   = c_dkgray;
 var _c_border = c_silver;
@@ -24,6 +27,13 @@ for (var i = 0; i < total_slots; i++) {
     var _cy = menu_y_start;
     
     var _hover = (_mx >= _cx && _mx <= _cx + slot_size && _my >= _cy && _my <= _cy + slot_size);
+    if (_hover) {
+        var _s_data = inventory_array[i];
+        if (is_struct(_s_data)) {
+            hovered_item_slot_data = _s_data;
+            hovered_item_data = scr_get_item_data(_s_data.key);
+        }
+    }
     var _current_bg_col = (i == selected_slot || _hover) ? c_gray : _c_base;
     var _col_border     = (i == selected_slot || _hover) ? c_white : _c_border;
     var _current_alpha  = (i == selected_slot || _hover) ? 0.9 : _alpha;
@@ -98,6 +108,13 @@ if (show_backpack) {
         var _sx = _bx + (i % _cols * (_grid_slot_size + _grid_sp));
         var _sy = _by + (i div _cols * (_grid_slot_size + _grid_sp));
         var _b_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
+        if (_b_hover) {
+            var _s_data = backpack_array[i];
+            if (is_struct(_s_data)) {
+                hovered_item_slot_data = _s_data;
+                hovered_item_data = scr_get_item_data(_s_data.key);
+            }
+        }
         var _bg_col = (_b_hover) ? c_gray : _c_base;
         var _bd_col = (_b_hover) ? c_white : _c_border;
         var _bp_alpha = (_b_hover) ? 0.9 : _alpha;
@@ -117,7 +134,8 @@ if (show_backpack) {
                 var _f = variable_struct_exists(_b_data, "row") ? (_b_data.row * 3) + _b_data.subimg : _b_data.subimg;
 
                 // Offset de calidad para herramientas
-                if (_is_tool && _b_key != "sword" && _b_key != "bow" && variable_struct_exists(_b_slot, "quality")) {
+                var _is_tool_b = variable_struct_exists(global.tool_data, _b_key);
+                if (_is_tool_b && _b_key != "sword" && _b_key != "bow" && variable_struct_exists(_b_slot, "quality")) {
                     _f += _b_slot.quality;
                 }
 
@@ -156,6 +174,13 @@ if (show_shipping) {
         var _sy = _sy_base + (i div _cols * (_grid_slot_size + _grid_sp));
         
         var _s_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
+        if (_s_hover) {
+            var _s_data = shipping_array[i];
+            if (is_struct(_s_data)) {
+                hovered_item_slot_data = _s_data;
+                hovered_item_data = scr_get_item_data(_s_data.key);
+            }
+        }
         var _bg_col = (_s_hover) ? c_gray : _c_base;
         var _bd_col = (_s_hover) ? c_white : _c_border;
         var _s_alpha = (_s_hover) ? 0.9 : _alpha;
@@ -215,6 +240,13 @@ if (show_chest && instance_exists(current_chest_id)) {
         var _sy = _cy_base + (i div _cols * (_grid_slot_size + _grid_sp));
         
         var _c_hover = (_mx >= _sx && _mx <= _sx + _grid_slot_size && _my >= _sy && _my <= _sy + _grid_slot_size);
+        if (_c_hover) {
+            var _s_data = current_chest_id.storage_array[i];
+            if (is_struct(_s_data)) {
+                hovered_item_slot_data = _s_data;
+                hovered_item_data = scr_get_item_data(_s_data.key);
+            }
+        }
         var _bg_col = (_c_hover) ? c_gray : _c_base;
         var _bd_col = (_c_hover) ? c_white : _c_border;
         var _c_alpha = (_c_hover) ? 0.9 : _alpha;
@@ -309,3 +341,55 @@ if (instance_exists(obj_controller)) {
     }
     draw_set_alpha(1.0);
 }
+// === 6. DIBUJAR TOOLTIP ===
+if (is_struct(hovered_item_data) && !is_struct(held_item)) {
+    var _name = hovered_item_data.name;
+    var _qty  = hovered_item_slot_data.quantity;
+    var _type = (variable_struct_exists(hovered_item_data, "type")) ? hovered_item_data.type : -1;
+    
+    var _tooltip_text = _name;
+    if (_qty > 1) _tooltip_text += "\nCantidad: " + string(_qty);
+    
+    // Agregar calidad y nivel para herramientas
+    if (_type == ITEM_TYPE.TOOL || _type == ITEM_TYPE.WEAPON) {
+        if (variable_struct_exists(hovered_item_slot_data, "quality")) {
+            var _qual_idx = hovered_item_slot_data.quality;
+            if (_qual_idx >= 0 && _qual_idx < array_length(global.quality_names)) {
+                _tooltip_text += "\nCalidad: " + global.quality_names[_qual_idx];
+            }
+        }
+        
+        var _level = 1;
+        if (variable_struct_exists(hovered_item_slot_data, "quality")) {
+            _level = hovered_item_slot_data.quality + 1;
+        } else if (variable_struct_exists(hovered_item_data, "level")) {
+            _level = hovered_item_data.level;
+        }
+        
+        _tooltip_text += "\nNivel: " + string(_level);
+    }
+
+    draw_set_font(fnt_pixel_operator);
+    var _tw = (string_width(_tooltip_text) + 16) * 1.2;
+    var _th = (string_height(_tooltip_text) + 16) * 1.2;
+    
+    var _tx = _mx + 20;
+    var _ty = _my + 20;
+    
+    // Mantener dentro de la pantalla
+    if (_tx + _tw > display_get_gui_width()) _tx = _mx - _tw - 8;
+    if (_ty + _th > display_get_gui_height()) _ty = _my - _th - 8;
+    
+    // Dibujar fondo
+    draw_set_alpha(0.9);
+    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_dkgray, c_dkgray, false);
+    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_silver, c_silver, true);
+    draw_set_alpha(1.0);
+    
+    // Dibujar texto
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_text_transformed(_tx + 8, _ty + 8, _tooltip_text, 1.2, 1.2, 0);
+}
+
