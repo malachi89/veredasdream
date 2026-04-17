@@ -79,13 +79,13 @@ function scr_restore_room_drops(_room_name) {
 }
 
 function scr_get_room_state(_room_name) {
-    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [] };
+    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [] };
     return global.room_states[$ _room_name];
 }
 
 function scr_capture_current_room_state() {
     var _room_name = room_get_name(room);
-    var _state = { crops: [], tilled_tiles: [], chests: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [] };
     
     // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
@@ -126,6 +126,31 @@ function scr_capture_current_room_state() {
         }
     }
 
+    // Capture Buildings
+    var _building_objs = [obj_barn, obj_chicken, obj_greenhouse, obj_mill, obj_stable];
+    for (var b = 0; b < array_length(_building_objs); b++) {
+        var _obj = _building_objs[b];
+        for (var i = 0; i < instance_number(_obj); i++) {
+            var _inst = instance_find(_obj, i);
+            array_push(_state.buildings, {
+                obj: object_get_name(_obj),
+                x: _inst.x,
+                y: _inst.y
+            });
+        }
+    }
+
+    // Capture Horses
+    for (var i = 0; i < instance_number(obj_horse_parent); i++) {
+        var _inst = instance_find(obj_horse_parent, i);
+        array_push(_state.horses, {
+            obj: object_get_name(_inst.object_index),
+            x: _inst.x,
+            y: _inst.y,
+            dir: _inst.dir
+        });
+    }
+
     var _layer_id = layer_get_id("Tiles_tilled_watered");
     if (_layer_id != -1) {
         var _map_id = layer_tilemap_get_id(_layer_id);
@@ -158,6 +183,10 @@ function scr_restore_room_state(_room_name) {
         }
     }
     if (layer_get_id("Instances_Crops") != -1) {
+        // First destroy existing ones to avoid duplicates if re-entering
+        with (obj_crop) instance_destroy();
+        with (obj_tree) instance_destroy();
+        
         for (var i = 0; i < array_length(_state.crops); i++) {
             var _c_data = _state.crops[i];
             
@@ -201,6 +230,7 @@ function scr_restore_room_state(_room_name) {
     
     // Restaurar Cofres
     if (variable_struct_exists(_state, "chests")) {
+        with (obj_chest) instance_destroy();
         for (var i = 0; i < array_length(_state.chests); i++) {
             var _c_data = _state.chests[i];
             // Verificar que las coordenadas estén dentro de los límites de la habitación
@@ -209,6 +239,56 @@ function scr_restore_room_state(_room_name) {
                 _chest.storage_array = _c_data.storage_array;
                 _chest.image_speed = 0;
                 _chest.image_index = 0;
+            }
+        }
+    }
+
+    // Restore Buildings
+    if (variable_struct_exists(_state, "buildings") && array_length(_state.buildings) > 0) {
+        for (var i = 0; i < array_length(_state.buildings); i++) {
+            var _b_data = _state.buildings[i];
+            var _obj = asset_get_index(_b_data.obj);
+            if (_obj != -1) {
+                // Determine corresponding placeholder
+                var _placeholder = noone;
+                switch (_obj) {
+                    case obj_barn: _placeholder = obj_barn_placeholder; break;
+                    case obj_chicken: _placeholder = obj_chicken_placeholder; break;
+                    case obj_greenhouse: _placeholder = obj_greenhouse_placeholder; break;
+                    case obj_mill: _placeholder = obj_mill_placeholder; break;
+                    case obj_stable: _placeholder = obj_stable_placeholder; break;
+                }
+                
+                // Destroy placeholder if it exists at this position
+                if (_placeholder != noone) {
+                    var _p_inst = instance_place(_b_data.x, _b_data.y, _placeholder);
+                    if (_p_inst == noone) {
+                        // try instance_nearest if instance_place fails due to collision issues
+                        _p_inst = instance_nearest(_b_data.x, _b_data.y, _placeholder);
+                        if (_p_inst != noone && point_distance(_b_data.x, _b_data.y, _p_inst.x, _p_inst.y) > 1) {
+                            _p_inst = noone;
+                        }
+                    }
+                    if (_p_inst != noone) instance_destroy(_p_inst);
+                }
+                
+                // Create actual building
+                if (!instance_exists(_obj) || instance_number(_obj) < array_length(_state.buildings)) {
+                     instance_create_layer(_b_data.x, _b_data.y, "Instances", _obj);
+                }
+            }
+        }
+    }
+
+    // Restore Horses
+    if (variable_struct_exists(_state, "horses")) {
+        with (obj_horse_parent) instance_destroy();
+        for (var i = 0; i < array_length(_state.horses); i++) {
+            var _h_data = _state.horses[i];
+            var _obj = asset_get_index(_h_data.obj);
+            if (_obj != -1) {
+                var _inst = instance_create_layer(_h_data.x, _h_data.y, "Instances", _obj);
+                if (variable_instance_exists(_inst, "dir")) _inst.dir = _h_data.dir;
             }
         }
     }
