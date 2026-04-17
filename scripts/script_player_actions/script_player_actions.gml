@@ -314,3 +314,56 @@ function scr_set_player_action_sprites(_skin, _hair, _clothes, _eyes) {
     other.action_sprite_clothes = _clothes;
     other.action_sprite_eyes = _eyes;
 }
+
+function scr_buy_building(_building_name) {
+    var _placeholder_obj = noone;
+    var _actual_obj = noone;
+
+    switch (_building_name) {
+        case "chicken_coop":
+            _placeholder_obj = obj_chicken_placeholder;
+            _actual_obj = obj_chicken;
+            break;
+        case "barn":
+            _placeholder_obj = obj_barn_placeholder;
+            _actual_obj = obj_barn;
+            break;
+        case "stable":
+            _placeholder_obj = obj_stable_placeholder;
+            _actual_obj = obj_stable;
+            break;
+        case "mill":
+            _placeholder_obj = obj_mill_placeholder;
+            _actual_obj = obj_mill;
+            break;
+        case "greenhouse":
+            _placeholder_obj = obj_greenhouse_placeholder;
+            _actual_obj = obj_greenhouse;
+            break;
+        default:
+            scr_notify("Edificio desconocido: " + _building_name);
+            return false;
+    }
+
+    if (instance_exists(_placeholder_obj)) {
+        var _inst = instance_find(_placeholder_obj, 0);
+        var _x = _inst.x;
+        var _y = _inst.y;
+        var _layer = _inst.layer;
+
+        instance_destroy(_inst);
+        instance_create_layer(_x, _y, _layer, _actual_obj);
+        
+        if (_building_name == "stable") {
+            // Spawn 2 horses outside the stable
+            instance_create_layer(_x + 96, _y + 16, "Instances", obj_horse1);
+            instance_create_layer(_x + 96, _y + 40, "Instances", obj_horse1);
+        }
+        
+        scr_notify("!" + _building_name + " comprado!");
+        return true;
+    } else {
+        scr_notify("No se encontro el lugar para " + _building_name);
+        return false;
+    }
+}

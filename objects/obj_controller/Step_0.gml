@@ -70,6 +70,9 @@ else if (chat_open) {
             } else if (_cmd == "upgrade_tool" && array_length(_parts) >= 2) {
                 var _item = _parts[1];
                 scr_upgrade_tool(_item);
+            } else if (_cmd == "buy_building" && array_length(_parts) >= 2) {
+                var _bname = _parts[1];
+                scr_buy_building(_bname);
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
