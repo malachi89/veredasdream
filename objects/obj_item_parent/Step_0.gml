@@ -50,7 +50,7 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
                 else if (variable_struct_exists(global.placeable_data, item_key)) _name = global.placeable_data[$ item_key].name;
 
-                scr_notify("+" + string(quantity) + " " + _name);
+                scr_notify_item(quantity, _name);
                 instance_destroy();
             }
         }

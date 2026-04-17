@@ -10,8 +10,8 @@ function scr_use_item(_item_data, _gx, _gy) {
     var _target_y = _gy + 8;
 
     // 3. Reorientación del Jugador
-    var _view_x = (_item_key == "bow") ? mouse_x : _target_x;
-    var _view_y = (_item_key == "bow") ? mouse_y : _target_y;
+    var _view_x = (_item_key == "bow" || _item_key == "sickle") ? mouse_x : _target_x;
+    var _view_y = (_item_key == "bow" || _item_key == "sickle") ? mouse_y : _target_y;
     var _diff_x = _view_x - _p_center_x;
     var _diff_y = _view_y - _p_center_y;
 
@@ -29,39 +29,60 @@ function scr_use_item(_item_data, _gx, _gy) {
 
     // --- LÓGICA DE COSECHA (Hoz o Mano) ---
     var _is_harvesting = false;
-    var _harvest_range = (_item_key == "sickle") ? 1 : 0; // 1 means 3x3 area (range of 1 tile around target), 0 means 1x1
-
-    for (var dx = -_harvest_range; dx <= _harvest_range; dx++) {
-        for (var dy = -_harvest_range; dy <= _harvest_range; dy++) {
-            var _tx = _target_x + (dx * 16);
-            var _ty = _target_y + (dy * 16);
-            
-            // Search for both crops and trees
-            var _crop_inst = instance_position(_tx, _ty, obj_crop);
-            var _tree_inst = instance_position(_tx, _ty, obj_tree);
-            
-            // Handle Tree Harvest
-            if (_tree_inst != noone) {
-                if (_tree_inst.has_fruit) {
-                    if (_item_key == "" || _item_key == "sickle") {
-                        _is_harvesting = true;
-                        inventory_drop_item(_tree_inst.fruit_item, 1, _tree_inst.x, _tree_inst.y);
-                        _tree_inst.has_fruit = false;
-                        _tree_inst.days_since_harvest = 0;
-                    }
+    
+    if (_item_key == "sickle") {
+        // Harvesting with Sickle (3x3 Area)
+        var _x1 = _target_x - 24; 
+        var _y1 = _target_y - 24;
+        var _x2 = _target_x + 24;
+        var _y2 = _target_y + 24;
+        
+        // Add distance check to prevent harvesting far away
+        var _dist = point_distance(_p_center_x, _p_center_y, _target_x, _target_y);
+        
+        if (_dist <= 64) { // Only harvest if within reach (64px = 4 tiles)
+            // Find all crops in area
+            var _list = ds_list_create();
+            var _count = collision_rectangle_list(_x1, _y1, _x2, _y2, obj_crop, false, true, _list, false);
+            for (var i = 0; i < _count; i++) {
+                var _inst = _list[| i];
+                if (_inst.growth_stage >= _inst.max_stages) {
+                    _is_harvesting = true;
+                    inventory_drop_item(_inst.crop_type, 1, _inst.x + 8, _inst.y + 8);
+                    instance_destroy(_inst);
                 }
             }
+            ds_list_clear(_list);
             
-            // Handle Regular Crop Harvest
-            if (_crop_inst != noone) {
-                if (_crop_inst.growth_stage >= _crop_inst.max_stages) {
-                    if (_item_key == "" || _item_key == "sickle") {
-                        _is_harvesting = true;
-                        inventory_drop_item(_crop_inst.crop_type, 1, _crop_inst.x + 8, _crop_inst.y + 8);
-                        instance_destroy(_crop_inst);
-                    }
+            // Find all trees in area
+            _count = collision_rectangle_list(_x1, _y1, _x2, _y2, obj_tree, false, true, _list, false);
+            for (var i = 0; i < _count; i++) {
+                var _inst = _list[| i];
+                if (_inst.has_fruit) {
+                    _is_harvesting = true;
+                    inventory_drop_item(_inst.fruit_item, 1, _inst.x, _inst.y);
+                    _inst.has_fruit = false;
+                    _inst.days_since_harvest = 0;
                 }
             }
+            ds_list_destroy(_list);
+        }
+    } else if (_item_key == "") {
+        // Manual harvest (1x1 Area)
+        var _crop_inst = instance_position(_target_x, _target_y, obj_crop);
+        var _tree_inst = instance_position(_target_x, _target_y, obj_tree);
+        
+        if (_tree_inst != noone && _tree_inst.has_fruit) {
+            _is_harvesting = true;
+            inventory_drop_item(_tree_inst.fruit_item, 1, _tree_inst.x, _tree_inst.y);
+            _tree_inst.has_fruit = false;
+            _tree_inst.days_since_harvest = 0;
+        }
+        
+        if (_crop_inst != noone && _crop_inst.growth_stage >= _crop_inst.max_stages) {
+            _is_harvesting = true;
+            inventory_drop_item(_crop_inst.crop_type, 1, _crop_inst.x + 8, _crop_inst.y + 8);
+            instance_destroy(_crop_inst);
         }
     }
 

@@ -470,49 +470,31 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.placeable_data, _key)) return global.placeable_data[$ _key];
     return undefined;
 }
-function scr_upgrade_tool(_tool_key) {
-    var _found = false;
-
-    // Buscar en Hotbar
-    for (var i = 0; i < obj_inventory.total_slots; i++) {
-        var _item = obj_inventory.inventory_array[i];
-        if (is_struct(_item) && _item.key == _tool_key) {
-            // Si no tiene calidad (partida vieja), se la asignamos de la base de datos
-            if (!variable_struct_exists(_item, "quality")) {
-                if (variable_struct_exists(global.tool_data, _tool_key)) {
-                    _item.quality = global.tool_data[$ _tool_key].quality;
-                } else {
-                    _item.quality = 0;
+function scr_notify_item(_qty, _name) {
+    if (instance_exists(obj_controller)) {
+        // Check if an item notification for this item type already exists
+        for (var i = 0; i < ds_list_size(obj_controller.notifications); i++) {
+            var _n = obj_controller.notifications[| i];
+            
+            // Check if this notification is for the same item name
+            // The format is "+QTY NAME"
+            var _space_pos = string_pos(" ", _n.text);
+            if (_space_pos > 0) {
+                var _existing_name = string_copy(_n.text, _space_pos + 1, string_length(_n.text) - _space_pos);
+                if (_existing_name == _name) {
+                    // Update quantity
+                    var _current_qty = real(string_copy(_n.text, 2, _space_pos - 2));
+                    var _new_qty = _current_qty + _qty;
+                    
+                    _n.text = "+" + string(_new_qty) + " " + _name;
+                    _n.timer = 120; // Reset timer
+                    _n.alpha = 1.0;
+                    return;
                 }
             }
-            _item.quality += 1;
-            _found = true;
-            break;
         }
-    }
-
-    if (!_found) {
-        // Buscar en Mochila
-        for (var i = 0; i < obj_inventory.max_backpack_slots; i++) {
-            var _item = obj_inventory.backpack_array[i];
-            if (is_struct(_item) && _item.key == _tool_key) {
-                if (!variable_struct_exists(_item, "quality")) {
-                    if (variable_struct_exists(global.tool_data, _tool_key)) {
-                        _item.quality = global.tool_data[$ _tool_key].quality;
-                    } else {
-                        _item.quality = 0;
-                    }
-                }
-                _item.quality += 1;
-                _found = true;
-                break;
-            }
-        }
-    }
-    
-    if (_found) {
-        scr_notify("¡Herramienta mejorada!");
-    } else {
-        scr_notify("No se encontró la herramienta para mejorar");
+        // Otherwise create new notification
+        scr_notify("+" + string(_qty) + " " + _name);
     }
 }
+

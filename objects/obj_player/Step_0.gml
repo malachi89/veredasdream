@@ -54,7 +54,7 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
     
-    if ((_actual_dist <= 32 || _item_key == "bow" || _is_placeable) && !obj_inventory.show_backpack) {
+    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _is_placeable) && !obj_inventory.show_backpack) {
         scr_use_item(_selected_item, _gx, _gy);
     }
 }

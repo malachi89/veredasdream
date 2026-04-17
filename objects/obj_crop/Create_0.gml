@@ -7,6 +7,9 @@ crop_type = "";
 days_to_grow = 1; 
 max_stages = 1;
 
+// Asignar máscara de colisión (usamos los iconos que son 16x16)
+mask_index = asset_get_index("sprite_crops_icons");
+
 // --- LÓGICA DE CRECIMIENTO ---
 grow = function() {
     if (is_watered) {
