@@ -8,8 +8,8 @@
   "name":"obj_transition",
   "overriddenProperties":[],
   "parent":{
-    "name":"mechanics",
-    "path":"folders/objects/farm/mechanics.yy",
+    "name":"game_control",
+    "path":"folders/objects/game_control.yy",
   },
   "parentObjectId":null,
   "persistent":false,
