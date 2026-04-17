@@ -1,27 +1,27 @@
 {
   "$GMSprite":"v2",
-  "%Name":"sprite_interior_doors_windows_curtains",
+  "%Name":"sprite_fish_decoration",
   "bboxMode":0,
-  "bbox_bottom":250,
-  "bbox_left":0,
-  "bbox_right":255,
-  "bbox_top":15,
+  "bbox_bottom":47,
+  "bbox_left":5,
+  "bbox_right":322,
+  "bbox_top":3,
   "collisionKind":1,
   "collisionTolerance":0,
   "DynamicTexturePage":false,
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"6fae39cd-dc77-410c-97ab-3bb3561ff828","name":"6fae39cd-dc77-410c-97ab-3bb3561ff828","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"c63f9e26-339b-471f-921f-ed1dbb830edb","name":"c63f9e26-339b-471f-921f-ed1dbb830edb","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
-  "height":256,
+  "height":48,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"eea974a9-a54f-4303-a2a6-6c76803d3765","blendMode":0,"displayName":"default","isLocked":false,"name":"eea974a9-a54f-4303-a2a6-6c76803d3765","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"ce5fe76a-8fc0-4a38-8ab2-1e7db528c9f2","blendMode":0,"displayName":"default","isLocked":false,"name":"ce5fe76a-8fc0-4a38-8ab2-1e7db528c9f2","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
-  "name":"sprite_interior_doors_windows_curtains",
+  "name":"sprite_fish_decoration",
   "nineSlice":null,
   "origin":0,
   "parent":{
@@ -33,7 +33,7 @@
   "resourceVersion":"2.0",
   "sequence":{
     "$GMSequence":"v1",
-    "%Name":"sprite_interior_doors_windows_curtains",
+    "%Name":"sprite_fish_decoration",
     "autoRecord":true,
     "backdropHeight":768,
     "backdropImageOpacity":0.5,
@@ -57,7 +57,7 @@
       "resourceType":"KeyframeStore<MomentsEventKeyframe>",
       "resourceVersion":"2.0",
     },
-    "name":"sprite_interior_doors_windows_curtains",
+    "name":"sprite_fish_decoration",
     "playback":1,
     "playbackSpeed":30.0,
     "playbackSpeedType":0,
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"6fae39cd-dc77-410c-97ab-3bb3561ff828","path":"sprites/sprite_interior_doors_windows_curtains/sprite_interior_doors_windows_curtains.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"6ab49ec4-8a66-4ab1-8fc8-52b6271f1952","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"c63f9e26-339b-471f-921f-ed1dbb830edb","path":"sprites/sprite_fish_decoration/sprite_fish_decoration.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"f36f7a18-9026-4dab-9157-476c7116e06e","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":256,
+  "width":336,
 }

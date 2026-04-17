@@ -159,8 +159,8 @@
   ],
   "name":"farm",
   "parent":{
-    "name":"rooms",
-    "path":"folders/rooms.yy",
+    "name":"farm",
+    "path":"folders/rooms/farm.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

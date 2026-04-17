@@ -1,14 +1,14 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_interior_doors_windows_curtains",
+  "%Name":"ts_doors_windows_chimneys",
   "autoTileSets":[],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_interior_doors_windows_curtains",
-  "out_columns":16,
+  "name":"ts_doors_windows_chimneys",
+  "out_columns":19,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -18,8 +18,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"sprite_interior_doors_windows_curtains",
-    "path":"sprites/sprite_interior_doors_windows_curtains/sprite_interior_doors_windows_curtains.yy",
+    "name":"sprite_door_windows_and_chimney",
+    "path":"sprites/sprite_door_windows_and_chimney/sprite_door_windows_and_chimney.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{
@@ -34,5 +34,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":256,
+  "tile_count":368,
 }
