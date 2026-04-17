@@ -6,8 +6,8 @@
   "name":"obj_stable_placeholder",
   "overriddenProperties":[],
   "parent":{
-    "name":"buildings_placeholders",
-    "path":"folders/objects/farm/buildings_placeholders.yy",
+    "name":"buildings",
+    "path":"folders/objects/farm/buildings.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -28,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sprite_farm_building_stable",
-    "path":"sprites/sprite_farm_building_stable/sprite_farm_building_stable.yy",
+    "name":"sprite_farm_building_stable_placeholder",
+    "path":"sprites/sprite_farm_building_stable_placeholder/sprite_farm_building_stable_placeholder.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -6,8 +6,8 @@
   "name":"obj_mill",
   "overriddenProperties":[],
   "parent":{
-    "name":"buildings_placeholders",
-    "path":"folders/objects/farm/buildings_placeholders.yy",
+    "name":"buildings",
+    "path":"folders/objects/farm/buildings.yy",
   },
   "parentObjectId":null,
   "persistent":false,
