@@ -5,6 +5,7 @@ if (!is_initialized && item_key != "") {
     else if (variable_struct_exists(global.crop_data, item_key)) _data = global.crop_data[$ item_key];
     else if (variable_struct_exists(global.seed_data, item_key)) _data = global.seed_data[$ item_key];
     else if (variable_struct_exists(global.placeable_data, item_key)) _data = global.placeable_data[$ item_key];
+    else if (variable_struct_exists(global.material_data, item_key)) _data = global.material_data[$ item_key];
 
     if (_data != undefined) {
 
@@ -49,6 +50,7 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;
                 else if (variable_struct_exists(global.tool_data, item_key)) _name = global.tool_data[$ item_key].name;
                 else if (variable_struct_exists(global.placeable_data, item_key)) _name = global.placeable_data[$ item_key].name;
+                else if (variable_struct_exists(global.material_data, item_key)) _name = global.material_data[$ item_key].name;
 
                 scr_notify_item(quantity, _name);
                 instance_destroy();

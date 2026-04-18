@@ -154,12 +154,43 @@ function scr_use_item(_item_data, _gx, _gy) {
                         scr_notify("No se pueden quitar cofres con articulos adentro");
                     }
                 } else {
-                    // NEW: Logic to remove fruit trees with axe
-                    var _tree_to_remove = instance_position(_target_x, _target_y, obj_tree);
-
-                    if (_tree_to_remove != noone) {
-                        inventory_drop_item("wood", 1, _tree_to_remove.x, _tree_to_remove.y);
-                        instance_destroy(_tree_to_remove);
+                    if (_item_key == "axe") {
+                        show_debug_message("=== AXE DEBUG === click tile: (" + string(_gx) + ", " + string(_gy) + ")  target: (" + string(_target_x) + ", " + string(_target_y) + ")");
+                        var _nearest_dist = 999999;
+                        var _nearest_id   = noone;
+                        with (obj_common_tree) {
+                            var _d = point_distance(x, y, _gx, _gy);
+                            show_debug_message("  common_tree id=" + string(id) + " pos=(" + string(x) + "," + string(y) + ") dist_to_tile=" + string(_d));
+                            if (_d < _nearest_dist) { _nearest_dist = _d; _nearest_id = id; }
+                        }
+                        show_debug_message("  nearest common_tree: id=" + string(_nearest_id) + " dist=" + string(_nearest_dist));
+                        var _tree_to_remove = noone;
+                        with (obj_common_tree) {
+                            var _spr = asset_get_index("sprite_tree_" + tree_type);
+                            if (sprite_exists(_spr)) {
+                                var _bx1 = x + sprite_get_bbox_left(_spr);
+                                var _by1 = y + sprite_get_bbox_top(_spr);
+                                var _bx2 = x + sprite_get_bbox_right(_spr);
+                                var _by2 = y + sprite_get_bbox_bottom(_spr);
+                                // Check tile overlap with bbox rather than point-in-bbox
+                                if (_gx < _bx2 && _gx + 16 > _bx1 && _gy < _by2 && _gy + 16 > _by1) {
+                                    _tree_to_remove = id;
+                                    break;
+                                }
+                            }
+                        }
+                        if (_tree_to_remove == noone) _tree_to_remove = instance_position(_target_x, _target_y, obj_tree);
+                        show_debug_message("  tree_to_remove=" + string(_tree_to_remove));
+                        if (_tree_to_remove != noone) {
+                            inventory_drop_item("wood", irandom_range(3, 5), _tree_to_remove.x, _tree_to_remove.y);
+                            instance_destroy(_tree_to_remove);
+                        }
+                    } else if (_item_key == "pickaxe") {
+                        var _rock_to_remove = instance_position(_target_x, _target_y, obj_rock);
+                        if (_rock_to_remove != noone) {
+                            inventory_drop_item("stone", irandom_range(1, 3), _rock_to_remove.x, _rock_to_remove.y);
+                            instance_destroy(_rock_to_remove);
+                        }
                     }
                 }
 

@@ -589,6 +589,7 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.crop_data, _key)) return global.crop_data[$ _key];
     if (variable_struct_exists(global.tool_data, _key)) return global.tool_data[$ _key];
     if (variable_struct_exists(global.placeable_data, _key)) return global.placeable_data[$ _key];
+    if (variable_struct_exists(global.material_data, _key)) return global.material_data[$ _key];
     return undefined;
 }
 function scr_notify_item(_qty, _name) {

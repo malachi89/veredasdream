@@ -323,3 +323,18 @@ global.placeable_data = {
         base_sell_price: 50
     }
 };
+
+global.material_data = {
+    wood: {
+        name: "Madera",
+        type: ITEM_TYPE.MATERIAL,
+        sprite: sprite_material_wood,
+        subimg: 0
+    },
+    stone: {
+        name: "Piedra",
+        type: ITEM_TYPE.MATERIAL,
+        sprite: sprite_material_stone,
+        subimg: 0
+    }
+};

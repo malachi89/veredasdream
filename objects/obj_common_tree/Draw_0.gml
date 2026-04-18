@@ -12,3 +12,4 @@ if (growth_stage <= 3) {
     else if (global.season == "winter") _season_idx = 3;
     draw_sprite(_spr, 3 + _season_idx, x, y);
 }
+

@@ -52,6 +52,7 @@ function add_item(_item_key, _qty = 1) {
     var _is_stackable = false;
     if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.material_data, _item_key)) _is_stackable = true;
 
     // --- 2. Si es stackable, buscar si ya existe para sumar ---
     if (_is_stackable) {
