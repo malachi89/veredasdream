@@ -58,7 +58,7 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && tool_cooldow
 
     if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _is_placeable) && !obj_inventory.show_backpack) {
         scr_use_item(_selected_item, _gx, _gy);
-        tool_cooldown = 40;
+        tool_cooldown = 50;
     }
 }
 
@@ -107,8 +107,22 @@ if (state == STATE.ACTING) {
     ];
     var _current = _anim_data[state];
     sprite_index = _current[0];
+    
+    var _prev_frame = floor(frame_anim);
     frame_anim += _current[1];
     if (frame_anim >= _current[2]) frame_anim = 0;
+    var _curr_frame = floor(frame_anim);
+    
+    if (_curr_frame != _prev_frame) {
+        if (state == STATE.WALK || state == STATE.RUN) {
+            var _f1 = 1;
+            var _f2 = (state == STATE.WALK) ? 4 : 5;
+            if (_curr_frame == _f1 || _curr_frame == _f2) {
+                audio_play_sound(choose(walk1, walk2, walk3), 1, false);
+            }
+        }
+    }
+    
     var _dir_idx = dir;
     if (is_riding) {
         if (state == STATE.IDLE) _dir_idx = dir;

@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"watering_can",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":0,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":1.0,
+  "exportDir":"",
+  "name":"watering_can",
+  "parent":{
+    "name":"tools",
+    "path":"folders/sounds/tools.yy",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"watering_can.mp3",
+  "volume":1.0,
+}

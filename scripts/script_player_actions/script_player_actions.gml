@@ -167,6 +167,7 @@ function scr_use_item(_item_data, _gx, _gy) {
                     }
                 }
                 if (_tilled_any && !_skip_energy) other.energy -= 2;
+                if (_tilled_any) audio_play_sound(hoe, 1, false);
                 other.frames_action = 6;
                 other.action_sprite_tool = sprite_player_hoe_pickaxe_hoe_insects;
                 scr_set_player_action_sprites(sprite_player_skin_pickaxe_hoe_insects, sprite_player_hair_pickaxe_hoe_insects, sprite_player_clothes_pickaxe_hoe_insects, sprite_player_eyes_pickaxe_hoe_insects);
@@ -195,6 +196,7 @@ function scr_use_item(_item_data, _gx, _gy) {
                     }
                 }
                 if (_watered_any && !_skip_energy) other.energy -= 2;
+                if (_watered_any) audio_play_sound(watering_can, 1, false);
                 other.frames_action = 8;
                 other.action_sprite_tool = sprite_player_watering_can_watering;
                 scr_set_player_action_sprites(sprite_player_skin_watering, sprite_player_hair_watering, sprite_player_clothes_watering, sprite_player_eyes_watering);
@@ -287,6 +289,7 @@ function scr_use_item(_item_data, _gx, _gy) {
             break;
 
             case "sickle":
+                audio_play_sound(sickle, 1, false);
                 other.frames_action = 6;
                 other.action_sprite_tool = sprite_player_sickle_axe_sickle;
                 scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);

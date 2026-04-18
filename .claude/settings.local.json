@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep -v \"//\")"
+      "Bash(grep -v \"//\")",
+      "Bash(\"C:/Users/malch/AppData/Roaming/uv/python/cpython-3.12.11-windows-x86_64-none/python.exe\" -c \"import PIL; print\\('pillow ok'\\)\")",
+      "Bash(\"C:/Users/malch/AppData/Roaming/uv/python/cpython-3.12.11-windows-x86_64-none/python.exe\" -m pip install pillow)",
+      "Bash(where python *)",
+      "Bash(where python3 *)",
+      "Bash(\"/c/Users/malch/AppData/Local/Microsoft/WindowsApps/python.exe\" -c \"import PIL; print\\('ok'\\)\")",
+      "Bash(\"/c/Users/malch/AppData/Roaming/uv/python/cpython-3.12.11-windows-x86_64-none/python.exe\" -m venv .venv_npc)",
+      "Bash(\".venv_npc/Scripts/pip.exe\" install *)",
+      "Bash(\".venv_npc/Scripts/python.exe\" generate_npcs.py)",
+      "Bash(\".venv_npc/Scripts/python.exe\" -c \"from PIL import Image; i=Image.open\\('generated/spr_npc_Miraculos_idle.png'\\); print\\('idle:', i.size\\); i=Image.open\\('generated/spr_npc_Miraculos_walk.png'\\); print\\('walk:', i.size\\); i=Image.open\\('generated/spr_npc_Miraculos_portrait.png'\\); print\\('portrait:', i.size\\)\")"
     ]
   }
 }
