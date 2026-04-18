@@ -4,8 +4,8 @@ function scr_populate_farm() {
     var _y1            = 200;
     var _x2            = 1900;
     var _y2            = 1900;
-    var _tree_count    = 700;
-    var _rock_count    = 750;
+    var _tree_count    = 250;
+    var _rock_count    = 450;
     var _max_attempts  = 40;
     var _tree_radius   = 24; // Half-width of a tree sprite (~48px wide)
     var _rock_radius   = 12; // Half-width of a rock sprite (~24px wide)
