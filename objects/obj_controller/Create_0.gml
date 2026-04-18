@@ -52,6 +52,7 @@ function start_new_day() {
     }
 
     scr_advance_stored_room_states(room_get_name(room));
+    scr_advance_common_trees();
 
     var _lay_id = layer_get_id("Tiles_tilled_watered");
     if (_lay_id != -1) {
@@ -112,6 +113,7 @@ global.pending_player_room_name = "";
 global.pending_player_x = 0;
 global.pending_player_y = 0;
 global.pending_player_dir = DIR.DOWN;
+global.farm_populated = false;
 
 sleep_menu_open = false;
 sleep_menu_selection = 0;

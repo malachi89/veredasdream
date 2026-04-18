@@ -4,207 +4,69 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Veredas Dream** is a farming simulation game built in GameMaker Studio 2 using GML (GameMaker Language). The game features a seasonal time system, farming mechanics with crop growth, inventory management, horse riding, and persistent world state across room transitions.
+**Veredas Dream** is a farming/life simulation RPG built in **GameMaker Studio 2** (GML). It is a Spanish-language project inspired by games like Stardew Valley. The project file is `Veredas Dream.yyp`. All development happens in GameMaker Studio 2's IDE — there is no CLI build system, linter, or test runner.
 
-## Building and Running
+## Language
 
-Open the project in GameMaker Studio 2:
-- **Run in debug mode**: Press `F5`
-- **Build executable**: Press `F7`
-- **Project file**: `Veredas Dream.yyp`
-
-Configuration settings are in `datafiles/settings.ini` and affect time speed, season length, and audio volume.
+All in-game text, variable names, comments, and notifications are in **Spanish**. When adding new content, follow this convention (e.g., `scr_notify("Juego guardado")`).
 
 ## Architecture
 
-### Core Systems and Object Roles
+### Persistent Singletons
+The game revolves around three persistent singleton objects:
 
-**obj_controller** (persistent, single instance)
-- Manages game time (minutes, hours, days, seasons, years)
-- Handles daily progression: crop growth, soil drying, tileset updates
-- Draws HUD (calendar, time, money)
-- Manages save/load system and room state persistence
-- Controls sleep menu and shipping summary UI
-- Must be singleton - destroys duplicates in Create event
+- **`obj_controller`** — Game master. Initializes all globals, manages the day/time cycle, handles room transitions, runs the debug console, and coordinates the day-end/save flow. Only one instance is ever allowed. The `start_new_day()` and `update_tilesets()` functions live here.
+- **`obj_inventory`** — Manages the hotbar (10 slots), backpack (64 slots), and shipping bin (64 slots). Exposes `add_item(_key, _qty)` and inventory swap/split functions. Initial player equipment is hardcoded in `Create_0.gml`.
+- **`obj_player`** — Handles movement (WASD + Shift to run), tool use (left-click → `scr_use_item()`), and horse mounting (F key).
 
-**obj_inventory** (persistent, single instance)
-- Manages 10-slot hotbar and larger backpack
-- Handles item pickup, drag-and-drop UI, item dropping
-- Draws inventory UI and item tooltips
-- Must be singleton - destroys duplicates in Create event
+### Global State (initialized in `obj_controller`)
+All game-wide data lives in `global.*` structs:
+- `global.seed_data`, `global.crop_data`, `global.tool_data`, `global.placeable_data` — item databases (defined in `script_init.gml`)
+- `global.room_states` — persisted state per room (crops, tilled tiles, chests, buildings, horses)
+- `global.room_drops` — dropped item instances per room
+- `global.money`, `global.day`, `global.season`, `global.year`, `global.game_hour/minute`
 
-**obj_player** (NOT persistent)
-- State machine: `STATE.IDLE`, `STATE.WALK`, `STATE.RUN`, `STATE.ACTING`
-- Handles movement with grid-based tool interaction (16x16 cells)
-- Manages layered sprite rendering (body, clothes, hair, eyes)
-- Interacts with world: tilling, watering, planting, harvesting
-- Horse mounting/dismounting logic
-- Created fresh in each room, position restored from global variables
+### Scripts (GML functions, not objects)
+- **`script_init.gml`** — Defines all enums (`DIR`, `STATE`, `ITEM_TYPE`, `TOOL_TYPE`, `SEASON`, `QUALITY`) and populates the four global item databases.
+- **`script_inventory_functions.gml`** — Room persistence (`scr_capture_current_room_state`, `scr_restore_room_state`), save/load (`scr_save_game`, `scr_apply_loaded_game`), drop system, `scr_sleep_and_save`, `scr_process_shipping`, `scr_notify`, `scr_get_item_data`.
+- **`script_player_actions.gml`** — `scr_use_item()`: the central dispatcher for all tool use, planting, and placeable logic. Also contains `scr_buy_building()`.
+- **`scr_populate_farm`** / **`scr_advance_common_trees`** — Farm generation and tree state advancement.
 
-**obj_crop**
-- Represents planted crops in the world
-- Growth controlled by days_passed, is_watered state
-- Sprite selection based on crop_type (e.g., "tomato", "cabbage")
-- Harvesting adds crops to inventory and destroys instance
+### Room Persistence Pattern
+Rooms are not persistent by default. When the player leaves a room, `scr_capture_current_room_state()` saves crops/tiles/chests/buildings/horses into `global.room_states[room_name]`. When re-entering, `obj_controller`'s Step event calls `scr_restore_room_state()` and `scr_restore_room_drops()`. Off-screen room crop/tile advancement is handled by `scr_advance_stored_room_states()` on each new day.
 
-**obj_horse_parent** / **obj_horse1** / **obj_horse2**
-- AI-controlled horses with states: IDLE, PACING, PREPARING_TO_EAT, EATING
-- Player can mount/dismount (increases movement speed)
-- Uses layered rendering when mounted (horse body + saddle + player layers)
+### Save System
+Save data is JSON written to `saves/savegame.json` via `scr_save_game()`. The save includes time, money, player position, inventory state, and all room states. Loading is attempted at startup in `obj_controller`'s Create event.
 
-**obj_transition**
-- Invisible trigger zones for room transitions
-- Sets destination room and player spawn coordinates
-- Uses `target_room`, `target_x`, `target_y` variables
+### Tile Conventions (16px grid)
+- Tile ID `72` = tilled soil
+- Tile ID `168` = tilled + watered soil
+- Layer `Tiles_tilled_watered` — the tilemap for farm soil state
+- Layer `Tiles_details` — blocks planting (objects/decorations)
+- Layer `Instances_Crops` — where `obj_crop` and `obj_tree` instances are created
+- Layer `Tiles_seasonal_props` — seasonal decorations, tileset swapped by `update_tilesets()`
 
-### Global Data Architecture
+### Seasonal Tilesets
+`update_tilesets()` swaps tilesets on `Tiles_background`, `Tiles_details`, and `Tiles_seasonal_props` based on `global.season_index`. Fruit trees are destroyed on entering winter.
 
-All game data centralized in `scripts/script_init/script_init.gml`:
+### Item Key System
+Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"chest"`). `scr_get_item_data(_key)` searches all four global databases and returns the data struct. Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
 
-**Enums**: `DIR`, `STATE`, `HORSE_STATE`, `ITEM_TYPE`, `TOOL_TYPE`, `SEASON`, `QUALITY`
+### Buildings
+Farm buildings start as placeholder objects (`obj_barn_placeholder`, etc.). `scr_buy_building(_name)` destroys the placeholder and creates the real object at the same position. Building state is captured and restored via the room state system.
 
-**Data Structs**:
-- `global.seed_data`: Seed properties (name, seasons, growth_time, crop_base_name, prices)
-- `global.crop_data`: Harvested crop properties (name, seasons, prices)
-- `global.tool_data`: Tool properties (name, tool_type, sprite, subimg, sellable, droppable)
+## Debug Commands (press Enter in-game)
+- `add_item <key> <qty>` — add item to inventory
+- `upgrade_tool <key>` — upgrade a tool
+- `buy_building <name>` — place a building (names: `chicken_coop`, `barn`, `stable`, `mill`, `greenhouse`)
 
-**Persistence Globals**:
-- `global.room_states`: Stores crops and tilled_tiles per room (e.g., `global.room_states[$ "farm"]`)
-- `global.room_drops`: Stores dropped items per room with unique IDs
-- `global.save_file_path`: JSON save file location
+## Debug Hotkeys
+- `O` — advance one day
+- `P` — advance one season
+- `U` — drop 5 tomato seeds at player position
 
-### Persistence System
-
-**Room State Tracking** (`script_inventory_functions.gml`):
-- `scr_capture_current_room_state()`: Saves current room's crops and tilled tiles to global.room_states
-- `scr_restore_room_state(room_name)`: Recreates crops and tilled tiles when entering a room
-- `scr_advance_stored_room_states(current_room)`: Ages crops and dries soil in inactive rooms during day advancement
-
-**Item Drops** (also in `script_inventory_functions.gml`):
-- Items dropped on ground get unique `persistent_drop_id`
-- Tracked in `global.room_drops[$ room_name]` array
-- Recreated when re-entering a room
-
-**Save/Load**:
-- Saves to JSON format via `scr_write_save_game()` and `scr_read_save_game()`
-- Stores time, money, inventory, room states, dropped items, player position
-- Load happens in obj_controller Create event, restored in obj_player Other_4 (Room Start)
-
-### Layer Architecture
-
-GameMaker rooms use named layers. Common layers:
-- `Tiles_background`: Seasonal tileset (ts_farm_spring/summer/fall/winter)
-- `Tiles_details`: Decorative details using seasonal tileset
-- `Tiles_tilled_watered`: Soil state (tile 72 = dry tilled, tile 168 = wet tilled)
-- `Instances`: Game objects (player, crops, items, NPCs)
-
-Tileset swapping happens in `update_tilesets()` when season changes.
-
-### Player Action System
-
-When player uses a tool (in `script_player_actions.gml`):
-1. Check grid cell at interaction point (calculated from player direction)
-2. Tool-specific logic:
-   - **HOE**: Creates tilled soil tile (72) on Tiles_tilled_watered layer
-   - **WATERING_CAN**: Changes tilled tile to watered (168)
-   - **SEED**: Plants crop instance if soil is tilled, consumes seed from inventory
-   - **PICKAXE/AXE/SWORD/BOW**: Combat/resource gathering (future implementation)
-3. Triggers `STATE.ACTING` with tool-specific animation
-
-### Animation System
-
-Player sprites are layered and directional:
-- **Naming convention**: `sprite_player_[layer]_[state]` (e.g., `sprite_player_clothes_walk`)
-- **Layers**: skin, clothes, hair, eyes, tool/weapon overlay
-- **Directions**: Mapped via DIR enum (DOWN=0, UP=1, RIGHT=2, LEFT=3)
-- **Horse riding**: Separate sprite sets `sprite_player_horse1_[layer]_[state]`
-
-Each sprite has 4 subimages (one per direction). Animation frame advancement handled in Step event.
-
-## Development Workflow
-
-### Common Patterns
-
-**Adding a New Crop**:
-1. Add seed entry to `global.seed_data` in `script_init.gml`
-2. Add crop entry to `global.crop_data`
-3. Import crop sprite (5-7 frames for growth stages) to sprites/
-4. Ensure `crop_base_name` matches between seed and crop entries
-
-**Adding a New Tool**:
-1. Add enum value to `TOOL_TYPE` in `script_init.gml`
-2. Add tool entry to `global.tool_data`
-3. Add tool sprite frame to `sprite_tools` or create new sprite
-4. Implement action logic in `script_player_actions.gml`
-5. Create animation sprites: `sprite_player_[layer]_[toolname]` for all layers
-
-**Creating a New Room**:
-1. Create room in GameMaker IDE with required layers
-2. Add room name to `RoomOrderNodes` in `.yyp` file (auto-generated)
-3. Add transition objects (obj_transition) with target room properties
-4. Initialize room state in `global.room_states` if needed
-
-### Debug Commands
-
-Keyboard shortcuts for testing (defined in obj_controller Step event):
-- `P`: Cycle through seasons (Spring → Summer → Fall → Winter)
-- `O`: Advance to next day (triggers crop growth, soil drying)
-- `U`: Drop 5 Tomato Seeds at player position (for inventory testing)
-
-See `KEYBINDINGS.md` for full control scheme.
-
-### Important Constraints
-
-**Singleton Pattern**: obj_controller and obj_inventory must exist only once. They check `instance_number()` in Create event and self-destruct if duplicates exist.
-
-**Persistence Markers**:
-- obj_controller: `persistent = true`
-- obj_inventory: `persistent = true`
-- obj_player: NOT persistent (recreated per room, position restored via globals)
-
-**Room Transitions**: Player position and direction stored in `global.pending_player_*` variables, applied in obj_player Other_4 event.
-
-**Crop Growth**: Crops only grow when watered (tile 168). Daily advancement uses `scr_advance_stored_room_states()` to process inactive rooms.
-
-**Item Stacking**: Items with same `item_key` stack in inventory. Tools are non-stackable (max_stack = 1).
-
-## File Organization
-
-```
-objects/
-  obj_controller/       - Game time, UI, persistence
-  obj_inventory/        - Inventory system
-  obj_player/           - Player character
-  obj_crop/             - Crop instances
-  obj_horse_parent/     - Base horse logic
-  obj_horse1/           - Horse variant 1
-  obj_item_parent/      - Dropped item base
-  obj_transition/       - Room transition triggers
-  obj_bed/              - Sleep interaction
-  obj_shipping_bin/     - Sell crops
-
-scripts/
-  script_init/                    - Enums and global data
-  script_inventory_functions/     - Persistence helpers
-  script_player_actions/          - Tool interaction logic
-
-rooms/
-  farm/                 - Main outdoor area
-  farm_house/           - Interior space
-
-datafiles/
-  settings.ini          - Time speed, season length, audio
-
-sprites/                - All visual assets
-tilesets/               - Seasonal tilesets
-fonts/                  - UI fonts
-sounds/                 - Audio (background music)
-```
-
-## Notes
-
-- The game uses GameMaker's built-in tilemap system for terrain
-- All text is in Spanish (e.g., "Semilla de Tomate", "Regadera")
-- Sprite assets created in Aseprite (source files in root directory)
-- Save system stores exact room state - crops, items, tilled soil all persist
-- Time progression: 1 real second = time_frames_per_minute frames = 1 game minute (default)
+## Settings
+Runtime configuration is read from `settings.ini`:
+- `[Time] TimeSpeedMultiplier` (default `1.0`)
+- `[Time] DaysPerSeason` (default `28`)
+- `[Audio] MusicVolume` (default `0.0`)

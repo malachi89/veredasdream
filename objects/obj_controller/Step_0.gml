@@ -6,6 +6,14 @@ if (load_needs_apply && instance_exists(obj_player) && instance_exists(obj_inven
     load_needs_apply = false;
 }
 
+// Populate farm with trees and rocks on first visit (fresh game only)
+if (!global.farm_populated && room_get_name(room) == "farm"
+        && instance_exists(obj_player) && instance_exists(obj_inventory)) {
+    global.farm_populated = true;
+    scr_populate_farm();
+    scr_capture_current_room_state();
+}
+
 var _room_name = room_get_name(room);
 if (current_room_name != _room_name) {
     current_room_name = _room_name;

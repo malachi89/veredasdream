@@ -79,7 +79,7 @@ function scr_restore_room_drops(_room_name) {
 }
 
 function scr_get_room_state(_room_name) {
-    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [] };
+    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [] };
     return global.room_states[$ _room_name];
 }
 
@@ -164,6 +164,22 @@ function scr_capture_current_room_state() {
             }
         }
     }
+    // Capture Common Trees
+    var _ct_state = [];
+    for (var i = 0; i < instance_number(obj_common_tree); i++) {
+        var _inst = instance_find(obj_common_tree, i);
+        array_push(_ct_state, { x: _inst.x, y: _inst.y, tree_type: _inst.tree_type, growth_stage: _inst.growth_stage });
+    }
+    _state.common_trees = _ct_state;
+
+    // Capture Rocks
+    var _rock_state = [];
+    for (var i = 0; i < instance_number(obj_rock); i++) {
+        var _inst = instance_find(obj_rock, i);
+        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index) });
+    }
+    _state.rocks = _rock_state;
+
     global.room_states[$ _room_name] = _state;
 }
 
@@ -292,6 +308,30 @@ function scr_restore_room_state(_room_name) {
             }
         }
     }
+
+    // Restore Common Trees
+    if (variable_struct_exists(_state, "common_trees")) {
+        with (obj_common_tree) instance_destroy();
+        for (var i = 0; i < array_length(_state.common_trees); i++) {
+            var _ct = _state.common_trees[i];
+            var _inst = instance_create_layer(_ct.x, _ct.y, "Instances", obj_common_tree);
+            _inst.tree_type    = _ct.tree_type;
+            _inst.growth_stage = _ct.growth_stage;
+        }
+    }
+
+    // Restore Rocks
+    if (variable_struct_exists(_state, "rocks")) {
+        with (obj_rock) instance_destroy();
+        for (var i = 0; i < array_length(_state.rocks); i++) {
+            var _r = _state.rocks[i];
+            var _inst = instance_create_layer(_r.x, _r.y, "Instances", obj_rock);
+            var _spr = asset_get_index(_r.sprite_name);
+            if (_spr != -1) _inst.sprite_index = _spr;
+            _inst.image_speed = 0;
+            _inst.image_index = 0;
+        }
+    }
 }
 
 function scr_advance_stored_room_states(_exclude_room_name) {
@@ -403,6 +443,7 @@ function scr_apply_loaded_game(_save_data) {
     global.season = _save_data.time.season;
     global.money = _save_data.economy.money;
     global.room_states = _save_data.room_states;
+    global.farm_populated = variable_struct_exists(global.room_states, "farm");
     global.room_drops = _save_data.room_drops;
     global.next_drop_uid = _save_data.next_drop_uid;
     obj_inventory.selected_slot = _save_data.inventory.selected_slot;
