@@ -413,3 +413,27 @@ _tp[$ "watering_can"] = [
     { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
     { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: true  }  // VITOLANIO
 ];
+
+// --- NPC DATA ---
+global.npc_data = {
+    Miraculos:  { name: "Miraculos", skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "lyria",      hair_color: "black",  clothes_color: "blue",   dialog_id: -1 },
+    Jose:       { name: "José",      skin: 2, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
+    Maria:      { name: "María",     skin: 3, eye_type: "female", eye_color: "black",  hair_style: "iridessa",   hair_color: "brown",  clothes_color: "pink",   dialog_id: -1 },
+    Juan:       { name: "Juan",      skin: 1, eye_type: "male",   eye_color: "black",  hair_style: "josh",       hair_color: "brown",  clothes_color: "blue",   dialog_id: -1 },
+    Lupita:     { name: "Lupita",    skin: 4, eye_type: "female", eye_color: "green",  hair_style: "fawn",       hair_color: "black",  clothes_color: "purple", dialog_id: -1 },
+    Carlos:     { name: "Carlos",    skin: 2, eye_type: "male",   eye_color: "blue",   hair_style: "sebastian",  hair_color: "brown",  clothes_color: "red",    dialog_id: -1 },
+    Ana:        { name: "Ana",       skin: 1, eye_type: "female", eye_color: "blue",   hair_style: "silvermist", hair_color: "blonde", clothes_color: "green",  dialog_id: -1 },
+    Pedro:      { name: "Pedro",     skin: 3, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "ginger", clothes_color: "blue",   dialog_id: -1 },
+    Sofia:      { name: "Sofía",     skin: 2, eye_type: "female", eye_color: "brown",  hair_style: "lyria",      hair_color: "blonde", clothes_color: "pink",   dialog_id: -1 },
+    Diego:      { name: "Diego",     skin: 4, eye_type: "male",   eye_color: "black",  hair_style: "josh",       hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
+    Carmen:     { name: "Carmen",    skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "fawn",       hair_color: "brown",  clothes_color: "red",    dialog_id: -1 },
+    Luis:       { name: "Luis",      skin: 3, eye_type: "male",   eye_color: "green",  hair_style: "sebastian",  hair_color: "black",  clothes_color: "purple", dialog_id: -1 },
+    Fernanda:   { name: "Fernanda",  skin: 2, eye_type: "female", eye_color: "blue",   hair_style: "iridessa",   hair_color: "ginger", clothes_color: "blue",   dialog_id: -1 },
+    Jorge:      { name: "Jorge",     skin: 4, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "blonde", clothes_color: "green",  dialog_id: -1 },
+    Elena:      { name: "Elena",     skin: 1, eye_type: "female", eye_color: "green",  hair_style: "silvermist", hair_color: "brown",  clothes_color: "pink",   dialog_id: -1 },
+    Raul:       { name: "Raúl",      skin: 3, eye_type: "male",   eye_color: "blue",   hair_style: "josh",       hair_color: "ginger", clothes_color: "red",    dialog_id: -1 },
+    Patricia:   { name: "Patricia",  skin: 2, eye_type: "female", eye_color: "black",  hair_style: "lyria",      hair_color: "ginger", clothes_color: "purple", dialog_id: -1 },
+    Miguel:     { name: "Miguel",    skin: 4, eye_type: "male",   eye_color: "brown",  hair_style: "fawn",       hair_color: "blonde", clothes_color: "blue",   dialog_id: -1 },
+    Rosa:       { name: "Rosa",      skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "iridessa",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
+    Andres:     { name: "Andrés",    skin: 3, eye_type: "male",   eye_color: "black",  hair_style: "sebastian",  hair_color: "ginger", clothes_color: "red",    dialog_id: -1 },
+};
