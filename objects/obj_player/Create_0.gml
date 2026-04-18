@@ -21,3 +21,6 @@ move_speed_run = move_speed * 1.5;
 frames_idle = 4;
 frames_walk = 6;
 frames_run  = 8;
+
+max_energy = 500;
+energy = 500;

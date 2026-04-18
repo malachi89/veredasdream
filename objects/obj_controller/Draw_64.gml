@@ -9,6 +9,39 @@ var _day_name = global.day_names[(_total_days - 1) mod 7];
 var _date_text = global.season_names[$ global.season] + " " + string(global.day) + " " + _day_name;
 var _money_text = "MXN$ " + string(global.money);
 
+// --- ENERGY BAR (Top-Left) ---
+if (instance_exists(obj_player)) {
+    var _p = obj_player;
+    var _ebx = 20;
+    var _eby = 20;
+    var _ebw = 200;
+    var _ebh = 24;
+    
+    // Background
+    draw_set_alpha(0.5);
+    draw_rectangle_color(_ebx, _eby, _ebx + _ebw, _eby + _ebh, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+    draw_rectangle_color(_ebx, _eby, _ebx + _ebw, _eby + _ebh, c_white, c_white, c_white, c_white, true);
+    
+    // Energy Fill
+    var _fill_ratio = clamp(_p.energy / _p.max_energy, 0, 1);
+    var _fill_w = _fill_ratio * _ebw;
+    
+    var _col = c_lime;
+    if (_p.energy <= 150) _col = c_yellow; // 70% used (30% left)
+    if (_p.energy <= 50) _col = c_red;    // 90% used (10% left)
+    
+    if (_fill_w > 0) {
+        draw_rectangle_color(_ebx + 2, _eby + 2, _ebx + _fill_w - 2, _eby + _ebh - 2, _col, _col, _col, _col, false);
+    }
+    
+    // Label
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_ebx + 5, _eby + _ebh + 5, "ENERGIA", 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+}
+
 draw_set_font(fnt_pixel_operator);
 draw_set_halign(fa_right);
 draw_set_valign(fa_top);
@@ -144,10 +177,11 @@ if (shipping_summary_open) {
 
 // --- NOTIFICACIONES ---
 draw_set_halign(fa_left);
-draw_set_valign(fa_top);
+draw_set_valign(fa_bottom);
+var _gui_h = display_get_gui_height();
 for (var i = 0; i < ds_list_size(notifications); i++) {
     var _notif = notifications[| i];
-    var _ny = 20 + (i * 30);
+    var _ny = _gui_h - 150 - (i * 30);
     draw_text_transformed_color(20, _ny, _notif.text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, _notif.alpha);
 }
 
