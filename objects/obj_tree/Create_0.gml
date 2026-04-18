@@ -1,4 +1,5 @@
 // --- VARIABLES DE INSTANCIA PARA ÁRBOLES ---
+hits_remaining = 10;
 days_passed = 0;
 crop_type = "";
 days_to_grow = 1; 

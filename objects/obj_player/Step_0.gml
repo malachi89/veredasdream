@@ -43,7 +43,9 @@ if (keyboard_check_pressed(ord("F"))) {
     }
 }
 
-if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
+if (tool_cooldown > 0) tool_cooldown--;
+
+if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && tool_cooldown <= 0) {
     var _selected_item = obj_inventory.inventory_array[obj_inventory.selected_slot];
     var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     var _gx = floor(mouse_x / 16) * 16;
@@ -51,11 +53,12 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING) {
     var _p_cx = (bbox_left + bbox_right) / 2;
     var _p_cy = (bbox_top + bbox_bottom) / 2;
     var _actual_dist = point_distance(_p_cx, _p_cy, _gx + 8, _gy + 8);
-    
+
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
-    
+
     if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _is_placeable) && !obj_inventory.show_backpack) {
         scr_use_item(_selected_item, _gx, _gy);
+        tool_cooldown = 40;
     }
 }
 

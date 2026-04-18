@@ -338,3 +338,78 @@ global.material_data = {
         subimg: 0
     }
 };
+
+// --- SISTEMA DE PROGRESIÓN DE HERRAMIENTAS ---
+// global.tool_progression[$ "key"][QUALITY_tier] = { stats }
+// hits_required: daño por golpe = 1 + hits_required (recursos tienen 10 HP base)
+// area_width/height: área de efecto en tiles
+// double_drop_chance/triple_drop_chance/treasure_chance: 0.0-1.0
+// no_energy_chance: 1.0 = siempre sin gasto de energía
+// water_persists_next_day: el riego persiste al día siguiente
+global.tool_progression = {};
+var _tp = global.tool_progression;
+
+// --- PICO ---
+_tp[$ "pickaxe"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+    { hits_required: 1, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+    { hits_required: 2, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+    { hits_required: 3, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+    { hits_required: 4, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+    { hits_required: 5, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+    { hits_required: 6, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+    { hits_required: 7, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0.05, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+    { hits_required: 8, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0.05, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: false }  // VITOLANIO
+];
+
+// --- HACHA ---
+_tp[$ "axe"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+    { hits_required: 1, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+    { hits_required: 2, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+    { hits_required: 3, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+    { hits_required: 4, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+    { hits_required: 5, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+    { hits_required: 6, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0,    triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+    { hits_required: 7, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0.05, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+    { hits_required: 8, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0.05, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: false }  // VITOLANIO
+];
+
+// --- HOZ ---
+_tp[$ "sickle"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+    { hits_required: 0, area_width: 2, area_height: 2, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+    { hits_required: 0, area_width: 3, area_height: 3, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+    { hits_required: 0, area_width: 4, area_height: 4, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+    { hits_required: 0, area_width: 5, area_height: 5, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+    { hits_required: 0, area_width: 5, area_height: 5, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+    { hits_required: 0, area_width: 5, area_height: 5, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0,   no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+    { hits_required: 0, area_width: 5, area_height: 5, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0.3, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+    { hits_required: 0, area_width: 5, area_height: 5, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0.3, no_energy_chance: 1.0, water_persists_next_day: false }  // VITOLANIO
+];
+
+// --- AZADA ---
+_tp[$ "hoe"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+    { hits_required: 0, area_width: 2, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+    { hits_required: 0, area_width: 3, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+    { hits_required: 0, area_width: 3, area_height: 2, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+    { hits_required: 0, area_width: 3, area_height: 3, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+    { hits_required: 0, area_width: 3, area_height: 6, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+    { hits_required: 0, area_width: 6, area_height: 6, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+    { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+    { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: false }  // VITOLANIO
+];
+
+// --- REGADERA ---
+_tp[$ "watering_can"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+    { hits_required: 0, area_width: 2, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+    { hits_required: 0, area_width: 3, area_height: 1, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+    { hits_required: 0, area_width: 3, area_height: 2, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+    { hits_required: 0, area_width: 3, area_height: 3, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+    { hits_required: 0, area_width: 3, area_height: 6, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+    { hits_required: 0, area_width: 6, area_height: 6, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+    { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+    { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: true  }  // VITOLANIO
+];

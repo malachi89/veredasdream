@@ -212,8 +212,24 @@ if (instance_exists(obj_inventory) && !sleep_menu_open && !obj_inventory.show_ba
         var _is_seed = variable_struct_exists(global.seed_data, _item_key);
         var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
         
-        if (_is_seed || _is_placeable || (_is_tool && (_item_key == "hoe" || _item_key == "watering_can" || _item_key == "shovel"))) {
+        var _is_aoe_tool = _is_tool && (_item_key == "hoe" || _item_key == "watering_can" ||
+                           _item_key == "shovel" || _item_key == "sickle" ||
+                           _item_key == "pickaxe" || _item_key == "axe");
+        if (_is_seed || _is_placeable || _is_aoe_tool) {
             show_selector = true;
+            // Compute selector size from tier stats, swapped for UP/DOWN facing
+            selector_w = 1;
+            selector_h = 1;
+            if (variable_struct_exists(global.tool_progression, _item_key)) {
+                var _prog = global.tool_progression[$ _item_key];
+                var _q = (is_struct(_slot_content) && variable_struct_exists(_slot_content, "quality")) ? _slot_content.quality : QUALITY.OXIDADO;
+                if (_q >= 0 && _q < array_length(_prog)) {
+                    var _ts = _prog[_q];
+                    var _facing_vertical = instance_exists(obj_player) && (obj_player.dir == DIR.UP || obj_player.dir == DIR.DOWN);
+                    selector_w = _facing_vertical ? _ts.area_height : _ts.area_width;
+                    selector_h = _facing_vertical ? _ts.area_width  : _ts.area_height;
+                }
+            }
             if (instance_exists(obj_player)) {
                 var _p_cx = (obj_player.bbox_left + obj_player.bbox_right) / 2;
                 var _p_cy = (obj_player.bbox_top + obj_player.bbox_bottom) / 2;

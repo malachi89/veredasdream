@@ -5,13 +5,18 @@ draw_set_alpha(1.0);
 
 // 2. Dibujo del Selector de Rango (Solo si es herramienta/semilla válida)
 if (show_selector) {
+    var _sx1 = gx - floor(selector_w / 2) * 16;
+    var _sy1 = gy - floor(selector_h / 2) * 16;
+    var _sx2 = _sx1 + selector_w * 16 - 1;
+    var _sy2 = _sy1 + selector_h * 16 - 1;
+
     // Relleno suave
     draw_set_alpha(0.3);
-    draw_rectangle_color(gx, gy, gx + 15, gy + 15, selector_color, selector_color, selector_color, selector_color, false);
+    draw_rectangle_color(_sx1, _sy1, _sx2, _sy2, selector_color, selector_color, selector_color, selector_color, false);
 
     // Borde más marcado
     draw_set_alpha(0.8);
-    draw_rectangle_color(gx, gy, gx + 15, gy + 15, selector_color, selector_color, selector_color, selector_color, true);
+    draw_rectangle_color(_sx1, _sy1, _sx2, _sy2, selector_color, selector_color, selector_color, selector_color, true);
 
     draw_set_alpha(1.0);
 

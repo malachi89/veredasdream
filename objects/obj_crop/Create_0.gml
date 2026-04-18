@@ -2,9 +2,10 @@
 days_passed = 0;
 growth_stage = 0;
 is_watered = false;
-skip_blank_frame = false; 
+persistent_water = false;
+skip_blank_frame = false;
 crop_type = "";
-days_to_grow = 1; 
+days_to_grow = 1;
 max_stages = 1;
 
 // Asignar máscara de colisión (usamos los iconos que son 16x16)
@@ -26,6 +27,6 @@ grow = function() {
             image_index = growth_stage;
         }
 
-        is_watered = false; 
+        is_watered = persistent_water;
     }
 }

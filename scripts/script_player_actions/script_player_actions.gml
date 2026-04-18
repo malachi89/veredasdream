@@ -3,8 +3,28 @@ function scr_use_item(_item_data, _gx, _gy) {
     var _item_key = is_struct(_item_data) ? _item_data.key : _item_data;
     if (_item_key == undefined || _item_key == -1) _item_key = "";
 
+    // Leer estadísticas de progresión del tier actual
+    var _tier_stats = undefined;
+    if (variable_struct_exists(global.tool_progression, _item_key)) {
+        var _prog = global.tool_progression[$ _item_key];
+        var _quality = (is_struct(_item_data) && variable_struct_exists(_item_data, "quality")) ? _item_data.quality : QUALITY.OXIDADO;
+        if (_quality >= 0 && _quality < array_length(_prog)) {
+            _tier_stats = _prog[_quality];
+        }
+    }
+    if (_tier_stats == undefined) {
+        _tier_stats = { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,
+                        treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0, water_persists_next_day: false };
+    }
+    var _skip_energy = (_item_key != "" && random(1) < _tier_stats.no_energy_chance);
+
+    // Dimensiones efectivas: intercambiar si el jugador mira arriba/abajo
+    var _facing_vertical = (other.dir == DIR.UP || other.dir == DIR.DOWN);
+    var _eff_w = _facing_vertical ? _tier_stats.area_height : _tier_stats.area_width;
+    var _eff_h = _facing_vertical ? _tier_stats.area_width  : _tier_stats.area_height;
+
     // Check Energy
-    if (other.energy <= 0 && _item_key != "") {
+    if (other.energy <= 0 && _item_key != "" && !_skip_energy) {
         scr_notify("¡Sin energia!");
         return;
     }
@@ -37,11 +57,13 @@ function scr_use_item(_item_data, _gx, _gy) {
     var _is_harvesting = false;
     
     if (_item_key == "sickle") {
-        // Harvesting with Sickle (3x3 Area)
-        var _x1 = _target_x - 24; 
-        var _y1 = _target_y - 24;
-        var _x2 = _target_x + 24;
-        var _y2 = _target_y + 24;
+        // Harvesting with Sickle (area from tier)
+        var _sickle_hw = _eff_w * 8;
+        var _sickle_hh = _eff_h * 8;
+        var _x1 = _target_x - _sickle_hw;
+        var _y1 = _target_y - _sickle_hh;
+        var _x2 = _target_x + _sickle_hw;
+        var _y2 = _target_y + _sickle_hh;
         
         // Add distance check to prevent harvesting far away
         var _dist = point_distance(_p_center_x, _p_center_y, _target_x, _target_y);
@@ -54,8 +76,11 @@ function scr_use_item(_item_data, _gx, _gy) {
                 var _inst = _list[| i];
                 if (_inst.growth_stage >= _inst.max_stages) {
                     _is_harvesting = true;
-                    other.energy -= 2;
-                    inventory_drop_item(_inst.crop_type, 1, _inst.x + 8, _inst.y + 8);
+                    if (!_skip_energy) other.energy -= 2;
+                    var _drop_qty = 1;
+                    if (random(1) < _tier_stats.double_drop_chance) _drop_qty *= 2;
+                    if (random(1) < _tier_stats.triple_drop_chance) _drop_qty *= 3;
+                    inventory_drop_item(_inst.crop_type, _drop_qty, _inst.x + 8, _inst.y + 8);
                     instance_destroy(_inst);
                 }
             }
@@ -67,8 +92,11 @@ function scr_use_item(_item_data, _gx, _gy) {
                 var _inst = _list[| i];
                 if (_inst.has_fruit) {
                     _is_harvesting = true;
-                    other.energy -= 2;
-                    inventory_drop_item(_inst.fruit_item, 1, _inst.x, _inst.y);
+                    if (!_skip_energy) other.energy -= 2;
+                    var _fdrop_qty = 1;
+                    if (random(1) < _tier_stats.double_drop_chance) _fdrop_qty *= 2;
+                    if (random(1) < _tier_stats.triple_drop_chance) _fdrop_qty *= 3;
+                    inventory_drop_item(_inst.fruit_item, _fdrop_qty, _inst.x, _inst.y);
                     _inst.has_fruit = false;
                     _inst.days_since_harvest = 0;
                 }
@@ -121,28 +149,52 @@ function scr_use_item(_item_data, _gx, _gy) {
 
         switch (_item_key) {
             case "hoe":
-                var _current_tile = tilemap_get_at_pixel(_map_id, _gx, _gy);
-                // Si no es tierra arada (72) ni regada (168), y no hay tile en Tiles_details, entonces lo aramos (72)
-                if ((_current_tile != 72 && _current_tile != 168) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _gx, _gy) == 0)) {
-                    tilemap_set_at_pixel(_map_id, 72, _gx, _gy);
-                    other.energy -= 2;
+                var _haw = _eff_w;
+                var _hah = _eff_h;
+                var _hox = floor(_haw / 2) * 16;
+                var _hoy = floor(_hah / 2) * 16;
+                var _tilled_any = false;
+                for (var _hty = 0; _hty < _hah; _hty++) {
+                    for (var _htx = 0; _htx < _haw; _htx++) {
+                        var _htx_px = _gx - _hox + _htx * 16;
+                        var _hty_px = _gy - _hoy + _hty * 16;
+                        var _cur_tile = tilemap_get_at_pixel(_map_id, _htx_px, _hty_px);
+                        if ((_cur_tile != 72 && _cur_tile != 168) &&
+                            (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _htx_px, _hty_px) == 0)) {
+                            tilemap_set_at_pixel(_map_id, 72, _htx_px, _hty_px);
+                            _tilled_any = true;
+                        }
+                    }
                 }
+                if (_tilled_any && !_skip_energy) other.energy -= 2;
                 other.frames_action = 6;
                 other.action_sprite_tool = sprite_player_hoe_pickaxe_hoe_insects;
                 scr_set_player_action_sprites(sprite_player_skin_pickaxe_hoe_insects, sprite_player_hair_pickaxe_hoe_insects, sprite_player_clothes_pickaxe_hoe_insects, sprite_player_eyes_pickaxe_hoe_insects);
             break;
 
             case "watering_can":
-                if ((tilemap_get_at_pixel(_map_id, _gx, _gy) == 72) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _gx, _gy) == 0)) {
-                    tilemap_set_at_pixel(_map_id, 168, _gx, _gy);
-                    other.energy -= 2;
+                var _waw = _eff_w;
+                var _wah = _eff_h;
+                var _wox = floor(_waw / 2) * 16;
+                var _woy = floor(_wah / 2) * 16;
+                var _watered_any = false;
+                for (var _wty = 0; _wty < _wah; _wty++) {
+                    for (var _wtx = 0; _wtx < _waw; _wtx++) {
+                        var _wtx_px = _gx - _wox + _wtx * 16;
+                        var _wty_px = _gy - _woy + _wty * 16;
+                        if ((tilemap_get_at_pixel(_map_id, _wtx_px, _wty_px) == 72) &&
+                            (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _wtx_px, _wty_px) == 0)) {
+                            tilemap_set_at_pixel(_map_id, 168, _wtx_px, _wty_px);
+                            _watered_any = true;
+                        }
+                        var _wcrop = instance_position(_wtx_px + 8, _wty_px + 8, obj_crop);
+                        if (_wcrop != noone) {
+                            _wcrop.is_watered = true;
+                            if (_tier_stats.water_persists_next_day) _wcrop.persistent_water = true;
+                        }
+                    }
                 }
-                
-                var _watered_crop = instance_position(_gx + 8, _gy + 8, obj_crop);
-                if (_watered_crop != noone) {
-                    _watered_crop.is_watered = true;
-                }
-
+                if (_watered_any && !_skip_energy) other.energy -= 2;
                 other.frames_action = 8;
                 other.action_sprite_tool = sprite_player_watering_can_watering;
                 scr_set_player_action_sprites(sprite_player_skin_watering, sprite_player_hair_watering, sprite_player_clothes_watering, sprite_player_eyes_watering);
@@ -164,7 +216,7 @@ function scr_use_item(_item_data, _gx, _gy) {
                     if (_is_empty) {
                         inventory_drop_item("chest", 1, _chest_to_remove.x + 8, _chest_to_remove.y + 8);
                         instance_destroy(_chest_to_remove);
-                        other.energy -= 2;
+                        if (!_skip_energy) other.energy -= 2;
                     } else {
                         scr_notify("No se pueden quitar cofres con articulos adentro");
                     }
@@ -197,16 +249,30 @@ function scr_use_item(_item_data, _gx, _gy) {
                         if (_tree_to_remove == noone) _tree_to_remove = instance_position(_target_x, _target_y, obj_tree);
                         show_debug_message("  tree_to_remove=" + string(_tree_to_remove));
                         if (_tree_to_remove != noone) {
-                            inventory_drop_item("wood", irandom_range(3, 5), _tree_to_remove.x, _tree_to_remove.y);
-                            instance_destroy(_tree_to_remove);
-                            other.energy -= 2;
+                            audio_play_sound(axe, 1, false);
+                            var _dmg_ax = 1 + _tier_stats.hits_required;
+                            _tree_to_remove.hits_remaining -= _dmg_ax;
+                            if (_tree_to_remove.hits_remaining <= 0) {
+                                var _wood_qty = irandom_range(3, 5);
+                                if (random(1) < _tier_stats.double_drop_chance) _wood_qty *= 2;
+                                inventory_drop_item("wood", _wood_qty, _tree_to_remove.x, _tree_to_remove.y);
+                                instance_destroy(_tree_to_remove);
+                            }
+                            if (!_skip_energy) other.energy -= 2;
                         }
                     } else if (_item_key == "pickaxe") {
                         var _rock_to_remove = instance_position(_target_x, _target_y, obj_rock);
                         if (_rock_to_remove != noone) {
-                            inventory_drop_item("stone", irandom_range(1, 3), _rock_to_remove.x, _rock_to_remove.y);
-                            instance_destroy(_rock_to_remove);
-                            other.energy -= 2;
+                            audio_play_sound(pickaxe, 1, false);
+                            var _dmg_pk = 1 + _tier_stats.hits_required;
+                            _rock_to_remove.hits_remaining -= _dmg_pk;
+                            if (_rock_to_remove.hits_remaining <= 0) {
+                                var _stone_qty = irandom_range(1, 3);
+                                if (random(1) < _tier_stats.double_drop_chance) _stone_qty *= 2;
+                                inventory_drop_item("stone", _stone_qty, _rock_to_remove.x, _rock_to_remove.y);
+                                instance_destroy(_rock_to_remove);
+                            }
+                            if (!_skip_energy) other.energy -= 2;
                         }
                     }
                 }
@@ -416,4 +482,25 @@ function scr_buy_building(_building_name) {
         scr_notify("No se encontro el lugar para " + _building_name);
         return false;
     }
+}
+
+function scr_upgrade_tool(_tool_key) {
+    var _arrays = [obj_inventory.inventory_array, obj_inventory.backpack_array];
+    for (var a = 0; a < 2; a++) {
+        var _arr = _arrays[a];
+        for (var i = 0; i < array_length(_arr); i++) {
+            var _slot = _arr[i];
+            if (is_struct(_slot) && variable_struct_exists(_slot, "key") && _slot.key == _tool_key) {
+                var _cur = variable_struct_exists(_slot, "quality") ? _slot.quality : QUALITY.OXIDADO;
+                if (_cur < QUALITY.VITOLANIO) {
+                    _slot.quality = _cur + 1;
+                    scr_notify(_tool_key + " mejorado a " + global.quality_names[_slot.quality]);
+                } else {
+                    scr_notify(_tool_key + " ya esta al maximo");
+                }
+                return;
+            }
+        }
+    }
+    scr_notify("Herramienta no encontrada: " + _tool_key);
 }

@@ -61,9 +61,13 @@ function start_new_day() {
         // Advance Regular Crops
         with (obj_crop) {
             var _tile = tilemap_get_at_pixel(_map_id, x, y);
-            if (_tile == 168) is_watered = true;
+            if (_tile == 168 || persistent_water) is_watered = true;
             grow();
-            if (_tile == 168) tilemap_set_at_pixel(_map_id, 72, x, y);
+            if (persistent_water) {
+                tilemap_set_at_pixel(_map_id, 168, x, y);
+            } else if (_tile == 168) {
+                tilemap_set_at_pixel(_map_id, 72, x, y);
+            }
         }
         
         // Advance Trees (Independent of watered soil)
@@ -99,6 +103,8 @@ gx = 0;
 gy = 0;
 show_selector = false;
 selector_color = c_white;
+selector_w = 1;
+selector_h = 1;
 
 notifications = ds_list_create();
 

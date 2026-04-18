@@ -94,7 +94,8 @@ function scr_capture_current_room_state() {
         _state.crops[_idx] = {
             type: "crop",
             x: _inst.x, y: _inst.y, crop_type: _inst.crop_type, days_passed: _inst.days_passed,
-            growth_stage: _inst.growth_stage, is_watered: _inst.is_watered, skip_blank_frame: _inst.skip_blank_frame,
+            growth_stage: _inst.growth_stage, is_watered: _inst.is_watered, persistent_water: _inst.persistent_water,
+            skip_blank_frame: _inst.skip_blank_frame,
             days_to_grow: _inst.days_to_grow, max_stages: _inst.max_stages, image_index: _inst.image_index
         };
     }
@@ -110,7 +111,8 @@ function scr_capture_current_room_state() {
             fruit_cycle_days: _inst.fruit_cycle_days,
             days_since_harvest: _inst.days_since_harvest,
             has_fruit: _inst.has_fruit,
-            fruit_item: _inst.fruit_item
+            fruit_item: _inst.fruit_item,
+            hits_remaining: _inst.hits_remaining
         };
     }
     
@@ -168,7 +170,7 @@ function scr_capture_current_room_state() {
     var _ct_state = [];
     for (var i = 0; i < instance_number(obj_common_tree); i++) {
         var _inst = instance_find(obj_common_tree, i);
-        array_push(_ct_state, { x: _inst.x, y: _inst.y, tree_type: _inst.tree_type, growth_stage: _inst.growth_stage });
+        array_push(_ct_state, { x: _inst.x, y: _inst.y, tree_type: _inst.tree_type, growth_stage: _inst.growth_stage, hits_remaining: _inst.hits_remaining });
     }
     _state.common_trees = _ct_state;
 
@@ -176,7 +178,7 @@ function scr_capture_current_room_state() {
     var _rock_state = [];
     for (var i = 0; i < instance_number(obj_rock); i++) {
         var _inst = instance_find(obj_rock, i);
-        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index) });
+        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index), hits_remaining: _inst.hits_remaining });
     }
     _state.rocks = _rock_state;
 
@@ -233,9 +235,11 @@ function scr_restore_room_state(_room_name) {
                     days_since_harvest = variable_struct_exists(_c_data, "days_since_harvest") ? _c_data.days_since_harvest : 0;
                     has_fruit = variable_struct_exists(_c_data, "has_fruit") ? _c_data.has_fruit : false;
                     fruit_item = variable_struct_exists(_c_data, "fruit_item") ? _c_data.fruit_item : crop_type;
+                    hits_remaining = variable_struct_exists(_c_data, "hits_remaining") ? _c_data.hits_remaining : 10;
                 } else {
                     growth_stage = _c_data.growth_stage;
                     is_watered = _c_data.is_watered;
+                    persistent_water = variable_struct_exists(_c_data, "persistent_water") ? _c_data.persistent_water : false;
                     skip_blank_frame = _c_data.skip_blank_frame;
                     image_index = _c_data.image_index;
                 }
@@ -315,8 +319,9 @@ function scr_restore_room_state(_room_name) {
         for (var i = 0; i < array_length(_state.common_trees); i++) {
             var _ct = _state.common_trees[i];
             var _inst = instance_create_layer(_ct.x, _ct.y, "Instances", obj_common_tree);
-            _inst.tree_type    = _ct.tree_type;
-            _inst.growth_stage = _ct.growth_stage;
+            _inst.tree_type      = _ct.tree_type;
+            _inst.growth_stage   = _ct.growth_stage;
+            _inst.hits_remaining = variable_struct_exists(_ct, "hits_remaining") ? _ct.hits_remaining : 10;
         }
     }
 
@@ -329,6 +334,7 @@ function scr_restore_room_state(_room_name) {
             var _spr = asset_get_index(_r.sprite_name);
             if (_spr != -1) _inst.sprite_index = _spr;
             _inst.image_speed = 0;
+            _inst.hits_remaining = variable_struct_exists(_r, "hits_remaining") ? _r.hits_remaining : 10;
             _inst.image_index = 0;
         }
     }
@@ -377,12 +383,25 @@ function scr_advance_stored_room_states(_exclude_room_name) {
                 var _ideal = floor((_c_data.days_passed / _c_data.days_to_grow) * _c_data.max_stages);
                 _c_data.growth_stage = clamp(_ideal, 0, _c_data.max_stages);
                 _c_data.image_index = (_c_data.skip_blank_frame && _c_data.growth_stage == 1) ? 0 : _c_data.growth_stage;
-                _c_data.is_watered = false;
+                _c_data.is_watered = (variable_struct_exists(_c_data, "persistent_water") && _c_data.persistent_water);
                 _state.crops[i] = _c_data;
             }
         }
         for (var j = 0; j < array_length(_state.tilled_tiles); j++) {
             if (_state.tilled_tiles[j].tile == 168) _state.tilled_tiles[j].tile = 72;
+        }
+        // Re-water tiles for crops with persistent_water
+        for (var ci = 0; ci < array_length(_state.crops); ci++) {
+            var _cd = _state.crops[ci];
+            if (variable_struct_exists(_cd, "persistent_water") && _cd.persistent_water &&
+                variable_struct_exists(_cd, "type") && _cd.type == "crop") {
+                for (var ti = 0; ti < array_length(_state.tilled_tiles); ti++) {
+                    if (_state.tilled_tiles[ti].x == _cd.x && _state.tilled_tiles[ti].y == _cd.y) {
+                        _state.tilled_tiles[ti].tile = 168;
+                        break;
+                    }
+                }
+            }
         }
         global.room_states[$ _room_name] = _state;
     }
