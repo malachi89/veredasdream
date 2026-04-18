@@ -12,7 +12,15 @@ if (wanders) {
     var _nx = x + wander_dx * wander_speed;
     var _ny = y + wander_dy * wander_speed;
 
-    if (!place_meeting(_nx, _ny, obj_collision)) {
+    var _blocked = place_meeting(_nx, _ny, obj_collision);
+    if (!_blocked) {
+        var _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
+        var _tm_trees     = layer_tilemap_get_id("Tiles_trees");
+        if (_tm_buildings != -1 && tilemap_get_at_pixel(_tm_buildings, _nx, _ny) != 0) _blocked = true;
+        if (_tm_trees     != -1 && tilemap_get_at_pixel(_tm_trees,     _nx, _ny) != 0) _blocked = true;
+    }
+
+    if (!_blocked) {
         x = _nx;
         y = _ny;
         _moving = (wander_dx != 0 || wander_dy != 0);
@@ -38,7 +46,8 @@ if (frame_anim >= _frames) frame_anim = 0;
 image_index  = (dir * _frames) + floor(frame_anim);
 image_speed  = 0;
 sprite_index = _moving ? spr_skin_walk : spr_skin_idle;
-depth        = -bbox_bottom;
+var _counter_layer = layer_get_id("Tiles_blacksmith");
+depth = (_counter_layer != -1) ? layer_get_depth(_counter_layer) + 1 : -bbox_bottom;
 
 cur_skin    = _moving ? spr_skin_walk    : spr_skin_idle;
 cur_eyes    = _moving ? spr_eyes_walk    : spr_eyes_idle;

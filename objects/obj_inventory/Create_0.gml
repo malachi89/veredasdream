@@ -37,6 +37,18 @@ shipping_array     = array_create(max_shipping_slots, -1);
 split_timer = 0;
 split_delay = 10; // Frames entre cada item tomado al mantener presionado
 
+// --- TIENDA ---
+shop_open      = false;
+shop_npc_key   = "";
+shop_scroll    = 0;
+shop_msg       = "";
+shop_msg_timer = 0;
+
+// --- DIALOGO ---
+dialog_open     = false;
+dialog_npc_name = "";
+dialog_text     = "";
+
 // --- FUNCIONES DEL SISTEMA ---
 function update_gui_positions() {
     // --- CALCULO DE POSICION (HOTBAR) ---

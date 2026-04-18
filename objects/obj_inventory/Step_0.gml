@@ -1,3 +1,73 @@
+// === DIALOGO ===
+if (dialog_open) {
+    if (keyboard_check_pressed(vk_escape)) dialog_open = false;
+    exit;
+}
+
+// === TIENDA ===
+if (shop_open) {
+    if (shop_msg_timer > 0) shop_msg_timer--;
+
+    if (keyboard_check_pressed(vk_escape)) {
+        shop_open    = false;
+        shop_npc_key = "";
+        shop_msg     = "";
+    }
+
+    var _shop    = global.shop_data[$ shop_npc_key];
+    var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
+    var _sn      = array_length(_sitems);
+    var _visible = 8;
+
+    var _wheel = mouse_wheel_down() - mouse_wheel_up();
+    shop_scroll = clamp(shop_scroll + _wheel, 0, max(0, _sn - _visible));
+
+    if (mouse_check_button_pressed(mb_left) && _shop != undefined && _shop.available) {
+        var _smx  = device_mouse_x_to_gui(0);
+        var _smy  = device_mouse_y_to_gui(0);
+        var _sgw  = display_get_gui_width();
+        var _sgh  = display_get_gui_height();
+        var _spw  = 520;
+        var _srow = 44;
+        var _spx1 = (_sgw - _spw) / 2;
+        var _spy1 = _sgh * 0.12 + 48;
+
+        for (var _si = 0; _si < _visible; _si++) {
+            var _sidx = _si + shop_scroll;
+            if (_sidx >= _sn) break;
+            var _sry1 = _spy1 + _si * _srow;
+            var _sry2 = _sry1 + _srow - 2;
+            if (_smx >= _spx1 && _smx <= _spx1 + _spw && _smy >= _sry1 && _smy <= _sry2) {
+                var _entry      = _sitems[_sidx];
+                var _can_afford = global.money >= _entry.price_money;
+                var _items_ok   = true;
+                for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
+                    var _req = _entry.price_items[_sj];
+                    if (scr_count_item(_req.key) < _req.qty) { _items_ok = false; break; }
+                }
+                if (_can_afford && _items_ok) {
+                    global.money -= _entry.price_money;
+                    for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
+                        var _req = _entry.price_items[_sj];
+                        scr_remove_item(_req.key, _req.qty);
+                    }
+                    add_item(_entry.item_key, 1);
+                    shop_msg       = "Comprado!";
+                    shop_msg_timer = 90;
+                } else if (!_can_afford) {
+                    shop_msg       = "Fondos insuficientes";
+                    shop_msg_timer = 90;
+                } else {
+                    shop_msg       = "Te faltan materiales";
+                    shop_msg_timer = 90;
+                }
+                break;
+            }
+        }
+    }
+    exit;
+}
+
 if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open)) {
     exit;
 }

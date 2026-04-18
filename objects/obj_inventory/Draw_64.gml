@@ -385,11 +385,151 @@ if (is_struct(hovered_item_data) && !is_struct(held_item)) {
     draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_dkgray, c_dkgray, false);
     draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_silver, c_silver, true);
     draw_set_alpha(1.0);
-    
+
     // Dibujar texto
     draw_set_color(c_white);
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
     draw_text_transformed(_tx + 8, _ty + 8, _tooltip_text, 1.2, 1.2, 0);
+}
+
+// === DIALOGO NPC ===
+if (dialog_open) {
+    var _dgw  = display_get_gui_width();
+    var _dgh  = display_get_gui_height();
+    var _dbw  = _dgw - 80;
+    var _dbh  = 110;
+    var _dbx1 = 40;
+    var _dby1 = _dgh - _dbh - 20;
+    var _dbx2 = _dbx1 + _dbw;
+    var _dby2 = _dby1 + _dbh;
+
+    draw_set_alpha(0.88);
+    draw_roundrect_color_ext(_dbx1, _dby1, _dbx2, _dby2, 10, 10, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_dbx1, _dby1, _dbx2, _dby2, 10, 10, c_white, c_white, true);
+
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_dbx1 + 16, _dby1 + 12, dialog_npc_name, 1.8, 1.8, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+    draw_set_color(c_white);
+    draw_line(_dbx1 + 10, _dby1 + 42, _dbx2 - 10, _dby1 + 42);
+    draw_set_valign(fa_middle);
+    draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, dialog_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+    draw_set_halign(fa_right);
+    draw_set_color(c_silver);
+    draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+}
+
+// === TIENDA ===
+if (shop_open) {
+    var _gw  = display_get_gui_width();
+    var _gh  = display_get_gui_height();
+    var _pw  = 520;
+    var _ph  = 460;
+    var _px1 = (_gw - _pw) / 2;
+    var _py1 = _gh * 0.12;
+    var _px2 = _px1 + _pw;
+    var _py2 = _py1 + _ph;
+
+    var _shop    = global.shop_data[$ shop_npc_key];
+    var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
+    var _sn      = array_length(_sitems);
+    var _visible = 8;
+    var _row     = 44;
+    var _clerk   = variable_struct_exists(global.npc_data, shop_npc_key) ? global.npc_data[$ shop_npc_key].name : shop_npc_key;
+
+    draw_set_alpha(0.72);
+    draw_rectangle_color(0, 0, _gw, _gh, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+
+    draw_set_alpha(0.93);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_silver, c_silver, true);
+
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_px1 + _pw / 2, _py1 + 10, _clerk, 2.2, 2.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+    draw_set_color(c_silver);
+    draw_line(_px1 + 10, _py1 + 46, _px2 - 10, _py1 + 46);
+
+    draw_set_halign(fa_right);
+    draw_set_color(c_silver);
+    draw_text_transformed(_px2 - 14, _py1 + 14, "[ESC] Cerrar", 1.1, 1.1, 0);
+
+    var _list_y = _py1 + 52;
+    var _dmx    = device_mouse_x_to_gui(0);
+    var _dmy    = device_mouse_y_to_gui(0);
+
+    if (_shop == undefined || !_shop.available) {
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text_transformed_color(_px1 + _pw / 2, _py1 + _ph / 2, "Proximamente...", 1.8, 1.8, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
+    } else if (_sn == 0) {
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text_transformed_color(_px1 + _pw / 2, _py1 + _ph / 2, "Sin articulos", 1.8, 1.8, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
+    } else {
+        for (var _i = 0; _i < _visible; _i++) {
+            var _idx  = _i + shop_scroll;
+            if (_idx >= _sn) break;
+            var _entry   = _sitems[_idx];
+            var _idata   = scr_get_item_data(_entry.item_key);
+            var _ry      = _list_y + _i * _row;
+            var _hovered = (_dmx >= _px1 + 6 && _dmx <= _px2 - 6 && _dmy >= _ry && _dmy <= _ry + _row - 2);
+
+            if (_hovered) {
+                draw_set_alpha(0.35);
+                draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, c_white, c_white, false);
+                draw_set_alpha(1.0);
+            }
+
+            if (_idata != undefined) {
+                var _f = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
+                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.4, 1.4, 0, c_white, 1.0);
+                draw_set_halign(fa_left);
+                draw_set_valign(fa_middle);
+                draw_text_transformed_color(_px1 + 50, _ry + _row / 2, _idata.name, 1.4, 1.4, 0, c_white, c_white, c_white, c_white, 1.0);
+            }
+
+            var _price_str = "MXN$ " + string(_entry.price_money);
+            for (var _j = 0; _j < array_length(_entry.price_items); _j++) {
+                var _req      = _entry.price_items[_j];
+                var _req_data = scr_get_item_data(_req.key);
+                var _req_name = (_req_data != undefined) ? _req_data.name : _req.key;
+                _price_str   += " + " + string(_req.qty) + " " + _req_name;
+            }
+            var _can_afford = global.money >= _entry.price_money;
+            var _price_col  = _can_afford ? c_lime : c_red;
+            draw_set_halign(fa_right);
+            draw_set_valign(fa_middle);
+            draw_text_transformed_color(_px2 - 14, _ry + _row / 2, _price_str, 1.3, 1.3, 0, _price_col, _price_col, _price_col, _price_col, 1.0);
+        }
+
+        if (shop_scroll > 0) {
+            draw_set_halign(fa_center);
+            draw_set_valign(fa_middle);
+            draw_text_transformed_color(_px1 + _pw / 2, _list_y - 14, "^", 1.6, 1.6, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
+        }
+        if (shop_scroll + _visible < _sn) {
+            draw_set_halign(fa_center);
+            draw_text_transformed_color(_px1 + _pw / 2, _list_y + _visible * _row, "v", 1.6, 1.6, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
+        }
+    }
+
+    draw_set_color(c_silver);
+    draw_line(_px1 + 10, _py2 - 38, _px2 - 10, _py2 - 38);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_middle);
+    draw_text_transformed_color(_px1 + 14, _py2 - 19, "MXN$ " + string(global.money), 1.4, 1.4, 0, c_lime, c_lime, c_green, c_green, 1.0);
+
+    if (shop_msg_timer > 0) {
+        var _msg_alpha = min(1.0, shop_msg_timer / 20.0);
+        draw_set_halign(fa_right);
+        draw_text_transformed_color(_px2 - 14, _py2 - 19, shop_msg, 1.4, 1.4, 0, c_yellow, c_yellow, c_yellow, c_yellow, _msg_alpha);
+    }
 }
 

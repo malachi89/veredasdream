@@ -437,3 +437,57 @@ global.npc_data = {
     Rosa:       { name: "Rosa",      skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "iridessa",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
     Andres:     { name: "Andrés",    skin: 3, eye_type: "male",   eye_color: "black",  hair_style: "sebastian",  hair_color: "ginger", clothes_color: "red",    dialog_id: -1 },
 };
+
+// --- TIENDAS ---
+// price_items: array de { key, qty } requeridos ademas del dinero
+global.shop_data = {};
+
+global.shop_data[$ "Miraculos"] = {
+    available: true,
+    items: [
+        // PRIMAVERA
+        { item_key: "cherry_seeds",       price_money: 30, price_items: [] },
+        { item_key: "apricot_seeds",      price_money: 25, price_items: [] },
+        { item_key: "strawberry_seeds",   price_money: 40, price_items: [] },
+        { item_key: "spring_onion_seeds", price_money: 10, price_items: [] },
+        { item_key: "potato_seeds",       price_money: 20, price_items: [] },
+        { item_key: "onion_seeds",        price_money: 15, price_items: [] },
+        { item_key: "carrot_seeds",       price_money: 15, price_items: [] },
+        { item_key: "blueberry_seeds",    price_money: 50, price_items: [] },
+        { item_key: "parsnip_seeds",      price_money: 15, price_items: [] },
+        { item_key: "cabbage_seeds",      price_money: 20, price_items: [] },
+        { item_key: "cauliflower_seeds",  price_money: 30, price_items: [] },
+        { item_key: "rice_seeds",         price_money: 25, price_items: [] },
+        { item_key: "broccoli_seeds",     price_money: 25, price_items: [] },
+        { item_key: "asparagus_seeds",    price_money: 35, price_items: [] },
+        // VERANO
+        { item_key: "tomato_seeds",       price_money: 20, price_items: [] },
+        { item_key: "banana_seeds",       price_money: 30, price_items: [] },
+        { item_key: "orange_seeds",       price_money: 35, price_items: [] },
+        { item_key: "mango_seeds",        price_money: 40, price_items: [] },
+        { item_key: "peach_seeds",        price_money: 35, price_items: [] },
+        { item_key: "sunflower_seeds",    price_money: 15, price_items: [] },
+        { item_key: "hot_pepper_seeds",   price_money: 30, price_items: [] },
+        { item_key: "corn_seeds",         price_money: 25, price_items: [] },
+        { item_key: "green_pepper_seeds", price_money: 20, price_items: [] },
+        { item_key: "melon_seeds",        price_money: 50, price_items: [] },
+        { item_key: "watermelon_seeds",   price_money: 50, price_items: [] },
+        { item_key: "cucumber_seeds",     price_money: 20, price_items: [] },
+        { item_key: "eggplant_seeds",     price_money: 25, price_items: [] },
+        { item_key: "pineapple_seeds",    price_money: 60, price_items: [] },
+        { item_key: "green_beans_seeds",  price_money: 25, price_items: [] },
+        { item_key: "adzuki_bean_seeds",  price_money: 30, price_items: [] },
+        { item_key: "wild_berry_seeds",   price_money: 20, price_items: [] },
+        { item_key: "wheat_seeds",        price_money: 10, price_items: [] },
+        { item_key: "aloe_seeds",         price_money: 30, price_items: [] },
+        // OTONO
+        { item_key: "beetroot_seeds",     price_money: 25, price_items: [] },
+        { item_key: "pumpkin_seeds",      price_money: 30, price_items: [] },
+        { item_key: "grapes_seeds",       price_money: 40, price_items: [] },
+        { item_key: "apple_seeds",        price_money: 30, price_items: [] },
+    ]
+};
+
+global.shop_data[$ "Carlos"] = { available: false, items: [] };
+global.shop_data[$ "Pedro"]  = { available: false, items: [] };
+global.shop_data[$ "Jorge"]  = { available: false, items: [] };

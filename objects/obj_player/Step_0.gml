@@ -1,4 +1,14 @@
-if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open)) {
+if (instance_exists(obj_inventory) && obj_inventory.dialog_open) {
+    if (keyboard_check_pressed(ord("E"))) obj_inventory.dialog_open = false;
+    state = STATE.IDLE;
+    frame_anim = 0;
+    image_speed = 0;
+    depth = -bbox_bottom;
+    exit;
+}
+
+if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open))
+    || (instance_exists(obj_inventory) && obj_inventory.shop_open)) {
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
@@ -40,6 +50,30 @@ if (keyboard_check_pressed(ord("F"))) {
             frames_run  = 6;
             instance_destroy(_horse);
         }
+    }
+}
+
+if (keyboard_check_pressed(ord("E")) && !obj_inventory.show_backpack) {
+    var _npc = instance_nearest(x, y, obj_npc);
+    if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
+        var _shop_entry = global.shop_data[$ _npc.npc_key];
+        if (_shop_entry != undefined) {
+            obj_inventory.shop_open      = true;
+            obj_inventory.shop_npc_key   = _npc.npc_key;
+            obj_inventory.shop_scroll    = 0;
+            obj_inventory.shop_msg       = "";
+            obj_inventory.shop_msg_timer = 0;
+        } else {
+            if (obj_inventory.dialog_open) {
+                obj_inventory.dialog_open = false;
+            } else {
+                obj_inventory.dialog_open     = true;
+                obj_inventory.dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
+                obj_inventory.dialog_text     = "Hola campeon, echele ganas";
+            }
+        }
+    } else if (obj_inventory.dialog_open) {
+        obj_inventory.dialog_open = false;
     }
 }
 

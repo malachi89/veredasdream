@@ -611,6 +611,45 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.material_data, _key)) return global.material_data[$ _key];
     return undefined;
 }
+function scr_count_item(_key) {
+    var _inv   = obj_inventory;
+    var _total = 0;
+    for (var i = 0; i < _inv.total_slots; i++) {
+        var _s = _inv.inventory_array[i];
+        if (is_struct(_s) && _s.key == _key) _total += _s.quantity;
+    }
+    for (var i = 0; i < _inv.max_backpack_slots; i++) {
+        var _s = _inv.backpack_array[i];
+        if (is_struct(_s) && _s.key == _key) _total += _s.quantity;
+    }
+    return _total;
+}
+
+function scr_remove_item(_key, _qty) {
+    if (scr_count_item(_key) < _qty) return false;
+    var _inv  = obj_inventory;
+    var _left = _qty;
+    for (var i = 0; i < _inv.total_slots && _left > 0; i++) {
+        var _s = _inv.inventory_array[i];
+        if (is_struct(_s) && _s.key == _key) {
+            var _take = min(_s.quantity, _left);
+            _s.quantity -= _take;
+            _left       -= _take;
+            if (_s.quantity <= 0) _inv.inventory_array[i] = -1;
+        }
+    }
+    for (var i = 0; i < _inv.max_backpack_slots && _left > 0; i++) {
+        var _s = _inv.backpack_array[i];
+        if (is_struct(_s) && _s.key == _key) {
+            var _take = min(_s.quantity, _left);
+            _s.quantity -= _take;
+            _left       -= _take;
+            if (_s.quantity <= 0) _inv.backpack_array[i] = -1;
+        }
+    }
+    return true;
+}
+
 function scr_notify_item(_qty, _name) {
     if (instance_exists(obj_controller)) {
         // Check if an item notification for this item type already exists
