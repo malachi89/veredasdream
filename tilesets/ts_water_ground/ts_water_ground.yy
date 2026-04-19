@@ -1,7 +1,12 @@
 {
   "$GMTileSet":"v1",
   "%Name":"ts_water_ground",
-  "autoTileSets":[],
+  "autoTileSets":[
+    {"$GMAutoTileSet":"","%Name":"at_water1","closed_edge":false,"name":"at_water1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[
+        261,233,234,213,258,237,239,280,257,260,262,283,286,211,208,230,236,232,256,229,214,210,209,206,263,
+        259,235,231,285,281,282,254,228,278,212,205,215,207,287,255,284,253,204,277,252,279,276,
+      ],},
+  ],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,

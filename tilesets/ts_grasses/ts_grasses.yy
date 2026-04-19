@@ -1,16 +1,14 @@
 {
   "$GMTileSet":"v1",
-  "%Name":"ts_grass_deep_forest",
-  "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],},
-  ],
+  "%Name":"ts_grasses",
+  "autoTileSets":[],
   "macroPageTiles":{
     "SerialiseHeight":0,
     "SerialiseWidth":0,
     "TileSerialiseData":[],
   },
-  "name":"ts_grass_deep_forest",
-  "out_columns":31,
+  "name":"ts_grasses",
+  "out_columns":19,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -20,8 +18,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"sprite_ts_grass_deep_forest",
-    "path":"sprites/sprite_ts_grass_deep_forest/sprite_ts_grass_deep_forest.yy",
+    "name":"sprite_grasses",
+    "path":"sprites/sprite_grasses/sprite_grasses.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{
@@ -36,5 +34,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":960,
+  "tile_count":350,
 }
