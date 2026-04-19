@@ -85,7 +85,7 @@ function scr_get_room_state(_room_name) {
 
 function scr_capture_current_room_state() {
     var _room_name = room_get_name(room);
-    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [] };
     
     // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
@@ -150,6 +150,18 @@ function scr_capture_current_room_state() {
             x: _inst.x,
             y: _inst.y,
             dir: _inst.dir
+        });
+    }
+
+    // Capture Farm Animals
+    for (var i = 0; i < instance_number(obj_farm_animal); i++) {
+        var _inst = instance_find(obj_farm_animal, i);
+        array_push(_state.animals, {
+            x:           _inst.x,
+            y:           _inst.y,
+            animal_type: _inst.animal_type,
+            variant:     _inst.variant,
+            dir:         _inst.dir
         });
     }
 
@@ -309,6 +321,26 @@ function scr_restore_room_state(_room_name) {
             if (_obj != -1) {
                 var _inst = instance_create_layer(_h_data.x, _h_data.y, "Instances", _obj);
                 if (variable_instance_exists(_inst, "dir")) _inst.dir = _h_data.dir;
+            }
+        }
+    }
+
+    // Restore Farm Animals
+    if (variable_struct_exists(_state, "animals")) {
+        with (obj_farm_animal) instance_destroy();
+        for (var i = 0; i < array_length(_state.animals); i++) {
+            var _a = _state.animals[i];
+            var _inst = instance_create_layer(_a.x, _a.y, "Instances", obj_farm_animal);
+            with (_inst) {
+                animal_type = _a.animal_type;
+                variant     = _a.variant;
+                dir         = _a.dir;
+                sprite_anim = asset_get_index("sprite_" + animal_type + "_" + variant);
+                if (sprite_anim == -1) sprite_anim = sprite_chicken_white;
+                frame_count = sprite_get_number(sprite_anim);
+                if (frame_count == 32 && idle_type > 3) idle_type = 3;
+                var _data   = global.animal_data[$ animal_type];
+                move_speed  = (_data != undefined) ? _data.move_speed : 0.6;
             }
         }
     }

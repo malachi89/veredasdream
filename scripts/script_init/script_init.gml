@@ -33,6 +33,21 @@ enum HORSE_DIR {
     LEFT = 3
 }
 
+enum ANIMAL_STATE {
+    IDLE,
+    WANDERING
+}
+
+global.animal_data = {
+    chicken: { move_speed: 1.0 },
+    duck:    { move_speed: 0.9 },
+    ostrich: { move_speed: 0.8 },
+    goat:    { move_speed: 0.7 },
+    pig:     { move_speed: 0.6 },
+    sheep:   { move_speed: 0.55 },
+    cow:     { move_speed: 0.5 }
+};
+
 enum ITEM_TYPE {
     MATERIAL,   // Madera, piedra, basura
     TOOL,       // Hacha, pico, regadera

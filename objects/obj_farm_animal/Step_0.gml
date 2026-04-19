@@ -1,0 +1,44 @@
+frame_anim += 0.1;
+
+switch (state) {
+
+    case ANIMAL_STATE.IDLE:
+        if (frame_anim >= 4) frame_anim -= 4;
+        idle_timer -= 1;
+        if (idle_timer <= 0) {
+            dir              = irandom(3);
+            state            = ANIMAL_STATE.WANDERING;
+            frame_anim       = 0;
+            max_wander_steps = irandom_range(60, 180);
+            wander_steps     = max_wander_steps;
+        }
+    break;
+
+    case ANIMAL_STATE.WANDERING:
+        if (frame_anim >= 4) frame_anim -= 4;
+        var _dx = 0, _dy = 0;
+        switch (dir) {
+            case DIR.DOWN:  _dy =  move_speed; break;
+            case DIR.UP:    _dy = -move_speed; break;
+            case DIR.RIGHT: _dx =  move_speed; break;
+            case DIR.LEFT:  _dx = -move_speed; break;
+        }
+        if (!place_meeting(x + _dx, y + _dy, obj_collision)) {
+            x += _dx;
+            y += _dy;
+        } else {
+            dir          = irandom(3);
+            wander_steps = max_wander_steps;
+        }
+        wander_steps -= 1;
+        if (wander_steps <= 0) {
+            state      = ANIMAL_STATE.IDLE;
+            frame_anim = 0;
+            idle_type  = irandom(4);
+            if (frame_count == 32 && idle_type > 3) idle_type = 3;
+            idle_timer = irandom_range(120, 300);
+        }
+    break;
+}
+
+depth = -bbox_bottom;
