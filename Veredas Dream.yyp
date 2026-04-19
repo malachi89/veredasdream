@@ -227,6 +227,7 @@
     {"id":{"name":"script_init","path":"scripts/script_init/script_init.yy",},},
     {"id":{"name":"script_inventory_functions","path":"scripts/script_inventory_functions/script_inventory_functions.yy",},},
     {"id":{"name":"script_player_actions","path":"scripts/script_player_actions/script_player_actions.yy",},},
+    {"id":{"name":"scr_add_animal","path":"scripts/scr_add_animal/scr_add_animal.yy",},},
     {"id":{"name":"axe","path":"sounds/axe/axe.yy",},},
     {"id":{"name":"hoe","path":"sounds/hoe/hoe.yy",},},
     {"id":{"name":"pickaxe","path":"sounds/pickaxe/pickaxe.yy",},},

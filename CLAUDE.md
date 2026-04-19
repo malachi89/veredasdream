@@ -57,6 +57,7 @@ Farm buildings start as placeholder objects (`obj_barn_placeholder`, etc.). `scr
 
 ## Debug Commands (press Enter in-game)
 - `add_item <key> <qty>` — add item to inventory
+- `add_animal <id>` — place a random variant of an animal at mouse position (e.g. `chicken`, `cow`)
 - `upgrade_tool <key>` — upgrade a tool
 - `buy_building <name>` — place a building (names: `chicken_coop`, `barn`, `stable`, `mill`, `greenhouse`)
 

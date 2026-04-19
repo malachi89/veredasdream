@@ -75,6 +75,9 @@ else if (chat_open) {
                         scr_notify("Inventario lleno");
                     }
                 }
+            } else if (_cmd == "add_animal" && array_length(_parts) >= 2) {
+                var _animal = _parts[1];
+                scr_add_animal(_animal);
             } else if (_cmd == "upgrade_tool" && array_length(_parts) >= 2) {
                 var _item = _parts[1];
                 scr_upgrade_tool(_item);
