@@ -49,7 +49,7 @@
   "origin":0,
   "parent":{
     "name":"eyes",
-    "path":"folders/sprites/player_maker/bear/eyes.yy",
+    "path":"folders/sprites/player/bear/eyes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

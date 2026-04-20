@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"hair",
-    "path":"folders/sprites/player_maker/bear/hair.yy",
+    "path":"folders/sprites/player/bear/hair.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

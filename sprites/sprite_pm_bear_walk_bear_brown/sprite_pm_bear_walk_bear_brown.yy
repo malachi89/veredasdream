@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"bear",
-    "path":"folders/sprites/player_maker/bear/bear.yy",
+    "path":"folders/sprites/player/bear/bear.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
@@ -74,7 +74,7 @@
     },
     "name":"sprite_pm_bear_walk_bear_brown",
     "playback":1,
-    "playbackSpeed":30.0,
+    "playbackSpeed":3.0,
     "playbackSpeedType":0,
     "resourceType":"GMSequence",
     "resourceVersion":"2.0",

@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"clothes",
-    "path":"folders/sprites/player_maker/death/clothes.yy",
+    "path":"folders/sprites/player/death/clothes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

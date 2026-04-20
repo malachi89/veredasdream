@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"skin",
-    "path":"folders/sprites/player_maker/death/skin.yy",
+    "path":"folders/sprites/player/death/skin.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

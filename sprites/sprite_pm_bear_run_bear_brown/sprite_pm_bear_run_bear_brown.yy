@@ -49,7 +49,7 @@
   "origin":0,
   "parent":{
     "name":"bear",
-    "path":"folders/sprites/player_maker/bear/bear.yy",
+    "path":"folders/sprites/player/bear/bear.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

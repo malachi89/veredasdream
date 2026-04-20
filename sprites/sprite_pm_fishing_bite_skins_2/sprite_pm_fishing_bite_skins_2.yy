@@ -57,7 +57,7 @@
   "origin":0,
   "parent":{
     "name":"skin",
-    "path":"folders/sprites/player_maker/fishing/skin.yy",
+    "path":"folders/sprites/player/fishing/skin.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

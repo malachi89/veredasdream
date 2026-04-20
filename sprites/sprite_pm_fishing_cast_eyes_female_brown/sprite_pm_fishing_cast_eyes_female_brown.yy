@@ -85,7 +85,7 @@
   "origin":0,
   "parent":{
     "name":"eyes",
-    "path":"folders/sprites/player_maker/fishing/eyes.yy",
+    "path":"folders/sprites/player/fishing/eyes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

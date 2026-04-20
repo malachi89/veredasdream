@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"skin",
-    "path":"folders/sprites/player_maker/bear/skin.yy",
+    "path":"folders/sprites/player/bear/skin.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

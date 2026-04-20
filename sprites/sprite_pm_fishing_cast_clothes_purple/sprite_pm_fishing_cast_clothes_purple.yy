@@ -85,7 +85,7 @@
   "origin":0,
   "parent":{
     "name":"clothes",
-    "path":"folders/sprites/player_maker/fishing/clothes.yy",
+    "path":"folders/sprites/player/fishing/clothes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

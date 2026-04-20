@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"eyes",
-    "path":"folders/sprites/player_maker/death/eyes.yy",
+    "path":"folders/sprites/player/death/eyes.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

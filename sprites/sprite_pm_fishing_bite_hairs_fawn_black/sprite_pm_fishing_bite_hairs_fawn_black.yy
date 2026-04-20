@@ -57,7 +57,7 @@
   "origin":0,
   "parent":{
     "name":"hair",
-    "path":"folders/sprites/player_maker/fishing/hair.yy",
+    "path":"folders/sprites/player/fishing/hair.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

@@ -41,7 +41,7 @@
   "origin":0,
   "parent":{
     "name":"accessories",
-    "path":"folders/sprites/player_maker/death/accessories.yy",
+    "path":"folders/sprites/player/death/accessories.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
