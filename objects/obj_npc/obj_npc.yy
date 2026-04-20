@@ -10,8 +10,8 @@
   "name":"obj_npc",
   "overriddenProperties":[],
   "parent":{
-    "name":"objects",
-    "path":"folders/objects.yy",
+    "name":"game_control",
+    "path":"folders/objects/game_control.yy",
   },
   "parentObjectId":null,
   "persistent":false,
