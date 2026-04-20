@@ -361,6 +361,7 @@
     {"id":{"name":"sprite_interior_sofas","path":"sprites/sprite_interior_sofas/sprite_interior_sofas.yy",},},
     {"id":{"name":"sprite_interior_tables_desks","path":"sprites/sprite_interior_tables_desks/sprite_interior_tables_desks.yy",},},
     {"id":{"name":"sprite_inventory_bar","path":"sprites/sprite_inventory_bar/sprite_inventory_bar.yy",},},
+    {"id":{"name":"sprite_leaf_particle","path":"sprites/sprite_leaf_particle/sprite_leaf_particle.yy",},},
     {"id":{"name":"sprite_material_stone","path":"sprites/sprite_material_stone/sprite_material_stone.yy",},},
     {"id":{"name":"sprite_material_wood","path":"sprites/sprite_material_wood/sprite_material_wood.yy",},},
     {"id":{"name":"sprite_npc_idle_clothes_blue","path":"sprites/sprite_npc_idle_clothes_blue/sprite_npc_idle_clothes_blue.yy",},},
