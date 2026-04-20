@@ -303,7 +303,7 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                     
                     var _in_bounds = gx >= 0 && gy >= 0 && gx < room_width - 16 && gy < room_height - 16;
                     
-                    var _current_tile_at_gxgy = tilemap_get_at_pixel(_map_id, gx, gy); // Use _gx, _gy directly
+                    var _current_tile_at_gxgy = (_map_id != -1) ? tilemap_get_at_pixel(_map_id, gx, gy) : 0; // Use _gx, _gy directly
                     var _is_tillable_ground = (_map_id != -1 && (_current_tile_at_gxgy == 72 || _current_tile_at_gxgy == 168)) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, gx, gy) == 0);
                     
                     _can_actually_place = (_actual_dist <= 32 || _is_placeable) && !_occupied && !_collides_with_player && _in_bounds;
