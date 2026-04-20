@@ -122,6 +122,7 @@ global.pending_player_y = 0;
 global.pending_player_dir = DIR.DOWN;
 global.farm_populated = false;
 global.forest_needs_repopulate = true;
+global.forest_days_since_rare = 0;
 
 sleep_menu_open = false;
 sleep_menu_selection = 0;
