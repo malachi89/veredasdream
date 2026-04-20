@@ -354,6 +354,136 @@ global.material_data = {
     }
 };
 
+// --- DATOS DE RECOLECCIÓN DEL BOSQUE ---
+// Sell prices by rarity: 1=5, 2=12, 3=25, 4=60, 5=150
+global.forage_data = {};
+var _fd = global.forage_data;
+
+// Mushrooms (subimg 0–77)
+_fd[$ "forage_m00"] = { name: "Champiñón de Campo",      subimg: 0,  rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m01"] = { name: "Boleto Noble",             subimg: 1,  rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m02"] = { name: "Níscalo de Pinar",         subimg: 2,  rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m03"] = { name: "Amanita de los Césares",   subimg: 3,  rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m04"] = { name: "Rebozuelo Dorado",         subimg: 4,  rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m05"] = { name: "Trompeta de la Muerte",    subimg: 5,  rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m06"] = { name: "Seta de Cardo",            subimg: 6,  rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m07"] = { name: "Morilla de Primavera",     subimg: 7,  rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m08"] = { name: "Trufa Negra",              subimg: 8,  rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 150 };
+_fd[$ "forage_m09"] = { name: "Seta de San Jorge",        subimg: 9,  rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m10"] = { name: "Oreja de Judas",           subimg: 10, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m11"] = { name: "Hongo Blanco",             subimg: 11, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m12"] = { name: "Seta de Pino",             subimg: 12, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m13"] = { name: "Pie Azul",                 subimg: 13, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m14"] = { name: "Lengua de Gato",           subimg: 14, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m15"] = { name: "Carbonera de Otoño",       subimg: 15, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m16"] = { name: "Parasol Gigante",          subimg: 16, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m17"] = { name: "Seta de Chopo",            subimg: 17, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m18"] = { name: "Rebozuelo Naranja",        subimg: 18, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m19"] = { name: "Boleto Bayo",              subimg: 19, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m20"] = { name: "Seta de Mayo",             subimg: 20, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m21"] = { name: "Amanita Rojiza",           subimg: 21, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m22"] = { name: "Champiñón Silvestre",      subimg: 22, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m23"] = { name: "Seta de Ostra",            subimg: 23, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m24"] = { name: "Boleto Reticulado",        subimg: 24, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m25"] = { name: "Seta Engañosa",            subimg: 25, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m26"] = { name: "Níscalo de Sangre",        subimg: 26, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m27"] = { name: "Trompeta Amarilla",        subimg: 27, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m28"] = { name: "Seta de Brezo",            subimg: 28, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m29"] = { name: "Hongo Rojo",               subimg: 29, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m30"] = { name: "Seta de Encina",           subimg: 30, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m31"] = { name: "Boleto Real",              subimg: 31, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m32"] = { name: "Seta de Musgo",            subimg: 32, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m33"] = { name: "Amanita Citrina",          subimg: 33, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m34"] = { name: "Seta de Prados",           subimg: 34, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m35"] = { name: "Bola de Nieve",            subimg: 35, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m36"] = { name: "Seta de Haya",             subimg: 36, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m37"] = { name: "Boleto de Verano",         subimg: 37, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m38"] = { name: "Seta de Roble",            subimg: 38, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m39"] = { name: "Rebozuelo de Canal",       subimg: 39, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m40"] = { name: "Seta de Abeto",            subimg: 40, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m41"] = { name: "Amanita Pantera",          subimg: 41, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m42"] = { name: "Seta de Jaral",            subimg: 42, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m43"] = { name: "Boleto de Pino",           subimg: 43, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m44"] = { name: "Seta de Castaño",          subimg: 44, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m45"] = { name: "Trompeta Gris",            subimg: 45, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m46"] = { name: "Seta de Aliso",            subimg: 46, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m47"] = { name: "Champiñón de Bosque",      subimg: 47, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m48"] = { name: "Seta de Abedul",           subimg: 48, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m49"] = { name: "Boleto Elegante",          subimg: 49, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m50"] = { name: "Seta de Sauce",            subimg: 50, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m51"] = { name: "Amanita Muscaria",         subimg: 51, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m52"] = { name: "Seta de Olmo",             subimg: 52, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m53"] = { name: "Rebozuelo Amatista",       subimg: 53, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m54"] = { name: "Seta de Enebro",           subimg: 54, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m55"] = { name: "Boleto de Cueva",          subimg: 55, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m56"] = { name: "Seta de Gruta",            subimg: 56, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m57"] = { name: "Champiñón de Arena",       subimg: 57, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m58"] = { name: "Seta de Duna",             subimg: 58, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m59"] = { name: "Boleto de Costa",          subimg: 59, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m60"] = { name: "Seta de Pantano",          subimg: 60, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m61"] = { name: "Amanita Vaginata",         subimg: 61, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m62"] = { name: "Seta de Turbera",          subimg: 62, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m63"] = { name: "Rebozuelo Velloso",        subimg: 63, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m64"] = { name: "Seta de Breñal",           subimg: 64, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m65"] = { name: "Boleto de Risco",          subimg: 65, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m66"] = { name: "Seta de Cumbre",           subimg: 66, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m67"] = { name: "Champiñón de Pasto",       subimg: 67, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_m68"] = { name: "Seta de Valle",            subimg: 68, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m69"] = { name: "Boleto de Cañada",         subimg: 69, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m70"] = { name: "Seta de Arroyo",           subimg: 70, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m71"] = { name: "Amanita de Huevo",         subimg: 71, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m72"] = { name: "Seta de Manantial",        subimg: 72, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m73"] = { name: "Rebozuelo de Fuente",      subimg: 73, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_m74"] = { name: "Seta de Cascada",          subimg: 74, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_m75"] = { name: "Boleto de Niebla",         subimg: 75, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m76"] = { name: "Seta de Bruma",            subimg: 76, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_m77"] = { name: "Champiñón Lunar",          subimg: 77, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 150 };
+
+// Herbs (subimg 78–96)
+_fd[$ "forage_h00"] = { name: "Hierbabuena",        subimg: 78, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_h01"] = { name: "Romero de Monte",    subimg: 79, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_h02"] = { name: "Tomillo de Roca",    subimg: 80, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_h03"] = { name: "Salvia del Bosque",  subimg: 81, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h04"] = { name: "Albahaca Silvestre", subimg: 82, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h05"] = { name: "Lavanda de Valle",   subimg: 83, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_h06"] = { name: "Orégano de Sierra",  subimg: 84, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h07"] = { name: "Menta de Agua",      subimg: 85, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h08"] = { name: "Poleo",              subimg: 86, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h09"] = { name: "Eneldo",             subimg: 87, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h10"] = { name: "Perejil de Selva",   subimg: 88, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h11"] = { name: "Cilantro de Loma",   subimg: 89, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h12"] = { name: "Laurel de Cañada",   subimg: 90, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_h13"] = { name: "Mejorana",           subimg: 91, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_h14"] = { name: "Estragón",           subimg: 92, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_h15"] = { name: "Anís de Estepa",     subimg: 93, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_h16"] = { name: "Hinojo",             subimg: 94, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_h17"] = { name: "Comino de Páramo",   subimg: 95, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_h18"] = { name: "Azafrán del Bosque", subimg: 96, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 150 };
+
+// Flowers (subimg 97–118)
+_fd[$ "forage_f00"] = { name: "Margarita",           subimg: 97,  rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_f01"] = { name: "Amapola",             subimg: 98,  rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_f02"] = { name: "Lirio de Agua",       subimg: 99,  rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f03"] = { name: "Orquídea Selvática",  subimg: 100, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_f04"] = { name: "Rosa Silvestre",      subimg: 101, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_f05"] = { name: "Girasol de Monte",    subimg: 102, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_f06"] = { name: "Tulipán de Valle",    subimg: 103, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f07"] = { name: "Violeta de Bosque",   subimg: 104, rarity: 1, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 5   };
+_fd[$ "forage_f08"] = { name: "Jazmín de Noche",     subimg: 105, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_f09"] = { name: "Clavel de Aire",      subimg: 106, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f10"] = { name: "Hortensia",           subimg: 107, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f11"] = { name: "Azucena de Río",      subimg: 108, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f12"] = { name: "Narciso",             subimg: 109, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f13"] = { name: "Pensamiento",         subimg: 110, rarity: 2, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 12  };
+_fd[$ "forage_f14"] = { name: "Dalia de Sierra",     subimg: 111, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f15"] = { name: "Camelia",             subimg: 112, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_f16"] = { name: "Crisantemo",          subimg: 113, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f17"] = { name: "Gladiolo",            subimg: 114, rarity: 3, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 25  };
+_fd[$ "forage_f18"] = { name: "Gardenia",            subimg: 115, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_f19"] = { name: "Magnolio",            subimg: 116, rarity: 4, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 60  };
+_fd[$ "forage_f20"] = { name: "Loto Azul",           subimg: 117, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 150 };
+_fd[$ "forage_f21"] = { name: "Orquídea de Cristal", subimg: 118, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 150 };
+
 // --- SISTEMA DE PROGRESIÓN DE HERRAMIENTAS ---
 // global.tool_progression[$ "key"][QUALITY_tier] = { stats }
 // hits_required: daño por golpe = 1 + hits_required (recursos tienen 10 HP base)

@@ -230,6 +230,7 @@
     {"id":{"name":"scr_add_animal","path":"scripts/scr_add_animal/scr_add_animal.yy",},},
     {"id":{"name":"scr_advance_common_trees","path":"scripts/scr_advance_common_trees/scr_advance_common_trees.yy",},},
     {"id":{"name":"scr_populate_farm","path":"scripts/scr_populate_farm/scr_populate_farm.yy",},},
+    {"id":{"name":"scr_populate_forest","path":"scripts/scr_populate_forest/scr_populate_forest.yy",},},
     {"id":{"name":"script_init","path":"scripts/script_init/script_init.yy",},},
     {"id":{"name":"script_inventory_functions","path":"scripts/script_inventory_functions/script_inventory_functions.yy",},},
     {"id":{"name":"script_player_actions","path":"scripts/script_player_actions/script_player_actions.yy",},},

@@ -51,6 +51,7 @@ function start_new_day() {
         }
     }
 
+    global.forest_needs_repopulate = true;
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();
 
@@ -120,6 +121,7 @@ global.pending_player_x = 0;
 global.pending_player_y = 0;
 global.pending_player_dir = DIR.DOWN;
 global.farm_populated = false;
+global.forest_needs_repopulate = true;
 
 sleep_menu_open = false;
 sleep_menu_selection = 0;

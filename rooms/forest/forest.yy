@@ -530,7 +530,7 @@
           1,307,-38,-2147483648,1,301,-4,-2147483648,1,300,-45,-2147483648,1,300,-75,-2147483648,1,300,-143,-2147483648,
           1,315,-261,-2147483648,1,300,-15,-2147483648,1,338,-331,-2147483648,1,311,-161,-2147483648,4,302,-2147483648,
           302,302,-396,-2147483648,1,338,-294,-2147483648,1,311,-1354,-2147483648,1,338,-1263,-2147483648,
-        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_grasses","path":"tilesets/ts_grasses/ts_grasses.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_grasses","path":"tilesets/ts_grasses/ts_grasses.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
     {"$GMRTileLayer":"","%Name":"Tiles_grass","depth":400,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_grass","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":313,"SerialiseWidth":313,"TileCompressedData":[
           -108,202,-37,69,-276,202,-37,69,-1107,202,-18,200,-2,158,-293,202,-19,200,-2,158,-292,202,-20,200,1,
           158,-124,202,-8,156,-160,202,-20,200,-2,158,-40,202,-4,158,-7,202,-6,158,-62,202,-15,156,-8,202,-10,

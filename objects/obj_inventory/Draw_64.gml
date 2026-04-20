@@ -64,9 +64,10 @@ for (var i = 0; i < total_slots; i++) {
             var _cc = slot_size / 2;
             
             // Ajuste para centrar el icono
-            var _draw_off_x = _off;
-            
-            draw_sprite_ext(_data.sprite, _f, _cx + _cc - _draw_off_x, _cy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+            var _sz    = 16 / sprite_get_width(_data.sprite);
+            var _cox   = (sprite_get_width(_data.sprite)  / 2 - sprite_get_xoffset(_data.sprite)) * _sz * _icon_scale;
+            var _coy   = (sprite_get_height(_data.sprite) / 2 - sprite_get_yoffset(_data.sprite)) * _sz * _icon_scale;
+            draw_sprite_ext(_data.sprite, _f, _cx + _cc - _cox, _cy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
             
             // DIBUJAR CANTIDAD
             if (_qty > 1) {
@@ -141,9 +142,10 @@ if (show_backpack) {
 
                 var _cc = _grid_slot_size / 2;
                 
-                var _draw_off_x = _off;
-                
-                draw_sprite_ext(_b_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+                var _sz  = 16 / sprite_get_width(_b_data.sprite);
+                var _cox = (sprite_get_width(_b_data.sprite)  / 2 - sprite_get_xoffset(_b_data.sprite)) * _sz * _icon_scale;
+                var _coy = (sprite_get_height(_b_data.sprite) / 2 - sprite_get_yoffset(_b_data.sprite)) * _sz * _icon_scale;
+                draw_sprite_ext(_b_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
                 
                 if (_b_qty > 1) {
                     draw_set_halign(fa_right);
@@ -207,9 +209,10 @@ if (show_shipping) {
 
                 var _cc = _grid_slot_size / 2;
 
-                var _draw_off_x = _off;
-
-                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+                var _sz  = 16 / sprite_get_width(_s_data.sprite);
+                var _cox = (sprite_get_width(_s_data.sprite)  / 2 - sprite_get_xoffset(_s_data.sprite)) * _sz * _icon_scale;
+                var _coy = (sprite_get_height(_s_data.sprite) / 2 - sprite_get_yoffset(_s_data.sprite)) * _sz * _icon_scale;
+                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
 
                 
                 if (_s_qty > 1) {
@@ -273,9 +276,10 @@ if (show_chest && instance_exists(current_chest_id)) {
 
                 var _cc = _grid_slot_size / 2;
 
-                var _draw_off_x = _off;
-
-                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _draw_off_x, _sy + _cc - _off, _icon_scale, _icon_scale, 0, c_white, 1);
+                var _sz  = 16 / sprite_get_width(_s_data.sprite);
+                var _cox = (sprite_get_width(_s_data.sprite)  / 2 - sprite_get_xoffset(_s_data.sprite)) * _sz * _icon_scale;
+                var _coy = (sprite_get_height(_s_data.sprite) / 2 - sprite_get_yoffset(_s_data.sprite)) * _sz * _icon_scale;
+                draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
 
                 
                 if (_s_qty > 1) {
@@ -307,9 +311,10 @@ if (is_struct(held_item)) {
             _f += held_item.quality;
         }
 
-        var _draw_h_off_x = _h_off;
-        
-        draw_sprite_ext(_h_data.sprite, _f, _mx - _draw_h_off_x, _my - _h_off, _h_scl, _h_scl, 0, c_white, 0.8);
+        var _sz  = 16 / sprite_get_width(_h_data.sprite);
+        var _cox = (sprite_get_width(_h_data.sprite)  / 2 - sprite_get_xoffset(_h_data.sprite)) * _sz * _h_scl;
+        var _coy = (sprite_get_height(_h_data.sprite) / 2 - sprite_get_yoffset(_h_data.sprite)) * _sz * _h_scl;
+        draw_sprite_ext(_h_data.sprite, _f, _mx - _cox, _my - _coy, _h_scl * _sz, _h_scl * _sz, 0, c_white, 0.8);
         
         // DIBUJAR CANTIDAD EN MANO
         if (_h_qty > 1) {
@@ -489,7 +494,8 @@ if (shop_open) {
 
             if (_idata != undefined) {
                 var _f = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
-                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.4, 1.4, 0, c_white, 1.0);
+                var _sz = 16 / sprite_get_width(_idata.sprite);
+                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.4 * _sz, 1.4 * _sz, 0, c_white, 1.0);
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
                 draw_text_transformed_color(_px1 + 50, _ry + _row / 2, _idata.name, 1.4, 1.4, 0, c_white, c_white, c_white, c_white, 1.0);

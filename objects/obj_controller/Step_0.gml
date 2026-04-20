@@ -22,6 +22,13 @@ if (current_room_name != _room_name) {
     update_tilesets();
 }
 
+if (global.forest_needs_repopulate && _room_name == "forest"
+        && instance_exists(obj_player) && instance_exists(obj_inventory)) {
+    global.forest_needs_repopulate = false;
+    scr_populate_forest();
+    scr_capture_current_room_state();
+}
+
 if (global.pending_player_room_name == _room_name && instance_exists(obj_player)) {
     obj_player.x = global.pending_player_x;
     obj_player.y = global.pending_player_y;
