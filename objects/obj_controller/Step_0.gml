@@ -1,6 +1,11 @@
+if (room_get_name(room) == "rm_main_menu") exit;
+
 if (!variable_instance_exists(id, "season")) season = 0;
 
-if (load_needs_apply && instance_exists(obj_player) && instance_exists(obj_inventory)) {
+if (load_needs_apply) {
+    if (!instance_exists(obj_player)) instance_create_layer(0, 0, "Instances", obj_player);
+    if (!instance_exists(obj_inventory)) instance_create_layer(0, 0, "Instances", obj_inventory);
+    
     scr_apply_loaded_game(pending_loaded_game);
     pending_loaded_game = undefined;
     load_needs_apply = false;

@@ -578,6 +578,8 @@
   "resources":[
     {"id":{"name":"fnt_pixel_operator","path":"fonts/fnt_pixel_operator/fnt_pixel_operator.yy",},},
     {"id":{"name":"obj_barn_placeholder","path":"objects/obj_barn_placeholder/obj_barn_placeholder.yy",},},
+    {"id":{"name":"obj_main_menu","path":"objects/obj_main_menu/obj_main_menu.yy",},},
+    {"id":{"name":"rm_main_menu","path":"rooms/rm_main_menu/rm_main_menu.yy",},},
     {"id":{"name":"obj_barn","path":"objects/obj_barn/obj_barn.yy",},},
     {"id":{"name":"obj_bed","path":"objects/obj_bed/obj_bed.yy",},},
     {"id":{"name":"obj_camera","path":"objects/obj_camera/obj_camera.yy",},},
@@ -1004,6 +1006,7 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
+    {"roomId":{"name":"rm_main_menu","path":"rooms/rm_main_menu/rm_main_menu.yy",},},
     {"roomId":{"name":"farm","path":"rooms/farm/farm.yy",},},
     {"roomId":{"name":"farm_house","path":"rooms/farm_house/farm_house.yy",},},
     {"roomId":{"name":"town","path":"rooms/town/town.yy",},},

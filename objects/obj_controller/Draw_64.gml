@@ -1,3 +1,5 @@
+if (room_get_name(room) == "rm_main_menu") exit;
+
 var _gui_w = display_get_gui_width();
 var _hour_str = string(global.game_hour);
 if (global.game_hour < 10) _hour_str = "0" + _hour_str;

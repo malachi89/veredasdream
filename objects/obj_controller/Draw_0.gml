@@ -1,3 +1,5 @@
+if (room_get_name(room) == "rm_main_menu") exit;
+
 // 1. Dibujo del Cursor Fantasma (Siempre visible para orientar al jugador)
 draw_set_alpha(0.15);
 draw_rectangle_color(gx, gy, gx + 15, gy + 15, c_white, c_white, c_white, c_white, true);

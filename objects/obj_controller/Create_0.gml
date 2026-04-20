@@ -140,7 +140,7 @@ chat_history = []; // Optional: to store previous commands
 
 current_room_name = room_get_name(room);
 pending_loaded_game = scr_read_save_game();
-load_needs_apply = is_struct(pending_loaded_game);
+load_needs_apply = false; // Menu handles it
 
 // Fade variables for day start
 fade_alpha = 1.0;
