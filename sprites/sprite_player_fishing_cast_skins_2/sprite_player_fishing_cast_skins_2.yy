@@ -118,7 +118,7 @@
     },
     "name":"sprite_player_fishing_cast_skins_2",
     "playback":1,
-    "playbackSpeed":30.0,
+    "playbackSpeed":3.0,
     "playbackSpeedType":0,
     "resourceType":"GMSequence",
     "resourceVersion":"2.0",

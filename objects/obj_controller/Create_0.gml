@@ -130,6 +130,7 @@ bed_overlap_previous = false;
 
 // Variables para el resumen de ventas
 shipping_summary_open = false;
+shipping_summary_pending_close = false;
 shipping_summary_data = { items: [], total: 0 };
 shipping_summary_scroll = 0; // Por si hay muchos items
 

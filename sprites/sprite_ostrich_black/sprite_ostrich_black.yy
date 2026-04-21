@@ -57,7 +57,7 @@
   "origin":0,
   "parent":{
     "name":"farm_ostriches",
-    "path":"folders/sprites/farm_animals/farm_ostriches.yy",
+    "path":"folders/sprites/animals/farm_animals/farm_ostriches.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

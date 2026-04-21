@@ -2,7 +2,10 @@
   "$GMTileSet":"v1",
   "%Name":"ts_grass_deep_forest",
   "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],},
+    {"$GMAutoTileSet":"","%Name":"at_deep_forest_1","closed_edge":false,"name":"at_deep_forest_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[
+        69,41,42,21,66,45,47,88,65,68,70,91,94,19,16,38,44,40,64,37,22,18,17,14,71,67,43,39,93,89,90,62,36,86,
+        20,13,23,15,95,63,92,61,12,85,60,87,84,
+      ],},
   ],
   "macroPageTiles":{
     "SerialiseHeight":0,

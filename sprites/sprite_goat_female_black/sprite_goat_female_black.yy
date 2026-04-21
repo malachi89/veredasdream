@@ -61,7 +61,7 @@
   "origin":0,
   "parent":{
     "name":"farm_goats",
-    "path":"folders/sprites/farm_animals/farm_goats.yy",
+    "path":"folders/sprites/animals/farm_animals/farm_goats.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

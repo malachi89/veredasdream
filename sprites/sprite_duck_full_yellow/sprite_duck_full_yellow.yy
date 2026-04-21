@@ -61,7 +61,7 @@
   "origin":0,
   "parent":{
     "name":"farm_ducks",
-    "path":"folders/sprites/farm_animals/farm_ducks.yy",
+    "path":"folders/sprites/animals/farm_animals/farm_ducks.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

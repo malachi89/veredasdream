@@ -49,7 +49,7 @@
   "origin":0,
   "parent":{
     "name":"hair",
-    "path":"folders/sprites/player/bear/hair.yy",
+    "path":"folders/sprites/player/mount_bear/hair.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

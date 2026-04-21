@@ -3,11 +3,12 @@ function get_sprite_set(_idle, _walk, _run, _action)
 {
     switch (state)
     {
-        case STATE.IDLE:   return _idle;
-        case STATE.WALK:   return _walk;
-        case STATE.RUN:    return _run;
-        case STATE.ACTING: return _action;
-        default:           return _idle;
+        case STATE.IDLE:    return _idle;
+        case STATE.WALK:    return _walk;
+        case STATE.RUN:     return _run;
+        case STATE.ACTING:  return _action;
+        case STATE.FISHING: return (_action != -1) ? _action : _idle;
+        default:            return _idle;
     }
 }
 
@@ -52,7 +53,7 @@ if (is_riding && _saddle_s != noone) {
     draw_sprite(_saddle_s, image_index, x, y);
 }
 
-// 6. Dibujar Herramienta (Solo si está en estado ACTING y no estamos montando)
-if (state == STATE.ACTING && !is_riding) {
+// 6. Dibujar Herramienta (Solo si está en estado ACTING o FISHING y no estamos montando)
+if ((state == STATE.ACTING || state == STATE.FISHING) && !is_riding) {
     draw_sprite(action_sprite_tool, image_index, x, y);
 }

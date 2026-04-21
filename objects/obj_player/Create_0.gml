@@ -13,6 +13,9 @@ state = STATE.IDLE;
 
 frame_anim = 0;
 
+fishing_substate = FISHING_STATE.CASTING;
+fishing_bite_timer = 0;
+fishing_wait_timer = 0;
 
 move_speed = 1.3;
 move_speed_run = move_speed * 1.5;

@@ -96,6 +96,40 @@ else if (chat_open) {
             } else if (_cmd == "buy_building" && array_length(_parts) >= 2) {
                 var _bname = _parts[1];
                 scr_buy_building(_bname);
+            } else if (_cmd == "set_money" && array_length(_parts) >= 2) {
+                global.money = real(_parts[1]);
+                scr_notify("Dinero: MXN$ " + string(global.money));
+            } else if (_cmd == "set_energy" && array_length(_parts) >= 2) {
+                if (instance_exists(obj_player)) {
+                    obj_player.energy = clamp(real(_parts[1]), 0, obj_player.max_energy);
+                    scr_notify("Energia: " + string(obj_player.energy));
+                }
+            } else if (_cmd == "heal") {
+                if (instance_exists(obj_player)) {
+                    obj_player.energy = obj_player.max_energy;
+                    scr_notify("Energia restaurada");
+                }
+            } else if (_cmd == "set_day" && array_length(_parts) >= 2) {
+                global.day = clamp(real(_parts[1]), 1, global.days_per_season);
+                scr_notify("Dia: " + string(global.day));
+            } else if (_cmd == "set_hour" && array_length(_parts) >= 2) {
+                global.game_hour = clamp(real(_parts[1]), 0, 23);
+                global.game_minute = 0;
+                scr_notify("Hora: " + string(global.game_hour) + ":00");
+            } else if (_cmd == "set_season" && array_length(_parts) >= 2) {
+                var _sname = _parts[1];
+                var _sidx = -1;
+                for (var _si = 0; _si < 4; _si++) {
+                    if (global.season_list[_si] == _sname) { _sidx = _si; break; }
+                }
+                if (_sidx != -1) {
+                    global.season_index = _sidx;
+                    global.season = global.season_list[_sidx];
+                    update_tilesets();
+                    scr_notify("Estacion: " + global.season_names[$ global.season]);
+                } else {
+                    scr_notify("Estacion invalida. Usa: spring summer fall winter");
+                }
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
@@ -181,37 +215,39 @@ if (sleep_menu_open) {
 }
 
 if (shipping_summary_open) {
-    var _mx = device_mouse_x_to_gui(0);
-    var _my = device_mouse_y_to_gui(0);
-    var _cx = display_get_gui_width() * 0.5;
-    var _cy = display_get_gui_height() * 0.5;
-    
-    // Boton "Continuar" (Debe coincidir EXACTAMENTE con el Draw Event)
-    var _tw = 450;
-    var _th = 550;
-    var _ty2 = _cy + (_th / 2) - 40;
-    
-    var _btn_w = 240;
-    var _btn_h = 60;
-    var _btn_x1 = _cx - (_btn_w / 2);
-    var _btn_y1 = _ty2 + 40;
-    var _btn_x2 = _cx + (_btn_w / 2);
-    var _btn_y2 = _btn_y1 + _btn_h;
-    
-    if (mouse_check_button_pressed(mb_left)) {
-        if (point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2)) {
-            shipping_summary_open = false;
-            start_new_day();
-            scr_save_game();
-            scr_notify("Nuevo dia comenzado");
-        }
-    }
-    
-    if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E")) || keyboard_check_pressed(vk_space)) {
+    if (shipping_summary_pending_close) {
         shipping_summary_open = false;
+        shipping_summary_pending_close = false;
         start_new_day();
         scr_save_game();
-        scr_notify("Nuevo día comenzado");
+        scr_notify("Nuevo dia comenzado");
+    } else {
+        var _mx = device_mouse_x_to_gui(0);
+        var _my = device_mouse_y_to_gui(0);
+        var _cx = display_get_gui_width() * 0.5;
+        var _cy = display_get_gui_height() * 0.5;
+
+        // Boton "Continuar" (Debe coincidir EXACTAMENTE con el Draw Event)
+        var _tw = 450;
+        var _th = 550;
+        var _ty2 = _cy + (_th / 2) - 40;
+
+        var _btn_w = 240;
+        var _btn_h = 60;
+        var _btn_x1 = _cx - (_btn_w / 2);
+        var _btn_y1 = _ty2 + 40;
+        var _btn_x2 = _cx + (_btn_w / 2);
+        var _btn_y2 = _btn_y1 + _btn_h;
+
+        if (mouse_check_button_pressed(mb_left)) {
+            if (point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2)) {
+                shipping_summary_pending_close = true;
+            }
+        }
+
+        if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E")) || keyboard_check_pressed(vk_space)) {
+            shipping_summary_pending_close = true;
+        }
     }
 }
 

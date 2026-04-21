@@ -7,7 +7,7 @@ if (instance_exists(obj_inventory) && obj_inventory.dialog_open) {
     exit;
 }
 
-if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open))
+if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open))
     || (instance_exists(obj_inventory) && obj_inventory.shop_open)) {
     state = STATE.IDLE;
     frame_anim = 0;
@@ -79,7 +79,7 @@ if (keyboard_check_pressed(ord("E")) && !obj_inventory.show_backpack) {
 
 if (tool_cooldown > 0) tool_cooldown--;
 
-if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && tool_cooldown <= 0) {
+if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
     var _selected_item = obj_inventory.inventory_array[obj_inventory.selected_slot];
     var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     var _gx = floor(mouse_x / 16) * 16;
@@ -99,7 +99,7 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && tool_cooldow
 var _mx = 0;
 var _my = 0;
 
-if (state != STATE.ACTING) {
+if (state != STATE.ACTING && state != STATE.FISHING) {
     if (_mag == 0) {
         state = STATE.IDLE;
     } else {
@@ -126,10 +126,115 @@ if (state == STATE.ACTING) {
         state = STATE.IDLE;
         frame_anim = 0;
     }
-    
+
     // Cada calidad desplaza el sprite 4 direcciones completas hacia abajo
     var _quality_offset = action_quality * (4 * frames_action);
     image_index = _quality_offset + (dir * frames_action) + floor(frame_anim);
+} else if (state == STATE.FISHING) {
+    if (mouse_check_button_pressed(mb_right)) {
+        state = STATE.IDLE;
+        frame_anim = 0;
+    } else {
+        var _anim_speed = (fishing_substate == FISHING_STATE.WAITING) ? 0.05 : 0.2;
+        frame_anim += _anim_speed;
+
+        switch (fishing_substate) {
+            case FISHING_STATE.CASTING:
+                if (frame_anim >= 15) {
+                    fishing_substate = FISHING_STATE.WAITING;
+                    frame_anim = 0;
+                    fishing_wait_timer = irandom_range(180, 480);
+                    action_sprite_tool = sprite_player_fishing_wait_weapon;
+                    scr_set_player_action_sprites(
+                        sprite_player_fishing_wait_skins_2,
+                        sprite_player_fishing_wait_hairs_fawn_black,
+                        sprite_player_fishing_wait_clothes_purple,
+                        sprite_player_fishing_wait_eyes_female_brown
+                    );
+                }
+            break;
+
+            case FISHING_STATE.WAITING:
+                if (frame_anim >= 4) frame_anim = 0;
+                fishing_wait_timer--;
+                if (fishing_wait_timer <= 0) {
+                    fishing_substate = FISHING_STATE.BITE;
+                    frame_anim = 0;
+                    fishing_bite_timer = 120;
+                    action_sprite_tool = sprite_player_fishing_bite_weapon;
+                    scr_set_player_action_sprites(
+                        sprite_player_fishing_bite_skins_2,
+                        sprite_player_fishing_bite_hairs_fawn_black,
+                        sprite_player_fishing_bite_clothes_purple,
+                        sprite_player_fishing_bite_eyes_female_brown
+                    );
+                    scr_notify("¡Mordió! ¡Haz clic para pescar!");
+                }
+            break;
+
+            case FISHING_STATE.BITE:
+                if (frame_anim >= 8) frame_anim = 7;
+                fishing_bite_timer--;
+                if (mouse_check_button_pressed(mb_left) || keyboard_check_pressed(vk_space)) {
+                    fishing_substate = FISHING_STATE.REELING;
+                    frame_anim = 0;
+                    action_sprite_tool = sprite_player_fishing_reel_weapon;
+                    scr_set_player_action_sprites(
+                        sprite_player_fishing_reel_skins_2,
+                        sprite_player_fishing_reel_hairs_fawn_black,
+                        sprite_player_fishing_reel_clothes_purple,
+                        -1
+                    );
+                } else if (fishing_bite_timer <= 0) {
+                    fishing_substate = FISHING_STATE.WAITING;
+                    frame_anim = 0;
+                    fishing_wait_timer = irandom_range(180, 480);
+                    action_sprite_tool = sprite_player_fishing_wait_weapon;
+                    scr_set_player_action_sprites(
+                        sprite_player_fishing_wait_skins_2,
+                        sprite_player_fishing_wait_hairs_fawn_black,
+                        sprite_player_fishing_wait_clothes_purple,
+                        sprite_player_fishing_wait_eyes_female_brown
+                    );
+                }
+            break;
+
+            case FISHING_STATE.REELING:
+                if (frame_anim >= 4) {
+                    fishing_substate = FISHING_STATE.CATCHING;
+                    frame_anim = 0;
+                    action_sprite_tool = sprite_player_fishing_catch_weapon;
+                    scr_set_player_action_sprites(
+                        sprite_player_fishing_catch_skins_2,
+                        sprite_player_fishing_catch_hairs_fawn_black,
+                        sprite_player_fishing_catch_clothes_purple,
+                        sprite_player_fishing_catch_eyes_female_brown
+                    );
+                }
+            break;
+
+            case FISHING_STATE.CATCHING:
+                if (frame_anim >= 4) {
+                    var _fish_key = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+                    var _fish_data = global.fish_data[$ _fish_key];
+                    obj_inventory.add_item(_fish_key, 1);
+                    energy -= 10;
+                    scr_notify("¡Atrapaste un " + _fish_data.name + "!");
+                    state = STATE.IDLE;
+                    frame_anim = 0;
+                }
+            break;
+        }
+
+        var _fpd = 15;
+        switch (fishing_substate) {
+            case FISHING_STATE.WAITING:  _fpd = 4; break;
+            case FISHING_STATE.BITE:     _fpd = 8; break;
+            case FISHING_STATE.REELING:  _fpd = 4; break;
+            case FISHING_STATE.CATCHING: _fpd = 4; break;
+        }
+        image_index = (dir * _fpd) + floor(frame_anim);
+    }
 } else {
     var _s_idle = is_riding ? sprite_player_horse1_body_idle : sprite_player_idle;
     var _s_walk = is_riding ? sprite_player_horse1_body_walk : sprite_player_walk;

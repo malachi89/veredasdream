@@ -33,7 +33,7 @@
   "origin":0,
   "parent":{
     "name":"bear",
-    "path":"folders/sprites/player/bear/bear.yy",
+    "path":"folders/sprites/animals/wild_animals/bear.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

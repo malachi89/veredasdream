@@ -317,8 +317,22 @@ function scr_use_item(_item_data, _gx, _gy) {
             case "shovel":
                 other.energy -= 2;
                 other.frames_action = 6;
-                other.action_sprite_tool = sprite_player_shovel_shovel; 
+                other.action_sprite_tool = sprite_player_shovel_shovel;
                 scr_set_player_action_sprites(sprite_player_skin_shovel, sprite_player_hair_shovel, sprite_player_clothes_shovel, sprite_player_eyes_shovel);
+            break;
+
+            case "fishing_rod":
+                other.state = STATE.FISHING;
+                other.fishing_substate = FISHING_STATE.CASTING;
+                other.fishing_wait_timer = 0;
+                other.fishing_bite_timer = 0;
+                other.action_sprite_tool = sprite_player_fishing_cast_weapon;
+                scr_set_player_action_sprites(
+                    sprite_player_fishing_cast_skins_2,
+                    sprite_player_fishing_cast_hairs_fawn_black,
+                    sprite_player_fishing_cast_clothes_purple,
+                    sprite_player_fishing_cast_eyes_female_brown
+                );
             break;
         }
     }

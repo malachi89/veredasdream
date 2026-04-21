@@ -31,7 +31,7 @@
   "origin":0,
   "parent":{
     "name":"horse2",
-    "path":"folders/sprites/animals/farm_animals/horse2.yy",
+    "path":"folders/sprites/animals/mount_animals/horse2.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
