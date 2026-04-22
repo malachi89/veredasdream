@@ -104,4 +104,49 @@ function scr_populate_forest() {
             break;
         }
     }
+
+    // --- Lumber area: daily tree replenishment ---
+    var _lx1          = 2970;
+    var _ly1          = 778;
+    var _lx2          = 3876;
+    var _ly2          = 1313;
+    var _lumber_max   = 20;
+    var _lumber_daily = 4;
+    var _tree_radius  = 24;
+    var _tree_types   = ["birch", "mahogany", "pine", "maple"];
+
+    var _existing_count = 0;
+    var _lumber_placed  = [];
+    with (obj_common_tree) {
+        if (x >= _lx1 && x <= _lx2 && y >= _ly1 && y <= _ly2) {
+            _existing_count += 1;
+            array_push(_lumber_placed, { x: x, y: y, r: _tree_radius });
+        }
+    }
+
+    var _is_first_time = (_existing_count == 0);
+    var _spawn_limit   = _is_first_time ? 12 : _lumber_daily;
+    var _to_spawn      = min(_spawn_limit, _lumber_max - _existing_count);
+
+    for (var i = 0; i < _to_spawn; i++) {
+        for (var attempt = 0; attempt < 40; attempt++) {
+            var _px = floor(random_range(_lx1, _lx2 - 1) / 16) * 16;
+            var _py = floor(random_range(_ly1, _ly2 - 1) / 16) * 16;
+            var _ok = true;
+            for (var j = 0; j < array_length(_lumber_placed); j++) {
+                if (point_distance(_px, _py, _lumber_placed[j].x, _lumber_placed[j].y) < (_tree_radius + _lumber_placed[j].r)) {
+                    _ok = false;
+                    break;
+                }
+            }
+            if (!_ok) continue;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+
+            var _inst = instance_create_layer(_px, _py, "Instances", obj_common_tree);
+            _inst.tree_type    = _tree_types[irandom(3)];
+            _inst.growth_stage = _is_first_time ? ((random(1) < 0.7) ? 4 : irandom_range(1, 3)) : 1;
+            array_push(_lumber_placed, { x: _px, y: _py, r: _tree_radius });
+            break;
+        }
+    }
 }

@@ -25,6 +25,7 @@ if (current_room_name != _room_name) {
     scr_restore_room_state(_room_name);
     scr_restore_room_drops(_room_name);
     update_tilesets();
+    scr_setup_forest_trees();
 }
 
 if (global.forest_needs_repopulate && _room_name == "forest"

@@ -712,3 +712,38 @@ function scr_notify_item(_qty, _name) {
     }
 }
 
+function scr_setup_forest_trees() {
+    if (!layer_exists("Tiles_trees")) return;
+    if (layer_exists("Tiles_trees_top")) return;
+
+    var _back_layer = layer_get_id("Tiles_trees");
+    var _back_tm    = layer_tilemap_get_id(_back_layer);
+    if (_back_tm == -1) return;
+
+    var _map_w = tilemap_get_width(_back_tm);
+    var _map_h = tilemap_get_height(_back_tm);
+
+    var _front_layer = layer_create(-2000, "Tiles_trees_top");
+    var _front_tm = layer_tilemap_create(
+        _front_layer,
+        tilemap_get_x(_back_tm),
+        tilemap_get_y(_back_tm),
+        tilemap_get_tileset(_back_tm),
+        _map_w,
+        _map_h
+    );
+
+    for (var _cx = 0; _cx < _map_w; _cx++) {
+        for (var _cy = 0; _cy < _map_h; _cy++) {
+            var _tile = tilemap_get(_back_tm, _cx, _cy);
+            if (_tile != 0) {
+                var _below = (_cy + 1 < _map_h) ? tilemap_get(_back_tm, _cx, _cy + 1) : 0;
+                if (_below != 0) {
+                    tilemap_set(_front_tm, _tile, _cx, _cy);
+                    tilemap_set(_back_tm,  0,     _cx, _cy);
+                }
+            }
+        }
+    }
+}
+
