@@ -123,6 +123,8 @@ global.pending_player_dir = DIR.DOWN;
 global.farm_populated = false;
 global.forest_needs_repopulate = true;
 global.forest_days_since_rare = 0;
+global.forest_days_since_rare_insect = 0;
+global.forest_insects = [];
 
 sleep_menu_open = false;
 sleep_menu_selection = 0;

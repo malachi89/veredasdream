@@ -105,6 +105,74 @@ function scr_populate_forest() {
         }
     }
 
+    // --- Insects ---
+    with (obj_insect) instance_destroy();
+    global.forest_insects = [];
+
+    var _ins_spawn_count = irandom_range(5, 10);
+    var _ikeys      = variable_struct_get_names(global.insect_data);
+    var _ipool      = [];
+    var _iweights   = [];
+    var _itotal     = 0;
+    var _irare_pool = [];
+    for (var i = 0; i < array_length(_ikeys); i++) {
+        var _entry   = global.insect_data[$ _ikeys[i]];
+        var _weight  = 51 - _entry.rarity;
+        array_push(_ipool,    _ikeys[i]);
+        array_push(_iweights, _weight);
+        _itotal += _weight;
+        if (_entry.rarity <= 1) array_push(_irare_pool, _ikeys[i]);
+    }
+
+    var _iplaced       = [];
+    var _ispawned_rare = false;
+
+    for (var i = 0; i < _ins_spawn_count; i++) {
+        var _roll   = random(_itotal);
+        var _cursor = 0;
+        var _chosen = _ipool[0];
+        for (var k = 0; k < array_length(_ipool); k++) {
+            _cursor += _iweights[k];
+            if (_roll < _cursor) { _chosen = _ipool[k]; break; }
+        }
+        if (global.insect_data[$ _chosen].rarity <= 1) _ispawned_rare = true;
+
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            var _ok = true;
+            for (var j = 0; j < array_length(_iplaced); j++) {
+                if (point_distance(_px, _py, _iplaced[j].x, _iplaced[j].y) < _min_dist) { _ok = false; break; }
+            }
+            if (!_ok) continue;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            var _inst        = instance_create_layer(_px, _py, "Instances", obj_insect);
+            _inst.insect_key = _chosen;
+            _inst.sprite_index = global.insect_data[$ _chosen].sprite;
+            array_push(_iplaced, { x: _px, y: _py });
+            array_push(global.forest_insects, { key: _chosen, x: _px, y: _py });
+            break;
+        }
+    }
+
+    global.forest_days_since_rare_insect += 1;
+    if (_ispawned_rare) {
+        global.forest_days_since_rare_insect = 0;
+    } else if (global.forest_days_since_rare_insect >= 3) {
+        global.forest_days_since_rare_insect = 0;
+        var _chosen = _irare_pool[irandom(array_length(_irare_pool) - 1)];
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            var _inst        = instance_create_layer(_px, _py, "Instances", obj_insect);
+            _inst.insect_key = _chosen;
+            _inst.sprite_index = global.insect_data[$ _chosen].sprite;
+            array_push(global.forest_insects, { key: _chosen, x: _px, y: _py });
+            break;
+        }
+    }
+
     // --- Lumber area: daily tree replenishment ---
     var _lx1          = 2970;
     var _ly1          = 778;

@@ -1,0 +1,9 @@
+insect_key       = "insect_ant";
+sprite_index     = global.insect_data[$ insect_key].sprite;
+state            = ANIMAL_STATE.IDLE;
+dir              = choose(DIR.LEFT, DIR.RIGHT);
+frame_anim       = 0;
+move_speed       = 0.5;
+idle_timer       = irandom_range(60, 240);
+wander_steps     = 0;
+max_wander_steps = irandom_range(30, 120);

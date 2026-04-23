@@ -65,7 +65,8 @@ enum ITEM_TYPE {
     WEAPON,     // Espadas, arcos
     CROP,       // El fruto ya cosechado (el tomate, el trigo)
     FISH,       // Peces capturados
-    PLACEABLE   // Objetos que se pueden colocar: cofres, decoracion, etc.
+    PLACEABLE,  // Objetos que se pueden colocar: cofres, decoracion, etc.
+    INSECT      // Insectos capturados con la red
 }
 
 enum TOOL_TYPE {
@@ -761,3 +762,54 @@ for (var _fi = 0; _fi < array_length(_fkeys); _fi++) {
     var _fd = global.fish_data[$ _fkeys[_fi]];
     repeat (_fd.rarity) { array_push(global.fish_pool, _fkeys[_fi]); }
 }
+
+// --- DATOS DE INSECTOS ---
+global.insect_data = {};
+var _ins = global.insect_data;
+
+// Insectos básicos
+_ins[$ "insect_ant"]           = { name: "Hormiga",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_ant,           subimg: 0, rarity: 50, base_sell_price: 10  };
+_ins[$ "insect_caterpillar"]   = { name: "Oruga",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_caterpillar,   subimg: 0, rarity: 50, base_sell_price: 15  };
+_ins[$ "insect_cricket"]       = { name: "Grillo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cricket,       subimg: 0, rarity: 50, base_sell_price: 12  };
+_ins[$ "insect_cicada"]        = { name: "Cigarra",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cicada,        subimg: 0, rarity: 20, base_sell_price: 35  };
+_ins[$ "insect_beach_hopper"]  = { name: "Pulga de Mar",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_beach_hopper,  subimg: 0, rarity: 20, base_sell_price: 30  };
+_ins[$ "insect_bee"]           = { name: "Abeja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_bees,          subimg: 0, rarity: 20, base_sell_price: 40  };
+
+// Caracoles
+_ins[$ "insect_snail_black"]   = { name: "Caracol Negro",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_black,   subimg: 0, rarity: 50, base_sell_price: 20  };
+_ins[$ "insect_snail_green"]   = { name: "Caracol Verde",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_green,   subimg: 0, rarity: 50, base_sell_price: 20  };
+_ins[$ "insect_snail_red"]     = { name: "Caracol Rojo",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_red,     subimg: 0, rarity: 50, base_sell_price: 25  };
+_ins[$ "insect_snail_blue"]    = { name: "Caracol Azul",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_blue,    subimg: 0, rarity: 20, base_sell_price: 50  };
+_ins[$ "insect_snail_pink"]    = { name: "Caracol Rosa",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_pink,    subimg: 0, rarity: 20, base_sell_price: 55  };
+_ins[$ "insect_snail_dark"]    = { name: "Caracol Oscuro",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_dark,    subimg: 0, rarity: 20, base_sell_price: 60  };
+_ins[$ "insect_snail_purple"]  = { name: "Caracol Morado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_purple,  subimg: 0, rarity: 7,  base_sell_price: 120 };
+_ins[$ "insect_snail_golden"]  = { name: "Caracol Dorado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_golden,  subimg: 0, rarity: 2,  base_sell_price: 400 };
+
+// Mariposas y polillas
+_ins[$ "insect_butterfly_common"]          = { name: "Mariposa Común",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_common,          subimg: 0, rarity: 50, base_sell_price: 15  };
+_ins[$ "insect_butterfly_wood_white"]      = { name: "Mariposa Blanca",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_wood_white,      subimg: 0, rarity: 50, base_sell_price: 18  };
+_ins[$ "insect_butterfly_cabbage_white"]   = { name: "Mariposa de la Col",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cabbage_white,   subimg: 0, rarity: 50, base_sell_price: 15  };
+_ins[$ "insect_butterfly_orange_tip"]      = { name: "Aurora",                   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_orange_tip,      subimg: 0, rarity: 50, base_sell_price: 20  };
+_ins[$ "insect_butterfly_cloudless_sulphur"] = { name: "Mariposa Azufre",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cloudless_sulphur, subimg: 0, rarity: 20, base_sell_price: 45 };
+_ins[$ "insect_butterfly_migrant"]         = { name: "Mariposa Migrante",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_migrant,         subimg: 0, rarity: 20, base_sell_price: 50  };
+_ins[$ "insect_butterfly_glider"]          = { name: "Mariposa Planeadora",      type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glider,          subimg: 0, rarity: 20, base_sell_price: 55  };
+_ins[$ "insect_butterfly_hairstreak"]      = { name: "Mariposa Listada",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_hairstreak,      subimg: 0, rarity: 20, base_sell_price: 60  };
+_ins[$ "insect_butterfly_peacock_pansy"]   = { name: "Mariposa Pavo Real",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_peacock_pansy,   subimg: 0, rarity: 20, base_sell_price: 65  };
+_ins[$ "insect_butterfly_red_admiral"]     = { name: "Almirante Rojo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_red_admiral,     subimg: 0, rarity: 20, base_sell_price: 70  };
+_ins[$ "insect_butterfly_eggfly"]          = { name: "Mariposa Huevo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_eggfly,          subimg: 0, rarity: 20, base_sell_price: 60  };
+_ins[$ "insect_butterfly_diadem"]          = { name: "Mariposa Diadema",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_diadem,          subimg: 0, rarity: 7,  base_sell_price: 120 };
+_ins[$ "insect_butterfly_azure"]           = { name: "Mariposa Azur",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_azure,           subimg: 0, rarity: 7,  base_sell_price: 130 };
+_ins[$ "insect_butterfly_european_peacock"] = { name: "Pavo Real Europeo",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_european_peacock, subimg: 0, rarity: 7, base_sell_price: 140 };
+_ins[$ "insect_butterfly_cinnabar_moth"]   = { name: "Polilla Cinabrio",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cinnabar_moth,   subimg: 0, rarity: 7,  base_sell_price: 150 };
+_ins[$ "insect_butterfly_io_moth"]         = { name: "Polilla Io",               type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_io_moth,         subimg: 0, rarity: 7,  base_sell_price: 160 };
+_ins[$ "insect_butterfly_sheep_moth"]      = { name: "Polilla Oveja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_sheep_moth,      subimg: 0, rarity: 7,  base_sell_price: 155 };
+_ins[$ "insect_butterfly_luna_moth"]       = { name: "Polilla Luna",             type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_luna_moth,       subimg: 0, rarity: 7,  base_sell_price: 200 };
+_ins[$ "insect_butterfly_silkmoth"]        = { name: "Polilla de Seda",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_silkmoth,        subimg: 0, rarity: 7,  base_sell_price: 180 };
+_ins[$ "insect_butterfly_monarch"]         = { name: "Mariposa Monarca",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_monarch,         subimg: 0, rarity: 7,  base_sell_price: 175 };
+_ins[$ "insect_butterfly_morpho"]          = { name: "Morpho Azul",              type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_morpho,          subimg: 0, rarity: 2,  base_sell_price: 350 };
+_ins[$ "insect_butterfly_glasswing"]       = { name: "Mariposa Alas de Cristal", type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glasswing,       subimg: 0, rarity: 2,  base_sell_price: 400 };
+_ins[$ "insect_butterfly_ulysses"]         = { name: "Mariposa Ulises",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_ulysses,         subimg: 0, rarity: 2,  base_sell_price: 450 };
+_ins[$ "insect_butterfly_emperor"]         = { name: "Mariposa Emperador",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_emperor,         subimg: 0, rarity: 2,  base_sell_price: 420 };
+_ins[$ "insect_butterfly_periander_metalmark"] = { name: "Metalmark Periander",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_periander_metalmark, subimg: 0, rarity: 2, base_sell_price: 380 };
+_ins[$ "insect_butterfly_birdwing"]        = { name: "Alas de Pájaro",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_birdwing,        subimg: 0, rarity: 1,  base_sell_price: 800 };
+_ins[$ "insect_butterfly_goliath_birdwing"] = { name: "Goliat Alas de Pájaro",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_goliath_birdwing, subimg: 0, rarity: 1, base_sell_price: 1000 };

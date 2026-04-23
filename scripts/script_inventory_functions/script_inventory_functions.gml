@@ -78,6 +78,16 @@ function scr_restore_room_drops(_room_name) {
     }
 }
 
+function scr_restore_forest_insects() {
+    with (obj_insect) instance_destroy();
+    for (var i = 0; i < array_length(global.forest_insects); i++) {
+        var _d    = global.forest_insects[i];
+        var _inst = instance_create_layer(_d.x, _d.y, "Instances", obj_insect);
+        _inst.insect_key   = _d.key;
+        _inst.sprite_index = global.insect_data[$ _d.key].sprite;
+    }
+}
+
 function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [] };
     return global.room_states[$ _room_name];
@@ -195,6 +205,14 @@ function scr_capture_current_room_state() {
     _state.rocks = _rock_state;
 
     global.room_states[$ _room_name] = _state;
+
+    if (_room_name == "forest") {
+        global.forest_insects = [];
+        for (var i = 0; i < instance_number(obj_insect); i++) {
+            var _inst = instance_find(obj_insect, i);
+            array_push(global.forest_insects, { key: _inst.insect_key, x: _inst.x, y: _inst.y });
+        }
+    }
 }
 
 function scr_restore_room_state(_room_name) {
@@ -643,6 +661,7 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.material_data, _key)) return global.material_data[$ _key];
     if (variable_struct_exists(global.forage_data,   _key)) return global.forage_data[$   _key];
     if (variable_struct_exists(global.fish_data,     _key)) return global.fish_data[$     _key];
+    if (variable_struct_exists(global.insect_data,   _key)) return global.insect_data[$   _key];
     return undefined;
 }
 function scr_count_item(_key) {
