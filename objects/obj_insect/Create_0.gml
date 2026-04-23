@@ -7,3 +7,4 @@ move_speed       = 0.5;
 idle_timer       = irandom_range(60, 240);
 wander_steps     = 0;
 max_wander_steps = irandom_range(30, 120);
+flee_timer       = 0;

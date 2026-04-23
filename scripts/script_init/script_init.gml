@@ -44,7 +44,8 @@ enum HORSE_DIR {
 
 enum ANIMAL_STATE {
     IDLE,
-    WANDERING
+    WANDERING,
+    FLEEING
 }
 
 global.animal_data = {
@@ -813,3 +814,10 @@ _ins[$ "insect_butterfly_emperor"]         = { name: "Mariposa Emperador",      
 _ins[$ "insect_butterfly_periander_metalmark"] = { name: "Metalmark Periander",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_periander_metalmark, subimg: 0, rarity: 2, base_sell_price: 380 };
 _ins[$ "insect_butterfly_birdwing"]        = { name: "Alas de Pájaro",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_birdwing,        subimg: 0, rarity: 1,  base_sell_price: 800 };
 _ins[$ "insect_butterfly_goliath_birdwing"] = { name: "Goliat Alas de Pájaro",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_goliath_birdwing, subimg: 0, rarity: 1, base_sell_price: 1000 };
+
+global.insect_pool = [];
+var _ikeys = variable_struct_get_names(global.insect_data);
+for (var _ii = 0; _ii < array_length(_ikeys); _ii++) {
+    var _id = global.insect_data[$ _ikeys[_ii]];
+    repeat (_id.rarity) { array_push(global.insect_pool, _ikeys[_ii]); }
+}

@@ -4,6 +4,14 @@ var _frame_count = sprite_get_number(sprite_index);
 frame_anim += 0.15;
 if (frame_anim >= _frame_count) frame_anim -= _frame_count;
 
+if (state != ANIMAL_STATE.FLEEING && instance_exists(obj_player)) {
+    if (point_distance(x, y, obj_player.x, obj_player.y) < 64) {
+        state      = ANIMAL_STATE.FLEEING;
+        flee_timer = 90;
+        dir        = (obj_player.x < x) ? DIR.RIGHT : DIR.LEFT;
+    }
+}
+
 switch (state) {
     case ANIMAL_STATE.IDLE:
         idle_timer -= 1;
@@ -27,6 +35,21 @@ switch (state) {
             state            = ANIMAL_STATE.IDLE;
             idle_timer       = irandom_range(60, 240);
             max_wander_steps = irandom_range(30, 120);
+        }
+    break;
+
+    case ANIMAL_STATE.FLEEING:
+        var _fdx      = (dir == DIR.LEFT) ? -(move_speed * 2.5) : (move_speed * 2.5);
+        var _check_fx = x + _fdx + (dir == DIR.LEFT ? -4 : 4);
+        if (!instance_position(_check_fx, y, obj_collision)) {
+            x += _fdx;
+        } else {
+            dir = (dir == DIR.LEFT) ? DIR.RIGHT : DIR.LEFT;
+        }
+        flee_timer--;
+        if (flee_timer <= 0) {
+            state      = ANIMAL_STATE.IDLE;
+            idle_timer = irandom_range(60, 240);
         }
     break;
 }

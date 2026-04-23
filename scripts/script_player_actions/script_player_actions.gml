@@ -310,6 +310,7 @@ function scr_use_item(_item_data, _gx, _gy) {
             case "bugnet":
                 other.energy -= 2;
                 other.frames_action = 6;
+                other.bugnet_caught = false;
                 other.action_sprite_tool = sprite_player_bugnet_pickaxe_hoe_insects;
                 scr_set_player_action_sprites(sprite_player_skin_pickaxe_hoe_insects, sprite_player_hair_pickaxe_hoe_insects, sprite_player_clothes_pickaxe_hoe_insects, sprite_player_eyes_pickaxe_hoe_insects);
             break;

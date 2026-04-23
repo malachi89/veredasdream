@@ -28,4 +28,5 @@ frames_run  = 8;
 max_energy = 500;
 energy = 500;
 
-tool_cooldown = 0;
+tool_cooldown  = 0;
+bugnet_caught  = false;

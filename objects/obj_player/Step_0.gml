@@ -90,7 +90,7 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STA
 
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
 
-    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _is_placeable) && !obj_inventory.show_backpack) {
+    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !obj_inventory.show_backpack) {
         scr_use_item(_selected_item, _gx, _gy);
         tool_cooldown = 50;
     }
@@ -122,6 +122,25 @@ if (state != _prev_state) frame_anim = 0;
 
 if (state == STATE.ACTING) {
     frame_anim += 0.2;
+
+    if (!bugnet_caught && floor(frame_anim) >= 5) {
+        var _held     = obj_inventory.inventory_array[obj_inventory.selected_slot];
+        var _held_key = is_struct(_held) ? _held.key : _held;
+        if (_held_key == "bugnet") {
+            bugnet_caught = true;
+            var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
+            if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
+                var _ikey  = _nearest.insect_key;
+                var _idata = global.insect_data[$ _ikey];
+                obj_inventory.add_item(_ikey, 1);
+                scr_notify("¡Atrapaste un " + _idata.name + "!");
+                instance_destroy(_nearest);
+            } else {
+                scr_notify("¡Fallaste!");
+            }
+        }
+    }
+
     if (frame_anim >= frames_action) {
         state = STATE.IDLE;
         frame_anim = 0;
