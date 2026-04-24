@@ -20,7 +20,7 @@ switch (_type) {
             is_connected  = true;
             connect_state = "connected";
             show_debug_message("[NET] Client connected from " + peer_ip);
-            net_handle_handshake_incoming(peer_socket);
+            // Client will send HANDSHAKE first; we just wait.
         } else if (role == NET_ROLE.CLIENT) {
             is_connected  = true;
             connect_state = "connected";
@@ -48,6 +48,3 @@ switch (_type) {
         break;
 }
 
-function net_handle_handshake_incoming(_client_sock) {
-    show_debug_message("[NET] Waiting for HANDSHAKE from client...");
-}
