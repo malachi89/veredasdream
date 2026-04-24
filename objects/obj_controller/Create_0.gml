@@ -90,7 +90,7 @@ function update_tilesets() {
     var _props_layer = layer_get_id("Tiles_seasonal_props"); // New layer for seasonal props
     
     if (_bg_layer != -1) tilemap_tileset(layer_tilemap_get_id(_bg_layer), _tilesets[global.season_index]);
-    if (_details_layer != -1) tilemap_tileset(layer_tilemap_get_id(_details_layer), _tilesets[global.season_index]);
+    if (_details_layer != -1 && room_get_name(room) == "farm") tilemap_tileset(layer_tilemap_get_id(_details_layer), _tilesets[global.season_index]);
     if (_props_layer != -1) tilemap_tileset(layer_tilemap_get_id(_props_layer), _props_tilesets[global.season_index]);
 }
 
