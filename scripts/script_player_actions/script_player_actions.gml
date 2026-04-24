@@ -398,10 +398,10 @@ function scr_use_item(_item_data, _gx, _gy) {
             }
             
             // Gastar item del inventario
-            var _inv_slot = obj_inventory.inventory_array[obj_inventory.selected_slot];
+            var _inv_slot = other.inventory_array[other.selected_slot];
             if (is_struct(_inv_slot)) {
                 _inv_slot.quantity -= 1;
-                if (_inv_slot.quantity <= 0) obj_inventory.inventory_array[obj_inventory.selected_slot] = -1;
+                if (_inv_slot.quantity <= 0) other.inventory_array[other.selected_slot] = -1;
             }
         }
     }
@@ -418,8 +418,8 @@ function scr_use_item(_item_data, _gx, _gy) {
                          _gx >= 0 && _gy >= 0 && _gx < room_width - 16 && _gy < room_height - 16;
                          
         // Verificar que el jugador no esté en el camino
-        if (_can_place && instance_exists(obj_player)) {
-            if (collision_rectangle(_gx, _gy, _gx + 15, _gy + 15, obj_player, false, true)) {
+        if (_can_place) {
+            if (collision_rectangle(_gx, _gy, _gx + 15, _gy + 15, other, false, true)) {
                 _can_place = false;
             }
         }
@@ -432,10 +432,10 @@ function scr_use_item(_item_data, _gx, _gy) {
             var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
             
             // Gastar item del inventario
-            var _inv_slot = obj_inventory.inventory_array[obj_inventory.selected_slot];
+            var _inv_slot = other.inventory_array[other.selected_slot];
             if (is_struct(_inv_slot)) {
                 _inv_slot.quantity -= 1;
-                if (_inv_slot.quantity <= 0) obj_inventory.inventory_array[obj_inventory.selected_slot] = -1;
+                if (_inv_slot.quantity <= 0) other.inventory_array[other.selected_slot] = -1;
             }
         }
     }
@@ -503,7 +503,9 @@ function scr_buy_building(_building_name) {
 }
 
 function scr_upgrade_tool(_tool_key) {
-    var _arrays = [obj_inventory.inventory_array, obj_inventory.backpack_array];
+    var _lp = global.local_player;
+    if (!instance_exists(_lp)) { scr_notify("Sin jugador local"); return; }
+    var _arrays = [_lp.inventory_array, _lp.backpack_array];
     for (var a = 0; a < 2; a++) {
         var _arr = _arrays[a];
         for (var i = 0; i < array_length(_arr); i++) {

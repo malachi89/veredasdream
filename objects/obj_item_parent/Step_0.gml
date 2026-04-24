@@ -31,19 +31,20 @@ if (y >= ystart_pos && vspeed >= 0) {
 if (collect_delay > 0) {
     collect_delay -= 1;
 } else {
-    if (instance_exists(obj_player)) {
-        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
+    var _lp = global.local_player;
+    if (instance_exists(_lp)) {
+        var _dist = point_distance(x, y, _lp.x, _lp.y);
 
         // Efecto magnetico si esta cerca
         if (_dist <= magnetic_range) {
-            var _dir = point_direction(x, y, obj_player.x, obj_player.y);
+            var _dir = point_direction(x, y, _lp.x, _lp.y);
             var _mag_spd = 3;
             x += lengthdir_x(_mag_spd, _dir);
             y += lengthdir_y(_mag_spd, _dir);
         }
 
         if (_dist <= 10) {
-            if (obj_inventory.add_item(item_key, quantity)) {
+            if (_lp.add_item(item_key, quantity)) {
                 scr_remove_room_drop(source_room_name, persistent_drop_id);
 
                 var _name = "Item";

@@ -9,11 +9,12 @@ var _time_text = _hour_str + ":" + _min_str;
 var _total_days = ((global.year - 1) * 4 * global.days_per_season) + (global.season_index * global.days_per_season) + global.day;
 var _day_name = global.day_names[(_total_days - 1) mod 7];
 var _date_text = global.season_names[$ global.season] + " " + string(global.day) + " " + _day_name;
-var _money_text = "MXN$ " + string(global.money);
+var _lp = global.local_player;
+var _money_text = instance_exists(_lp) ? "MXN$ " + string(_lp.money) : "MXN$ 0";
 
 // --- ENERGY BAR (Top-Left) ---
-if (instance_exists(obj_player)) {
-    var _p = obj_player;
+if (instance_exists(_lp)) {
+    var _p = _lp;
     var _ebx = 20;
     var _eby = 20;
     var _ebw = 200;

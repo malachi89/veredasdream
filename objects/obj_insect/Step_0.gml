@@ -4,11 +4,12 @@ var _frame_count = sprite_get_number(sprite_index);
 frame_anim += 0.15;
 if (frame_anim >= _frame_count) frame_anim -= _frame_count;
 
-if (state != ANIMAL_STATE.FLEEING && instance_exists(obj_player)) {
-    if (point_distance(x, y, obj_player.x, obj_player.y) < 64) {
+var _lp = global.local_player;
+if (state != ANIMAL_STATE.FLEEING && instance_exists(_lp)) {
+    if (point_distance(x, y, _lp.x, _lp.y) < 64) {
         state      = ANIMAL_STATE.FLEEING;
         flee_timer = 90;
-        dir        = (obj_player.x < x) ? DIR.RIGHT : DIR.LEFT;
+        dir        = (_lp.x < x) ? DIR.RIGHT : DIR.LEFT;
     }
 }
 

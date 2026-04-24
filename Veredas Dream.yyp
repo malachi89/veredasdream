@@ -591,6 +591,8 @@
   },
   "name":"Veredas Dream",
   "resources":[
+    {"id":{"name":"obj_net","path":"objects/obj_net/obj_net.yy",},},
+    {"id":{"name":"script_net","path":"scripts/script_net/script_net.yy",},},
     {"id":{"name":"fnt_pixel_operator","path":"fonts/fnt_pixel_operator/fnt_pixel_operator.yy",},},
     {"id":{"name":"obj_barn_placeholder","path":"objects/obj_barn_placeholder/obj_barn_placeholder.yy",},},
     {"id":{"name":"obj_barn","path":"objects/obj_barn/obj_barn.yy",},},

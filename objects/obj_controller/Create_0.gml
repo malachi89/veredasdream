@@ -23,7 +23,9 @@ global.game_minute = 0;
 global.game_hour = 6;
 global.day = 1;
 global.year = 1;
-global.money = 500;
+// money vive en obj_player.money (per-player). global.local_player apunta al jugador de esta maquina.
+global.local_player = noone;
+global.net_role = NET_ROLE.NONE;
 
 time_tick_counter = 0;
 time_frames_per_minute = (360 / global.time_multiplier);

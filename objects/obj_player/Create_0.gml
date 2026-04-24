@@ -1,3 +1,15 @@
+// --- IDENTIDAD MP ---
+// player_id: 1 for host/solo player, 2 for remote/client.
+// is_local: true on the machine that controls this player via keyboard/mouse.
+// is_host: true only on the host process (in single-player, the only player is the host).
+if (!variable_instance_exists(id, "player_id")) player_id = 1;
+if (!variable_instance_exists(id, "is_local")) is_local = true;
+if (!variable_instance_exists(id, "is_host")) is_host = true;
+room_name = room_get_name(room);
+
+// Local player pointer (global shortcut used across UI/HUD/scripts).
+if (is_local) global.local_player = id;
+
 // Variables para controlar la animación de acción
 is_riding = false;
 action_sprite_skin = -1;
@@ -30,3 +42,153 @@ energy = 500;
 
 tool_cooldown  = 0;
 bugnet_caught  = false;
+
+// --- ECONOMIA PER-PLAYER ---
+money = 500;
+
+// --- INVENTARIO PER-PLAYER ---
+total_slots        = 10;
+max_backpack_slots = 64;
+max_shipping_slots = 64;
+
+inventory_array = array_create(total_slots, -1);
+backpack_array  = array_create(max_backpack_slots, -1);
+shipping_array  = array_create(max_shipping_slots, -1);
+
+selected_slot = 0;
+held_item     = -1;
+
+// --- UI FLAGS PER-PLAYER ---
+show_backpack    = false;
+show_shipping    = false;
+show_chest       = false;
+current_chest_id = noone;
+
+hovered_item_data      = undefined;
+hovered_item_slot_data = undefined;
+
+split_timer = 0;
+split_delay = 10;
+
+// --- TIENDA / DIALOGO PER-PLAYER ---
+shop_open      = false;
+shop_npc_key   = "";
+shop_scroll    = 0;
+shop_msg       = "";
+shop_msg_timer = 0;
+
+dialog_open     = false;
+dialog_npc_name = "";
+dialog_text     = "";
+
+// --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---
+function add_item(_item_key, _qty = 1) {
+    var _is_stackable = false;
+    if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.material_data, _item_key)) _is_stackable = true;
+
+    if (_is_stackable) {
+        for (var i = 0; i < total_slots; i++) {
+            if (is_struct(inventory_array[i]) && inventory_array[i].key == _item_key) {
+                if (inventory_array[i].quantity + _qty <= 999) {
+                    inventory_array[i].quantity += _qty;
+                    return true;
+                }
+            }
+        }
+        for (var i = 0; i < max_backpack_slots; i++) {
+            if (is_struct(backpack_array[i]) && backpack_array[i].key == _item_key) {
+                if (backpack_array[i].quantity + _qty <= 999) {
+                    backpack_array[i].quantity += _qty;
+                    return true;
+                }
+            }
+        }
+    }
+
+    var _new_struct = { key: _item_key, quantity: _qty };
+    if (variable_struct_exists(global.tool_data, _item_key)) {
+        _new_struct.quality = global.tool_data[$ _item_key].quality;
+    }
+
+    for (var i = 0; i < total_slots; i++) {
+        if (inventory_array[i] == -1) {
+            inventory_array[i] = _new_struct;
+            return true;
+        }
+    }
+    for (var i = 0; i < max_backpack_slots; i++) {
+        if (backpack_array[i] == -1) {
+            backpack_array[i] = _new_struct;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function scr_inventory_swap(_target_array, _index) {
+    if (_target_array == shipping_array && is_struct(held_item)) {
+        var _item_data = scr_get_item_data(held_item.key);
+        if (is_struct(_item_data) && variable_struct_exists(_item_data, "sellable") && _item_data.sellable == false) {
+            scr_notify("Este objeto no se puede vender");
+            return;
+        }
+    }
+
+    var _item_en_slot = _target_array[_index];
+
+    if (held_item != -1 && is_struct(_item_en_slot)) {
+        if (held_item.key == _item_en_slot.key) {
+            var _total = _item_en_slot.quantity + held_item.quantity;
+            if (_total <= 999) {
+                _item_en_slot.quantity = _total;
+                held_item = -1;
+                return;
+            }
+        }
+    }
+
+    var _temp = _target_array[_index];
+    _target_array[_index] = held_item;
+    held_item = _temp;
+}
+
+function scr_inventory_split(_target_array, _index) {
+    var _item_en_slot = _target_array[_index];
+    if (!is_struct(_item_en_slot)) return;
+
+    if (is_struct(held_item)) {
+        if (held_item.key != _item_en_slot.key) return;
+        if (held_item.quantity >= 999) return;
+    }
+
+    if (_target_array == shipping_array) {
+        var _item_data = scr_get_item_data(_item_en_slot.key);
+        if (is_struct(_item_data) && variable_struct_exists(_item_data, "sellable") && _item_data.sellable == false) {
+            return;
+        }
+    }
+
+    if (!is_struct(held_item)) {
+        held_item = { key: _item_en_slot.key, quantity: 1 };
+    } else {
+        held_item.quantity += 1;
+    }
+
+    _item_en_slot.quantity -= 1;
+    if (_item_en_slot.quantity <= 0) {
+        _target_array[_index] = -1;
+    }
+}
+
+// Equipo inicial (solo en creacion fresh; load del save sobreescribe arrays mas tarde)
+if (is_host) {
+    add_item("watering_can", 1);
+    add_item("pickaxe", 1);
+    add_item("axe", 1);
+    add_item("sickle", 1);
+    add_item("hoe", 1);
+    add_item("tomato_seeds", 10);
+}

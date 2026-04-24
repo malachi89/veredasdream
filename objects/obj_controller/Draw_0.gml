@@ -23,8 +23,9 @@ if (show_selector) {
     draw_set_alpha(1.0);
 
     // --- PREVIEW DE OBJETOS COLOCABLES (PLACEABLE) ---
-    if (instance_exists(obj_inventory)) {
-        var _slot = obj_inventory.inventory_array[obj_inventory.selected_slot];
+    var _lp_d = global.local_player;
+    if (instance_exists(_lp_d)) {
+        var _slot = _lp_d.inventory_array[_lp_d.selected_slot];
         var _key = is_struct(_slot) ? _slot.key : "";
         if (_key != "" && variable_struct_exists(global.placeable_data, _key)) {
             var _data = global.placeable_data[$ _key];
