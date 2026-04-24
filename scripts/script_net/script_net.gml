@@ -3,6 +3,10 @@
 // ============================================================
 // Packet wire format: [u16 payload_size][u8 cmd][payload bytes]
 // payload_size = bytes AFTER the 3-byte header (cmd + payload).
+
+// Network socket type constants (GMS2 built-ins that may not resolve in all contexts)
+#macro NET_SOCKET_TCP 0
+#macro NET_SOCKET_UDP 1
 // Total wire bytes = 3 + payload_size.
 // ============================================================
 
@@ -242,7 +246,7 @@ function net_host_game() {
     var _net = instance_create_layer(0, 0, "Instances", obj_net);
 
     _net.port          = net_read_port();
-    _net.server_socket = network_create_server(network_type_tcp, _net.port, 1);
+    _net.server_socket = network_create_server(NET_SOCKET_TCP, _net.port, 1);
     if (_net.server_socket < 0) {
         show_debug_message("[NET] Failed to create server");
         instance_destroy(_net);
@@ -259,7 +263,7 @@ function net_join_game(_ip) {
     var _net = instance_create_layer(0, 0, "Instances", obj_net);
 
     _net.port          = net_read_port();
-    _net.client_socket = network_create_socket(network_type_tcp);
+    _net.client_socket = network_create_socket(NET_SOCKET_TCP);
     _net.role          = NET_ROLE.CLIENT;
     global.net_role    = NET_ROLE.CLIENT;
     _net.connect_state = "connecting";
