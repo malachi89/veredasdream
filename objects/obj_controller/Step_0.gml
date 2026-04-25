@@ -294,7 +294,12 @@ if (sleep_menu_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx, _my, _yes_x1, _yes_y1, _yes_x2, _yes_y2)) {
             sleep_menu_open = false;
-            scr_sleep_and_save();
+            if (global.net_role == NET_ROLE.CLIENT) {
+                net_send_sleep_request();
+                scr_notify("Esperando que el anfitrion duerma...");
+            } else {
+                scr_sleep_and_save();
+            }
         } else if (point_in_rectangle(_mx, _my, _no_x1, _no_y1, _no_x2, _no_y2)) {
             sleep_menu_open = false;
         }
@@ -303,7 +308,12 @@ if (sleep_menu_open) {
     if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
         if (sleep_menu_selection == 0) {
             sleep_menu_open = false;
-            scr_sleep_and_save();
+            if (global.net_role == NET_ROLE.CLIENT) {
+                net_send_sleep_request();
+                scr_notify("Esperando que el anfitrion duerma...");
+            } else {
+                scr_sleep_and_save();
+            }
         } else {
             sleep_menu_open = false;
         }

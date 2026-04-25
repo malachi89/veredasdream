@@ -98,6 +98,15 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.PLAYER_STATE:
             net_handle_player_state(_payload);
             break;
+        case NET_CMD.WORLD_EVENT:
+            net_handle_world_event(_payload);
+            break;
+        case NET_CMD.SLEEP_REQUEST:
+            net_handle_sleep_request();
+            break;
+        case NET_CMD.NEW_DAY:
+            net_handle_new_day(_payload);
+            break;
         case NET_CMD.DISCONNECT:
             var _reason = buffer_read(_payload, buffer_string);
             show_debug_message("[NET] Peer DISCONNECT: " + _reason);
@@ -294,6 +303,86 @@ function net_handle_player_state(_payload) {
         _rp.room_name = _room_name;
     } else {
         if (_rp != noone) instance_destroy(_rp);
+    }
+}
+
+// --- Sleep ---
+
+function net_send_sleep_request() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.SLEEP_REQUEST);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent SLEEP_REQUEST");
+}
+
+function net_handle_sleep_request() {
+    // Client is ready to sleep. Day only advances when the HOST sleeps.
+    show_debug_message("[NET] Client sent SLEEP_REQUEST");
+    scr_notify("El otro jugador quiere dormir");
+}
+
+function net_send_new_day() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _data = {
+        minute:       global.game_minute,
+        hour:         global.game_hour,
+        day:          global.day,
+        year:         global.year,
+        season_index: global.season_index,
+        season:       global.season,
+        room_states:  global.room_states,
+        room_drops:   global.room_drops
+    };
+    var _json = json_stringify(_data);
+    var _buf  = net_begin(NET_CMD.NEW_DAY);
+    buffer_write(_buf, buffer_string, _json);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent NEW_DAY (day=" + string(global.day) + ")");
+}
+
+function net_handle_new_day(_payload) {
+    var _json = buffer_read(_payload, buffer_string);
+    var _data = json_parse(_json);
+
+    global.game_minute  = _data.minute;
+    global.game_hour    = _data.hour;
+    global.day          = _data.day;
+    global.year         = _data.year;
+    global.season_index = _data.season_index;
+    global.season       = _data.season;
+    global.room_states  = _data.room_states;
+    global.room_drops   = _data.room_drops;
+
+    if (instance_exists(obj_controller)) {
+        with (obj_controller) {
+            scr_restore_room_state(room_get_name(room));
+            scr_restore_room_drops(room_get_name(room));
+            update_tilesets();
+            is_fading_in = true;
+            fade_alpha   = 1.0;
+        }
+    }
+    scr_notify("Nuevo dia: dia " + string(global.day));
+    show_debug_message("[NET] Applied NEW_DAY (day=" + string(global.day) + ")");
+}
+
+// --- World events ---
+
+function net_handle_world_event(_payload) {
+    var _evt_type  = buffer_read(_payload, buffer_u8);
+    var _room_name = buffer_read(_payload, buffer_string);
+
+    switch (_evt_type) {
+        case 1: // WEVT_BUILDING_BUILT
+            var _building_name = buffer_read(_payload, buffer_string);
+            show_debug_message("[NET] WORLD_EVENT building_built=" + _building_name + " room=" + _room_name);
+            if (_room_name == room_get_name(room)) {
+                scr_buy_building(_building_name);
+            }
+            break;
+        default:
+            show_debug_message("[NET] Unknown WORLD_EVENT type: " + string(_evt_type));
+            break;
     }
 }
 

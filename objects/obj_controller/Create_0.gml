@@ -81,6 +81,11 @@ function start_new_day() {
 
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
+
+    // Broadcast new day state to client so their world advances in sync.
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_new_day();
+    }
 }
 
 function update_tilesets() {

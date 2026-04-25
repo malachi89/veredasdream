@@ -493,7 +493,18 @@ function scr_buy_building(_building_name) {
             instance_create_layer(_x + 96, _y + 16, "Instances", obj_horse1);
             instance_create_layer(_x + 96, _y + 40, "Instances", obj_horse1);
         }
-        
+
+        scr_capture_current_room_state();
+
+        // Broadcast to client so the building appears on their screen too.
+        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+            var _wbuf = net_begin(NET_CMD.WORLD_EVENT);
+            buffer_write(_wbuf, buffer_u8,     1); // WEVT_BUILDING_BUILT
+            buffer_write(_wbuf, buffer_string, room_get_name(room));
+            buffer_write(_wbuf, buffer_string, _building_name);
+            net_broadcast(_wbuf);
+        }
+
         scr_notify("!" + _building_name + " comprado!");
         return true;
     } else {
