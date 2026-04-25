@@ -1,9 +1,17 @@
 // --- IP entry mode (shown after "Unirse" is chosen) ---
 if (ip_entry_mode) {
-    ip_text = keyboard_string;
+    // Strip non-digits and cap at 3 characters (last octet only).
+    var _filtered = "";
+    for (var _ci = 1; _ci <= string_length(keyboard_string); _ci++) {
+        var _ch = string_char_at(keyboard_string, _ci);
+        if (_ch >= "0" && _ch <= "9") _filtered += _ch;
+    }
+    if (string_length(_filtered) > 3) _filtered = string_copy(_filtered, 1, 3);
+    keyboard_string = _filtered;
+    ip_text = "192.168.100." + keyboard_string;
 
-    if (keyboard_check_pressed(vk_enter) && string_trim(ip_text) != "") {
-        var _ip = string_trim(ip_text);
+    if (keyboard_check_pressed(vk_enter) && string_length(keyboard_string) > 0) {
+        var _ip = ip_text;
         keyboard_string = "";
         ip_entry_mode   = false;
         connect_waiting = true;

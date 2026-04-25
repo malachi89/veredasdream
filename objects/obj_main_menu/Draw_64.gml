@@ -22,9 +22,17 @@ if (ip_entry_mode) {
     draw_set_alpha(1.0);
     draw_rectangle_color(_bx1, _by1, _bx1 + _bw, _by1 + _bh, c_white, c_white, c_white, c_white, true);
 
-    var _display_ip = ip_text;
-    if (current_time mod 800 < 400) _display_ip += "|";
-    draw_text_transformed_color(_cx, _cy, _display_ip, 2.2, 2.2, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
+    var _prefix   = "192.168.100.";
+    var _scale    = 2.2;
+    var _suffix   = keyboard_string;
+    if (current_time mod 800 < 400) _suffix += "|";
+    var _prefix_w = string_width(_prefix) * _scale;
+    var _total_w  = string_width(_prefix + keyboard_string) * _scale;
+    var _left_x   = _cx - _total_w / 2;
+    draw_set_halign(fa_left);
+    draw_text_transformed_color(_left_x,             _cy, _prefix, _scale, _scale, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
+    draw_text_transformed_color(_left_x + _prefix_w, _cy, _suffix, _scale, _scale, 0, c_lime,   c_lime,   c_lime,   c_lime,   1.0);
+    draw_set_halign(fa_center);
 
     draw_text_transformed_color(_cx, _cy + 55, "[Enter] Conectar   [Esc] Cancelar", 1.4, 1.4, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
     exit;
