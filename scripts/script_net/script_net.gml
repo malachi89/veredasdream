@@ -493,6 +493,8 @@ function net_send_use_item(_item_key, _quality, _selected_slot, _gx, _gy, _dir) 
     if (!instance_exists(obj_net) || !obj_net.is_connected) return;
     var _lp = global.local_player;
     if (!instance_exists(_lp)) return;
+    // -1 (empty slot) and any other non-string → empty string for wire protocol
+    if (!is_string(_item_key)) _item_key = "";
     var _buf = net_begin(NET_CMD.CMD_USE_ITEM);
     buffer_write(_buf, buffer_s32,    _gx);
     buffer_write(_buf, buffer_s32,    _gy);
