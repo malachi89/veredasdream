@@ -4,9 +4,9 @@
 // is_host: true only on the host process (in single-player, the only player is the host).
 if (!variable_instance_exists(id, "player_id")) player_id = 1;
 if (!variable_instance_exists(id, "is_local")) {
-    // In CLIENT mode a local player is created by the snapshot handler before room_goto.
-    // Any subsequent room-layout instance that fires Create should NOT claim is_local.
-    is_local = !(global.net_role == NET_ROLE.CLIENT && instance_exists(global.local_player));
+    // In any MP mode, if a local player already exists this new instance must not claim is_local.
+    // Covers: CLIENT room-layout duplicates, and HOST ghost player spawned by net_handle_handshake.
+    is_local = !(global.net_role != NET_ROLE.NONE && instance_exists(global.local_player));
 }
 if (!variable_instance_exists(id, "is_host")) is_host = (global.net_role != NET_ROLE.CLIENT);
 room_name = room_get_name(room);
