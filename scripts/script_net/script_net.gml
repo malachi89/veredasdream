@@ -268,17 +268,21 @@ function net_handle_player_state(_payload) {
     var _frame     = buffer_read(_payload, buffer_f32);
     var _riding    = buffer_read(_payload, buffer_u8) != 0;
 
+    // String lookup avoids scope-resolution issues (defaultScriptType=1 runs in caller scope).
+    var _obj_rp = asset_get_index("obj_remote_player");
+    if (_obj_rp < 0) return; // object not yet registered in IDE
+
     var _local_room = room_get_name(room);
 
     // Find existing obj_remote_player for this pid
     var _rp = noone;
-    with (obj_remote_player) {
+    with (_obj_rp) {
         if (player_id == _pid) { _rp = id; break; }
     }
 
     if (_room_name == _local_room) {
         if (_rp == noone) {
-            _rp = instance_create_layer(_px, _py, "Instances", obj_remote_player);
+            _rp = instance_create_layer(_px, _py, "Instances", _obj_rp);
             _rp.player_id = _pid;
         }
         _rp.target_x  = _px;
