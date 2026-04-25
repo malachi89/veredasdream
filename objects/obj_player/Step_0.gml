@@ -297,5 +297,14 @@ if (state == STATE.ACTING) {
     image_index = (_dir_idx * _current[2]) + floor(frame_anim);
 }
 
+// PLAYER_STATE broadcast at 15 Hz for multiplayer position sync
+if (global.net_role != NET_ROLE.NONE && instance_exists(obj_net) && obj_net.is_connected) {
+    net_state_timer += 1;
+    if (net_state_timer >= 4) {
+        net_state_timer = 0;
+        net_send_player_state();
+    }
+}
+
 image_speed = 0;
 depth = -bbox_bottom;

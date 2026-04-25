@@ -3,11 +3,14 @@
 // is_local: true on the machine that controls this player via keyboard/mouse.
 // is_host: true only on the host process (in single-player, the only player is the host).
 if (!variable_instance_exists(id, "player_id")) player_id = 1;
-if (!variable_instance_exists(id, "is_local")) is_local = true;
-if (!variable_instance_exists(id, "is_host")) is_host = true;
+if (!variable_instance_exists(id, "is_local")) {
+    // In CLIENT mode a local player is created by the snapshot handler before room_goto.
+    // Any subsequent room-layout instance that fires Create should NOT claim is_local.
+    is_local = !(global.net_role == NET_ROLE.CLIENT && instance_exists(global.local_player));
+}
+if (!variable_instance_exists(id, "is_host")) is_host = (global.net_role != NET_ROLE.CLIENT);
 room_name = room_get_name(room);
 
-// Local player pointer (global shortcut used across UI/HUD/scripts).
 if (is_local) global.local_player = id;
 
 // Variables para controlar la animación de acción
@@ -40,8 +43,9 @@ frames_run  = 8;
 max_energy = 500;
 energy = 500;
 
-tool_cooldown  = 0;
-bugnet_caught  = false;
+tool_cooldown    = 0;
+bugnet_caught    = false;
+net_state_timer  = 0;
 
 // --- ECONOMIA PER-PLAYER ---
 money = 500;

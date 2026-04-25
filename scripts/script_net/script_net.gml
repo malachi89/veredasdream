@@ -95,6 +95,9 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.FULL_SNAPSHOT:
             net_handle_full_snapshot(_payload);
             break;
+        case NET_CMD.PLAYER_STATE:
+            net_handle_player_state(_payload);
+            break;
         case NET_CMD.DISCONNECT:
             var _reason = buffer_read(_payload, buffer_string);
             show_debug_message("[NET] Peer DISCONNECT: " + _reason);
@@ -212,19 +215,16 @@ function net_handle_full_snapshot(_payload) {
     _p.add_item("tomato_seeds", 5);
     global.local_player = _p;
 
-    // Position pending: applied by obj_controller once in the right room
-    global.pending_player_room_name = _snap.player2.room_name;
-    global.pending_player_x         = _snap.player2.x;
-    global.pending_player_y         = _snap.player2.y;
-    global.pending_player_dir       = _snap.player2.dir;
+    // Set position directly — persistent instance carries x/y/dir through room_goto.
+    _p.x   = _snap.player2.x;
+    _p.y   = _snap.player2.y;
+    _p.dir = _snap.player2.dir;
 
     var _target = asset_get_index(_snap.player2.room_name);
     if (_target != -1 && room_get_name(room) != _snap.player2.room_name) {
+        global.pending_player_room_name = "";
         room_goto(_target);
     } else {
-        _p.x   = _snap.player2.x;
-        _p.y   = _snap.player2.y;
-        _p.dir = _snap.player2.dir;
         if (instance_exists(obj_controller)) {
             with (obj_controller) {
                 scr_restore_room_state(room_get_name(room));
@@ -237,6 +237,60 @@ function net_handle_full_snapshot(_payload) {
 
     scr_notify("Conectado como Jugador 2!");
     show_debug_message("[NET] Applied FULL_SNAPSHOT, room=" + _snap.player2.room_name);
+}
+
+// --- PLAYER_STATE ---
+
+function net_send_player_state() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _lp = global.local_player;
+    if (!instance_exists(_lp)) return;
+
+    var _buf = net_begin(NET_CMD.PLAYER_STATE);
+    buffer_write(_buf, buffer_u8,     _lp.player_id);
+    buffer_write(_buf, buffer_string, room_get_name(room));
+    buffer_write(_buf, buffer_f32,    _lp.x);
+    buffer_write(_buf, buffer_f32,    _lp.y);
+    buffer_write(_buf, buffer_u8,     _lp.dir);
+    buffer_write(_buf, buffer_u8,     _lp.state);
+    buffer_write(_buf, buffer_f32,    _lp.image_index);
+    buffer_write(_buf, buffer_u8,     _lp.is_riding ? 1 : 0);
+    net_broadcast(_buf);
+}
+
+function net_handle_player_state(_payload) {
+    var _pid       = buffer_read(_payload, buffer_u8);
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _px        = buffer_read(_payload, buffer_f32);
+    var _py        = buffer_read(_payload, buffer_f32);
+    var _dir       = buffer_read(_payload, buffer_u8);
+    var _pstate    = buffer_read(_payload, buffer_u8);
+    var _frame     = buffer_read(_payload, buffer_f32);
+    var _riding    = buffer_read(_payload, buffer_u8) != 0;
+
+    var _local_room = room_get_name(room);
+
+    // Find existing obj_remote_player for this pid
+    var _rp = noone;
+    with (obj_remote_player) {
+        if (player_id == _pid) { _rp = id; break; }
+    }
+
+    if (_room_name == _local_room) {
+        if (_rp == noone) {
+            _rp = instance_create_layer(_px, _py, "Instances", obj_remote_player);
+            _rp.player_id = _pid;
+        }
+        _rp.target_x  = _px;
+        _rp.target_y  = _py;
+        _rp.dir       = _dir;
+        _rp.rem_state = _pstate;
+        _rp.rem_frame = _frame;
+        _rp.is_riding = _riding;
+        _rp.room_name = _room_name;
+    } else {
+        if (_rp != noone) instance_destroy(_rp);
+    }
 }
 
 // --- Connection helpers (called from main menu) ---
