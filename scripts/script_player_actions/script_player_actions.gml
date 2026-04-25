@@ -449,7 +449,7 @@ function scr_set_player_action_sprites(_skin, _hair, _clothes, _eyes) {
     other.action_sprite_eyes = _eyes;
 }
 
-function scr_buy_building(_building_name) {
+function scr_buy_building(_building_name, _from_net = false) {
     var _placeholder_obj = noone;
     var _actual_obj = noone;
 
@@ -496,13 +496,14 @@ function scr_buy_building(_building_name) {
 
         scr_capture_current_room_state();
 
-        // Broadcast to client so the building appears on their screen too.
-        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        // Broadcast so the other player sees the building. Guard _from_net to prevent echo loops.
+        if (!_from_net && global.net_role != NET_ROLE.NONE && instance_exists(obj_net) && obj_net.is_connected) {
             var _wbuf = net_begin(NET_CMD.WORLD_EVENT);
             buffer_write(_wbuf, buffer_u8,     1); // WEVT_BUILDING_BUILT
             buffer_write(_wbuf, buffer_string, room_get_name(room));
             buffer_write(_wbuf, buffer_string, _building_name);
             net_broadcast(_wbuf);
+            show_debug_message("[NET] Sent WORLD_EVENT building=" + _building_name);
         }
 
         scr_notify("!" + _building_name + " comprado!");

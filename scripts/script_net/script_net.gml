@@ -377,7 +377,7 @@ function net_handle_world_event(_payload) {
             var _building_name = buffer_read(_payload, buffer_string);
             show_debug_message("[NET] WORLD_EVENT building_built=" + _building_name + " room=" + _room_name);
             if (_room_name == room_get_name(room)) {
-                scr_buy_building(_building_name);
+                scr_buy_building(_building_name, true);
             }
             break;
         default:
