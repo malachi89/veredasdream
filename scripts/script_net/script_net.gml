@@ -164,8 +164,8 @@ function net_send_full_snapshot(_client_socket) {
         },
         player2: {
             room_name: room_get_name(room),
-            x:         192,
-            y:         192,
+            x:         instance_exists(global.local_player) ? global.local_player.x + 32 : 192,
+            y:         instance_exists(global.local_player) ? global.local_player.y       : 192,
             dir:       DIR.DOWN,
             money:     500,
             energy:    500

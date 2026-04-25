@@ -195,6 +195,38 @@ else if (chat_open) {
                 } else {
                     scr_notify("Jugador " + string(_target_id) + " no encontrado");
                 }
+            } else if (_cmd == "debug_mp") {
+                var _role_str = "NONE";
+                if (global.net_role == NET_ROLE.HOST)   _role_str = "HOST";
+                if (global.net_role == NET_ROLE.CLIENT) _role_str = "CLIENT";
+                show_debug_message("=== MP DEBUG ===");
+                show_debug_message("net_role: " + _role_str);
+                if (instance_exists(obj_net)) {
+                    show_debug_message("obj_net.is_connected: " + string(obj_net.is_connected));
+                    show_debug_message("obj_net.connect_state: " + obj_net.connect_state);
+                } else {
+                    show_debug_message("obj_net: not present");
+                }
+                if (instance_exists(global.local_player)) {
+                    var _lp = global.local_player;
+                    show_debug_message("local_player id=" + string(_lp) +
+                        " player_id=" + string(_lp.player_id) +
+                        " is_local=" + string(_lp.is_local) +
+                        " is_host=" + string(_lp.is_host));
+                    show_debug_message("local_player x=" + string(_lp.x) +
+                        " y=" + string(_lp.y) +
+                        " state=" + string(_lp.state));
+                } else {
+                    show_debug_message("local_player: NONE");
+                }
+                with (obj_player) {
+                    show_debug_message("obj_player inst=" + string(id) +
+                        " pid=" + string(player_id) +
+                        " is_local=" + string(is_local) +
+                        " x=" + string(x) + " y=" + string(y));
+                }
+                show_debug_message("================");
+                scr_notify("MP debug impreso en consola");
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
