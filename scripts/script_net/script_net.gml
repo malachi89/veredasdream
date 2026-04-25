@@ -26,7 +26,7 @@ function net_send(_socket, _buf) {
     var _payload_size = buffer_tell(_buf) - 3;
     buffer_poke(_buf, 0, buffer_u16, _payload_size);
     network_send_packet(_socket, _buf, buffer_tell(_buf));
-    buffer_free(_buf);
+    buffer_delete(_buf);
 }
 
 // Broadcast to all connected peers (host sends to client; client sends to host).
@@ -40,7 +40,7 @@ function net_broadcast(_buf) {
     } else if (global.net_role == NET_ROLE.CLIENT && obj_net.client_socket >= 0) {
         network_send_packet(obj_net.client_socket, _buf, _total);
     }
-    buffer_free(_buf);
+    buffer_delete(_buf);
 }
 
 // --- Receive / dispatch ---
@@ -68,7 +68,7 @@ function net_process_incoming(_raw_buf, _raw_size, _from_socket) {
         buffer_seek(_payload, buffer_seek_start, 0);
 
         net_dispatch(_cmd, _payload, _from_socket);
-        buffer_free(_payload);
+        buffer_delete(_payload);
 
         _pos += _total;
     }
