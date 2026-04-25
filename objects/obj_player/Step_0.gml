@@ -97,7 +97,19 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STA
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
 
     if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !show_backpack) {
-        scr_use_item(_selected_item, _gx, _gy);
+        if (global.net_role == NET_ROLE.CLIENT) {
+            // Animate locally; host runs the authoritative mutation
+            var _quality = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
+                           ? _selected_item.quality : 0;
+            scr_use_item(_selected_item, _gx, _gy, true);
+            net_send_use_item(_item_key, _quality, selected_slot, _gx, _gy, dir);
+        } else {
+            scr_use_item(_selected_item, _gx, _gy);
+            if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                scr_capture_current_room_state();
+                net_broadcast_room_state(room_get_name(room));
+            }
+        }
         tool_cooldown = 50;
     }
 }

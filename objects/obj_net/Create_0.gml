@@ -12,6 +12,7 @@ peer_ip       = "";
 is_connected  = false;
 connect_state = "idle";   // "idle" | "connecting" | "connected" | "failed"
 local_player_id = 1;
+remote_player_ghost = noone;
 
 port = net_read_port();
 
