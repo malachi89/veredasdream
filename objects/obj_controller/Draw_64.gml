@@ -43,6 +43,13 @@ if (instance_exists(_lp)) {
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
     draw_text_transformed_color(_ebx + 5, _eby + _ebh + 5, "ENERGIA", 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+
+    // Multiplayer role badge
+    if (global.net_role != NET_ROLE.NONE) {
+        var _role_text = (global.net_role == NET_ROLE.HOST) ? "ANFITRION" : "INVITADO";
+        var _role_col  = (global.net_role == NET_ROLE.HOST) ? c_lime : c_aqua;
+        draw_text_transformed_color(_ebx + 5, _eby + _ebh + 22, _role_text, 1.5, 1.5, 0, _role_col, _role_col, _role_col, _role_col, 0.9);
+    }
 }
 
 draw_set_font(fnt_pixel_operator);
@@ -82,6 +89,28 @@ if (sleep_menu_open) {
     var _no_col = (sleep_menu_selection == 1) ? c_red : c_white;
     draw_text_transformed_color(_cx - 70, _cy + 48, "SI", 2, 2, 0, _yes_col, _yes_col, _yes_col, _yes_col, 1);
     draw_text_transformed_color(_cx + 70, _cy + 48, "NO", 2, 2, 0, _no_col, _no_col, _no_col, _no_col, 1);
+}
+
+// --- HOST-INITIATED SLEEP PROMPT (client side) ---
+if (sleep_prompt_open) {
+    var _cx = display_get_gui_width() * 0.5;
+    var _cy = display_get_gui_height() * 0.5;
+    draw_set_alpha(0.65);
+    draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+    draw_set_alpha(0.92);
+    draw_roundrect_color_ext(_cx - 210, _cy - 85, _cx + 210, _cy + 85, 12, 12, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_cx - 210, _cy - 85, _cx + 210, _cy + 85, 12, 12, c_white, c_white, true);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_font(fnt_pixel_operator);
+    draw_text_transformed(_cx, _cy - 35, "El anfitrion quiere dormir", 2, 2, 0);
+    draw_text_transformed(_cx, _cy - 2, "Quieres terminar el dia?", 1.2, 1.2, 0);
+    var _yes_col2 = (sleep_prompt_selection == 0) ? c_lime : c_white;
+    var _no_col2  = (sleep_prompt_selection == 1) ? c_red  : c_white;
+    draw_text_transformed_color(_cx - 70, _cy + 48, "SI", 2, 2, 0, _yes_col2, _yes_col2, _yes_col2, _yes_col2, 1);
+    draw_text_transformed_color(_cx + 70, _cy + 48, "NO", 2, 2, 0, _no_col2,  _no_col2,  _no_col2,  _no_col2,  1);
 }
 
 // --- RESUMEN DE VENTAS (TICKET) ---

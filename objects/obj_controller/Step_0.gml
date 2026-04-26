@@ -34,6 +34,7 @@ if (!global.farm_populated && room_get_name(room) == "farm"
 var _room_name = room_get_name(room);
 if (current_room_name != _room_name) {
     current_room_name = _room_name;
+    room_change_pending = false; // client: ROOM_SNAPSHOT arrived and room_goto fired
 
     // Snap camera to player on room entry so it doesn't pan violently from the old room.
     if (instance_exists(obj_camera) && instance_exists(global.local_player)) {
@@ -79,6 +80,9 @@ if (global.net_role != NET_ROLE.CLIENT) {
             global.game_hour += 1;
             if (global.game_hour >= 24) start_new_day();
         }
+        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+            net_send_time_update();
+        }
     }
 }
 
@@ -121,10 +125,18 @@ else if (chat_open) {
                 scr_add_animal(_animal);
             } else if (_cmd == "upgrade_tool" && array_length(_parts) >= 2) {
                 var _item = _parts[1];
-                scr_upgrade_tool(_item);
+                if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+                    net_send_upgrade_tool(_item);
+                } else {
+                    scr_upgrade_tool(_item);
+                }
             } else if (_cmd == "buy_building" && array_length(_parts) >= 2) {
                 var _bname = _parts[1];
-                scr_buy_building(_bname);
+                if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+                    net_send_buy_building(_bname);
+                } else {
+                    scr_buy_building(_bname);
+                }
             } else if (_cmd == "set_money" && array_length(_parts) >= 2) {
                 if (instance_exists(global.local_player)) {
                     global.local_player.money = real(_parts[1]);
@@ -141,25 +153,40 @@ else if (chat_open) {
                     scr_notify("Energia restaurada");
                 }
             } else if (_cmd == "set_day" && array_length(_parts) >= 2) {
-                global.day = clamp(real(_parts[1]), 1, global.days_per_season);
-                scr_notify("Dia: " + string(global.day));
-            } else if (_cmd == "set_hour" && array_length(_parts) >= 2) {
-                global.game_hour = clamp(real(_parts[1]), 0, 23);
-                global.game_minute = 0;
-                scr_notify("Hora: " + string(global.game_hour) + ":00");
-            } else if (_cmd == "set_season" && array_length(_parts) >= 2) {
-                var _sname = _parts[1];
-                var _sidx = -1;
-                for (var _si = 0; _si < 4; _si++) {
-                    if (global.season_list[_si] == _sname) { _sidx = _si; break; }
-                }
-                if (_sidx != -1) {
-                    global.season_index = _sidx;
-                    global.season = global.season_list[_sidx];
-                    update_tilesets();
-                    scr_notify("Estacion: " + global.season_names[$ global.season]);
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
                 } else {
-                    scr_notify("Estacion invalida. Usa: spring summer fall winter");
+                    global.day = clamp(real(_parts[1]), 1, global.days_per_season);
+                    scr_notify("Dia: " + string(global.day));
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                }
+            } else if (_cmd == "set_hour" && array_length(_parts) >= 2) {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
+                } else {
+                    global.game_hour   = clamp(real(_parts[1]), 0, 23);
+                    global.game_minute = 0;
+                    scr_notify("Hora: " + string(global.game_hour) + ":00");
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                }
+            } else if (_cmd == "set_season" && array_length(_parts) >= 2) {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
+                } else {
+                    var _sname = _parts[1];
+                    var _sidx = -1;
+                    for (var _si = 0; _si < 4; _si++) {
+                        if (global.season_list[_si] == _sname) { _sidx = _si; break; }
+                    }
+                    if (_sidx != -1) {
+                        global.season_index = _sidx;
+                        global.season = global.season_list[_sidx];
+                        update_tilesets();
+                        scr_notify("Estacion: " + global.season_names[$ global.season]);
+                        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                    } else {
+                        scr_notify("Estacion invalida. Usa: spring summer fall winter");
+                    }
                 }
             } else if (_cmd == "spawn_player2") {
                 // Phase 2 test harness: spawn a second player (non-local) at the cursor.
@@ -246,6 +273,7 @@ if (keyboard_check_pressed(ord("P"))) {
     global.season = global.season_list[global.season_index];
     update_tilesets();
     show_debug_message("Estacion: " + global.season_names[$ global.season]);
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
 }
 
 if (keyboard_check_pressed(ord("O"))) start_new_day();
@@ -294,12 +322,7 @@ if (sleep_menu_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx, _my, _yes_x1, _yes_y1, _yes_x2, _yes_y2)) {
             sleep_menu_open = false;
-            if (global.net_role == NET_ROLE.CLIENT) {
-                net_send_sleep_request();
-                scr_notify("Esperando que el anfitrion duerma...");
-            } else {
-                scr_sleep_and_save();
-            }
+            scr_on_sleep_yes();
         } else if (point_in_rectangle(_mx, _my, _no_x1, _no_y1, _no_x2, _no_y2)) {
             sleep_menu_open = false;
         }
@@ -308,12 +331,7 @@ if (sleep_menu_open) {
     if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
         if (sleep_menu_selection == 0) {
             sleep_menu_open = false;
-            if (global.net_role == NET_ROLE.CLIENT) {
-                net_send_sleep_request();
-                scr_notify("Esperando que el anfitrion duerma...");
-            } else {
-                scr_sleep_and_save();
-            }
+            scr_on_sleep_yes();
         } else {
             sleep_menu_open = false;
         }
@@ -322,12 +340,61 @@ if (sleep_menu_open) {
     if (keyboard_check_pressed(vk_escape)) sleep_menu_open = false;
 }
 
+// Client-side sleep confirmation when host initiates sleep
+if (sleep_prompt_open) {
+    var _mx2 = device_mouse_x_to_gui(0);
+    var _my2 = device_mouse_y_to_gui(0);
+    var _cx2 = display_get_gui_width() * 0.5;
+    var _cy2 = display_get_gui_height() * 0.5;
+    var _yes_x1b = _cx2 - 120; var _yes_y1b = _cy2 + 20;
+    var _yes_x2b = _cx2 - 20;  var _yes_y2b = _cy2 + 78;
+    var _no_x1b  = _cx2 + 20;  var _no_y1b  = _cy2 + 20;
+    var _no_x2b  = _cx2 + 120; var _no_y2b  = _cy2 + 78;
+
+    if (point_in_rectangle(_mx2, _my2, _yes_x1b, _yes_y1b, _yes_x2b, _yes_y2b)) sleep_prompt_selection = 0;
+    if (point_in_rectangle(_mx2, _my2, _no_x1b, _no_y1b, _no_x2b, _no_y2b))     sleep_prompt_selection = 1;
+    if (keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A")) || keyboard_check_pressed(ord("S"))) sleep_prompt_selection = 0;
+    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D")) || keyboard_check_pressed(ord("N"))) sleep_prompt_selection = 1;
+
+    if (mouse_check_button_pressed(mb_left)) {
+        if (point_in_rectangle(_mx2, _my2, _yes_x1b, _yes_y1b, _yes_x2b, _yes_y2b)) {
+            sleep_prompt_open = false;
+            sent_sleep_request = true;
+            net_send_sleep_response(true);
+            scr_notify("Esperando nuevo dia...");
+        } else if (point_in_rectangle(_mx2, _my2, _no_x1b, _no_y1b, _no_x2b, _no_y2b)) {
+            sleep_prompt_open = false;
+            net_send_sleep_response(false);
+        }
+    }
+
+    if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
+        if (sleep_prompt_selection == 0) {
+            sleep_prompt_open = false;
+            sent_sleep_request = true;
+            net_send_sleep_response(true);
+            scr_notify("Esperando nuevo dia...");
+        } else {
+            sleep_prompt_open = false;
+            net_send_sleep_response(false);
+        }
+    }
+    if (keyboard_check_pressed(vk_escape)) {
+        sleep_prompt_open = false;
+        net_send_sleep_response(false);
+    }
+}
+
 if (shipping_summary_open) {
     if (shipping_summary_pending_close) {
         shipping_summary_open = false;
         shipping_summary_pending_close = false;
+        sent_sleep_request  = false;
+        host_wants_sleep    = false;
+        client_wants_sleep  = false;
+        sleep_prompt_sent   = false;
         start_new_day();
-        scr_save_game();
+        if (global.net_role != NET_ROLE.CLIENT) scr_save_game();
         scr_notify("Nuevo dia comenzado");
     } else {
         var _mx = device_mouse_x_to_gui(0);

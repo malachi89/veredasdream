@@ -1,14 +1,17 @@
 // --- IP entry mode (shown after "Unirse" is chosen) ---
 if (ip_entry_mode) {
-    // Strip non-digits and cap at 3 characters (last octet only).
+    // Allow digits, dots, and letters (for "localhost" / hostnames).
     var _filtered = "";
     for (var _ci = 1; _ci <= string_length(keyboard_string); _ci++) {
         var _ch = string_char_at(keyboard_string, _ci);
-        if (_ch >= "0" && _ch <= "9") _filtered += _ch;
+        if ((_ch >= "0" && _ch <= "9") || _ch == "."
+            || (_ch >= "a" && _ch <= "z") || (_ch >= "A" && _ch <= "Z")) {
+            _filtered += _ch;
+        }
     }
-    if (string_length(_filtered) > 3) _filtered = string_copy(_filtered, 1, 3);
+    if (string_length(_filtered) > 40) _filtered = string_copy(_filtered, 1, 40);
     keyboard_string = _filtered;
-    ip_text = "192.168.100." + keyboard_string;
+    ip_text = keyboard_string;
 
     if (keyboard_check_pressed(vk_enter) && string_length(keyboard_string) > 0) {
         var _ip = ip_text;
@@ -126,8 +129,8 @@ if (_confirm) {
         case "Unirse":
             // Enter IP address
             ip_entry_mode   = true;
-            keyboard_string = "";
-            ip_text         = "";
+            keyboard_string = "192.168.100.";
+            ip_text         = "192.168.100.";
             notif_text      = "";
             notif_timer     = 0;
             break;

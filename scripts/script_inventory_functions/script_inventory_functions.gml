@@ -1,5 +1,11 @@
 function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
     var _room_name = room_get_name(room);
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        // Route through host so the drop UID is host-authoritative.
+        // No local instance — host creates it and broadcasts back via WEVT_ROOM_REFRESH.
+        net_send_drop(_room_name, _key, _qty, _px, _py, _delay);
+        return;
+    }
     var _inst = instance_create_layer(_px, _py, "Instances", obj_item_parent);
     with (_inst) {
         item_key = _key;
@@ -11,6 +17,9 @@ function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
         gravity = 0.15;
     }
     scr_register_room_drop(_inst, _room_name);
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        net_broadcast_room_state(_room_name);
+    }
 }
 
 function scr_get_room_drops(_room_name) {
@@ -61,8 +70,35 @@ function scr_remove_room_drop(_room_name, _drop_id) {
 
 function scr_restore_room_drops(_room_name) {
     var _drops = scr_get_room_drops(_room_name);
+
+    // Build authoritative ID set
+    var _stored_ids = {};
+    for (var i = 0; i < array_length(_drops); i++) {
+        _stored_ids[$ string(_drops[i].id)] = true;
+    }
+
+    // Destroy instances that are no longer in the authoritative state
+    var _to_destroy = [];
+    with (obj_item_parent) {
+        if (source_room_name == _room_name
+            && !variable_struct_exists(_stored_ids, string(persistent_drop_id))) {
+            array_push(_to_destroy, id);
+        }
+    }
+    for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+    // Build set of already-live instance IDs
+    var _existing_ids = {};
+    with (obj_item_parent) {
+        if (source_room_name == _room_name && persistent_drop_id != -1) {
+            _existing_ids[$ string(persistent_drop_id)] = true;
+        }
+    }
+
+    // Create instances only for drops that have no live instance yet
     for (var i = 0; i < array_length(_drops); i++) {
         var _drop_data = _drops[i];
+        if (variable_struct_exists(_existing_ids, string(_drop_data.id))) continue;
         var _inst = instance_create_layer(_drop_data.x, _drop_data.y, "Instances", obj_item_parent);
         with (_inst) {
             item_key = _drop_data.item_key;
@@ -694,6 +730,69 @@ function scr_sleep_and_save() {
     if (array_length(_summary.items) > 0) {
         if (instance_exists(obj_controller)) {
             obj_controller.shipping_summary_data = _summary;
+            obj_controller.shipping_summary_open = true;
+        }
+    } else {
+        start_new_day();
+        scr_save_game();
+        scr_notify("Dia terminado");
+    }
+}
+
+// Called from obj_controller Step when local player clicks "Si" on the sleep menu.
+// Routes to the right sleep function based on net role.
+function scr_on_sleep_yes() {
+    if (global.net_role == NET_ROLE.CLIENT) {
+        if (instance_exists(obj_controller)) obj_controller.sent_sleep_request = true;
+        net_send_sleep_request();
+        scr_notify("Esperando que el anfitrion duerma...");
+    } else if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        if (instance_exists(obj_controller)) obj_controller.host_wants_sleep = true;
+        if (instance_exists(obj_controller) && obj_controller.client_wants_sleep) {
+            obj_controller.host_wants_sleep  = false;
+            obj_controller.client_wants_sleep = false;
+            obj_controller.sleep_prompt_sent = false;
+            scr_sleep_and_save_mp();
+        } else {
+            obj_controller.sleep_prompt_sent = true;
+            net_send_sleep_prompt();
+            scr_notify("Esperando respuesta del invitado...");
+        }
+    } else {
+        scr_sleep_and_save();
+    }
+}
+
+// Multiplayer sleep: process both players' shipping, send client summary, start new day.
+// Called on HOST when both players have agreed to sleep.
+function scr_sleep_and_save_mp() {
+    var _bed = instance_find(obj_bed, 0);
+    if (_bed == noone) exit;
+
+    var _lp = global.local_player;
+    if (instance_exists(_lp)) {
+        _lp.is_riding = false;
+        _lp.state     = STATE.IDLE;
+        _lp.dir       = DIR.RIGHT;
+        _lp.x         = _bed.x + 40;
+        _lp.y         = _bed.y + 18;
+    }
+
+    // Process client (ghost) shipping; send summary and money update to client.
+    if (instance_exists(obj_net)) {
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost)) {
+            var _client_summary = scr_process_shipping(_ghost);
+            net_send_money_update(2, _ghost.money);
+            net_send_shipping_summary(2, _client_summary);
+        }
+    }
+
+    // Process host shipping and show summary (or start new day immediately).
+    var _host_summary = scr_process_shipping(_lp);
+    if (array_length(_host_summary.items) > 0) {
+        if (instance_exists(obj_controller)) {
+            obj_controller.shipping_summary_data = _host_summary;
             obj_controller.shipping_summary_open = true;
         }
     } else {

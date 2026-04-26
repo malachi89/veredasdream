@@ -16,7 +16,7 @@ with (obj_player) {
         break;
     }
 }
-if (_is_duplicate) {
+if (_is_duplicate && !is_local) {
     instance_destroy();
     exit;
 }

@@ -49,14 +49,20 @@ if (_p.shop_open) {
                     if (scr_count_item(_req.key) < _req.qty) { _items_ok = false; break; }
                 }
                 if (_can_afford && _items_ok) {
-                    _p.money -= _entry.price_money;
-                    for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
-                        var _req = _entry.price_items[_sj];
-                        scr_remove_item(_req.key, _req.qty);
+                    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+                        net_send_shop_buy(_p.shop_npc_key, _entry.item_key);
+                        _p.shop_msg       = "Procesando...";
+                        _p.shop_msg_timer = 90;
+                    } else {
+                        _p.money -= _entry.price_money;
+                        for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
+                            var _req = _entry.price_items[_sj];
+                            scr_remove_item(_req.key, _req.qty);
+                        }
+                        with (_p) add_item(_entry.item_key, 1);
+                        _p.shop_msg       = "Comprado!";
+                        _p.shop_msg_timer = 90;
                     }
-                    with (_p) add_item(_entry.item_key, 1);
-                    _p.shop_msg       = "Comprado!";
-                    _p.shop_msg_timer = 90;
                 } else if (!_can_afford) {
                     _p.shop_msg       = "Fondos insuficientes";
                     _p.shop_msg_timer = 90;
@@ -211,6 +217,11 @@ if (_l_press || _r_press || _r_held) {
                 if (point_in_rectangle(_mx, _my, _sx, _sy, _sx + _grid_slot_size, _sy + _grid_slot_size)) {
                     if (_l_press) with (_p) scr_inventory_swap(current_chest_id.storage_array, i);
                     else if (_do_split) with (_p) scr_inventory_split(current_chest_id.storage_array, i);
+                    if (instance_exists(obj_net) && obj_net.is_connected) {
+                        var _chest = _p.current_chest_id;
+                        net_send_chest_slot(_chest.x, _chest.y, room_get_name(room),
+                                            i, _chest.storage_array[i]);
+                    }
                     break;
                 }
             }

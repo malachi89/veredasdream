@@ -44,9 +44,23 @@ if (collect_delay > 0) {
         }
 
         if (_dist <= 10) {
-            if (_lp.add_item(item_key, quantity)) {
-                scr_remove_room_drop(source_room_name, persistent_drop_id);
-
+            var _picked = false;
+            if (global.net_role == NET_ROLE.CLIENT
+                && instance_exists(obj_net) && obj_net.is_connected) {
+                net_send_pickup(persistent_drop_id, source_room_name, item_key, quantity);
+                _picked = _lp.add_item(item_key, quantity);
+                if (_picked) scr_remove_room_drop(source_room_name, persistent_drop_id);
+            } else {
+                _picked = _lp.add_item(item_key, quantity);
+                if (_picked) {
+                    scr_remove_room_drop(source_room_name, persistent_drop_id);
+                    if (global.net_role == NET_ROLE.HOST
+                        && instance_exists(obj_net) && obj_net.is_connected) {
+                        net_broadcast_room_state(source_room_name);
+                    }
+                }
+            }
+            if (_picked) {
                 var _name = "Item";
                 if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;

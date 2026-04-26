@@ -38,8 +38,22 @@ switch (_type) {
         show_debug_message("[NET] Socket disconnected: " + string(_sock));
         is_connected  = false;
         connect_state = "idle";
-        peer_socket   = -1;
-        scr_notify("Desconectado de la partida");
+        scr_notify("El otro jugador se desconecto");
+
+        if (global.net_role == NET_ROLE.HOST) {
+            peer_socket = -1;
+            // Destroy server-side ghost and any remote-player visuals.
+            if (instance_exists(remote_player_ghost)) {
+                instance_destroy(remote_player_ghost);
+                remote_player_ghost = noone;
+            }
+            var _obj_rp = asset_get_index("obj_remote_player");
+            if (_obj_rp >= 0) with (_obj_rp) instance_destroy();
+        } else if (global.net_role == NET_ROLE.CLIENT) {
+            client_socket   = -1;
+            global.net_role = NET_ROLE.NONE;
+            room_goto(rm_main_menu);
+        }
         break;
 
     case NET_EV_DATA:

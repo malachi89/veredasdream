@@ -25,6 +25,7 @@ enum NET_CMD {
     CMD_SHOP_BUY     = 38,
     CMD_BUY_BUILDING = 39,
     CMD_UPGRADE_TOOL = 40,
+    CMD_DROP         = 41,
     INVENTORY_UPDATE = 48,
     MONEY_UPDATE     = 49,
     ENERGY_UPDATE    = 50,

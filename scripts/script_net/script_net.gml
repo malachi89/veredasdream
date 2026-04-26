@@ -98,23 +98,72 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.PLAYER_STATE:
             net_handle_player_state(_payload);
             break;
+        case NET_CMD.ROOM_CHANGE:
+            net_handle_room_change(_payload);
+            break;
+        case NET_CMD.ROOM_SNAPSHOT:
+            net_handle_room_snapshot(_payload);
+            break;
         case NET_CMD.WORLD_EVENT:
             net_handle_world_event(_payload);
             break;
         case NET_CMD.CMD_USE_ITEM:
             net_handle_use_item(_payload);
             break;
+        case NET_CMD.CMD_FISH_REEL:
+            net_handle_fish_reel();
+            break;
+        case NET_CMD.CMD_SHOP_BUY:
+            net_handle_shop_buy(_payload);
+            break;
+        case NET_CMD.CMD_BUY_BUILDING:
+            net_handle_buy_building(_payload);
+            break;
+        case NET_CMD.CMD_UPGRADE_TOOL:
+            net_handle_upgrade_tool(_payload);
+            break;
+        case NET_CMD.CMD_PICKUP:
+            net_handle_pickup(_payload);
+            break;
+        case NET_CMD.CMD_DROP:
+            net_handle_drop(_payload);
+            break;
+        case NET_CMD.CMD_CHEST_SLOT:
+            net_handle_chest_slot(_payload);
+            break;
         case NET_CMD.INVENTORY_UPDATE:
             net_handle_inventory_update(_payload);
+            break;
+        case NET_CMD.MONEY_UPDATE:
+            net_handle_money_update(_payload);
             break;
         case NET_CMD.ENERGY_UPDATE:
             net_handle_energy_update(_payload);
             break;
+        case NET_CMD.TIME_UPDATE:
+            net_handle_time_update(_payload);
+            break;
         case NET_CMD.SLEEP_REQUEST:
-            net_handle_sleep_request();
+            net_handle_sleep_request(_payload);
+            break;
+        case NET_CMD.SLEEP_PROMPT:
+            net_handle_sleep_prompt();
+            break;
+        case NET_CMD.SLEEP_RESPONSE:
+            net_handle_sleep_response(_payload);
+            break;
+        case NET_CMD.SHIPPING_SUMMARY:
+            net_handle_shipping_summary(_payload);
             break;
         case NET_CMD.NEW_DAY:
             net_handle_new_day(_payload);
+            break;
+        case NET_CMD.NOTIFY:
+            var _notify_pid = buffer_read(_payload, buffer_u8);
+            var _msg        = buffer_read(_payload, buffer_string);
+            // player_id 0 = broadcast; otherwise only show if it matches local player.
+            var _lp_pid = instance_exists(global.local_player) ? global.local_player.player_id : 0;
+            if (_notify_pid == 0 || _notify_pid == _lp_pid) scr_notify(_msg);
             break;
         case NET_CMD.DISCONNECT:
             var _reason = buffer_read(_payload, buffer_string);
@@ -296,6 +345,13 @@ function net_send_player_state() {
     buffer_write(_buf, buffer_u8,     _lp.state);
     buffer_write(_buf, buffer_f32,    _lp.image_index);
     buffer_write(_buf, buffer_u8,     _lp.is_riding ? 1 : 0);
+    if (_lp.state == STATE.ACTING || _lp.state == STATE.FISHING) {
+        buffer_write(_buf, buffer_s32, _lp.action_sprite_skin);
+        buffer_write(_buf, buffer_s32, _lp.action_sprite_tool);
+        buffer_write(_buf, buffer_s32, _lp.action_sprite_hair);
+        buffer_write(_buf, buffer_s32, _lp.action_sprite_clothes);
+        buffer_write(_buf, buffer_s32, _lp.action_sprite_eyes);
+    }
     net_broadcast(_buf);
 }
 
@@ -308,6 +364,14 @@ function net_handle_player_state(_payload) {
     var _pstate    = buffer_read(_payload, buffer_u8);
     var _frame     = buffer_read(_payload, buffer_f32);
     var _riding    = buffer_read(_payload, buffer_u8) != 0;
+    var _act_skin = -1, _act_tool = -1, _act_hair = -1, _act_clothes = -1, _act_eyes = -1;
+    if (_pstate == STATE.ACTING || _pstate == STATE.FISHING) {
+        _act_skin    = buffer_read(_payload, buffer_s32);
+        _act_tool    = buffer_read(_payload, buffer_s32);
+        _act_hair    = buffer_read(_payload, buffer_s32);
+        _act_clothes = buffer_read(_payload, buffer_s32);
+        _act_eyes    = buffer_read(_payload, buffer_s32);
+    }
 
     // String lookup avoids scope-resolution issues (defaultScriptType=1 runs in caller scope).
     var _obj_rp = asset_get_index("obj_remote_player");
@@ -333,24 +397,413 @@ function net_handle_player_state(_payload) {
         _rp.rem_frame = _frame;
         _rp.is_riding = _riding;
         _rp.room_name = _room_name;
+        if (_pstate == STATE.ACTING || _pstate == STATE.FISHING) {
+            _rp.act_skin    = _act_skin;
+            _rp.act_tool    = _act_tool;
+            _rp.act_hair    = _act_hair;
+            _rp.act_clothes = _act_clothes;
+            _rp.act_eyes    = _act_eyes;
+        }
     } else {
         if (_rp != noone) instance_destroy(_rp);
     }
+}
+
+// --- Ghost inventory helper ---
+
+// Add item to ghost and send whichever slot changed to the client.
+function net_ghost_add_item(_ghost, _item_key, _qty) {
+    _ghost.add_item(_item_key, _qty);
+    for (var _i = 0; _i < 10; _i++) {
+        var _s = _ghost.inventory_array[_i];
+        if (is_struct(_s) && _s.key == _item_key) {
+            net_send_inventory_update(2, 0, _i, _s);
+            return;
+        }
+    }
+    for (var _i = 0; _i < 64; _i++) {
+        var _s = _ghost.backpack_array[_i];
+        if (is_struct(_s) && _s.key == _item_key) {
+            net_send_inventory_update(2, 1, _i, _s);
+            return;
+        }
+    }
+}
+
+// --- Fishing ---
+
+function net_send_fish_reel() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_FISH_REEL);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent CMD_FISH_REEL");
+}
+
+function net_handle_fish_reel() {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _ghost = obj_net.remote_player_ghost;
+    if (!instance_exists(_ghost)) return;
+
+    var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+    var _fish_data = global.fish_data[$ _fish_key];
+
+    net_ghost_add_item(_ghost, _fish_key, 1);
+    _ghost.energy -= 10;
+    net_send_energy_update(2, _ghost.energy);
+    net_send_notify_peer("¡Atrapaste un " + _fish_data.name + "!");
+    show_debug_message("[NET] CMD_FISH_REEL: ghost caught " + _fish_key);
+}
+
+// --- Shop purchases ---
+
+function net_send_shop_buy(_npc_key, _item_key) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_SHOP_BUY);
+    buffer_write(_buf, buffer_string, _npc_key);
+    buffer_write(_buf, buffer_string, _item_key);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent CMD_SHOP_BUY " + _item_key + " @ " + _npc_key);
+}
+
+function net_handle_shop_buy(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _npc_key  = buffer_read(_payload, buffer_string);
+    var _item_key = buffer_read(_payload, buffer_string);
+
+    var _ghost = obj_net.remote_player_ghost;
+    if (!instance_exists(_ghost)) return;
+
+    var _shop = global.shop_data[$ _npc_key];
+    if (_shop == undefined || !_shop.available) {
+        net_send_notify_peer("Tienda no disponible");
+        return;
+    }
+
+    var _entry = undefined;
+    for (var _i = 0; _i < array_length(_shop.items); _i++) {
+        if (_shop.items[_i].item_key == _item_key) { _entry = _shop.items[_i]; break; }
+    }
+    if (_entry == undefined) { net_send_notify_peer("Articulo no encontrado"); return; }
+
+    var _can_afford = _ghost.money >= _entry.price_money;
+    var _items_ok   = true;
+    for (var _j = 0; _j < array_length(_entry.price_items); _j++) {
+        var _req = _entry.price_items[_j];
+        if (scr_count_item(_req.key, _ghost) < _req.qty) { _items_ok = false; break; }
+    }
+
+    if (_can_afford && _items_ok) {
+        _ghost.money -= _entry.price_money;
+        for (var _j = 0; _j < array_length(_entry.price_items); _j++) {
+            var _req = _entry.price_items[_j];
+            scr_remove_item(_req.key, _req.qty, _ghost);
+        }
+        net_ghost_add_item(_ghost, _item_key, 1);
+        net_send_money_update(2, _ghost.money);
+        net_send_notify_peer("Comprado!");
+        show_debug_message("[NET] CMD_SHOP_BUY: sold " + _item_key);
+    } else if (!_can_afford) {
+        net_send_notify_peer("Fondos insuficientes");
+    } else {
+        net_send_notify_peer("Te faltan materiales");
+    }
+}
+
+// --- Building purchase ---
+
+function net_send_buy_building(_building_name) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_BUY_BUILDING);
+    buffer_write(_buf, buffer_string, _building_name);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent CMD_BUY_BUILDING " + _building_name);
+}
+
+function net_handle_buy_building(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _name = buffer_read(_payload, buffer_string);
+    scr_buy_building(_name);
+    show_debug_message("[NET] CMD_BUY_BUILDING: " + _name);
+}
+
+// --- Tool upgrade ---
+
+function net_send_upgrade_tool(_tool_key) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_UPGRADE_TOOL);
+    buffer_write(_buf, buffer_string, _tool_key);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent CMD_UPGRADE_TOOL " + _tool_key);
+}
+
+function net_handle_upgrade_tool(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _tool_key = buffer_read(_payload, buffer_string);
+    var _ghost    = obj_net.remote_player_ghost;
+    if (!instance_exists(_ghost)) return;
+
+    var _arrays = [_ghost.inventory_array, _ghost.backpack_array];
+    for (var _a = 0; _a < 2; _a++) {
+        var _arr = _arrays[_a];
+        for (var _i = 0; _i < array_length(_arr); _i++) {
+            var _slot = _arr[_i];
+            if (is_struct(_slot) && variable_struct_exists(_slot, "key") && _slot.key == _tool_key) {
+                var _cur = variable_struct_exists(_slot, "quality") ? _slot.quality : QUALITY.OXIDADO;
+                if (_cur < QUALITY.VITOLANIO) {
+                    _slot.quality = _cur + 1;
+                    net_send_inventory_update(2, _a, _i, _slot);
+                    net_send_notify_peer(_tool_key + " mejorado a " + global.quality_names[_slot.quality]);
+                } else {
+                    net_send_notify_peer(_tool_key + " ya esta al maximo");
+                }
+                show_debug_message("[NET] CMD_UPGRADE_TOOL: " + _tool_key);
+                return;
+            }
+        }
+    }
+    net_send_notify_peer("No tienes ese item");
+}
+
+// --- Room transitions ---
+
+// Client → host: "I want to go to this room."
+function net_send_room_change(_room_name, _target_x, _target_y) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.ROOM_CHANGE);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_s32,    _target_x);
+    buffer_write(_buf, buffer_s32,    _target_y);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent CMD_ROOM_CHANGE -> " + _room_name);
+}
+
+// Host receives client's room-change request; sends a ROOM_SNAPSHOT back.
+function net_handle_room_change(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _target_x  = buffer_read(_payload, buffer_s32);
+    var _target_y  = buffer_read(_payload, buffer_s32);
+    show_debug_message("[NET] CMD_ROOM_CHANGE: client going to " + _room_name);
+
+    // If host is live in the target room, capture current state before snapshotting.
+    if (room_get_name(room) == _room_name) {
+        scr_capture_current_room_state();
+    }
+
+    net_send_room_snapshot(_room_name, _target_x, _target_y);
+}
+
+// Host → client: authoritative state for the room the client is entering.
+function net_send_room_snapshot(_room_name, _target_x, _target_y) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+
+    var _state = variable_struct_exists(global.room_states, _room_name)
+                 ? global.room_states[$ _room_name] : {};
+    var _drops = variable_struct_exists(global.room_drops, _room_name)
+                 ? global.room_drops[$  _room_name] : [];
+
+    var _buf = net_begin(NET_CMD.ROOM_SNAPSHOT);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_s32,    _target_x);
+    buffer_write(_buf, buffer_s32,    _target_y);
+    buffer_write(_buf, buffer_string, json_stringify(_state));
+    buffer_write(_buf, buffer_string, json_stringify(_drops));
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent ROOM_SNAPSHOT for " + _room_name);
+}
+
+// Client receives ROOM_SNAPSHOT: apply world state then call room_goto.
+function net_handle_room_snapshot(_payload) {
+    var _room_name  = buffer_read(_payload, buffer_string);
+    var _target_x   = buffer_read(_payload, buffer_s32);
+    var _target_y   = buffer_read(_payload, buffer_s32);
+    var _state_json = buffer_read(_payload, buffer_string);
+    var _drops_json = buffer_read(_payload, buffer_string);
+
+    // Update canonical world state so scr_restore_room_state has correct data on entry.
+    global.room_states[$ _room_name] = json_parse(_state_json);
+    global.room_drops[$  _room_name] = json_parse(_drops_json);
+
+    // Position player correctly when the new room's Step first runs.
+    global.pending_player_room_name = _room_name;
+    global.pending_player_x         = _target_x;
+    global.pending_player_y         = _target_y;
+    if (instance_exists(global.local_player)) {
+        global.pending_player_dir = global.local_player.dir;
+    }
+
+    var _target_room = asset_get_index(_room_name);
+    if (_target_room >= 0) {
+        room_goto(_target_room);
+    } else {
+        show_debug_message("[NET] ROOM_SNAPSHOT: unknown room " + _room_name);
+        if (instance_exists(obj_controller)) obj_controller.room_change_pending = false;
+    }
+    show_debug_message("[NET] Applied ROOM_SNAPSHOT, going to " + _room_name);
 }
 
 // --- Sleep ---
 
 function net_send_sleep_request() {
     if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _lp = global.local_player;
+    var _shipping_json = "[]";
+    if (instance_exists(_lp)) _shipping_json = json_stringify(_lp.shipping_array);
     var _buf = net_begin(NET_CMD.SLEEP_REQUEST);
+    buffer_write(_buf, buffer_string, _shipping_json);
     net_broadcast(_buf);
     show_debug_message("[NET] Sent SLEEP_REQUEST");
 }
 
-function net_handle_sleep_request() {
-    // Client is ready to sleep. Day only advances when the HOST sleeps.
+function net_handle_sleep_request(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _shipping_json = buffer_read(_payload, buffer_string);
     show_debug_message("[NET] Client sent SLEEP_REQUEST");
-    scr_notify("El otro jugador quiere dormir");
+    // Apply client's shipping array to ghost so host can process it.
+    if (instance_exists(obj_net)) {
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost) && _shipping_json != "" && _shipping_json != "[]") {
+            _ghost.shipping_array = json_parse(_shipping_json);
+        }
+    }
+    if (!instance_exists(obj_controller)) return;
+    obj_controller.client_wants_sleep = true;
+    // If we already sent SLEEP_PROMPT, the client will respond via SLEEP_RESPONSE
+    // — don't trigger scr_sleep_and_save_mp() here to avoid double execution.
+    if (obj_controller.host_wants_sleep && !obj_controller.sleep_prompt_sent) {
+        obj_controller.host_wants_sleep  = false;
+        obj_controller.client_wants_sleep = false;
+        scr_sleep_and_save_mp();
+    } else if (!obj_controller.host_wants_sleep) {
+        scr_notify("El invitado quiere dormir");
+    }
+}
+
+function net_send_sleep_prompt() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.SLEEP_PROMPT);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent SLEEP_PROMPT");
+}
+
+function net_handle_sleep_prompt() {
+    if (global.net_role != NET_ROLE.CLIENT) return;
+    show_debug_message("[NET] Received SLEEP_PROMPT from host");
+    if (!instance_exists(obj_controller)) return;
+    if (obj_controller.sent_sleep_request) {
+        net_send_sleep_response(true);
+        scr_notify("Esperando nuevo dia...");
+    } else {
+        obj_controller.sleep_prompt_open      = true;
+        obj_controller.sleep_prompt_selection = 0;
+    }
+}
+
+function net_send_sleep_response(_accept) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _lp = global.local_player;
+    var _shipping_json = "[]";
+    if (_accept && instance_exists(_lp)) _shipping_json = json_stringify(_lp.shipping_array);
+    var _buf = net_begin(NET_CMD.SLEEP_RESPONSE);
+    buffer_write(_buf, buffer_u8,     _accept ? 1 : 0);
+    buffer_write(_buf, buffer_string, _shipping_json);
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent SLEEP_RESPONSE accept=" + string(_accept));
+}
+
+function net_handle_sleep_response(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _accept        = buffer_read(_payload, buffer_u8);
+    var _shipping_json = buffer_read(_payload, buffer_string);
+    show_debug_message("[NET] SLEEP_RESPONSE accept=" + string(_accept));
+    if (!instance_exists(obj_controller)) return;
+    obj_controller.host_wants_sleep  = false;
+    obj_controller.client_wants_sleep = false;
+    obj_controller.sleep_prompt_sent = false;
+    if (_accept) {
+        // Apply client's shipping array to ghost.
+        if (instance_exists(obj_net)) {
+            var _ghost = obj_net.remote_player_ghost;
+            if (instance_exists(_ghost) && _shipping_json != "" && _shipping_json != "[]") {
+                _ghost.shipping_array = json_parse(_shipping_json);
+            }
+        }
+        scr_sleep_and_save_mp();
+    } else {
+        scr_notify("El invitado no quiere dormir");
+        net_send_notify_peer("Dormir cancelado");
+    }
+}
+
+function net_send_shipping_summary(_player_id, _summary) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.SHIPPING_SUMMARY);
+    buffer_write(_buf, buffer_u8,     _player_id);
+    buffer_write(_buf, buffer_string, json_stringify(_summary));
+    net_broadcast(_buf);
+    show_debug_message("[NET] Sent SHIPPING_SUMMARY to player " + string(_player_id));
+}
+
+function net_handle_shipping_summary(_payload) {
+    var _pid     = buffer_read(_payload, buffer_u8);
+    var _json    = buffer_read(_payload, buffer_string);
+    var _summary = json_parse(_json);
+    show_debug_message("[NET] Received SHIPPING_SUMMARY for player " + string(_pid));
+    if (!instance_exists(obj_controller)) return;
+    obj_controller.shipping_summary_data = _summary;
+    if (array_length(_summary.items) > 0) {
+        obj_controller.shipping_summary_open = true;
+    }
+}
+
+function net_send_time_update() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.TIME_UPDATE);
+    buffer_write(_buf, buffer_u8,  global.game_minute);
+    buffer_write(_buf, buffer_u8,  global.game_hour);
+    buffer_write(_buf, buffer_u16, global.day);
+    buffer_write(_buf, buffer_u16, global.year);
+    buffer_write(_buf, buffer_u8,  global.season_index);
+    net_broadcast(_buf);
+}
+
+function net_handle_time_update(_payload) {
+    var _prev_season    = global.season_index;
+    global.game_minute  = buffer_read(_payload, buffer_u8);
+    global.game_hour    = buffer_read(_payload, buffer_u8);
+    global.day          = buffer_read(_payload, buffer_u16);
+    global.year         = buffer_read(_payload, buffer_u16);
+    global.season_index = buffer_read(_payload, buffer_u8);
+    global.season       = global.season_list[global.season_index];
+    if (global.season_index != _prev_season && instance_exists(obj_controller)) {
+        with (obj_controller) update_tilesets();
+    }
+}
+
+function net_send_money_update(_player_id, _money) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.MONEY_UPDATE);
+    buffer_write(_buf, buffer_u8,  _player_id);
+    buffer_write(_buf, buffer_s32, _money);
+    net_broadcast(_buf);
+}
+
+function net_handle_money_update(_payload) {
+    var _pid   = buffer_read(_payload, buffer_u8);
+    var _money = buffer_read(_payload, buffer_s32);
+    var _lp = global.local_player;
+    if (!instance_exists(_lp) || _lp.player_id != _pid) return;
+    _lp.money = _money;
+    show_debug_message("[NET] MONEY_UPDATE player=" + string(_pid) + " money=" + string(_money));
+}
+
+// player_id 0 = show to all peers; pass a specific id for directed notifications.
+function net_send_notify_peer(_text, _player_id = 0) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.NOTIFY);
+    buffer_write(_buf, buffer_u8,     _player_id);
+    buffer_write(_buf, buffer_string, _text);
+    net_broadcast(_buf);
 }
 
 function net_send_new_day() {
@@ -489,7 +942,7 @@ function net_read_port() {
 
 // --- CMD_USE_ITEM (client → host) ---
 
-function net_send_use_item(_item_key, _quality, _selected_slot, _gx, _gy, _dir) {
+function net_send_use_item(_item_key, _quality, _quantity, _selected_slot, _gx, _gy, _dir) {
     if (!instance_exists(obj_net) || !obj_net.is_connected) return;
     var _lp = global.local_player;
     if (!instance_exists(_lp)) return;
@@ -504,6 +957,7 @@ function net_send_use_item(_item_key, _quality, _selected_slot, _gx, _gy, _dir) 
     buffer_write(_buf, buffer_u8,     _selected_slot);
     buffer_write(_buf, buffer_string, _item_key);
     buffer_write(_buf, buffer_u8,     _quality);
+    buffer_write(_buf, buffer_u16,    _quantity);
     net_broadcast(_buf);
     show_debug_message("[NET] Sent CMD_USE_ITEM item=" + _item_key + " slot=" + string(_selected_slot));
 }
@@ -519,6 +973,7 @@ function net_handle_use_item(_payload) {
     var _selected_slot = buffer_read(_payload, buffer_u8);
     var _item_key      = buffer_read(_payload, buffer_string);
     var _quality       = buffer_read(_payload, buffer_u8);
+    var _quantity      = buffer_read(_payload, buffer_u16);
 
     show_debug_message("[NET] CMD_USE_ITEM from client: item=" + _item_key + " slot=" + string(_selected_slot));
 
@@ -545,15 +1000,28 @@ function net_handle_use_item(_payload) {
     _ghost.dir          = _dir;
     _ghost.selected_slot = _selected_slot;
 
-    // Build item_data struct
-    var _item_data = _item_key;
-    if (variable_struct_exists(global.tool_data, _item_key) || _quality > 0) {
-        _item_data = { key: _item_key, quantity: 1, quality: _quality };
-    }
+    // Mirror the client's exact slot state onto the ghost before simulation
+    // so that inventory decrements (seeds, consumables) produce the right result.
+    var _item_data = (_item_key != "") ? { key: _item_key, quantity: _quantity, quality: _quality } : -1;
+    _ghost.inventory_array[_selected_slot] = _item_data;
 
     // Execute action on ghost (full mutation — no _anim_only)
     with (_ghost) {
         scr_use_item(_item_data, _gx, _gy);
+    }
+
+    // Bugnet: Step_0 ACTING check never runs on ghost, so resolve catch here.
+    if (_item_key == "bugnet") {
+        var _nearest = instance_nearest(_ghost.x, _ghost.y, obj_insect);
+        if (_nearest != noone && point_distance(_ghost.x, _ghost.y, _nearest.x, _nearest.y) <= 40) {
+            var _ikey  = _nearest.insect_key;
+            var _idata = global.insect_data[$ _ikey];
+            net_ghost_add_item(_ghost, _ikey, 1);
+            net_send_notify_peer("¡Atrapaste un " + _idata.name + "!");
+            instance_destroy(_nearest);
+        } else {
+            net_send_notify_peer("¡Fallaste!");
+        }
     }
 
     // Return ghost off-screen
@@ -641,4 +1109,107 @@ function net_handle_energy_update(_payload) {
     if (!instance_exists(_lp) || _lp.player_id != _pid) return;
     _lp.energy = _energy;
     show_debug_message("[NET] ENERGY_UPDATE player=" + string(_pid) + " energy=" + string(_energy));
+}
+
+// --- CMD_DROP (client → host) ---
+
+function net_send_drop(_room_name, _item_key, _quantity, _px, _py, _delay) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_DROP);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, _item_key);
+    buffer_write(_buf, buffer_u16,    _quantity);
+    buffer_write(_buf, buffer_s32,    _px);
+    buffer_write(_buf, buffer_s32,    _py);
+    buffer_write(_buf, buffer_u16,    _delay);
+    net_broadcast(_buf);
+}
+
+function net_handle_drop(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _item_key  = buffer_read(_payload, buffer_string);
+    var _quantity  = buffer_read(_payload, buffer_u16);
+    var _px        = buffer_read(_payload, buffer_s32);
+    var _py        = buffer_read(_payload, buffer_s32);
+    var _delay     = buffer_read(_payload, buffer_u16);
+
+    if (_room_name != room_get_name(room)) {
+        show_debug_message("[NET] CMD_DROP: cross-room drop ignored");
+        return;
+    }
+    // inventory_drop_item will register the drop and broadcast room state
+    inventory_drop_item(_item_key, _quantity, _px, _py, _delay);
+    show_debug_message("[NET] CMD_DROP: created " + _item_key + " at (" + string(_px) + "," + string(_py) + ")");
+}
+
+// --- CMD_PICKUP (client → host) ---
+
+function net_send_pickup(_drop_uid, _room_name, _item_key, _quantity) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_PICKUP);
+    buffer_write(_buf, buffer_u32,    _drop_uid);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, _item_key);
+    buffer_write(_buf, buffer_u16,    _quantity);
+    net_broadcast(_buf);
+}
+
+function net_handle_pickup(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _drop_uid  = buffer_read(_payload, buffer_u32);
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _item_key  = buffer_read(_payload, buffer_string);
+    var _quantity  = buffer_read(_payload, buffer_u16);
+
+    // Server-side inventory tracking on ghost
+    var _ghost = obj_net.remote_player_ghost;
+    if (instance_exists(_ghost)) _ghost.add_item(_item_key, _quantity);
+
+    // Remove from canonical room drops
+    scr_remove_room_drop(_room_name, _drop_uid);
+
+    // Destroy live drop instance if it is in the current room
+    with (obj_item_parent) {
+        if (persistent_drop_id == _drop_uid) { instance_destroy(); break; }
+    }
+
+    // Broadcast so global.room_drops is identical on both machines
+    net_broadcast_room_state(_room_name);
+    show_debug_message("[NET] CMD_PICKUP: uid=" + string(_drop_uid) + " item=" + _item_key);
+}
+
+// --- CMD_CHEST_SLOT (either player → peer) ---
+
+function net_send_chest_slot(_cx, _cy, _room_name, _slot_index, _slot_data) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_CHEST_SLOT);
+    buffer_write(_buf, buffer_s32,    _cx);
+    buffer_write(_buf, buffer_s32,    _cy);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_u8,     _slot_index);
+    buffer_write(_buf, buffer_string, json_stringify(_slot_data));
+    net_broadcast(_buf);
+}
+
+function net_handle_chest_slot(_payload) {
+    var _cx         = buffer_read(_payload, buffer_s32);
+    var _cy         = buffer_read(_payload, buffer_s32);
+    var _room_name  = buffer_read(_payload, buffer_string);
+    var _slot_index = buffer_read(_payload, buffer_u8);
+    var _slot_json  = buffer_read(_payload, buffer_string);
+    var _slot_data  = (_slot_json == "null" || _slot_json == "-1") ? -1 : json_parse(_slot_json);
+
+    if (_room_name != room_get_name(room)) {
+        show_debug_message("[NET] CMD_CHEST_SLOT: chest in other room, skipped");
+        return;
+    }
+
+    with (obj_chest) {
+        if (abs(x - _cx) < 4 && abs(y - _cy) < 4) {
+            storage_array[_slot_index] = _slot_data;
+            show_debug_message("[NET] CMD_CHEST_SLOT: slot=" + string(_slot_index));
+            break;
+        }
+    }
 }

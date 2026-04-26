@@ -85,7 +85,10 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
 
 if (tool_cooldown > 0) tool_cooldown--;
 
-if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
+var _mouse_over_ui = instance_exists(obj_inventory)
+    && device_mouse_y_to_gui(0) >= obj_inventory.menu_y_start;
+
+if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
     var _selected_item = inventory_array[selected_slot];
     var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     var _gx = floor(mouse_x / 16) * 16;
@@ -99,10 +102,11 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STA
     if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !show_backpack) {
         if (global.net_role == NET_ROLE.CLIENT) {
             // Animate locally; host runs the authoritative mutation
-            var _quality = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
-                           ? _selected_item.quality : 0;
+            var _quality  = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
+                            ? _selected_item.quality : 0;
+            var _quantity = is_struct(_selected_item) ? _selected_item.quantity : 1;
             scr_use_item(_selected_item, _gx, _gy, true);
-            net_send_use_item(_item_key, _quality, selected_slot, _gx, _gy, dir);
+            net_send_use_item(_item_key, _quality, _quantity, selected_slot, _gx, _gy, dir);
         } else {
             scr_use_item(_selected_item, _gx, _gy);
             if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
@@ -146,15 +150,22 @@ if (state == STATE.ACTING) {
         var _held_key = is_struct(_held) ? _held.key : _held;
         if (_held_key == "bugnet") {
             bugnet_caught = true;
-            var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
-            if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
-                var _ikey  = _nearest.insect_key;
-                var _idata = global.insect_data[$ _ikey];
-                add_item(_ikey, 1);
-                scr_notify("¡Atrapaste un " + _idata.name + "!");
-                instance_destroy(_nearest);
-            } else {
-                scr_notify("¡Fallaste!");
+            // CLIENT: host resolved the catch via net_handle_use_item; just play animation.
+            if (global.net_role != NET_ROLE.CLIENT) {
+                var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
+                if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
+                    var _ikey  = _nearest.insect_key;
+                    var _idata = global.insect_data[$ _ikey];
+                    add_item(_ikey, 1);
+                    scr_notify("¡Atrapaste un " + _idata.name + "!");
+                    instance_destroy(_nearest);
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                        scr_capture_current_room_state();
+                        net_broadcast_room_state(room_get_name(room));
+                    }
+                } else {
+                    scr_notify("¡Fallaste!");
+                }
             }
         }
     }
@@ -251,12 +262,17 @@ if (state == STATE.ACTING) {
 
             case FISHING_STATE.CATCHING:
                 if (frame_anim >= 4) {
-                    var _fish_key = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
-                    var _fish_data = global.fish_data[$ _fish_key];
-                    add_item(_fish_key, 1);
-                    energy -= 10;
-                    scr_notify("¡Atrapaste un " + _fish_data.name + "!");
-                    state = STATE.IDLE;
+                    if (global.net_role == NET_ROLE.CLIENT) {
+                        // Host resolves which fish is caught; result comes back as INVENTORY_UPDATE.
+                        net_send_fish_reel();
+                    } else {
+                        var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+                        var _fish_data = global.fish_data[$ _fish_key];
+                        add_item(_fish_key, 1);
+                        energy -= 10;
+                        scr_notify("¡Atrapaste un " + _fish_data.name + "!");
+                    }
+                    state      = STATE.IDLE;
                     frame_anim = 0;
                 }
             break;

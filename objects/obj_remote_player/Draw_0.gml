@@ -34,6 +34,13 @@ if (is_riding) {
     }
 } else {
     switch (_st) {
+        case STATE.ACTING:
+        case STATE.FISHING:
+            _skin_s    = (act_skin    >= 0) ? act_skin    : sprite_player_idle;
+            _clothes_s = (act_clothes >= 0) ? act_clothes : sprite_player_clothes_idle;
+            _eyes_s    = (act_eyes    >= 0) ? act_eyes    : sprite_player_eyes_idle;
+            _hair_s    = (act_hair    >= 0) ? act_hair    : sprite_player_hair_idle;
+            break;
         case STATE.WALK:
             _skin_s    = sprite_player_walk;
             _clothes_s = sprite_player_clothes_walk;
@@ -63,3 +70,6 @@ draw_sprite(_eyes_s,    _f, x, y);
 draw_sprite(_clothes_s, _f, x, y);
 draw_sprite(_hair_s,    _f, x, y);
 if (is_riding && _saddle_s != noone) draw_sprite(_saddle_s,  _f, x, y);
+if ((_st == STATE.ACTING || _st == STATE.FISHING) && !is_riding && act_tool >= 0) {
+    draw_sprite(act_tool, _f, x, y);
+}

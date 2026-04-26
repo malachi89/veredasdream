@@ -22,17 +22,10 @@ if (ip_entry_mode) {
     draw_set_alpha(1.0);
     draw_rectangle_color(_bx1, _by1, _bx1 + _bw, _by1 + _bh, c_white, c_white, c_white, c_white, true);
 
-    var _prefix   = "192.168.100.";
-    var _scale    = 2.2;
-    var _suffix   = keyboard_string;
-    if (current_time mod 800 < 400) _suffix += "|";
-    var _prefix_w = string_width(_prefix) * _scale;
-    var _total_w  = string_width(_prefix + keyboard_string) * _scale;
-    var _left_x   = _cx - _total_w / 2;
-    draw_set_halign(fa_left);
-    draw_text_transformed_color(_left_x,             _cy, _prefix, _scale, _scale, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
-    draw_text_transformed_color(_left_x + _prefix_w, _cy, _suffix, _scale, _scale, 0, c_lime,   c_lime,   c_lime,   c_lime,   1.0);
-    draw_set_halign(fa_center);
+    var _scale  = 2.2;
+    var _display = keyboard_string;
+    if (current_time mod 800 < 400) _display += "|";
+    draw_text_transformed_color(_cx, _cy, _display, _scale, _scale, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
 
     draw_text_transformed_color(_cx, _cy + 55, "[Enter] Conectar   [Esc] Cancelar", 1.4, 1.4, 0, c_silver, c_silver, c_silver, c_silver, 1.0);
     exit;
@@ -61,3 +54,5 @@ for (var i = 0; i < array_length(options); i++) {
 if (notif_text != "") {
     draw_text_transformed_color(_cx, _cy + 220, notif_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 }
+
+draw_text_transformed_color(_cx, _cy + 190, "Hospedar: abre el puerto 7777 TCP en tu firewall", 1.1, 1.1, 0, c_gray, c_gray, c_gray, c_gray, 0.6);

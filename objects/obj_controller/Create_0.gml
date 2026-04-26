@@ -133,9 +133,18 @@ global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
 global.forest_insects = [];
 
+room_change_pending = false; // client: waiting for ROOM_SNAPSHOT, suppress duplicate sends
+
 sleep_menu_open = false;
 sleep_menu_selection = 0;
 bed_overlap_previous = false;
+// Multiplayer sleep coordination
+host_wants_sleep   = false;  // host clicked "Si" but waiting for client
+client_wants_sleep = false;  // host received client SLEEP_REQUEST
+sent_sleep_request = false;  // client: already sent SLEEP_REQUEST to host
+sleep_prompt_sent  = false;  // host: SLEEP_PROMPT was sent, waiting for SLEEP_RESPONSE
+sleep_prompt_open      = false;  // client: host-initiated sleep prompt
+sleep_prompt_selection = 0;
 
 // Variables para el resumen de ventas
 shipping_summary_open = false;

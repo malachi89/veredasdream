@@ -20,6 +20,11 @@ if (instance_exists(_lp)) {
                     with (_lp) add_item(held_item.key, held_item.quantity);
                     _lp.held_item = -1;
                 }
+                if (global.net_role == NET_ROLE.HOST
+                    && instance_exists(obj_net) && obj_net.is_connected) {
+                    scr_capture_current_room_state();
+                    net_broadcast_room_state(room_get_name(room));
+                }
             }
         }
 
@@ -50,6 +55,11 @@ if (instance_exists(_lp)) {
             if (_lp.held_item != -1) {
                 with (_lp) add_item(held_item.key, held_item.quantity);
                 _lp.held_item = -1;
+            }
+            if (global.net_role == NET_ROLE.HOST
+                && instance_exists(obj_net) && obj_net.is_connected) {
+                scr_capture_current_room_state();
+                net_broadcast_room_state(room_get_name(room));
             }
         }
     }

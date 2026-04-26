@@ -5,9 +5,11 @@ var _win_w = window_get_width();
 var _win_h = window_get_height();
 
 // Ajustar el puerto de vista al tamaño de la ventana real
-view_wport[0] = _win_w;
-view_hport[0] = _win_h;
-surface_resize(application_surface, _win_w, _win_h);
+if (_win_w > 0 && _win_h > 0) {
+    view_wport[0] = _win_w;
+    view_hport[0] = _win_h;
+    surface_resize(application_surface, _win_w, _win_h);
+}
 
 // 2. posición objetivo (centrada)
 var target_x = target.x - cam_width / 2;
