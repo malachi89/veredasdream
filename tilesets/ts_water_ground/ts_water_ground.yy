@@ -2,10 +2,7 @@
   "$GMTileSet":"v1",
   "%Name":"ts_water_ground",
   "autoTileSets":[
-    {"$GMAutoTileSet":"","%Name":"at_water1","closed_edge":false,"name":"at_water1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[
-        261,233,234,213,258,237,239,280,257,260,262,283,286,211,208,230,236,232,256,229,214,210,209,206,263,
-        259,235,231,285,281,282,254,228,278,212,205,215,207,287,255,284,253,204,277,252,279,276,
-      ],},
+    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[893,143,140,141,11,99,53,94,8,98,52,93,10,50,49,891,],},
   ],
   "macroPageTiles":{
     "SerialiseHeight":0,
@@ -13,7 +10,7 @@
     "TileSerialiseData":[],
   },
   "name":"ts_water_ground",
-  "out_columns":20,
+  "out_columns":34,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -39,5 +36,5 @@
   "tileWidth":16,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":384,
+  "tile_count":1188,
 }

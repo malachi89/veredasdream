@@ -170,7 +170,9 @@
     {"$GMFolder":"","%Name":"forest","folderPath":"folders/tilesets/forest.yy","name":"forest","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"interior","folderPath":"folders/tilesets/interior.yy","name":"interior","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
-  "ForcedPrefabProjectReferences":[],
+  "ForcedPrefabProjectReferences":[
+    {"link":"io.gamemaker.gm_filter_underwater-1.0.0","name":"io.gamemaker.gm_filter_underwater-1.0.0","path":"io.gamemaker.gm_filter_underwater-1.0.0.yyp",},
+  ],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"sprite_player_archer_acc_beard_black_strip28.png","CopyToMask":-1,"filePath":"datafiles/archer/accessories","name":"sprite_player_archer_acc_beard_black_strip28.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"sprite_player_archer_acc_beard_blonde_strip28.png","CopyToMask":-1,"filePath":"datafiles/archer/accessories","name":"sprite_player_archer_acc_beard_blonde_strip28.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
