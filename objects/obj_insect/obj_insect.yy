@@ -10,8 +10,8 @@
   "name":"obj_insect",
   "overriddenProperties":[],
   "parent":{
-    "name":"objects",
-    "path":"folders/objects.yy",
+    "name":"animals",
+    "path":"folders/objects/animals.yy",
   },
   "parentObjectId":null,
   "persistent":false,

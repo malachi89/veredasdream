@@ -4,17 +4,7 @@ function scr_add_animal(_animal_type) {
         return false;
     }
 
-    var _variants = {
-        chicken: ["black", "black_white", "blonde", "blonde_green", "brown_black", "brown_white", "evil", "green", "pink", "red", "universe", "white"],
-        cow:     ["female_black", "female_blonde", "female_brown", "female_pink", "male_black", "male_blonde", "male_brown", "male_pink"],
-        duck:    ["full_black", "full_yellow", "mallad", "mallad_2", "mallad_female", "white", "white_2"],
-        goat:    ["female_black", "female_blonde", "female_brown", "female_pink", "male_black", "male_blonde", "male_brown", "male_pink"],
-        ostrich: ["black", "blue", "brown"],
-        pig:     ["mud_pink", "pink"],
-        sheep:   ["male", "male_2"]
-    };
-
-    var _v_list = _variants[$ _animal_type];
+    var _v_list  = global.animal_data[$ _animal_type].variants;
     var _variant = "white";
     if (_v_list != undefined && array_length(_v_list) > 0) {
         _variant = _v_list[irandom(array_length(_v_list) - 1)];

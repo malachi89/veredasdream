@@ -131,7 +131,9 @@ global.farm_populated = false;
 global.forest_needs_repopulate = true;
 global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
-global.forest_insects = [];
+global.forest_insects                = [];
+global.forest_wild_animals           = [];
+global.forest_days_since_farm_animal = 0;
 
 room_change_pending = false; // client: waiting for ROOM_SNAPSHOT, suppress duplicate sends
 

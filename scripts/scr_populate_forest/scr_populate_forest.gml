@@ -173,6 +173,67 @@ function scr_populate_forest() {
         }
     }
 
+    // --- Wild Animals ---
+    with (obj_wild_animal) instance_destroy();
+    global.forest_wild_animals = [];
+
+    var _wild_keys  = variable_struct_get_names(global.wild_animal_data);
+    var _wild_count = irandom_range(4, 6);
+    var _wplaced    = [];
+
+    for (var i = 0; i < _wild_count; i++) {
+        var _key  = _wild_keys[irandom(array_length(_wild_keys) - 1)];
+        var _data = global.wild_animal_data[$ _key];
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            var _ok = true;
+            for (var j = 0; j < array_length(_wplaced); j++) {
+                if (point_distance(_px, _py, _wplaced[j].x, _wplaced[j].y) < _min_dist) { _ok = false; break; }
+            }
+            if (!_ok) continue;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            var _inst            = instance_create_layer(_px, _py, "Instances", obj_wild_animal);
+            _inst.animal_key     = _key;
+            _inst.is_farm_animal = false;
+            _inst.sprite_index   = _data.sprite;
+            _inst.move_speed     = _data.move_speed;
+            _inst.hp             = _data.hp;
+            _inst.max_hp         = _data.max_hp;
+            array_push(_wplaced, { x: _px, y: _py });
+            array_push(global.forest_wild_animals, { key: _key, x: _px, y: _py, sprite: _data.sprite, move_speed: _data.move_speed, hp: _data.hp, max_hp: _data.max_hp });
+            break;
+        }
+    }
+
+    // --- Farm Animals in Forest (0-1 per day, 1 guaranteed every 7 days) ---
+    global.forest_days_since_farm_animal += 1;
+    var _spawn_farm = (irandom(1) == 0) || (global.forest_days_since_farm_animal >= 7);
+
+    if (_spawn_farm) {
+        global.forest_days_since_farm_animal = 0;
+        var _farm_keys = variable_struct_get_names(global.animal_data);
+        var _farm_key  = _farm_keys[irandom(array_length(_farm_keys) - 1)];
+        var _fdata     = global.animal_data[$ _farm_key];
+        var _variant   = _fdata.variants[irandom(array_length(_fdata.variants) - 1)];
+        var _fspr      = asset_get_index("sprite_" + _farm_key + "_" + _variant);
+        if (_fspr == -1) _fspr = sprite_chicken_white;
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            var _inst            = instance_create_layer(_px, _py, "Instances", obj_wild_animal);
+            _inst.animal_key     = _farm_key;
+            _inst.is_farm_animal = true;
+            _inst.sprite_index   = _fspr;
+            _inst.move_speed     = _fdata.move_speed;
+            _inst.hp             = _fdata.hp;
+            _inst.max_hp         = _fdata.max_hp;
+            array_push(global.forest_wild_animals, { key: _farm_key, x: _px, y: _py, sprite: _fspr, move_speed: _fdata.move_speed, hp: _fdata.hp, max_hp: _fdata.max_hp });
+            break;
+        }
+    }
+
     // --- Lumber area: daily tree replenishment ---
     var _lx1          = 2970;
     var _ly1          = 778;

@@ -124,6 +124,19 @@ function scr_restore_forest_insects() {
     }
 }
 
+function scr_restore_forest_wild_animals() {
+    with (obj_wild_animal) instance_destroy();
+    for (var i = 0; i < array_length(global.forest_wild_animals); i++) {
+        var _d    = global.forest_wild_animals[i];
+        var _inst = instance_create_layer(_d.x, _d.y, "Instances", obj_wild_animal);
+        _inst.animal_key    = _d.key;
+        _inst.sprite_index  = _d.sprite;
+        _inst.move_speed    = _d.move_speed;
+        _inst.hp            = _d.hp;
+        _inst.max_hp        = _d.max_hp;
+    }
+}
+
 function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [] };
     return global.room_states[$ _room_name];

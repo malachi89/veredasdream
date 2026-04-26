@@ -1,0 +1,13 @@
+animal_key       = "";
+is_farm_animal   = false;
+state            = ANIMAL_STATE.IDLE;
+dir              = choose(DIR.LEFT, DIR.RIGHT);
+frame_anim       = 0;
+move_speed       = 0.6;
+hp               = 1;
+max_hp           = 1;
+idle_timer       = irandom_range(60, 240);
+wander_steps     = 0;
+max_wander_steps = irandom_range(30, 120);
+flee_timer       = 0;
+hurt_flash_timer = 0;

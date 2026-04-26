@@ -86,13 +86,23 @@ enum ANIMAL_STATE {
 }
 
 global.animal_data = {
-    chicken: { move_speed: 1.0 },
-    duck:    { move_speed: 0.9 },
-    ostrich: { move_speed: 0.8 },
-    goat:    { move_speed: 0.7 },
-    pig:     { move_speed: 0.6 },
-    sheep:   { move_speed: 0.55 },
-    cow:     { move_speed: 0.5 }
+    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"] },
+    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"] },
+    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"] },
+    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"] },
+    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"] },
+    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"] },
+    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"] },
+};
+
+global.wild_animal_data = {
+    capibara: { name: "Capibara", sprite: sprite_forest_animals_capibara, move_speed: 0.7,  hp: 3, max_hp: 3 },
+    deer:     { name: "Venado",   sprite: sprite_forest_animals_deer,     move_speed: 1.2,  hp: 4, max_hp: 4 },
+    fox:      { name: "Zorro",    sprite: sprite_forest_animals_fox,      move_speed: 1.1,  hp: 3, max_hp: 3 },
+    frog:     { name: "Rana",     sprite: sprite_forest_animals_frog,     move_speed: 0.8,  hp: 2, max_hp: 2 },
+    penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2 },
+    rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 2, max_hp: 2 },
+    turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 5, max_hp: 5 },
 };
 
 enum ITEM_TYPE {

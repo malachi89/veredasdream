@@ -49,6 +49,7 @@ if (current_room_name != _room_name) {
     scr_restore_room_drops(_room_name);
     if (_room_name == "forest" && !global.forest_needs_repopulate) {
         scr_restore_forest_insects();
+        scr_restore_forest_wild_animals();
     }
     update_tilesets();
     scr_setup_forest_trees();
