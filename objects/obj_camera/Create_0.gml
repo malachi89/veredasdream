@@ -3,8 +3,8 @@ if (instance_number(obj_camera) > 1) {
     exit;
 }
 
-// target (a quién sigue)
-target = obj_player;
+// target: se fija en el jugador local desde obj_controller.Step cada frame.
+target = global.local_player;
 
 // tamaño de cámara (16:9)
 cam_width  = 640;

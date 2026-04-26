@@ -31,21 +31,36 @@ if (y >= ystart_pos && vspeed >= 0) {
 if (collect_delay > 0) {
     collect_delay -= 1;
 } else {
-    if (instance_exists(obj_player)) {
-        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
+    var _lp = global.local_player;
+    if (instance_exists(_lp)) {
+        var _dist = point_distance(x, y, _lp.x, _lp.y);
 
         // Efecto magnetico si esta cerca
         if (_dist <= magnetic_range) {
-            var _dir = point_direction(x, y, obj_player.x, obj_player.y);
+            var _dir = point_direction(x, y, _lp.x, _lp.y);
             var _mag_spd = 3;
             x += lengthdir_x(_mag_spd, _dir);
             y += lengthdir_y(_mag_spd, _dir);
         }
 
         if (_dist <= 10) {
-            if (obj_inventory.add_item(item_key, quantity)) {
-                scr_remove_room_drop(source_room_name, persistent_drop_id);
-
+            var _picked = false;
+            if (global.net_role == NET_ROLE.CLIENT
+                && instance_exists(obj_net) && obj_net.is_connected) {
+                net_send_pickup(persistent_drop_id, source_room_name, item_key, quantity);
+                _picked = _lp.add_item(item_key, quantity);
+                if (_picked) scr_remove_room_drop(source_room_name, persistent_drop_id);
+            } else {
+                _picked = _lp.add_item(item_key, quantity);
+                if (_picked) {
+                    scr_remove_room_drop(source_room_name, persistent_drop_id);
+                    if (global.net_role == NET_ROLE.HOST
+                        && instance_exists(obj_net) && obj_net.is_connected) {
+                        net_broadcast_room_state(source_room_name);
+                    }
+                }
+            }
+            if (_picked) {
                 var _name = "Item";
                 if (variable_struct_exists(global.seed_data, item_key)) _name = global.seed_data[$ item_key].name;
                 else if (variable_struct_exists(global.crop_data, item_key)) _name = global.crop_data[$ item_key].name;

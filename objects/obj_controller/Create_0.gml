@@ -23,7 +23,9 @@ global.game_minute = 0;
 global.game_hour = 6;
 global.day = 1;
 global.year = 1;
-global.money = 500;
+// money vive en obj_player.money (per-player). global.local_player apunta al jugador de esta maquina.
+global.local_player = noone;
+global.net_role = NET_ROLE.NONE;
 
 time_tick_counter = 0;
 time_frames_per_minute = (360 / global.time_multiplier);
@@ -79,6 +81,11 @@ function start_new_day() {
 
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
+
+    // Broadcast new day state to client so their world advances in sync.
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_new_day();
+    }
 }
 
 function update_tilesets() {
@@ -126,9 +133,18 @@ global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
 global.forest_insects = [];
 
+room_change_pending = false; // client: waiting for ROOM_SNAPSHOT, suppress duplicate sends
+
 sleep_menu_open = false;
 sleep_menu_selection = 0;
 bed_overlap_previous = false;
+// Multiplayer sleep coordination
+host_wants_sleep   = false;  // host clicked "Si" but waiting for client
+client_wants_sleep = false;  // host received client SLEEP_REQUEST
+sent_sleep_request = false;  // client: already sent SLEEP_REQUEST to host
+sleep_prompt_sent  = false;  // host: SLEEP_PROMPT was sent, waiting for SLEEP_RESPONSE
+sleep_prompt_open      = false;  // client: host-initiated sleep prompt
+sleep_prompt_selection = 0;
 
 // Variables para el resumen de ventas
 shipping_summary_open = false;

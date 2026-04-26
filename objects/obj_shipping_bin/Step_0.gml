@@ -1,29 +1,24 @@
-if (instance_exists(obj_player)) {
-    var _dist = point_distance(x, y, obj_player.x, obj_player.y);
-    
+var _lp = global.local_player;
+if (instance_exists(_lp)) {
+    var _dist = point_distance(x, y, _lp.x, _lp.y);
+
     if (_dist < 48) {
         if (keyboard_check_pressed(ord("E"))) {
-            with(obj_inventory) {
-                show_shipping = !show_shipping;
-                show_backpack = show_shipping; // Siempre abrir mochila si abrimos shipping
-                
-                // Si cerramos, devolvemos item en mano
-                if (!show_shipping && held_item != -1) {
-                    add_item(held_item.key, held_item.quantity);
-                    held_item = -1;
-                }
+            _lp.show_shipping = !_lp.show_shipping;
+            _lp.show_backpack = _lp.show_shipping;
+
+            if (!_lp.show_shipping && _lp.held_item != -1) {
+                with (_lp) add_item(held_item.key, held_item.quantity);
+                _lp.held_item = -1;
             }
         }
     } else {
-        // Si el jugador se aleja demasiado, cerrar el menú
-        with(obj_inventory) {
-            if (show_shipping) {
-                show_shipping = false;
-                show_backpack = false;
-                if (held_item != -1) {
-                    add_item(held_item.key, held_item.quantity);
-                    held_item = -1;
-                }
+        if (_lp.show_shipping) {
+            _lp.show_shipping = false;
+            _lp.show_backpack = false;
+            if (_lp.held_item != -1) {
+                with (_lp) add_item(held_item.key, held_item.quantity);
+                _lp.held_item = -1;
             }
         }
     }

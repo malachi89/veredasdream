@@ -1,5 +1,11 @@
-if (instance_exists(obj_inventory) && obj_inventory.dialog_open) {
-    if (keyboard_check_pressed(ord("E"))) obj_inventory.dialog_open = false;
+// Solo el jugador local procesa input de teclado/raton.
+if (!is_local) {
+    depth = -bbox_bottom;
+    exit;
+}
+
+if (dialog_open) {
+    if (keyboard_check_pressed(ord("E"))) dialog_open = false;
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
@@ -8,7 +14,7 @@ if (instance_exists(obj_inventory) && obj_inventory.dialog_open) {
 }
 
 if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open))
-    || (instance_exists(obj_inventory) && obj_inventory.shop_open)) {
+    || shop_open) {
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
@@ -53,34 +59,37 @@ if (keyboard_check_pressed(ord("F"))) {
     }
 }
 
-if (keyboard_check_pressed(ord("E")) && !obj_inventory.show_backpack) {
+if (keyboard_check_pressed(ord("E")) && !show_backpack) {
     var _npc = instance_nearest(x, y, obj_npc);
     if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
         var _shop_entry = global.shop_data[$ _npc.npc_key];
         if (_shop_entry != undefined) {
-            obj_inventory.shop_open      = true;
-            obj_inventory.shop_npc_key   = _npc.npc_key;
-            obj_inventory.shop_scroll    = 0;
-            obj_inventory.shop_msg       = "";
-            obj_inventory.shop_msg_timer = 0;
+            shop_open      = true;
+            shop_npc_key   = _npc.npc_key;
+            shop_scroll    = 0;
+            shop_msg       = "";
+            shop_msg_timer = 0;
         } else {
-            if (obj_inventory.dialog_open) {
-                obj_inventory.dialog_open = false;
+            if (dialog_open) {
+                dialog_open = false;
             } else {
-                obj_inventory.dialog_open     = true;
-                obj_inventory.dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
-                obj_inventory.dialog_text     = "Hola campeon, echele ganas";
+                dialog_open     = true;
+                dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
+                dialog_text     = "Hola campeon, echele ganas";
             }
         }
-    } else if (obj_inventory.dialog_open) {
-        obj_inventory.dialog_open = false;
+    } else if (dialog_open) {
+        dialog_open = false;
     }
 }
 
 if (tool_cooldown > 0) tool_cooldown--;
 
-if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
-    var _selected_item = obj_inventory.inventory_array[obj_inventory.selected_slot];
+var _mouse_over_ui = instance_exists(obj_inventory)
+    && device_mouse_y_to_gui(0) >= obj_inventory.menu_y_start;
+
+if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
+    var _selected_item = inventory_array[selected_slot];
     var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     var _gx = floor(mouse_x / 16) * 16;
     var _gy = floor(mouse_y / 16) * 16;
@@ -90,8 +99,21 @@ if (mouse_check_button_pressed(mb_left) && state != STATE.ACTING && state != STA
 
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
 
-    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !obj_inventory.show_backpack) {
-        scr_use_item(_selected_item, _gx, _gy);
+    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !show_backpack) {
+        if (global.net_role == NET_ROLE.CLIENT) {
+            // Animate locally; host runs the authoritative mutation
+            var _quality  = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
+                            ? _selected_item.quality : 0;
+            var _quantity = is_struct(_selected_item) ? _selected_item.quantity : 1;
+            scr_use_item(_selected_item, _gx, _gy, true);
+            net_send_use_item(_item_key, _quality, _quantity, selected_slot, _gx, _gy, dir);
+        } else {
+            scr_use_item(_selected_item, _gx, _gy);
+            if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                scr_capture_current_room_state();
+                net_broadcast_room_state(room_get_name(room));
+            }
+        }
         tool_cooldown = 50;
     }
 }
@@ -124,19 +146,26 @@ if (state == STATE.ACTING) {
     frame_anim += 0.2;
 
     if (!bugnet_caught && floor(frame_anim) >= 5) {
-        var _held     = obj_inventory.inventory_array[obj_inventory.selected_slot];
+        var _held     = inventory_array[selected_slot];
         var _held_key = is_struct(_held) ? _held.key : _held;
         if (_held_key == "bugnet") {
             bugnet_caught = true;
-            var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
-            if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
-                var _ikey  = _nearest.insect_key;
-                var _idata = global.insect_data[$ _ikey];
-                obj_inventory.add_item(_ikey, 1);
-                scr_notify("¡Atrapaste un " + _idata.name + "!");
-                instance_destroy(_nearest);
-            } else {
-                scr_notify("¡Fallaste!");
+            // CLIENT: host resolved the catch via net_handle_use_item; just play animation.
+            if (global.net_role != NET_ROLE.CLIENT) {
+                var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
+                if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
+                    var _ikey  = _nearest.insect_key;
+                    var _idata = global.insect_data[$ _ikey];
+                    add_item(_ikey, 1);
+                    scr_notify("¡Atrapaste un " + _idata.name + "!");
+                    instance_destroy(_nearest);
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                        scr_capture_current_room_state();
+                        net_broadcast_room_state(room_get_name(room));
+                    }
+                } else {
+                    scr_notify("¡Fallaste!");
+                }
             }
         }
     }
@@ -146,7 +175,6 @@ if (state == STATE.ACTING) {
         frame_anim = 0;
     }
 
-    // Cada calidad desplaza el sprite 4 direcciones completas hacia abajo
     var _quality_offset = action_quality * (4 * frames_action);
     image_index = _quality_offset + (dir * frames_action) + floor(frame_anim);
 } else if (state == STATE.FISHING) {
@@ -234,12 +262,17 @@ if (state == STATE.ACTING) {
 
             case FISHING_STATE.CATCHING:
                 if (frame_anim >= 4) {
-                    var _fish_key = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
-                    var _fish_data = global.fish_data[$ _fish_key];
-                    obj_inventory.add_item(_fish_key, 1);
-                    energy -= 10;
-                    scr_notify("¡Atrapaste un " + _fish_data.name + "!");
-                    state = STATE.IDLE;
+                    if (global.net_role == NET_ROLE.CLIENT) {
+                        // Host resolves which fish is caught; result comes back as INVENTORY_UPDATE.
+                        net_send_fish_reel();
+                    } else {
+                        var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+                        var _fish_data = global.fish_data[$ _fish_key];
+                        add_item(_fish_key, 1);
+                        energy -= 10;
+                        scr_notify("¡Atrapaste un " + _fish_data.name + "!");
+                    }
+                    state      = STATE.IDLE;
                     frame_anim = 0;
                 }
             break;
@@ -265,12 +298,12 @@ if (state == STATE.ACTING) {
     ];
     var _current = _anim_data[state];
     sprite_index = _current[0];
-    
+
     var _prev_frame = floor(frame_anim);
     frame_anim += _current[1];
     if (frame_anim >= _current[2]) frame_anim = 0;
     var _curr_frame = floor(frame_anim);
-    
+
     if (_curr_frame != _prev_frame) {
         if (state == STATE.WALK || state == STATE.RUN) {
             var _f1 = 1;
@@ -280,7 +313,7 @@ if (state == STATE.ACTING) {
             }
         }
     }
-    
+
     var _dir_idx = dir;
     if (is_riding) {
         if (state == STATE.IDLE) _dir_idx = dir;
@@ -290,6 +323,15 @@ if (state == STATE.ACTING) {
         }
     }
     image_index = (_dir_idx * _current[2]) + floor(frame_anim);
+}
+
+// PLAYER_STATE broadcast at 15 Hz for multiplayer position sync
+if (global.net_role != NET_ROLE.NONE && instance_exists(obj_net) && obj_net.is_connected) {
+    net_state_timer += 1;
+    if (net_state_timer >= 4) {
+        net_state_timer = 0;
+        net_send_player_state();
+    }
 }
 
 image_speed = 0;

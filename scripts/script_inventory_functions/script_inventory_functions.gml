@@ -1,5 +1,11 @@
 function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
     var _room_name = room_get_name(room);
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        // Route through host so the drop UID is host-authoritative.
+        // No local instance — host creates it and broadcasts back via WEVT_ROOM_REFRESH.
+        net_send_drop(_room_name, _key, _qty, _px, _py, _delay);
+        return;
+    }
     var _inst = instance_create_layer(_px, _py, "Instances", obj_item_parent);
     with (_inst) {
         item_key = _key;
@@ -11,6 +17,9 @@ function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
         gravity = 0.15;
     }
     scr_register_room_drop(_inst, _room_name);
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        net_broadcast_room_state(_room_name);
+    }
 }
 
 function scr_get_room_drops(_room_name) {
@@ -61,8 +70,35 @@ function scr_remove_room_drop(_room_name, _drop_id) {
 
 function scr_restore_room_drops(_room_name) {
     var _drops = scr_get_room_drops(_room_name);
+
+    // Build authoritative ID set
+    var _stored_ids = {};
+    for (var i = 0; i < array_length(_drops); i++) {
+        _stored_ids[$ string(_drops[i].id)] = true;
+    }
+
+    // Destroy instances that are no longer in the authoritative state
+    var _to_destroy = [];
+    with (obj_item_parent) {
+        if (source_room_name == _room_name
+            && !variable_struct_exists(_stored_ids, string(persistent_drop_id))) {
+            array_push(_to_destroy, id);
+        }
+    }
+    for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+    // Build set of already-live instance IDs
+    var _existing_ids = {};
+    with (obj_item_parent) {
+        if (source_room_name == _room_name && persistent_drop_id != -1) {
+            _existing_ids[$ string(persistent_drop_id)] = true;
+        }
+    }
+
+    // Create instances only for drops that have no live instance yet
     for (var i = 0; i < array_length(_drops); i++) {
         var _drop_data = _drops[i];
+        if (variable_struct_exists(_existing_ids, string(_drop_data.id))) continue;
         var _inst = instance_create_layer(_drop_data.x, _drop_data.y, "Instances", obj_item_parent);
         with (_inst) {
             item_key = _drop_data.item_key;
@@ -215,30 +251,56 @@ function scr_capture_current_room_state() {
     }
 }
 
+// Helper: build a lookup map { "x_y": index } from an array of stored structs.
+function _build_xy_map(_arr) {
+    var _m = {};
+    for (var _i = 0; _i < array_length(_arr); _i++) {
+        var _e = _arr[_i];
+        var _k = string(_e.x) + "_" + string(_e.y);
+        _m[$ _k] = _i;
+    }
+    return _m;
+}
+
+// Reconcile: update/create/destroy instances to match stored state.
+// Safer than destroy-all because it leaves untouched instances (e.g. from the other player) alone.
 function scr_restore_room_state(_room_name) {
     var _state = scr_get_room_state(_room_name);
+
+    // ---- TILEMAP (tilled/watered) — always wipe+reapply; no instances involved ----
     var _layer_id = layer_get_id("Tiles_tilled_watered");
     if (_layer_id != -1) {
         var _map_id = layer_tilemap_get_id(_layer_id);
-        for (var _y = 0; _y < room_height; _y += 16) {
-            for (var _x = 0; _x < room_width; _x += 16) {
-                tilemap_set_at_pixel(_map_id, 0, _x, _y);
+        for (var _ty = 0; _ty < room_height; _ty += 16) {
+            for (var _tx = 0; _tx < room_width; _tx += 16) {
+                tilemap_set_at_pixel(_map_id, 0, _tx, _ty);
             }
         }
         for (var i = 0; i < array_length(_state.tilled_tiles); i++) {
-            var _tile_data = _state.tilled_tiles[i];
-            tilemap_set_at_pixel(_map_id, _tile_data.tile, _tile_data.x, _tile_data.y);
+            var _td = _state.tilled_tiles[i];
+            tilemap_set_at_pixel(_map_id, _td.tile, _td.x, _td.y);
         }
     }
+
+    // ---- CROPS & TREES ----
     if (layer_get_id("Instances_Crops") != -1) {
-        // First destroy existing ones to avoid duplicates if re-entering
-        with (obj_crop) instance_destroy();
-        with (obj_tree) instance_destroy();
-        
+        var _crop_map = _build_xy_map(_state.crops);
+
+        // Remove existing crops/trees not in stored state
+        var _to_destroy = [];
+        with (obj_crop) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_crop_map, _k)) array_push(_to_destroy, id);
+        }
+        with (obj_tree) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_crop_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+        // Create/update stored crops
         for (var i = 0; i < array_length(_state.crops); i++) {
             var _c_data = _state.crops[i];
-            
-            // Determine object type (with backward compatibility)
             var _is_tree = false;
             if (variable_struct_exists(_c_data, "type")) {
                 _is_tree = (_c_data.type == "tree");
@@ -250,101 +312,118 @@ function scr_restore_room_state(_room_name) {
                     _is_tree = _c_info.is_fruit_tree;
                 }
             }
-            
             var _obj_type = _is_tree ? obj_tree : obj_crop;
-            var _inst = instance_create_layer(_c_data.x, _c_data.y, "Instances_Crops", _obj_type);
-            
+
+            // Find existing instance at this position
+            var _inst = noone;
+            with (_obj_type) {
+                if (x == _c_data.x && y == _c_data.y) { _inst = id; break; }
+            }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_c_data.x, _c_data.y, "Instances_Crops", _obj_type);
+            }
             with (_inst) {
-                crop_type = _c_data.crop_type;
-                days_passed = _c_data.days_passed;
+                crop_type    = _c_data.crop_type;
+                days_passed  = _c_data.days_passed;
                 days_to_grow = _c_data.days_to_grow;
-                max_stages = _c_data.max_stages;
-                
+                max_stages   = _c_data.max_stages;
                 if (_is_tree) {
-                    fruit_cycle_days = variable_struct_exists(_c_data, "fruit_cycle_days") ? _c_data.fruit_cycle_days : 2;
+                    fruit_cycle_days   = variable_struct_exists(_c_data, "fruit_cycle_days")   ? _c_data.fruit_cycle_days   : 2;
                     days_since_harvest = variable_struct_exists(_c_data, "days_since_harvest") ? _c_data.days_since_harvest : 0;
-                    has_fruit = variable_struct_exists(_c_data, "has_fruit") ? _c_data.has_fruit : false;
-                    fruit_item = variable_struct_exists(_c_data, "fruit_item") ? _c_data.fruit_item : crop_type;
-                    hits_remaining = variable_struct_exists(_c_data, "hits_remaining") ? _c_data.hits_remaining : 10;
+                    has_fruit          = variable_struct_exists(_c_data, "has_fruit")          ? _c_data.has_fruit          : false;
+                    fruit_item         = variable_struct_exists(_c_data, "fruit_item")         ? _c_data.fruit_item         : crop_type;
+                    hits_remaining     = variable_struct_exists(_c_data, "hits_remaining")     ? _c_data.hits_remaining     : 10;
                 } else {
-                    growth_stage = _c_data.growth_stage;
-                    is_watered = _c_data.is_watered;
+                    growth_stage     = _c_data.growth_stage;
+                    is_watered       = _c_data.is_watered;
                     persistent_water = variable_struct_exists(_c_data, "persistent_water") ? _c_data.persistent_water : false;
                     skip_blank_frame = _c_data.skip_blank_frame;
-                    image_index = _c_data.image_index;
+                    image_index      = _c_data.image_index;
                 }
                 image_speed = 0;
             }
         }
     }
-    
-    // Restaurar Cofres
+
+    // ---- CHESTS ----
     if (variable_struct_exists(_state, "chests")) {
-        with (obj_chest) instance_destroy();
+        var _chest_map = _build_xy_map(_state.chests);
+        var _to_destroy = [];
+        with (obj_chest) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_chest_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
         for (var i = 0; i < array_length(_state.chests); i++) {
-            var _c_data = _state.chests[i];
-            // Verificar que las coordenadas estén dentro de los límites de la habitación
-            if (_c_data.x >= 0 && _c_data.y >= 0 && _c_data.x < room_width - 16 && _c_data.y < room_height - 16) {
-                var _chest = instance_create_layer(_c_data.x, _c_data.y, "Instances", obj_chest);
-                _chest.storage_array = _c_data.storage_array;
-                _chest.image_speed = 0;
-                _chest.image_index = 0;
+            var _cd = _state.chests[i];
+            if (_cd.x < 0 || _cd.y < 0 || _cd.x >= room_width - 16 || _cd.y >= room_height - 16) continue;
+            var _inst = noone;
+            with (obj_chest) { if (x == _cd.x && y == _cd.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_cd.x, _cd.y, "Instances", obj_chest);
+                _inst.image_speed = 0;
+                _inst.image_index = 0;
             }
+            _inst.storage_array = _cd.storage_array;
         }
     }
 
-    // Restore Buildings
+    // ---- BUILDINGS ----
     if (variable_struct_exists(_state, "buildings") && array_length(_state.buildings) > 0) {
         for (var i = 0; i < array_length(_state.buildings); i++) {
             var _b_data = _state.buildings[i];
             var _obj = asset_get_index(_b_data.obj);
-            if (_obj != -1) {
-                // Determine corresponding placeholder
-                var _placeholder = noone;
-                switch (_obj) {
-                    case obj_barn: _placeholder = obj_barn_placeholder; break;
-                    case obj_chicken: _placeholder = obj_chicken_placeholder; break;
-                    case obj_greenhouse: _placeholder = obj_greenhouse_placeholder; break;
-                    case obj_mill: _placeholder = obj_mill_placeholder; break;
-                    case obj_stable: _placeholder = obj_stable_placeholder; break;
-                }
-                
-                // Destroy placeholder if it exists at this position
-                if (_placeholder != noone) {
-                    var _p_inst = instance_place(_b_data.x, _b_data.y, _placeholder);
-                    if (_p_inst == noone) {
-                        // try instance_nearest if instance_place fails due to collision issues
-                        _p_inst = instance_nearest(_b_data.x, _b_data.y, _placeholder);
-                        if (_p_inst != noone && point_distance(_b_data.x, _b_data.y, _p_inst.x, _p_inst.y) > 1) {
-                            _p_inst = noone;
-                        }
-                    }
-                    if (_p_inst != noone) instance_destroy(_p_inst);
-                }
-                
-                // Create actual building
-                if (!instance_exists(_obj) || instance_number(_obj) < array_length(_state.buildings)) {
-                     instance_create_layer(_b_data.x, _b_data.y, "Instances", _obj);
+            if (_obj == -1) continue;
+
+            // Already exists at this position?
+            var _already = false;
+            with (_obj) { if (x == _b_data.x && y == _b_data.y) { _already = true; break; } }
+            if (_already) continue;
+
+            // Remove placeholder
+            var _placeholder = noone;
+            switch (_obj) {
+                case obj_barn:        _placeholder = obj_barn_placeholder;        break;
+                case obj_chicken:     _placeholder = obj_chicken_placeholder;     break;
+                case obj_greenhouse:  _placeholder = obj_greenhouse_placeholder;  break;
+                case obj_mill:        _placeholder = obj_mill_placeholder;        break;
+                case obj_stable:      _placeholder = obj_stable_placeholder;      break;
+            }
+            if (_placeholder != noone) {
+                var _p_inst = instance_nearest(_b_data.x, _b_data.y, _placeholder);
+                if (_p_inst != noone && point_distance(_b_data.x, _b_data.y, _p_inst.x, _p_inst.y) <= 1) {
+                    instance_destroy(_p_inst);
                 }
             }
+            instance_create_layer(_b_data.x, _b_data.y, "Instances", _obj);
         }
     }
 
-    // Restore Horses
+    // ---- HORSES ----
     if (variable_struct_exists(_state, "horses")) {
-        with (obj_horse_parent) instance_destroy();
+        var _horse_map = _build_xy_map(_state.horses);
+        var _to_destroy = [];
+        with (obj_horse_parent) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_horse_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
         for (var i = 0; i < array_length(_state.horses); i++) {
-            var _h_data = _state.horses[i];
-            var _obj = asset_get_index(_h_data.obj);
-            if (_obj != -1) {
-                var _inst = instance_create_layer(_h_data.x, _h_data.y, "Instances", _obj);
-                if (variable_instance_exists(_inst, "dir")) _inst.dir = _h_data.dir;
-            }
+            var _hd = _state.horses[i];
+            var _obj = asset_get_index(_hd.obj);
+            if (_obj == -1) continue;
+            var _inst = noone;
+            with (obj_horse_parent) { if (x == _hd.x && y == _hd.y) { _inst = id; break; } }
+            if (_inst == noone) _inst = instance_create_layer(_hd.x, _hd.y, "Instances", _obj);
+            if (variable_instance_exists(_inst, "dir")) _inst.dir = _hd.dir;
         }
     }
 
-    // Restore Farm Animals
+    // ---- FARM ANIMALS ----
     if (variable_struct_exists(_state, "animals")) {
+        // Animals wander so we can't reliably key by position; wipe and recreate.
         with (obj_farm_animal) instance_destroy();
         for (var i = 0; i < array_length(_state.animals); i++) {
             var _a = _state.animals[i];
@@ -357,35 +436,55 @@ function scr_restore_room_state(_room_name) {
                 if (sprite_anim == -1) sprite_anim = sprite_chicken_white;
                 frame_count = sprite_get_number(sprite_anim);
                 if (frame_count == 32 && idle_type > 3) idle_type = 3;
-                var _data   = global.animal_data[$ animal_type];
-                move_speed  = (_data != undefined) ? _data.move_speed : 0.6;
+                var _data  = global.animal_data[$ animal_type];
+                move_speed = (_data != undefined) ? _data.move_speed : 0.6;
             }
         }
     }
 
-    // Restore Common Trees
+    // ---- COMMON TREES ----
     if (variable_struct_exists(_state, "common_trees")) {
-        with (obj_common_tree) instance_destroy();
+        var _ct_map = _build_xy_map(_state.common_trees);
+        var _to_destroy = [];
+        with (obj_common_tree) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_ct_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
         for (var i = 0; i < array_length(_state.common_trees); i++) {
             var _ct = _state.common_trees[i];
-            var _inst = instance_create_layer(_ct.x, _ct.y, "Instances", obj_common_tree);
+            var _inst = noone;
+            with (obj_common_tree) { if (x == _ct.x && y == _ct.y) { _inst = id; break; } }
+            if (_inst == noone) _inst = instance_create_layer(_ct.x, _ct.y, "Instances", obj_common_tree);
             _inst.tree_type      = _ct.tree_type;
             _inst.growth_stage   = _ct.growth_stage;
             _inst.hits_remaining = variable_struct_exists(_ct, "hits_remaining") ? _ct.hits_remaining : 10;
         }
     }
 
-    // Restore Rocks
+    // ---- ROCKS ----
     if (variable_struct_exists(_state, "rocks")) {
-        with (obj_rock) instance_destroy();
+        var _rock_map = _build_xy_map(_state.rocks);
+        var _to_destroy = [];
+        with (obj_rock) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_rock_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
         for (var i = 0; i < array_length(_state.rocks); i++) {
             var _r = _state.rocks[i];
-            var _inst = instance_create_layer(_r.x, _r.y, "Instances", obj_rock);
+            var _inst = noone;
+            with (obj_rock) { if (x == _r.x && y == _r.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_r.x, _r.y, "Instances", obj_rock);
+                _inst.image_speed = 0;
+                _inst.image_index = 0;
+            }
             var _spr = asset_get_index(_r.sprite_name);
             if (_spr != -1) _inst.sprite_index = _spr;
-            _inst.image_speed = 0;
             _inst.hits_remaining = variable_struct_exists(_r, "hits_remaining") ? _r.hits_remaining : 10;
-            _inst.image_index = 0;
         }
     }
 }
@@ -480,12 +579,30 @@ function scr_read_text_file(_path) {
 
 function scr_save_game() {
     scr_capture_current_room_state();
+
+    // Serializar todos los jugadores (versión 2)
+    var _players_arr = [];
+    with (obj_player) {
+        array_push(_players_arr, {
+            player_id:       player_id,
+            room_name:       room_get_name(room),
+            x:               x,
+            y:               y,
+            dir:             dir,
+            money:           money,
+            energy:          energy,
+            selected_slot:   selected_slot,
+            inventory_array: inventory_array,
+            backpack_array:  backpack_array,
+            shipping_array:  shipping_array,
+            held_item:       held_item
+        });
+    }
+
     var _save_data = {
-        version: 1,
+        version: 2,
         time: { minute: global.game_minute, hour: global.game_hour, day: global.day, year: global.year, season_index: global.season_index, season: global.season },
-        economy: { money: global.money },
-        player: { room_name: room_get_name(room), x: obj_player.x, y: obj_player.y, dir: obj_player.dir },
-        inventory: { selected_slot: obj_inventory.selected_slot, inventory_array: obj_inventory.inventory_array, backpack_array: obj_inventory.backpack_array, shipping_array: obj_inventory.shipping_array, held_item: obj_inventory.held_item },
+        players: _players_arr,
         room_states: global.room_states,
         room_drops: global.room_drops,
         next_drop_uid: global.next_drop_uid
@@ -510,40 +627,86 @@ function scr_apply_loaded_game(_save_data) {
     global.year = _save_data.time.year;
     global.season_index = _save_data.time.season_index;
     global.season = _save_data.time.season;
-    global.money = _save_data.economy.money;
     global.room_states = _save_data.room_states;
     global.farm_populated = variable_struct_exists(global.room_states, "farm");
     global.room_drops = _save_data.room_drops;
     global.next_drop_uid = _save_data.next_drop_uid;
-    obj_inventory.selected_slot = _save_data.inventory.selected_slot;
-    obj_inventory.inventory_array = _save_data.inventory.inventory_array;
-    obj_inventory.backpack_array = _save_data.inventory.backpack_array;
-    obj_inventory.shipping_array = _save_data.inventory.shipping_array;
-    
-    // Asegurar que el shipping_array tenga el tamaño correcto si se cargó un guardado viejo
-    if (array_length(obj_inventory.shipping_array) < obj_inventory.max_shipping_slots) {
-        var _extra = obj_inventory.max_shipping_slots - array_length(obj_inventory.shipping_array);
-        for (var i = 0; i < _extra; i++) array_push(obj_inventory.shipping_array, -1);
+
+    // Migrar guardados v1 -> v2
+    var _players_arr;
+    if (_save_data.version == 1) {
+        _players_arr = [{
+            player_id:       1,
+            room_name:       _save_data.player.room_name,
+            x:               _save_data.player.x,
+            y:               _save_data.player.y,
+            dir:             _save_data.player.dir,
+            money:           _save_data.economy.money,
+            energy:          500,
+            selected_slot:   _save_data.inventory.selected_slot,
+            inventory_array: _save_data.inventory.inventory_array,
+            backpack_array:  _save_data.inventory.backpack_array,
+            shipping_array:  _save_data.inventory.shipping_array,
+            held_item:       _save_data.inventory.held_item
+        }];
+    } else {
+        _players_arr = _save_data.players;
     }
-    
-    obj_inventory.held_item = _save_data.inventory.held_item;
-    obj_inventory.show_backpack = false;
-    obj_inventory.show_shipping = false;
-    global.pending_player_room_name = _save_data.player.room_name;
-    global.pending_player_x = _save_data.player.x;
-    global.pending_player_y = _save_data.player.y;
-    global.pending_player_dir = _save_data.player.dir;
-    var _target_room = asset_get_index(global.pending_player_room_name);
-    if (_target_room != -1 && room_get_name(room) != global.pending_player_room_name) {
+
+    // Limpiar jugadores existentes antes de recrear desde el guardado
+    // (evita duplicados si el room layout ya tenia un obj_player colocado)
+    with (obj_player) instance_destroy();
+
+    // Restaurar cada jugador
+    var _first_room = "";
+    for (var _pi = 0; _pi < array_length(_players_arr); _pi++) {
+        var _pd = _players_arr[_pi];
+
+        var _pinst = instance_create_layer(0, 0, "Instances", obj_player);
+        _pinst.player_id = _pd.player_id;
+        _pinst.is_local  = (_pd.player_id == 1);
+        _pinst.is_host   = (_pd.player_id == 1);
+
+        _pinst.money          = _pd.money;
+        _pinst.energy         = _pd.energy;
+        _pinst.selected_slot  = _pd.selected_slot;
+        _pinst.inventory_array = _pd.inventory_array;
+        _pinst.backpack_array  = _pd.backpack_array;
+        _pinst.shipping_array  = _pd.shipping_array;
+        _pinst.held_item       = _pd.held_item;
+        _pinst.show_backpack   = false;
+        _pinst.show_shipping   = false;
+
+        // Asegurar tamaño correcto del shipping array
+        if (array_length(_pinst.shipping_array) < _pinst.max_shipping_slots) {
+            var _extra = _pinst.max_shipping_slots - array_length(_pinst.shipping_array);
+            for (var i = 0; i < _extra; i++) array_push(_pinst.shipping_array, -1);
+        }
+
+        if (_pd.player_id == 1) {
+            // El jugador local (host/single-player) usa pending para reposicionarse
+            global.local_player = _pinst;
+            global.pending_player_room_name = _pd.room_name;
+            global.pending_player_x         = _pd.x;
+            global.pending_player_y         = _pd.y;
+            global.pending_player_dir        = _pd.dir;
+            _first_room = _pd.room_name;
+        }
+    }
+
+    var _target_room = asset_get_index(_first_room);
+    if (_target_room != -1 && room_get_name(room) != _first_room) {
         room_goto(_target_room);
     } else {
-        obj_player.x = global.pending_player_x;
-        obj_player.y = global.pending_player_y;
-        obj_player.dir = global.pending_player_dir;
-        obj_player.is_riding = false;
+        if (instance_exists(global.local_player)) {
+            global.local_player.x        = global.pending_player_x;
+            global.local_player.y        = global.pending_player_y;
+            global.local_player.dir      = global.pending_player_dir;
+            global.local_player.is_riding = false;
+        }
         scr_restore_room_state(room_get_name(room));
         scr_restore_room_drops(room_get_name(room));
-        update_tilesets();
+        if (instance_exists(obj_controller)) with (obj_controller) update_tilesets();
         global.pending_player_room_name = "";
     }
 }
@@ -551,34 +714,99 @@ function scr_apply_loaded_game(_save_data) {
 function scr_sleep_and_save() {
     var _bed = instance_find(obj_bed, 0);
     if (_bed == noone) exit;
-    obj_player.is_riding = false;
-    obj_player.state = STATE.IDLE;
-    obj_player.dir = DIR.RIGHT;
-    obj_player.x = _bed.x + 40;
-    obj_player.y = _bed.y + 18;
-    
-    // Procesar ventas y obtener datos para el resumen
-    var _summary = scr_process_shipping();
-    
-    // Si hubo ventas, mostrar resumen antes de avanzar
+
+    var _lp = global.local_player;
+    if (instance_exists(_lp)) {
+        _lp.is_riding = false;
+        _lp.state     = STATE.IDLE;
+        _lp.dir       = DIR.RIGHT;
+        _lp.x         = _bed.x + 40;
+        _lp.y         = _bed.y + 18;
+    }
+
+    // Procesar ventas de cada jugador; solo el local muestra el resumen aqui
+    var _summary = scr_process_shipping(_lp);
+
     if (array_length(_summary.items) > 0) {
         if (instance_exists(obj_controller)) {
             obj_controller.shipping_summary_data = _summary;
             obj_controller.shipping_summary_open = true;
         }
     } else {
-        // Si no hay ventas, avanzar dia directamente
         start_new_day();
         scr_save_game();
         scr_notify("Dia terminado");
     }
 }
 
-function scr_process_shipping() {
+// Called from obj_controller Step when local player clicks "Si" on the sleep menu.
+// Routes to the right sleep function based on net role.
+function scr_on_sleep_yes() {
+    if (global.net_role == NET_ROLE.CLIENT) {
+        if (instance_exists(obj_controller)) obj_controller.sent_sleep_request = true;
+        net_send_sleep_request();
+        scr_notify("Esperando que el anfitrion duerma...");
+    } else if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        if (instance_exists(obj_controller)) obj_controller.host_wants_sleep = true;
+        if (instance_exists(obj_controller) && obj_controller.client_wants_sleep) {
+            obj_controller.host_wants_sleep  = false;
+            obj_controller.client_wants_sleep = false;
+            obj_controller.sleep_prompt_sent = false;
+            scr_sleep_and_save_mp();
+        } else {
+            obj_controller.sleep_prompt_sent = true;
+            net_send_sleep_prompt();
+            scr_notify("Esperando respuesta del invitado...");
+        }
+    } else {
+        scr_sleep_and_save();
+    }
+}
+
+// Multiplayer sleep: process both players' shipping, send client summary, start new day.
+// Called on HOST when both players have agreed to sleep.
+function scr_sleep_and_save_mp() {
+    var _bed = instance_find(obj_bed, 0);
+    if (_bed == noone) exit;
+
+    var _lp = global.local_player;
+    if (instance_exists(_lp)) {
+        _lp.is_riding = false;
+        _lp.state     = STATE.IDLE;
+        _lp.dir       = DIR.RIGHT;
+        _lp.x         = _bed.x + 40;
+        _lp.y         = _bed.y + 18;
+    }
+
+    // Process client (ghost) shipping; send summary and money update to client.
+    if (instance_exists(obj_net)) {
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost)) {
+            var _client_summary = scr_process_shipping(_ghost);
+            net_send_money_update(2, _ghost.money);
+            net_send_shipping_summary(2, _client_summary);
+        }
+    }
+
+    // Process host shipping and show summary (or start new day immediately).
+    var _host_summary = scr_process_shipping(_lp);
+    if (array_length(_host_summary.items) > 0) {
+        if (instance_exists(obj_controller)) {
+            obj_controller.shipping_summary_data = _host_summary;
+            obj_controller.shipping_summary_open = true;
+        }
+    } else {
+        start_new_day();
+        scr_save_game();
+        scr_notify("Dia terminado");
+    }
+}
+
+function scr_process_shipping(_player = global.local_player) {
     var _summary = { items: [], total: 0 };
-    if (!instance_exists(obj_inventory)) return _summary;
-    
-    var _shipping_array = obj_inventory.shipping_array;
+    if (!instance_exists(_player)) return _summary;
+
+    var _shipping_array = _player.shipping_array;
     
     for (var i = 0; i < array_length(_shipping_array); i++) {
         var _item = _shipping_array[i];
@@ -617,7 +845,7 @@ function scr_process_shipping() {
     }
     
     if (_summary.total > 0) {
-        global.money += _summary.total;
+        _player.money += _summary.total;
     }
     
     return _summary;
@@ -664,40 +892,39 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.insect_data,   _key)) return global.insect_data[$   _key];
     return undefined;
 }
-function scr_count_item(_key) {
-    var _inv   = obj_inventory;
+function scr_count_item(_key, _player = global.local_player) {
+    if (!instance_exists(_player)) return 0;
     var _total = 0;
-    for (var i = 0; i < _inv.total_slots; i++) {
-        var _s = _inv.inventory_array[i];
+    for (var i = 0; i < _player.total_slots; i++) {
+        var _s = _player.inventory_array[i];
         if (is_struct(_s) && _s.key == _key) _total += _s.quantity;
     }
-    for (var i = 0; i < _inv.max_backpack_slots; i++) {
-        var _s = _inv.backpack_array[i];
+    for (var i = 0; i < _player.max_backpack_slots; i++) {
+        var _s = _player.backpack_array[i];
         if (is_struct(_s) && _s.key == _key) _total += _s.quantity;
     }
     return _total;
 }
 
-function scr_remove_item(_key, _qty) {
-    if (scr_count_item(_key) < _qty) return false;
-    var _inv  = obj_inventory;
+function scr_remove_item(_key, _qty, _player = global.local_player) {
+    if (scr_count_item(_key, _player) < _qty) return false;
     var _left = _qty;
-    for (var i = 0; i < _inv.total_slots && _left > 0; i++) {
-        var _s = _inv.inventory_array[i];
+    for (var i = 0; i < _player.total_slots && _left > 0; i++) {
+        var _s = _player.inventory_array[i];
         if (is_struct(_s) && _s.key == _key) {
             var _take = min(_s.quantity, _left);
             _s.quantity -= _take;
             _left       -= _take;
-            if (_s.quantity <= 0) _inv.inventory_array[i] = -1;
+            if (_s.quantity <= 0) _player.inventory_array[i] = -1;
         }
     }
-    for (var i = 0; i < _inv.max_backpack_slots && _left > 0; i++) {
-        var _s = _inv.backpack_array[i];
+    for (var i = 0; i < _player.max_backpack_slots && _left > 0; i++) {
+        var _s = _player.backpack_array[i];
         if (is_struct(_s) && _s.key == _key) {
             var _take = min(_s.quantity, _left);
             _s.quantity -= _take;
             _left       -= _take;
-            if (_s.quantity <= 0) _inv.backpack_array[i] = -1;
+            if (_s.quantity <= 0) _player.backpack_array[i] = -1;
         }
     }
     return true;

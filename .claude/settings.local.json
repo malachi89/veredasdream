@@ -27,7 +27,15 @@
       "Bash(/c/Users/malch/AppData/Roaming/uv/python/cpython-3.12.11-windows-x86_64-none/python.exe -m pip install --break-system-packages Pillow)",
       "Bash($UV_PYTHON *)",
       "Bash(/c/Users/malch/AppData/Roaming/uv/python/cpython-3.12.11-windows-x86_64-none/python.exe 'C:/Users/malch/Documents/veredasdream/Forest Animals/split_sprites.py' --discover)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "WebFetch(domain:manual.gamemaker.io)",
+      "WebFetch(domain:gamemaker.io)",
+      "Bash(git checkout *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git log *)",
+      "Bash(gh pr *)"
     ]
   }
 }

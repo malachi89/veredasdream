@@ -3,6 +3,43 @@
     Define enums y estructuras de datos globales.
 */
 
+enum NET_ROLE {
+    NONE   = 0,
+    HOST   = 1,
+    CLIENT = 2
+}
+
+enum NET_CMD {
+    HANDSHAKE        = 1,
+    HANDSHAKE_ACK    = 2,
+    FULL_SNAPSHOT    = 3,
+    PLAYER_STATE     = 16,
+    ROOM_CHANGE      = 17,
+    ROOM_SNAPSHOT    = 18,
+    CMD_USE_ITEM     = 32,
+    CMD_PICKUP       = 33,
+    CMD_BUGNET       = 34,
+    CMD_FISH_REEL    = 35,
+    CMD_OPEN_CHEST   = 36,
+    CMD_CHEST_SLOT   = 37,
+    CMD_SHOP_BUY     = 38,
+    CMD_BUY_BUILDING = 39,
+    CMD_UPGRADE_TOOL = 40,
+    CMD_DROP         = 41,
+    INVENTORY_UPDATE = 48,
+    MONEY_UPDATE     = 49,
+    ENERGY_UPDATE    = 50,
+    WORLD_EVENT      = 64,
+    TIME_UPDATE      = 65,
+    NEW_DAY          = 66,
+    SLEEP_REQUEST    = 80,
+    SLEEP_PROMPT     = 81,
+    SLEEP_RESPONSE   = 82,
+    SHIPPING_SUMMARY = 83,
+    NOTIFY           = 96,
+    DISCONNECT       = 112
+}
+
 enum DIR {
     DOWN = 0,
     UP = 1,

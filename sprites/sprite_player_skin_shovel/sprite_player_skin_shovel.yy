@@ -44,8 +44,8 @@
   "nineSlice":null,
   "origin":0,
   "parent":{
-    "name":"shovel24",
-    "path":"folders/sprites/player/actions/shovel24.yy",
+    "name":"shovel20",
+    "path":"folders/sprites/player/actions/shovel20.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
