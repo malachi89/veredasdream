@@ -1,7 +1,7 @@
 animal_key       = "";
 is_farm_animal   = false;
 state            = ANIMAL_STATE.IDLE;
-dir              = choose(DIR.LEFT, DIR.RIGHT);
+dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
 frame_anim       = 0;
 move_speed       = 0.6;
 hp               = 1;

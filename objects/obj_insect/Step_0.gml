@@ -9,7 +9,12 @@ if (state != ANIMAL_STATE.FLEEING && instance_exists(_lp)) {
     if (point_distance(x, y, _lp.x, _lp.y) < 64) {
         state      = ANIMAL_STATE.FLEEING;
         flee_timer = 90;
-        dir        = (_lp.x < x) ? DIR.RIGHT : DIR.LEFT;
+        // Flee in all 4 directions based on player position
+        var _pdir = point_direction(_lp.x, _lp.y, x, y);
+        if (_pdir >= 45 && _pdir < 135) dir = DIR.UP;
+        else if (_pdir >= 135 && _pdir < 225) dir = DIR.LEFT;
+        else if (_pdir >= 225 && _pdir < 315) dir = DIR.DOWN;
+        else dir = DIR.RIGHT;
     }
 }
 
@@ -18,18 +23,27 @@ switch (state) {
         idle_timer -= 1;
         if (idle_timer <= 0) {
             state        = ANIMAL_STATE.WANDERING;
-            dir          = choose(DIR.LEFT, DIR.RIGHT);
+            dir          = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
             wander_steps = max_wander_steps;
         }
     break;
 
     case ANIMAL_STATE.WANDERING:
-        var _dx      = (dir == DIR.LEFT) ? -move_speed : move_speed;
-        var _check_x = x + _dx + (dir == DIR.LEFT ? -4 : 4);
-        if (!instance_position(_check_x, y, obj_collision)) {
+        var _dx = 0;
+        var _dy = 0;
+        if (dir == DIR.LEFT) _dx = -move_speed;
+        else if (dir == DIR.RIGHT) _dx = move_speed;
+        else if (dir == DIR.UP) _dy = -move_speed;
+        else if (dir == DIR.DOWN) _dy = move_speed;
+        
+        var _check_x = x + _dx + (dir == DIR.LEFT ? -4 : (dir == DIR.RIGHT ? 4 : 0));
+        var _check_y = y + _dy + (dir == DIR.UP ? -4 : (dir == DIR.DOWN ? 4 : 0));
+        
+        if (!instance_position(_check_x, _check_y, obj_collision)) {
             x += _dx;
+            y += _dy;
         } else {
-            dir = (dir == DIR.LEFT) ? DIR.RIGHT : DIR.LEFT;
+            dir = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
         }
         wander_steps -= 1;
         if (wander_steps <= 0) {
@@ -40,12 +54,22 @@ switch (state) {
     break;
 
     case ANIMAL_STATE.FLEEING:
-        var _fdx      = (dir == DIR.LEFT) ? -(move_speed * 2.5) : (move_speed * 2.5);
-        var _check_fx = x + _fdx + (dir == DIR.LEFT ? -4 : 4);
-        if (!instance_position(_check_fx, y, obj_collision)) {
+        var _fspeed = move_speed * 2.5;
+        var _fdx = 0;
+        var _fdy = 0;
+        if (dir == DIR.LEFT) _fdx = -_fspeed;
+        else if (dir == DIR.RIGHT) _fdx = _fspeed;
+        else if (dir == DIR.UP) _fdy = -_fspeed;
+        else if (dir == DIR.DOWN) _fdy = _fspeed;
+
+        var _check_fx = x + _fdx + (dir == DIR.LEFT ? -4 : (dir == DIR.RIGHT ? 4 : 0));
+        var _check_fy = y + _fdy + (dir == DIR.UP ? -4 : (dir == DIR.DOWN ? 4 : 0));
+
+        if (!instance_position(_check_fx, _check_fy, obj_collision)) {
             x += _fdx;
+            y += _fdy;
         } else {
-            dir = (dir == DIR.LEFT) ? DIR.RIGHT : DIR.LEFT;
+            dir = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
         }
         flee_timer--;
         if (flee_timer <= 0) {

@@ -91,14 +91,29 @@ function start_new_day() {
 function update_tilesets() {
     var _tilesets = [ts_farm_spring, ts_farm_summer, ts_farm_fall, ts_farm_winter];
     var _props_tilesets = [ts_props_exterior_spring, ts_props_exterior_summer, ts_props_exterior_fall, ts_props_exterior_winter];
+    var _trees_tilesets = [ts_trees_spring, ts_trees_summer, ts_trees_fall, ts_trees_winter];
     
     var _bg_layer = layer_get_id("Tiles_background");
     var _details_layer = layer_get_id("Tiles_details");
-    var _props_layer = layer_get_id("Tiles_seasonal_props"); // New layer for seasonal props
+    var _props_layer = layer_get_id("Tiles_seasonal_props");
+    var _trees_layer = layer_get_id("Tiles_trees");
+    var _trees_top_layer = layer_get_id("Tiles_trees_top");
     
     if (_bg_layer != -1) tilemap_tileset(layer_tilemap_get_id(_bg_layer), _tilesets[global.season_index]);
-    if (_details_layer != -1 && room_get_name(room) == "farm") tilemap_tileset(layer_tilemap_get_id(_details_layer), _tilesets[global.season_index]);
+    
+    if (_details_layer != -1) {
+        var _room = room_get_name(room);
+        if (_room == "farm" || _room == "forest" || _room == "town") {
+            tilemap_tileset(layer_tilemap_get_id(_details_layer), (_room == "farm") ? _tilesets[global.season_index] : _props_tilesets[global.season_index]);
+        }
+    }
+    
     if (_props_layer != -1) tilemap_tileset(layer_tilemap_get_id(_props_layer), _props_tilesets[global.season_index]);
+    
+    if (_trees_layer != -1) {
+        tilemap_tileset(layer_tilemap_get_id(_trees_layer), _trees_tilesets[global.season_index]);
+        if (_trees_top_layer != -1) tilemap_tileset(layer_tilemap_get_id(_trees_top_layer), _trees_tilesets[global.season_index]);
+    }
 }
 
 global.season_list = ["spring", "summer", "fall", "winter"];

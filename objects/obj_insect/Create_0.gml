@@ -1,7 +1,7 @@
 insect_key       = "insect_ant";
 sprite_index     = global.insect_data[$ insect_key].sprite;
 state            = ANIMAL_STATE.IDLE;
-dir              = choose(DIR.LEFT, DIR.RIGHT);
+dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
 frame_anim       = 0;
 move_speed       = 0.5;
 idle_timer       = irandom_range(60, 240);

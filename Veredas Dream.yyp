@@ -12,6 +12,7 @@
   "Folders":[
     {"$GMFolder":"","%Name":"fonts","folderPath":"folders/fonts.yy","name":"fonts","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"objects","folderPath":"folders/objects.yy","name":"objects","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"animals","folderPath":"folders/objects/animals.yy","name":"animals","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"farm","folderPath":"folders/objects/farm.yy","name":"farm","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"animals","folderPath":"folders/objects/farm/animals.yy","name":"animals","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"obj_farm_animal","folderPath":"folders/objects/farm/animals/obj_farm_animal.yy","name":"obj_farm_animal","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -21,7 +22,6 @@
     {"$GMFolder":"","%Name":"items","folderPath":"folders/objects/farm/items.yy","name":"items","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"mechanics","folderPath":"folders/objects/farm/mechanics.yy","name":"mechanics","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"game_control","folderPath":"folders/objects/game_control.yy","name":"game_control","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"animals","folderPath":"folders/objects/animals.yy","name":"animals","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"materials","folderPath":"folders/objects/materials.yy","name":"materials","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"rooms","folderPath":"folders/rooms.yy","name":"rooms","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"farm","folderPath":"folders/rooms/farm.yy","name":"farm","resourceType":"GMFolder","resourceVersion":"2.0",},
