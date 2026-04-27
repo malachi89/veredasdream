@@ -868,3 +868,27 @@ for (var _ii = 0; _ii < array_length(_ikeys); _ii++) {
     var _id = global.insect_data[$ _ikeys[_ii]];
     repeat (_id.rarity) { array_push(global.insect_pool, _ikeys[_ii]); }
 }
+// --- DATOS DE PRODUCTOS ANIMALES ---
+global.animal_product_data = {};
+var _ap = global.animal_product_data;
+
+_ap[$ "honey"]                      = { name: "Miel",                      type: ITEM_TYPE.MATERIAL, sprite: sprite_animal_products, subimg: 0,  base_sell_price: 100 };
+_ap[$ "cheese"]                     = { name: "Queso",                     type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 1,  base_sell_price: 160 };
+_ap[$ "butter"]                     = { name: "Mantequilla",               type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 2,  base_sell_price: 110 };
+_ap[$ "mayonaise"]                  = { name: "Mayonesa",                  type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 3,  base_sell_price: 190 };
+_ap[$ "egg_chicken_white_large"]    = { name: "Huevo Blanco Grande",       type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 4,  base_sell_price: 50  };
+_ap[$ "egg_chicken_brown_large"]    = { name: "Huevo Colorado Grande",      type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 5,  base_sell_price: 50  };
+_ap[$ "egg_chicken_white_reg"]      = { name: "Huevo Blanco",              type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 6,  base_sell_price: 25  };
+_ap[$ "egg_chicken_brown_reg"]      = { name: "Huevo Colorado",             type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 7,  base_sell_price: 25  };
+_ap[$ "egg_duck_large"]             = { name: "Huevo de Pato Grande",      type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 8,  base_sell_price: 75  };
+_ap[$ "egg_duck_reg"]               = { name: "Huevo de Pato",             type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 9,  base_sell_price: 40  };
+_ap[$ "milk_reg"]                   = { name: "Leche",                     type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 10, base_sell_price: 60  };
+_ap[$ "milk_large"]                 = { name: "Leche Grande",              type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 11, base_sell_price: 110 };
+_ap[$ "goat_milk_reg"]              = { name: "Leche de Cabra",            type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 12, base_sell_price: 80  };
+_ap[$ "goat_milk_large"]             = { name: "Leche de Cabra Grande",     type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 13, base_sell_price: 150 };
+_ap[$ "chicken_leg"]                = { name: "Muslo de Pollo",            type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 14, base_sell_price: 40  };
+_ap[$ "egg_chicken_large_generic"]  = { name: "Huevo de Gallina Grande",   type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 15, base_sell_price: 50  };
+_ap[$ "wool"]                       = { name: "Lana",                      type: ITEM_TYPE.MATERIAL, sprite: sprite_animal_products, subimg: 16, base_sell_price: 120 };
+_ap[$ "goat_cheese"]                = { name: "Queso de Cabra",            type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 17, base_sell_price: 200 };
+_ap[$ "steak"]                      = { name: "Filete",                    type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 18, base_sell_price: 150 };
+_ap[$ "bacon"]                      = { name: "Tocino",                    type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 19, base_sell_price: 120 };
