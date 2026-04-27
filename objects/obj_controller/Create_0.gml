@@ -182,3 +182,5 @@ load_needs_apply = false; // Menu handles it
 fade_alpha = 1.0;
 fade_speed = 1.0 / (room_speed * 1.5); // 1.5 seconds fade duration
 is_fading_in = true;
+
+minigame_difficulty = 0; // 0: Easy, 1: Moderate, 2: Hard, 3: Extreme

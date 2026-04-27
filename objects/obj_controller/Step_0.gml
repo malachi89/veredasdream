@@ -279,6 +279,19 @@ if (keyboard_check_pressed(ord("P"))) {
 
 if (keyboard_check_pressed(ord("O"))) start_new_day();
 
+if (keyboard_check_pressed(ord("Y"))) {
+    if (!instance_exists(obj_minigame_timing)) {
+        var _inst = instance_create_depth(0, 0, 0, obj_minigame_timing);
+        _inst.difficulty = minigame_difficulty;
+        
+        var _diff_names = ["FACIL", "MODERADO", "DIFICIL", "EXTREMO"];
+        scr_notify("Minijuego: " + _diff_names[minigame_difficulty]);
+        
+        // Cycle difficulty for next time
+        minigame_difficulty = (minigame_difficulty + 1) mod 4;
+    }
+}
+
 if (keyboard_check_pressed(ord("U"))) {
     if (instance_exists(global.local_player)) {
         inventory_drop_item("tomato_seeds", 5, global.local_player.x, global.local_player.y);
