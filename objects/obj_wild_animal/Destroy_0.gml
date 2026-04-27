@@ -1,7 +1,13 @@
-for (var i = array_length(global.forest_wild_animals) - 1; i >= 0; i--) {
+var _best_i    = -1;
+var _best_dist = infinity;
+for (var i = 0; i < array_length(global.forest_wild_animals); i++) {
     var _d = global.forest_wild_animals[i];
-    if (_d.key == animal_key && _d.x == x && _d.y == y) {
-        array_delete(global.forest_wild_animals, i, 1);
-        break;
+    if (_d.key == animal_key) {
+        var _dist = point_distance(x, y, _d.x, _d.y);
+        if (_dist < _best_dist) {
+            _best_dist = _dist;
+            _best_i    = i;
+        }
     }
 }
+if (_best_i != -1) array_delete(global.forest_wild_animals, _best_i, 1);

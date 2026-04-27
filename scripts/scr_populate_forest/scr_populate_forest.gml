@@ -178,7 +178,7 @@ function scr_populate_forest() {
     global.forest_wild_animals = [];
 
     var _wild_keys  = variable_struct_get_names(global.wild_animal_data);
-    var _wild_count = irandom_range(4, 6);
+    var _wild_count = irandom_range(10, 15);
     var _wplaced    = [];
 
     for (var i = 0; i < _wild_count; i++) {

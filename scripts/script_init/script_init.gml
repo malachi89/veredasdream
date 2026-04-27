@@ -96,13 +96,13 @@ global.animal_data = {
 };
 
 global.wild_animal_data = {
-    capibara: { name: "Capibara", sprite: sprite_forest_animals_capibara, move_speed: 0.7,  hp: 3, max_hp: 3 },
-    deer:     { name: "Venado",   sprite: sprite_forest_animals_deer,     move_speed: 1.2,  hp: 4, max_hp: 4 },
-    fox:      { name: "Zorro",    sprite: sprite_forest_animals_fox,      move_speed: 1.1,  hp: 3, max_hp: 3 },
+    capibara: { name: "Capibara", sprite: sprite_forest_animals_capibara, move_speed: 0.7,  hp: 5, max_hp: 5 },
+    deer:     { name: "Venado",   sprite: sprite_forest_animals_deer,     move_speed: 1.2,  hp: 7, max_hp: 7 },
+    fox:      { name: "Zorro",    sprite: sprite_forest_animals_fox,      move_speed: 1.1,  hp: 4, max_hp: 4 },
     frog:     { name: "Rana",     sprite: sprite_forest_animals_frog,     move_speed: 0.8,  hp: 2, max_hp: 2 },
     penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2 },
-    rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 2, max_hp: 2 },
-    turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 5, max_hp: 5 },
+    rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3 },
+    turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9 },
 };
 
 enum ITEM_TYPE {
