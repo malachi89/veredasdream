@@ -32,6 +32,20 @@ if (result == 0) {
             if (script_exists(scr_notify)) {
                 scr_notify("¡Excelente!");
             }
+            
+            // Result Logic
+            if (instance_exists(target_animal)) {
+                // Check if player has a barn/coop
+                if (instance_exists(obj_barn) || instance_exists(obj_greenhouse)) { // Placeholder check
+                    // Proceed to adopt: move to farm/barn
+                    scr_notify("Adoptado!");
+                    instance_destroy(target_animal);
+                } else {
+                    // Drop product
+                    scr_notify("Producto obtenido!");
+                    // instance_create_layer(target_animal.x, target_animal.y, "Instances", obj_item_product);
+                }
+            }
         } else {
             result = -1;
             if (script_exists(scr_notify)) {

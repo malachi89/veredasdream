@@ -1,3 +1,22 @@
+// Difficulty mapping
+switch (animal_type) {
+    case "chicken":
+    case "duck":
+        catch_difficulty = 0; // Easy
+        break;
+    case "goat":
+    case "pig":
+    case "sheep":
+        catch_difficulty = 1; // Moderate
+        break;
+    case "cow":
+    case "ostrich":
+        catch_difficulty = 2; // Hard
+        break;
+    default:
+        catch_difficulty = 0; // Default to Easy
+}
+
 animal_type = (init_animal_type != "") ? init_animal_type : "chicken";
 variant     = (init_variant     != "") ? init_variant     : "white";
 

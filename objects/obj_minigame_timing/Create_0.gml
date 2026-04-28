@@ -14,4 +14,5 @@ hitbox_range = _ranges[difficulty];
 
 result = 0; // 0: playing, 1: success, -1: failure
 timer_after = 0; // Wait a few frames after result before destroying
+target_animal = noone;
 

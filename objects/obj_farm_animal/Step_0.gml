@@ -1,3 +1,12 @@
+// Handle hit interaction (assuming hit by net or weapon)
+// This is a placeholder for actual interaction detection, 
+// needing to be integrated with the weapon/net logic
+if (place_meeting(x, y, obj_net) && !instance_exists(obj_minigame_timing)) {
+    var _inst = instance_create_depth(0, 0, -999, obj_minigame_timing);
+    _inst.difficulty = catch_difficulty;
+    _inst.target_animal = id; // Store reference
+}
+
 frame_anim += 0.1;
 
 if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
