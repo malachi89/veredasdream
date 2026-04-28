@@ -62,7 +62,7 @@ net_state_timer  = 0;
 money = 500;
 
 // --- INVENTARIO PER-PLAYER ---
-total_slots        = 10;
+total_slots        = 30;
 max_backpack_slots = 64;
 max_shipping_slots = 64;
 

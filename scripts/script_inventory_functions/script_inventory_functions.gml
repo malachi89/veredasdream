@@ -686,6 +686,13 @@ function scr_apply_loaded_game(_save_data) {
         _pinst.inventory_array = _pd.inventory_array;
         _pinst.backpack_array  = _pd.backpack_array;
         _pinst.shipping_array  = _pd.shipping_array;
+
+        // Asegurar tamaño correcto del inventory array (hotbar cyclable)
+        if (array_length(_pinst.inventory_array) < 30) {
+            var _extra = 30 - array_length(_pinst.inventory_array);
+            for (var i = 0; i < _extra; i++) array_push(_pinst.inventory_array, -1);
+        }
+
         _pinst.held_item       = _pd.held_item;
         _pinst.show_backpack   = false;
         _pinst.show_shipping   = false;
@@ -892,6 +899,47 @@ function scr_draw_interact_prompt(_x, _y, _text) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_text_color(_x, (_y1 + _y2) / 2, _text, c_white, c_white, c_white, c_white, 1.0);
+}
+
+function scr_inventory_cycle_hotbars(_player = global.local_player) {
+    if (!instance_exists(_player)) return;
+    
+    var _row_size = 10;
+    var _total_hotbar = array_length(_player.inventory_array);
+    
+    // Ensure the array matches the player's total_slots expectation
+    if (_total_hotbar < 20) {
+         // If for some reason it's too small, try to use the instance variable or just return
+         if (variable_instance_exists(_player, "total_slots") && _player.total_slots >= 20) {
+             // Fill it up
+             while(array_length(_player.inventory_array) < _player.total_slots) array_push(_player.inventory_array, -1);
+             _total_hotbar = array_length(_player.inventory_array);
+         } else {
+             return; 
+         }
+    }
+    
+    // Rotate rows: R0 -> temp, R1 -> R0, R2 -> R1, temp -> R2
+    var _temp_r0 = array_create(_row_size);
+    for (var i = 0; i < _row_size; i++) _temp_r0[i] = _player.inventory_array[i];
+    
+    // Shift rows up
+    for (var i = 0; i < _total_hotbar - _row_size; i++) {
+        _player.inventory_array[i] = _player.inventory_array[i + _row_size];
+    }
+    
+    // Put Row 0 at the end
+    var _last_row_start = _total_hotbar - _row_size;
+    for (var i = 0; i < _row_size; i++) {
+        _player.inventory_array[_last_row_start + i] = _temp_r0[i];
+    }
+    
+    // Network Sync
+    if (global.net_role != NET_ROLE.NONE && instance_exists(obj_net) && obj_net.is_connected) {
+        for (var i = 0; i < _total_hotbar; i++) {
+            net_send_inventory_update(_player.player_id, 0, i, _player.inventory_array[i]);
+        }
+    }
 }
 
 function scr_get_item_data(_key) {

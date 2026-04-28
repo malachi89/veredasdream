@@ -214,7 +214,7 @@ function net_handle_handshake(_payload, _client_socket) {
         _g.money      = 500;
         _g.energy     = 500;
         // Clear default inventory and give client starting items
-        for (var _gi = 0; _gi < 10; _gi++) _g.inventory_array[_gi] = -1;
+        for (var _gi = 0; _gi < 30; _gi++) _g.inventory_array[_gi] = -1;
         for (var _gi = 0; _gi < 64; _gi++) _g.backpack_array[_gi]  = -1;
         _g.add_item("watering_can", 1);
         _g.add_item("hoe", 1);

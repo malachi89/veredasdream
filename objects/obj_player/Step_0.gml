@@ -22,6 +22,11 @@ if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_c
     exit;
 }
 
+if (keyboard_check_pressed(vk_tab) && !shop_open && !dialog_open) {
+    scr_inventory_cycle_hotbars(id);
+    audio_play_sound(axe, 1, false);
+}
+
 var _h   = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var _v   = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 var _run = keyboard_check(vk_shift);
