@@ -1,5 +1,6 @@
 animal_key       = "";
 is_farm_animal   = false;
+is_test_animal   = false;
 state            = ANIMAL_STATE.IDLE;
 dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
 frame_anim       = 0;

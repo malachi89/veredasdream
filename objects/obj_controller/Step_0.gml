@@ -51,6 +51,13 @@ if (current_room_name != _room_name) {
         scr_restore_forest_insects();
         scr_restore_forest_wild_animals();
     }
+    
+    // Test animals repopulation
+    if (_room_name == "farm" && global.farm_needs_repopulate_test_animals) {
+        global.farm_needs_repopulate_test_animals = false;
+        scr_populate_test_animals();
+        scr_capture_current_room_state();
+    }
     update_tilesets();
     scr_setup_forest_trees();
 }
@@ -230,6 +237,29 @@ else if (chat_open) {
                     scr_notify("Camara en jugador " + string(_target_id));
                 } else {
                     scr_notify("Jugador " + string(_target_id) + " no encontrado");
+                }
+            } else if (_cmd == "test_animals" && array_length(_parts) >= 2) {
+                var _sub = _parts[1];
+                if (_sub == "on") {
+                    global.debug_test_animals = true;
+                    global.farm_needs_repopulate_test_animals = true;
+                    if (room_get_name(room) == "farm") {
+                        scr_populate_test_animals();
+                        scr_capture_current_room_state();
+                        scr_notify("Test animals enabled and spawned.");
+                    } else {
+                        scr_notify("Test animals enabled (will spawn on farm entry).");
+                    }
+                } else if (_sub == "off") {
+                    global.debug_test_animals = false;
+                    global.farm_needs_repopulate_test_animals = false;
+                    if (room_get_name(room) == "farm") {
+                        with (obj_wild_animal) { if (is_test_animal) instance_destroy(); }
+                        scr_capture_current_room_state();
+                        scr_notify("Test animals disabled and removed.");
+                    } else {
+                        scr_notify("Test animals disabled.");
+                    }
                 }
             } else if (_cmd == "debug_mp") {
                 var _role_str = "NONE";

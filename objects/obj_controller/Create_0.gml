@@ -23,6 +23,8 @@ global.game_minute = 0;
 global.game_hour = 6;
 global.day = 1;
 global.year = 1;
+global.debug_test_animals = true;
+global.farm_needs_repopulate_test_animals = false;
 // money vive en obj_player.money (per-player). global.local_player apunta al jugador de esta maquina.
 global.local_player = noone;
 global.net_role = NET_ROLE.NONE;
@@ -54,6 +56,7 @@ function start_new_day() {
     }
 
     global.forest_needs_repopulate = true;
+    if (global.debug_test_animals) global.farm_needs_repopulate_test_animals = true;
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();
 

@@ -55,4 +55,8 @@ function scr_populate_farm() {
             }
         }
     }
+
+    if (global.debug_test_animals) {
+        scr_populate_test_animals();
+    }
 }

@@ -144,7 +144,7 @@ function scr_get_room_state(_room_name) {
 
 function scr_capture_current_room_state() {
     var _room_name = room_get_name(room);
-    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [] };
     
     // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
@@ -221,6 +221,23 @@ function scr_capture_current_room_state() {
             animal_type: _inst.animal_type,
             variant:     _inst.variant,
             dir:         _inst.dir
+        });
+    }
+
+    // Capture Wild/Huntable Animals
+    for (var i = 0; i < instance_number(obj_wild_animal); i++) {
+        var _inst = instance_find(obj_wild_animal, i);
+        array_push(_state.wild_animals, {
+            x:              _inst.x,
+            y:              _inst.y,
+            animal_key:     _inst.animal_key,
+            is_farm_animal: _inst.is_farm_animal,
+            is_test_animal: _inst.is_test_animal,
+            sprite_index:   sprite_get_name(_inst.sprite_index),
+            move_speed:     _inst.move_speed,
+            hp:             _inst.hp,
+            max_hp:         _inst.max_hp,
+            dir:            _inst.dir
         });
     }
 
@@ -451,6 +468,25 @@ function scr_restore_room_state(_room_name) {
                 if (frame_count == 32 && idle_type > 3) idle_type = 3;
                 var _data  = global.animal_data[$ animal_type];
                 move_speed = (_data != undefined) ? _data.move_speed : 0.6;
+            }
+        }
+    }
+
+    // ---- WILD/HUNTABLE ANIMALS ----
+    if (variable_struct_exists(_state, "wild_animals")) {
+        with (obj_wild_animal) instance_destroy();
+        for (var i = 0; i < array_length(_state.wild_animals); i++) {
+            var _wa = _state.wild_animals[i];
+            var _inst = instance_create_layer(_wa.x, _wa.y, "Instances", obj_wild_animal);
+            with (_inst) {
+                animal_key     = _wa.animal_key;
+                is_farm_animal = _wa.is_farm_animal;
+                is_test_animal = variable_struct_exists(_wa, "is_test_animal") ? _wa.is_test_animal : false;
+                sprite_index   = asset_get_index(_wa.sprite_index);
+                move_speed     = _wa.move_speed;
+                hp             = _wa.hp;
+                max_hp         = _wa.max_hp;
+                dir            = _wa.dir;
             }
         }
     }
