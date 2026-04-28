@@ -29,7 +29,7 @@ draw_sprite_ext(sprite_anim, _offset + _frame, x, y, 1, 1, 0, _blend, 1);
 if (hp < max_hp) {
     var _bar_w = 20;
     var _bar_h = 2;
-    var _px = x - _bar_w/2;
+    var _px = x + (sprite_width / 2) - (_bar_w / 2);
     var _py = bbox_top - 8;
     
     // Background
