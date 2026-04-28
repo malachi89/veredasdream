@@ -1,5 +1,12 @@
 frame_anim += 0.1;
 
+if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
+
+if (hp <= 0) {
+    instance_destroy();
+    exit;
+}
+
 switch (state) {
 
     case ANIMAL_STATE.IDLE:
@@ -37,6 +44,31 @@ switch (state) {
             idle_type  = irandom(4);
             if (frame_count == 32 && idle_type > 3) idle_type = 3;
             idle_timer = irandom_range(120, 300);
+        }
+    break;
+    
+    case ANIMAL_STATE.FLEEING:
+        if (frame_anim >= 4) frame_anim -= 4;
+        var _fspeed = move_speed * (is_panicked ? 5.0 : 2.5);
+        var _fdx = 0, _fdy = 0;
+        switch (dir) {
+            case DIR.DOWN:  _fdy =  _fspeed; break;
+            case DIR.UP:    _fdy = -_fspeed; break;
+            case DIR.RIGHT: _fdx =  _fspeed; break;
+            case DIR.LEFT:  _fdx = -_fspeed; break;
+        }
+        if (!place_meeting(x + _fdx, y + _fdy, obj_collision)) {
+            x += _fdx;
+            y += _fdy;
+        } else {
+            dir = irandom(3);
+        }
+        flee_timer--;
+        if (flee_timer <= 0) {
+            state       = ANIMAL_STATE.IDLE;
+            frame_anim  = 0;
+            is_panicked = false;
+            idle_timer  = irandom_range(120, 300);
         }
     break;
 }

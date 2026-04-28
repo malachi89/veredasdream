@@ -205,5 +205,10 @@ if (is_host) {
     add_item("axe", 1);
     add_item("sickle", 1);
     add_item("hoe", 1);
-    add_item("tomato_seeds", 10);
+    add_item("shovel", 1);
+    add_item("fishing_rod", 1);
+    add_item("bugnet", 1);
+    add_item("sword", 1);
+    add_item("bow", 1);
+    add_item("parsnip_seeds", 10);
 }

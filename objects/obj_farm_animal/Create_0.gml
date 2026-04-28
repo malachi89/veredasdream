@@ -22,3 +22,9 @@ if (frame_count == 32 && idle_type > 3) idle_type = 3;
 idle_timer       = irandom_range(120, 300);
 wander_steps     = 0;
 max_wander_steps = irandom_range(60, 180);
+
+hp               = 3;
+max_hp           = 3;
+flee_timer       = 0;
+hurt_flash_timer = 0;
+is_panicked      = false;

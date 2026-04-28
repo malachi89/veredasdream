@@ -204,8 +204,16 @@ else if (chat_open) {
                     _p2.is_host   = false;
                     // Give player 2 independent starter equipment
                     _p2.add_item("watering_can", 1);
+                    _p2.add_item("pickaxe", 1);
+                    _p2.add_item("axe", 1);
+                    _p2.add_item("sickle", 1);
                     _p2.add_item("hoe", 1);
-                    _p2.add_item("tomato_seeds", 5);
+                    _p2.add_item("shovel", 1);
+                    _p2.add_item("fishing_rod", 1);
+                    _p2.add_item("bugnet", 1);
+                    _p2.add_item("sword", 1);
+                    _p2.add_item("bow", 1);
+                    _p2.add_item("parsnip_seeds", 10);
                     scr_notify("Jugador 2 generado en (" + string(mouse_x) + ", " + string(mouse_y) + ")");
                 }
             } else if (_cmd == "focus_player" && array_length(_parts) >= 2) {

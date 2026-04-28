@@ -217,8 +217,16 @@ function net_handle_handshake(_payload, _client_socket) {
         for (var _gi = 0; _gi < 30; _gi++) _g.inventory_array[_gi] = -1;
         for (var _gi = 0; _gi < 64; _gi++) _g.backpack_array[_gi]  = -1;
         _g.add_item("watering_can", 1);
+        _g.add_item("pickaxe", 1);
+        _g.add_item("axe", 1);
+        _g.add_item("sickle", 1);
         _g.add_item("hoe", 1);
-        _g.add_item("tomato_seeds", 5);
+        _g.add_item("shovel", 1);
+        _g.add_item("fishing_rod", 1);
+        _g.add_item("bugnet", 1);
+        _g.add_item("sword", 1);
+        _g.add_item("bow", 1);
+        _g.add_item("parsnip_seeds", 10);
         obj_net.remote_player_ghost = _g;
     }
 }
@@ -294,8 +302,16 @@ function net_handle_full_snapshot(_payload) {
     _p.money     = _snap.player2.money;
     _p.energy    = _snap.player2.energy;
     _p.add_item("watering_can", 1);
+    _p.add_item("pickaxe", 1);
+    _p.add_item("axe", 1);
+    _p.add_item("sickle", 1);
     _p.add_item("hoe", 1);
-    _p.add_item("tomato_seeds", 5);
+    _p.add_item("shovel", 1);
+    _p.add_item("fishing_rod", 1);
+    _p.add_item("bugnet", 1);
+    _p.add_item("sword", 1);
+    _p.add_item("bow", 1);
+    _p.add_item("parsnip_seeds", 10);
     global.local_player = _p;
 
     // Set position directly — persistent instance carries x/y/dir through room_goto.

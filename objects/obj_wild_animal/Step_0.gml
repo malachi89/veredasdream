@@ -60,7 +60,7 @@ switch (state) {
     break;
 
     case ANIMAL_STATE.FLEEING:
-        var _fspeed = move_speed * 2.5;
+        var _fspeed = move_speed * (is_panicked ? 5.0 : 2.5);
         var _fdx = 0;
         var _fdy = 0;
         if (dir == DIR.LEFT) _fdx = -_fspeed;
@@ -81,6 +81,7 @@ switch (state) {
         if (flee_timer <= 0) {
             state      = ANIMAL_STATE.IDLE;
             idle_timer = irandom_range(60, 240);
+            is_panicked = false;
         }
     break;
 }

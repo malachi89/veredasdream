@@ -21,15 +21,22 @@ if (_hit != noone) {
     audio_play_sound(sound_arrow_hit, 1, false);
     _hit.hp -= damage;
     _hit.hurt_flash_timer = 15;
-    if (_hit.state != ANIMAL_STATE.FLEEING) {
-        _hit.state      = ANIMAL_STATE.FLEEING;
+    
+    // Forest animals panic and run faster when hit
+    if (object_get_name(_hit.object_index) == "obj_wild_animal") {
+        _hit.is_panicked = true;
+        _hit.flee_timer = 180; // Panicked flee lasts longer
+    } else {
         _hit.flee_timer = 90;
-        var _fdir = point_direction(x, y, _hit.x, _hit.y);
-        if (_fdir >= 45 && _fdir < 135)       _hit.dir = DIR.UP;
-        else if (_fdir >= 135 && _fdir < 225) _hit.dir = DIR.LEFT;
-        else if (_fdir >= 225 && _fdir < 315) _hit.dir = DIR.DOWN;
-        else                                   _hit.dir = DIR.RIGHT;
     }
+    
+    _hit.state = ANIMAL_STATE.FLEEING;
+    var _fdir = point_direction(x, y, _hit.x, _hit.y);
+    if (_fdir >= 45 && _fdir < 135)       _hit.dir = DIR.UP;
+    else if (_fdir >= 135 && _fdir < 225) _hit.dir = DIR.LEFT;
+    else if (_fdir >= 225 && _fdir < 315) _hit.dir = DIR.DOWN;
+    else                                   _hit.dir = DIR.RIGHT;
+    
     has_hit = true;
     exit;
 }

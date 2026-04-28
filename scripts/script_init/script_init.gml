@@ -281,8 +281,8 @@ global.tool_data = {
         name: "Espada",      
         type: ITEM_TYPE.TOOL,
         tool_type: TOOL_TYPE.SWORD,         
-        sprite: sprite_tools_v2, 
-        subimg: 2,
+        sprite: sprite_sword, 
+        subimg: 0,
         sellable: false,
         droppable: false,
 
@@ -360,7 +360,7 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,
         tool_type: TOOL_TYPE.FISHING_ROD,
         sprite: sprite_tools_v2,
-        subimg: 55,
+        subimg: 54,
         sellable: false,
         droppable: false,
 
@@ -373,7 +373,7 @@ global.tool_data = {
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.BUGNET,
         sprite: sprite_tools_v2,    
-        subimg: 46,
+        subimg: 45,
         sellable: false,
         droppable: false,
 

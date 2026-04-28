@@ -55,4 +55,4 @@ if (notif_text != "") {
     draw_text_transformed_color(_cx, _cy + 220, notif_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 }
 
-draw_text_transformed_color(_cx, _cy + 190, "Hospedar: abre el puerto 7777 TCP en tu firewall", 1.1, 1.1, 0, c_gray, c_gray, c_gray, c_gray, 0.6);
+

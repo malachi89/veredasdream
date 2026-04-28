@@ -1210,6 +1210,7 @@
     {"id":{"name":"sprite_rock2","path":"sprites/sprite_rock2/sprite_rock2.yy",},},
     {"id":{"name":"sprite_sheep_male_2","path":"sprites/sprite_sheep_male_2/sprite_sheep_male_2.yy",},},
     {"id":{"name":"sprite_sheep_male","path":"sprites/sprite_sheep_male/sprite_sheep_male.yy",},},
+    {"id":{"name":"sprite_sword","path":"sprites/sprite_sword/sprite_sword.yy",},},
     {"id":{"name":"sprite_tileset_farm_fall","path":"sprites/sprite_tileset_farm_fall/sprite_tileset_farm_fall.yy",},},
     {"id":{"name":"sprite_tileset_farm_spring","path":"sprites/sprite_tileset_farm_spring/sprite_tileset_farm_spring.yy",},},
     {"id":{"name":"sprite_tileset_farm_summer","path":"sprites/sprite_tileset_farm_summer/sprite_tileset_farm_summer.yy",},},

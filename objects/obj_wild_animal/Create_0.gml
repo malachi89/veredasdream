@@ -6,6 +6,7 @@ frame_anim       = 0;
 move_speed       = 0.6;
 hp               = 1;
 max_hp           = 1;
+is_panicked      = false;
 idle_timer       = irandom_range(60, 240);
 wander_steps     = 0;
 max_wander_steps = irandom_range(30, 120);
