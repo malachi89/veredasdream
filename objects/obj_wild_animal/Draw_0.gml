@@ -26,3 +26,4 @@ if (is_farm_animal) {
     var _frame = floor(frame_anim % _frames_per_dir) + (_dir_index * _frames_per_dir);
     draw_sprite_ext(sprite_index, _frame, x, y, 1, 1, 0, _blend, 1);
 }
+

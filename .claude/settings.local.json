@@ -35,7 +35,11 @@
       "Bash(git push *)",
       "Bash(git commit *)",
       "Bash(git log *)",
-      "Bash(gh pr *)"
+      "Bash(gh pr *)",
+      "Bash(xargs ls *)",
+      "Bash(git -C \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" status)",
+      "Bash(git -C \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" diff --stat)",
+      "Bash(git *)"
     ]
   }
 }
