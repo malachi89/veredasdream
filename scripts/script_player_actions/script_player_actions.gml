@@ -312,12 +312,6 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                 self.frames_action = 7;
                 self.action_sprite_tool = sprite_player_bow_archer;
                 scr_set_player_action_sprites(sprite_player_skin_archer, sprite_player_hair_archer, sprite_player_clothes_archer, sprite_player_eyes_archer);
-                if (!_anim_only) {
-                    self.energy -= 5;
-                    audio_play_sound(sound_bow, 1, false);
-                    var _arr = instance_create_layer(self.x + 16, self.y + 16, "Instances", obj_arrow);
-                    _arr.damage = (is_struct(_item_data) ? _item_data.quality : 0) + 1;
-                }
             break;
 
             case "bugnet":

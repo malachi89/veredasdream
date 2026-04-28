@@ -45,6 +45,11 @@ energy = 500;
 
 tool_cooldown    = 0;
 bugnet_caught    = false;
+bow_drawing           = false;
+bow_sound_id          = -1;
+bow_quality           = 0;
+arrow_shoot_snd_id    = -1;
+arrow_shoot_snd_timer = 0;
 net_state_timer  = 0;
 
 // --- ECONOMIA PER-PLAYER ---

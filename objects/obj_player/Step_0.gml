@@ -85,6 +85,14 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
 
 if (tool_cooldown > 0) tool_cooldown--;
 
+if (arrow_shoot_snd_timer > 0) {
+    arrow_shoot_snd_timer--;
+    if (arrow_shoot_snd_timer == 0 && arrow_shoot_snd_id != -1) {
+        audio_stop_sound(arrow_shoot_snd_id);
+        arrow_shoot_snd_id = -1;
+    }
+}
+
 var _mouse_over_ui = instance_exists(obj_inventory)
     && device_mouse_y_to_gui(0) >= obj_inventory.menu_y_start;
 
@@ -100,7 +108,20 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
     var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
 
     if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !show_backpack) {
-        if (global.net_role == NET_ROLE.CLIENT) {
+        if (_item_key == "bow") {
+            // Stop any previous bow sound before starting a new draw
+            if (bow_sound_id != -1 && audio_is_playing(bow_sound_id)) {
+                audio_stop_sound(bow_sound_id);
+            }
+            // Play sound immediately on click, skipping 0.30s of silence
+            bow_sound_id = audio_play_sound(sound_bow, 1, false);
+            audio_sound_set_track_position(bow_sound_id, 0.30);
+            // Start bow draw — animation only; arrow fires on LMB release
+            scr_use_item(_selected_item, _gx, _gy, true);
+            bow_drawing = true;
+            bow_quality = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
+                          ? _selected_item.quality : 0;
+        } else if (global.net_role == NET_ROLE.CLIENT) {
             // Animate locally; host runs the authoritative mutation
             var _quality  = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
                             ? _selected_item.quality : 0;
@@ -115,6 +136,28 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
             }
         }
         tool_cooldown = 50;
+    }
+}
+
+// Bow fire: runs every step — not gated on STATE.ACTING so it always catches the release
+if (bow_drawing && !mouse_check_button(mb_left)) {
+    bow_drawing = false;
+    arrow_shoot_snd_id = audio_play_sound(sound_arrow_shoot, 1, false);
+    audio_sound_set_track_position(arrow_shoot_snd_id, 1.85);
+    arrow_shoot_snd_timer = 9; // stop at 2.00s (0.15s × 60fps)
+    if (global.net_role != NET_ROLE.CLIENT) {
+        energy -= 5;
+        var _arr = instance_create_layer(x + 16, y + 16, "Instances", obj_arrow);
+        _arr.damage = bow_quality + 1;
+        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+            scr_capture_current_room_state();
+            net_broadcast_room_state(room_get_name(room));
+        }
+    } else {
+        var _bow_item = inventory_array[selected_slot];
+        var _qty = is_struct(_bow_item) ? _bow_item.quantity : 1;
+        net_send_use_item("bow", bow_quality, _qty, selected_slot,
+                          floor(mouse_x / 16) * 16, floor(mouse_y / 16) * 16, dir);
     }
 }
 
@@ -143,7 +186,19 @@ move_and_collide(_mx, _my, [obj_collision, obj_chest], 4, 0, 0, -1, -1);
 if (state != _prev_state) frame_anim = 0;
 
 if (state == STATE.ACTING) {
-    frame_anim += 0.2;
+    if (bow_drawing) {
+        // Hold: advance to pulled pose (frame 4) and track mouse direction
+        frame_anim = min(frame_anim + 0.2, 3);
+        var _dx = mouse_x - ((bbox_left + bbox_right) / 2);
+        var _dy = mouse_y - ((bbox_top + bbox_bottom) / 2);
+        if (abs(_dx) > abs(_dy)) {
+            dir = (_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+        } else {
+            dir = (_dy > 0) ? DIR.DOWN : DIR.UP;
+        }
+    } else {
+        frame_anim += 0.2;
+    }
 
     if (!bugnet_caught && floor(frame_anim) >= 5) {
         var _held     = inventory_array[selected_slot];
@@ -171,6 +226,7 @@ if (state == STATE.ACTING) {
     }
 
     if (frame_anim >= frames_action) {
+        bow_sound_id = -1; // clear reference; sound plays to natural end
         state = STATE.IDLE;
         frame_anim = 0;
     }
