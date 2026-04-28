@@ -95,6 +95,7 @@
     {"name":"inst_735D2E2F","path":"rooms/forest/forest.yy",},
     {"name":"inst_5294A555","path":"rooms/forest/forest.yy",},
     {"name":"inst_796E3CF0","path":"rooms/forest/forest.yy",},
+    {"name":"inst_3E4D2F79","path":"rooms/forest/forest.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -107,6 +108,7 @@
             {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"obj_transition","path":"objects/obj_transition/obj_transition.yy",},"propertyId":{"name":"target_y","path":"objects/obj_transition/obj_transition.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"1940",},
           ],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":4.25,"x":-16.0,"y":86.0,},
         {"$GMRInstance":"v4","%Name":"inst_4B7C2A9F","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_4B7C2A9F","objectId":{"name":"obj_forest_particles","path":"objects/obj_forest_particles/obj_forest_particles.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":0.0,"y":0.0,},
+        {"$GMRInstance":"v4","%Name":"inst_3E4D2F79","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_3E4D2F79","objectId":{"name":"obj_forest_sign","path":"objects/obj_forest_sign/obj_forest_sign.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":96.0,"y":12.0,},
       ],"layers":[],"name":"Instances","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
     {"$GMRInstanceLayer":"","%Name":"Instances_collision","depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
         {"$GMRInstance":"v4","%Name":"inst_387B0221","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_387B0221","objectId":{"name":"obj_collision","path":"objects/obj_collision/obj_collision.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":312.5,"scaleY":1.0,"x":0.0,"y":0.0,},

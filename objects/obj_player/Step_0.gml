@@ -60,26 +60,80 @@ if (keyboard_check_pressed(ord("F"))) {
 }
 
 if (keyboard_check_pressed(ord("E")) && !show_backpack) {
-    var _npc = instance_nearest(x, y, obj_npc);
-    if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
-        var _shop_entry = global.shop_data[$ _npc.npc_key];
-        if (_shop_entry != undefined) {
-            shop_open      = true;
-            shop_npc_key   = _npc.npc_key;
-            shop_scroll    = 0;
-            shop_msg       = "";
-            shop_msg_timer = 0;
+    var _sign = instance_nearest(x, y, obj_forest_sign);
+    if (_sign != noone && point_distance(x, y, _sign.x, _sign.y) < 60) {
+        if (dialog_open) {
+            dialog_open = false;
         } else {
-            if (dialog_open) {
-                dialog_open = false;
-            } else {
-                dialog_open     = true;
-                dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
-                dialog_text     = "Hola campeon, echele ganas";
+            var _animals = [];
+            for (var _i = 0; _i < array_length(global.forest_wild_animals); _i++) {
+                var _ak = global.forest_wild_animals[_i].key;
+                var _adata = global.wild_animal_data[$ _ak];
+                if (_adata == undefined) continue;
+                var _an = _adata.name;
+                var _dup = false;
+                for (var _j = 0; _j < array_length(_animals); _j++) {
+                    if (_animals[_j] == _an) { _dup = true; break; }
+                }
+                if (!_dup) array_push(_animals, _an);
             }
+
+            var _forage = [];
+            var _fcount = instance_number(obj_item_parent);
+            for (var _i = 0; _i < _fcount; _i++) {
+                var _fi = instance_find(obj_item_parent, _i);
+                if (!string_starts_with(_fi.item_key, "forage_")) continue;
+                var _fname = global.forage_data[$ _fi.item_key].name;
+                var _dup = false;
+                for (var _j = 0; _j < array_length(_forage); _j++) {
+                    if (_forage[_j] == _fname) { _dup = true; break; }
+                }
+                if (!_dup) array_push(_forage, _fname);
+            }
+
+            var _max = 6;
+            var _astr = "";
+            for (var _i = 0; _i < min(array_length(_animals), _max); _i++) {
+                if (_i > 0) _astr += ", ";
+                _astr += _animals[_i];
+            }
+            if (array_length(_animals) > _max) _astr += "...";
+            if (_astr == "") _astr = "ninguno";
+
+            var _fstr = "";
+            for (var _i = 0; _i < min(array_length(_forage), _max); _i++) {
+                if (_i > 0) _fstr += ", ";
+                _fstr += _forage[_i];
+            }
+            if (array_length(_forage) > _max) _fstr += "...";
+            if (_fstr == "") _fstr = "ninguna";
+
+            dialog_npc_name = "Tablón del Bosque";
+            dialog_text = "Animales: " + _astr + "\nPlantas y setas: " + _fstr;
+            dialog_open = true;
         }
-    } else if (dialog_open) {
-        dialog_open = false;
+    } else {
+        var _npc = instance_nearest(x, y, obj_npc);
+        if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
+            var _shop_entry = global.shop_data[$ _npc.npc_key];
+            if (_shop_entry != undefined) {
+                shop_open      = true;
+                shop_npc_key   = _npc.npc_key;
+                shop_scroll    = 0;
+                shop_msg       = "";
+                shop_msg_timer = 0;
+            } else {
+                if (dialog_open) {
+                    dialog_open = false;
+                } else {
+                    dialog_open     = true;
+                    dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
+                    dialog_text     = "Hola campeon, echele ganas";
+                }
+            }
+        } else if (dialog_open) {
+            dialog_open = false;
+        }
     }
 }
 
@@ -181,7 +235,7 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
     _my = (_mag != 0) ? (_v / _mag) * _spd : 0;
 }
 
-move_and_collide(_mx, _my, [obj_collision, obj_chest], 4, 0, 0, -1, -1);
+move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign], 4, 0, 0, -1, -1);
 
 if (state != _prev_state) frame_anim = 0;
 

@@ -21,6 +21,7 @@
     {"$GMFolder":"","%Name":"crops","folderPath":"folders/objects/farm/crops.yy","name":"crops","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"items","folderPath":"folders/objects/farm/items.yy","name":"items","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"mechanics","folderPath":"folders/objects/farm/mechanics.yy","name":"mechanics","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"forest","folderPath":"folders/objects/forest.yy","name":"forest","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"game_control","folderPath":"folders/objects/game_control.yy","name":"game_control","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"materials","folderPath":"folders/objects/materials.yy","name":"materials","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"rooms","folderPath":"folders/rooms.yy","name":"rooms","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -174,6 +175,7 @@
   ],
   "ForcedPrefabProjectReferences":[
     {"link":"io.gamemaker.gm_filter_underwater-1.0.0","name":"io.gamemaker.gm_filter_underwater-1.0.0","path":"io.gamemaker.gm_filter_underwater-1.0.0.yyp",},
+    {"link":"io.gamemaker.sdfshaders-1.0.0","name":"io.gamemaker.sdfshaders-1.0.0","path":"io.gamemaker.sdfshaders-1.0.0.yyp",},
   ],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"sprite_player_archer_acc_beard_black_strip28.png","CopyToMask":-1,"filePath":"datafiles/archer/accessories","name":"sprite_player_archer_acc_beard_black_strip28.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
@@ -641,6 +643,7 @@
     {"id":{"name":"obj_crop","path":"objects/obj_crop/obj_crop.yy",},},
     {"id":{"name":"obj_farm_animal","path":"objects/obj_farm_animal/obj_farm_animal.yy",},},
     {"id":{"name":"obj_forest_particles","path":"objects/obj_forest_particles/obj_forest_particles.yy",},},
+    {"id":{"name":"obj_forest_sign","path":"objects/obj_forest_sign/obj_forest_sign.yy",},},
     {"id":{"name":"obj_greenhouse_placeholder","path":"objects/obj_greenhouse_placeholder/obj_greenhouse_placeholder.yy",},},
     {"id":{"name":"obj_greenhouse","path":"objects/obj_greenhouse/obj_greenhouse.yy",},},
     {"id":{"name":"obj_horse_parent","path":"objects/obj_horse_parent/obj_horse_parent.yy",},},
@@ -830,6 +833,7 @@
     {"id":{"name":"sprite_forest_animals_snail_purple","path":"sprites/sprite_forest_animals_snail_purple/sprite_forest_animals_snail_purple.yy",},},
     {"id":{"name":"sprite_forest_animals_snail_red","path":"sprites/sprite_forest_animals_snail_red/sprite_forest_animals_snail_red.yy",},},
     {"id":{"name":"sprite_forest_animals_turtle","path":"sprites/sprite_forest_animals_turtle/sprite_forest_animals_turtle.yy",},},
+    {"id":{"name":"sprite_forest_sign","path":"sprites/sprite_forest_sign/sprite_forest_sign.yy",},},
     {"id":{"name":"sprite_fruit_boxes","path":"sprites/sprite_fruit_boxes/sprite_fruit_boxes.yy",},},
     {"id":{"name":"sprite_goat_female_black","path":"sprites/sprite_goat_female_black/sprite_goat_female_black.yy",},},
     {"id":{"name":"sprite_goat_female_blonde","path":"sprites/sprite_goat_female_blonde/sprite_goat_female_blonde.yy",},},

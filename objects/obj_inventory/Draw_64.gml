@@ -346,14 +346,15 @@ if (is_struct(_p.hovered_item_data) && !is_struct(_p.held_item)) {
 
 // === DIALOGO NPC ===
 if (_p.dialog_open) {
-    var _dgw  = display_get_gui_width();
-    var _dgh  = display_get_gui_height();
-    var _dbw  = _dgw - 80;
-    var _dbh  = 110;
-    var _dbx1 = 40;
-    var _dby1 = _dgh - _dbh - 20;
-    var _dbx2 = _dbx1 + _dbw;
-    var _dby2 = _dby1 + _dbh;
+    var _dgw   = display_get_gui_width();
+    var _dgh   = display_get_gui_height();
+    var _dbw   = _dgw - 80;
+    var _lines = string_split(_p.dialog_text, "\n");
+    var _dbh   = (array_length(_lines) > 1) ? 180 : 110;
+    var _dbx1  = 40;
+    var _dby1  = _dgh - _dbh - 20;
+    var _dbx2  = _dbx1 + _dbw;
+    var _dby2  = _dby1 + _dbh;
     draw_set_alpha(0.88);
     draw_roundrect_color_ext(_dbx1, _dby1, _dbx2, _dby2, 10, 10, c_dkgray, c_dkgray, false);
     draw_set_alpha(1.0);
@@ -365,7 +366,9 @@ if (_p.dialog_open) {
     draw_set_color(c_white);
     draw_line(_dbx1 + 10, _dby1 + 42, _dbx2 - 10, _dby1 + 42);
     draw_set_valign(fa_middle);
-    draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, _p.dialog_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+    for (var _li = 0; _li < array_length(_lines); _li++) {
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 56 + _li * 44, _lines[_li], 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+    }
     draw_set_halign(fa_right);
     draw_set_color(c_silver);
     draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);

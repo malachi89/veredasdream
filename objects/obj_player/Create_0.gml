@@ -1,3 +1,9 @@
+// Destroy room-layout duplicate when a persistent player already exists in this session.
+if (instance_exists(global.local_player) && global.local_player != id) {
+    instance_destroy();
+    exit;
+}
+
 // --- IDENTIDAD MP ---
 // player_id: 1 for host/solo player, 2 for remote/client.
 // is_local: true on the machine that controls this player via keyboard/mouse.
