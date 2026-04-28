@@ -12,6 +12,10 @@ frame_anim += 0.1;
 if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
 
 if (hp <= 0) {
+    var _data = global.animal_data[$ animal_type];
+    if (_data != undefined && _data.product_drop != undefined) {
+        inventory_drop_item(_data.product_drop, 1, x, y);
+    }
     instance_destroy();
     exit;
 }

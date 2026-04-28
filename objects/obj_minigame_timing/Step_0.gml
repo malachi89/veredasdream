@@ -42,8 +42,12 @@ if (result == 0) {
                     instance_destroy(target_animal);
                 } else {
                     // Drop product
-                    scr_notify("Producto obtenido!");
-                    // instance_create_layer(target_animal.x, target_animal.y, "Instances", obj_item_product);
+                    var _data = global.animal_data[$ target_animal.animal_type];
+                    if (_data != undefined && _data.product_drop != undefined) {
+                        inventory_drop_item(_data.product_drop, 1, target_animal.x, target_animal.y);
+                        scr_notify("Producto obtenido!");
+                    }
+                    instance_destroy(target_animal);
                 }
             }
         } else {

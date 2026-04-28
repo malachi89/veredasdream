@@ -86,13 +86,13 @@ enum ANIMAL_STATE {
 }
 
 global.animal_data = {
-    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"] },
-    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"] },
-    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"] },
-    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"] },
-    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"] },
-    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"] },
-    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"] },
+    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drop: "chicken_leg" },
+    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drop: "steak" },
+    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"], product_drop: "egg_duck_reg" },
+    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drop: "goat_milk_reg" },
+    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"], product_drop: "steak" },
+    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"], product_drop: "bacon" },
+    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"], product_drop: "wool" },
 };
 
 global.wild_animal_data = {
