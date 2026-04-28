@@ -86,13 +86,13 @@ enum ANIMAL_STATE {
 }
 
 global.animal_data = {
-    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drop: "egg_chicken_brown_reg" },
-    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drop: "milk_reg" },
-    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"], product_drop: "egg_duck_reg" },
-    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drop: "goat_milk_reg" },
-    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"], product_drop: "chicken_leg" },
-    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"], product_drop: "bacon" },
-    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"], product_drop: "wool" },
+    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drops: ["egg_chicken_brown_reg", "egg_chicken_white_reg", "chicken_leg"] },
+    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drops: ["milk_reg", "milk_large", "steak"] },
+    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"], product_drops: ["egg_duck_reg", "egg_duck_large"] },
+    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drops: ["goat_milk_reg", "goat_milk_large", "goat_cheese"] },
+    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"], product_drops: ["chicken_leg", "egg_chicken_large_generic"] },
+    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"], product_drops: ["bacon", "steak"] },
+    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"], product_drops: ["wool"] },
 };
 
 global.wild_animal_data = {

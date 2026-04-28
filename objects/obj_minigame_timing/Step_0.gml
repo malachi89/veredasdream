@@ -43,8 +43,10 @@ if (result == 0) {
                 } else {
                     // Drop product
                     var _data = global.animal_data[$ target_animal.animal_type];
-                    if (_data != undefined && _data.product_drop != undefined) {
-                        inventory_drop_item(_data.product_drop, 1, target_animal.x, target_animal.y);
+                    if (_data != undefined && _data.product_drops != undefined && array_length(_data.product_drops) > 0) {
+                        var _len = array_length(_data.product_drops);
+                        var _product = _data.product_drops[irandom(_len - 1)];
+                        inventory_drop_item(_product, 1, target_animal.x, target_animal.y);
                         scr_notify("Producto obtenido!");
                     }
                     instance_destroy(target_animal);
