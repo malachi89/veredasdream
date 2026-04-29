@@ -266,7 +266,7 @@ function scr_capture_current_room_state() {
     var _rock_state = [];
     for (var i = 0; i < instance_number(obj_rock); i++) {
         var _inst = instance_find(obj_rock, i);
-        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index), hits_remaining: _inst.hits_remaining });
+        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index), image_index: _inst.image_index, hits_remaining: _inst.hits_remaining });
     }
     _state.rocks = _rock_state;
 
@@ -529,10 +529,10 @@ function scr_restore_room_state(_room_name) {
             if (_inst == noone) {
                 _inst = instance_create_layer(_r.x, _r.y, "Instances", obj_rock);
                 _inst.image_speed = 0;
-                _inst.image_index = 0;
             }
             var _spr = asset_get_index(_r.sprite_name);
             if (_spr != -1) _inst.sprite_index = _spr;
+            _inst.image_index = variable_struct_exists(_r, "image_index") ? _r.image_index : 0;
             _inst.hits_remaining = variable_struct_exists(_r, "hits_remaining") ? _r.hits_remaining : 10;
         }
     }

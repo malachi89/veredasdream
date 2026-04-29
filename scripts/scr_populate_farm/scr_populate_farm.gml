@@ -8,7 +8,7 @@ function scr_populate_farm() {
     var _rock_count    = 450;
     var _max_attempts  = 40;
     var _tree_radius   = 24; // Half-width of a tree sprite (~48px wide)
-    var _rock_radius   = 12; // Half-width of a rock sprite (~24px wide)
+    var _rock_radius   = 8; // Half-width of a rock sprite (16px wide)
     // Each placed entry: { x, y, r } — the required clearance radius
     // Minimum distance between two objects = r_new + r_existing
     var _placed        = [];

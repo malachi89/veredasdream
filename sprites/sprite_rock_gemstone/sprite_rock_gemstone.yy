@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":0,
   "parent":{
-    "name":"mine",
-    "path":"folders/sprites/mine.yy",
+    "name":"cave",
+    "path":"folders/sprites/cave.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
