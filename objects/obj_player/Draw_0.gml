@@ -165,7 +165,12 @@ if (global.net_role == NET_ROLE.CLIENT) {
         }
     }
 
-    if (is_riding && _horse_s != noone) draw_sprite(_horse_s,   image_index, x, y);
+    if (is_riding && _horse_s != noone) {
+        draw_sprite_ext(_horse_s, image_index, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+        draw_sprite(_horse_s,   image_index, x, y);
+    } else {
+        draw_sprite_ext(_skin_s, image_index, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+    }
     draw_sprite(_skin_s,    image_index, x, y);
     if (_eyes_s >= 0)                   draw_sprite(_eyes_s,    image_index, x, y);
     draw_sprite(_clothes_s, image_index, x, y);
@@ -189,7 +194,12 @@ if (global.net_role == NET_ROLE.CLIENT) {
         _hair_s    = get_sprite_set(sprite_player_hair_idle,    sprite_player_hair_walk,    sprite_player_hair_run,    action_sprite_hair);
     }
 
-    if (is_riding && _horse_s != noone) draw_sprite(_horse_s,   image_index, x, y);
+    if (is_riding && _horse_s != noone) {
+        draw_sprite_ext(_horse_s, image_index, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+        draw_sprite(_horse_s,   image_index, x, y);
+    } else {
+        draw_sprite_ext(_skin_s, image_index, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+    }
     draw_sprite(_skin_s,    image_index, x, y);
     draw_sprite(_eyes_s,    image_index, x, y);
     draw_sprite(_clothes_s, image_index, x, y);
