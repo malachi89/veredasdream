@@ -13,71 +13,117 @@ All in-game text, variable names, comments, and notifications are in **Spanish**
 ## Architecture
 
 ### Persistent Singletons
-The game revolves around three persistent singleton objects:
+The game revolves around these persistent singleton objects:
 
 - **`obj_controller`** — Game master. Initializes all globals, manages the day/time cycle, handles room transitions, runs the debug console, and coordinates the day-end/save flow. Only one instance is ever allowed. The `start_new_day()` and `update_tilesets()` functions live here.
-- **`obj_inventory`** — Manages the hotbar (10 slots), backpack (64 slots), and shipping bin (64 slots). Exposes `add_item(_key, _qty)` and inventory swap/split functions. Initial player equipment is hardcoded in `Create_0.gml`.
-- **`obj_player`** — Handles movement (WASD + Shift to run), tool use (left-click → `scr_use_item()`), horse mounting (F key), and fishing state machine.
+- **`obj_inventory`** — UI-only singleton for the local player's inventory display. **All actual inventory data (slots, money, energy) lives in `obj_player`.** `obj_inventory` delegates `add_item`/swap/split to `global.local_player`. Manages visual slot rendering and window resize.
+- **`obj_player`** — Handles movement (WASD + Shift to run), tool use (left-click → `scr_use_item()`), horse mounting (F key), fishing state machine, and **owns all per-player data**: `inventory_array` (10 slots), `backpack_array` (64 slots), `shipping_array` (64 slots), `money`, `energy`, `held_item`.
+- **`obj_camera`** — Follows `global.local_player`.
 
 ### Global State (initialized in `obj_controller`)
-All game-wide data lives in `global.*` structs:
-- `global.seed_data`, `global.crop_data`, `global.tool_data`, `global.placeable_data` — item databases (defined in `script_init.gml`)
-- `global.fish_data`, `global.fish_pool` — fishing database and weighted catch pool (defined in `script_init.gml`)
-- `global.animal_data` — per-animal movement stats (chicken, cow, duck, goat, ostrich, pig, sheep)
-- `global.room_states` — persisted state per room (crops, tilled tiles, chests, buildings, horses)
-- `global.room_drops` — dropped item instances per room
+All game-wide data lives in `global.*` structs defined in `script_init.gml`:
+
+**Item databases:**
+- `global.seed_data` — 43 crop seeds (spring/summer/fall/winter)
+- `global.crop_data` — Harvested crop items
+- `global.tool_data` — 10 tools: `watering_can`, `pickaxe`, `axe`, `sickle`, `hoe`, `shovel`, `fishing_rod`, `bugnet`, `sword`, `bow`
+- `global.tool_progression` — 9 quality tiers (OXIDADO → VITOLANIO) with per-tier stats
+- `global.placeable_data` — Placeables (chest)
+- `global.material_data` — `wood`, `stone`
+- `global.forage_data` — 119 forage items (mushrooms `forage_m*`, herbs `forage_h*`, flowers `forage_f*`), rarity 1–5
+- `global.fish_data`, `global.fish_pool` — 99 fish with rarity weights; `fish_pool` is a flat array for O(1) random selection
+- `global.insect_data`, `global.insect_pool` — 60 insects (ants, snails, butterflies, moths, crickets, etc.); weighted pool
+- `global.animal_data` — Per-animal stats for `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`: `move_speed`, `hp`, `max_hp`, `variants[]`, `product_drops[]`
+- `global.wild_animal_data` — Forest animals: `capibara`, `deer`, `fox`, `frog`, `penguin`, `rabbit`, `turtle`
+- `global.animal_product_data` — 20 products: eggs, milk, cheese, butter, honey, meat, wool (keyed e.g. `"egg_chicken_brown_reg"`, `"milk_reg"`, `"steak"`, `"wool"`)
+- `global.npc_data`, `global.shop_data` — 21 NPCs; only "Miraculos" shop is active
+
+**World state:**
+- `global.room_states` — Persisted state per room (crops, tiles, chests, buildings, horses)
+- `global.room_drops` — Dropped item instances per room
+- `global.next_drop_uid` — Incrementing ID for drop persistence
 - `global.money`, `global.day`, `global.season`, `global.year`, `global.game_hour/minute`
+- `global.farm_populated`, `global.debug_test_animals`, `global.farm_needs_repopulate_test_animals`
+- `global.forest_needs_repopulate`, `global.forest_days_since_rare`, `global.forest_days_since_rare_insect`
+
+**Multiplayer:**
+- `global.net_role` — `NET_ROLE.NONE` (single-player), `NET_ROLE.HOST`, or `NET_ROLE.CLIENT`
+- `global.local_player` — Points to the local `obj_player` instance
 
 ### Scripts (GML functions, not objects)
-- **`script_init.gml`** — Defines all enums (`DIR`, `STATE`, `FISHING_STATE`, `ITEM_TYPE`, `TOOL_TYPE`, `SEASON`, `QUALITY`) and populates all global item databases including fish.
-- **`script_inventory_functions.gml`** — Room persistence (`scr_capture_current_room_state`, `scr_restore_room_state`), save/load (`scr_save_game`, `scr_apply_loaded_game`), drop system, `scr_sleep_and_save`, `scr_process_shipping`, `scr_notify`, `scr_get_item_data`.
-- **`script_player_actions.gml`** — `scr_use_item()`: the central dispatcher for all tool use, planting, and placeable logic. Also contains `scr_buy_building()` and `scr_upgrade_tool()`.
-- **`scr_add_animal`** — Places a random variant of an animal at mouse position.
+- **`script_init.gml`** — Defines all enums (`NET_ROLE`, `NET_CMD`, `DIR`, `STATE`, `FISHING_STATE`, `HORSE_STATE`, `ANIMAL_STATE`, `ITEM_TYPE`, `TOOL_TYPE`, `SEASON`, `QUALITY`) and all global databases.
+- **`script_inventory_functions.gml`** — Room persistence (`scr_capture_current_room_state`, `scr_restore_room_state`), save/load (`scr_save_game`, `scr_apply_loaded_game`), drop system (`inventory_drop_item`, `scr_register_room_drop`), `scr_sleep_and_save`, `scr_process_shipping`, `scr_notify`, `scr_get_item_data`.
+- **`script_player_actions.gml`** — `scr_use_item()`: central dispatcher for tool use, planting, harvesting, and placeable logic. Also `scr_buy_building()` and `scr_upgrade_tool()`.
+- **`script_net.gml`** — LAN multiplayer over TCP/UDP. Packet format: `[u16 payload_size][u8 cmd][payload]`. 40+ `NET_CMD` messages for state sync (HANDSHAKE, FULL_SNAPSHOT, PLAYER_STATE, TIME_UPDATE, NEW_DAY, CMD_USE_ITEM, CMD_PICKUP, CMD_BUGNET, SLEEP_REQUEST, etc.).
+- **`scr_add_animal`** — Places a random-variant `obj_farm_animal` at mouse position.
 - **`scr_populate_farm`** / **`scr_advance_common_trees`** — Farm generation and tree state advancement.
+- **`scr_populate_forest`** — Spawns daily forage items, wild animals, and insects in the forest room.
+- **`scr_populate_test_animals`** — Dev helper. Spawns all wild and farm animal types as **`obj_wild_animal`** instances (with `is_farm_animal = true` and `is_test_animal = true` for farm types). These are NOT `obj_farm_animal`.
+
+### Animal Systems — Two Separate Objects
+
+**`obj_farm_animal`** — Real farm animals bought/placed on the farm. `animal_type` and `variant` set via `init_animal_type`/`init_variant` object properties or `scr_add_animal`. Death drops an item from `global.animal_data[$ animal_type].product_drops` via `inventory_drop_item`.
+
+**`obj_wild_animal`** — Forest creatures AND the debug test animals from `scr_populate_test_animals`. Key variables: `animal_key` (the type string), `is_farm_animal` (true for farm types spawned as test animals), `is_test_animal`. Death code: if `is_farm_animal`, drops a product from `global.animal_data[$ animal_key].product_drops`; otherwise simply destroys.
+
+Both share `ANIMAL_STATE` (IDLE, WANDERING, FLEEING) and `hurt_flash_timer`.
 
 ### Room Persistence Pattern
-Rooms are not persistent by default. When the player leaves a room, `scr_capture_current_room_state()` saves crops/tiles/chests/buildings/horses into `global.room_states[room_name]`. When re-entering, `obj_controller`'s Step event calls `scr_restore_room_state()` and `scr_restore_room_drops()`. Off-screen room crop/tile advancement is handled by `scr_advance_stored_room_states()` on each new day.
+Rooms are not persistent by default. When the player leaves a room, `scr_capture_current_room_state()` saves crops/tiles/chests/buildings/horses into `global.room_states[room_name]`. When re-entering, `obj_controller`'s Step event calls `scr_restore_room_state()` and `scr_restore_room_drops()`. Off-screen crop/tile advancement is handled by `scr_advance_stored_room_states()` on each new day.
 
 ### Save System
-Save data is JSON written to `saves/savegame.json` via `scr_save_game()`. The save includes time, money, player position, inventory state, and all room states. Loading is attempted at startup in `obj_controller`'s Create event.
+Save data is JSON written to `saves/savegame.json` via `scr_save_game()`. Includes time, money, player position, inventory state, all room states, room drops, and `next_drop_uid`. Loading is attempted at startup in `obj_controller`'s Create event.
+
+### Item Key System
+Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"fish_00"`, `"egg_chicken_brown_reg"`, `"forage_m00"`). `scr_get_item_data(_key)` searches all databases in order: `seed_data`, `crop_data`, `tool_data`, `placeable_data`, `material_data`, `forage_data`, `fish_data`, `insect_data`, `animal_product_data`. Returns `undefined` if not found.
+
+`obj_item_parent` (world-drop pickup) also searches the same databases in its Step event to resolve the sprite for display. Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
+
+### Drop System
+`inventory_drop_item(_key, _qty, _px, _py, _delay=15)` — Creates an `obj_item_parent` on the `"Instances"` layer at the given position, registers it in `global.room_drops`, and (in multiplayer HOST mode) broadcasts the room state. All rooms that need drops must have an `"Instances"` layer.
 
 ### Tile Conventions (16px grid)
 - Tile ID `72` = tilled soil
 - Tile ID `168` = tilled + watered soil
-- Layer `Tiles_tilled_watered` — the tilemap for farm soil state
-- Layer `Tiles_details` — blocks planting (objects/decorations)
+- Layer `Tiles_tilled_watered` — tilemap for farm soil state
+- Layer `Tiles_details` — blocks planting
 - Layer `Instances_Crops` — where `obj_crop` and `obj_tree` instances are created
 - Layer `Tiles_seasonal_props` — seasonal decorations, tileset swapped by `update_tilesets()`
 
 ### Seasonal Tilesets
 `update_tilesets()` swaps tilesets on `Tiles_background`, `Tiles_details`, and `Tiles_seasonal_props` based on `global.season_index`. Fruit trees are destroyed on entering winter.
 
-### Item Key System
-Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"chest"`, `"fish_00"`). `scr_get_item_data(_key)` searches all global databases (seed, crop, tool, placeable, fish) and returns the data struct. Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
-
 ### Buildings
 Farm buildings start as placeholder objects (`obj_barn_placeholder`, etc.). `scr_buy_building(_name)` destroys the placeholder and creates the real object at the same position. Building state is captured and restored via the room state system.
 
 ### Fishing System
-The fishing rod triggers `STATE.FISHING` in `obj_player`. The state machine progresses through sub-states defined in the `FISHING_STATE` enum:
-1. **CASTING** — plays 15 frames of cast animation, then transitions to WAITING.
-2. **WAITING** — loops until a random bite timer (180–480 frames) fires.
-3. **BITE** — player has 120 frames (2 seconds) to press LMB or Space to reel in. Missing the window returns to IDLE with "¡Se escapó!".
-4. **REELING** — plays 15 frames, then transitions to CATCHING.
-5. **CATCHING** — plays 15 frames, then picks a fish from `global.fish_pool` using weighted random selection, adds it to inventory, and deducts 10 energy.
+The fishing rod triggers `STATE.FISHING` in `obj_player`. Sub-states via `FISHING_STATE`:
+1. **CASTING** — 15 frames, then WAITING.
+2. **WAITING** — random bite timer (180–480 frames).
+3. **BITE** — 120 frames to press LMB/Space; miss → "¡Se escapó!".
+4. **REELING** — 15 frames.
+5. **CATCHING** — picks from `global.fish_pool`, adds to inventory, deducts 10 energy.
 
-Fish are keyed as `"fish_00"` through `"fish_98"` using `sprite_all_fishes`. Rarity weights: common=50, uncommon=20, rare=7, very_rare=2, legendary=1. `global.fish_pool` is a flat array built from these weights for O(1) random selection.
+### Insect Catching System
+The `bugnet` tool is used in the forest to catch insects. The timing minigame (`obj_minigame_timing`) has 4 difficulty levels (0=Easy to 3=Extreme) controlling indicator speed and hitbox precision. Caught insects are added to inventory via `global.insect_data`.
 
-Water tile detection is **deferred** — the rod currently works from any tile.
+### Bow & Arrow System
+The `bow` tool fires `obj_arrow` projectiles toward the mouse. Arrows deal 1 damage (overridden by bow quality). `obj_arrow` Step checks collision with `obj_wild_animal` first, then `obj_farm_animal` using `instance_place`. Hit animals enter `ANIMAL_STATE.FLEEING` and take `hp` damage.
+
+### Multiplayer
+Two-player LAN co-op. `global.net_role` determines behavior throughout the codebase — always check it before any operation that should be host-authoritative (drops, day advancement, shipping). `obj_remote_player` renders the remote player's avatar. Sleep must be coordinated: client sends a sleep request, host confirms before advancing the day.
+
+### Forest System
+`scr_populate_forest()` runs daily to respawn forage items, insects (`obj_insect`), and wild animals (`obj_wild_animal`) in the forest room. Rare spawns are gated by `global.forest_days_since_rare` / `global.forest_days_since_rare_insect` counters. Items and creatures persist via `global.room_drops` / `global.room_states`.
 
 ## Debug Commands (press Enter in-game to open the console)
 | Command | Description |
 |---|---|
 | `add_item <key> <qty>` | Add items to inventory (e.g. `add_item tomato_seeds 5`) |
-| `add_animal <id>` | Place a random animal variant at mouse position (e.g. `add_animal chicken`) |
+| `add_animal <id>` | Place a random `obj_farm_animal` variant at mouse position |
 | `upgrade_tool <key>` | Upgrade a tool one quality tier (e.g. `upgrade_tool hoe`) |
 | `buy_building <name>` | Instantly build (e.g. `buy_building chicken_coop`) |
-| `set_money <amount>` | Set player money directly (e.g. `set_money 9999`) |
+| `set_money <amount>` | Set player money |
 | `set_energy <amount>` | Set player energy (capped at max) |
 | `heal` | Restore player to full energy |
 | `set_day <n>` | Set the current day within the season (1–`days_per_season`) |
@@ -91,7 +137,7 @@ Animal ids: `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`
 ## Debug Hotkeys
 - `O` — advance one day
 - `P` — advance one season
-- `U` — drop 5 tomato seeds at player position
+- `U` — drop 5 tomato seeds at player position (calls `inventory_drop_item`)
 
 ## Settings
 Runtime configuration is read from `settings.ini`:

@@ -1,3 +1,6 @@
+animal_type = (init_animal_type != "") ? init_animal_type : "chicken";
+variant     = (init_variant     != "") ? init_variant     : "white";
+
 // Difficulty mapping
 switch (animal_type) {
     case "chicken":
@@ -17,15 +20,13 @@ switch (animal_type) {
         catch_difficulty = 0; // Default to Easy
 }
 
-animal_type = (init_animal_type != "") ? init_animal_type : "chicken";
-variant     = (init_variant     != "") ? init_variant     : "white";
-
 sprite_anim = asset_get_index("sprite_" + animal_type + "_" + variant);
 if (sprite_anim == -1) {
     show_debug_message("obj_farm_animal: sprite no encontrado para " + animal_type + "_" + variant);
     sprite_anim = sprite_chicken_white;
 }
-frame_count = sprite_get_number(sprite_anim); // 36 o 32
+sprite_index = sprite_anim;
+frame_count  = sprite_get_number(sprite_anim); // 36 o 32
 
 state      = ANIMAL_STATE.IDLE;
 dir        = DIR.DOWN;
@@ -42,8 +43,8 @@ idle_timer       = irandom_range(120, 300);
 wander_steps     = 0;
 max_wander_steps = irandom_range(60, 180);
 
-hp               = 3;
-max_hp           = 3;
+hp               = (_data != undefined) ? _data.hp     : 3;
+max_hp           = (_data != undefined) ? _data.max_hp : 3;
 flee_timer       = 0;
 hurt_flash_timer = 0;
 is_panicked      = false;

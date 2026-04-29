@@ -7,6 +7,13 @@ if (frame_anim >= _frame_count) frame_anim -= _frame_count;
 if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
 
 if (hp <= 0) {
+    if (is_farm_animal) {
+        var _adata = global.animal_data[$ animal_key];
+        if (_adata != undefined && variable_struct_exists(_adata, "product_drops") && array_length(_adata.product_drops) > 0) {
+            var _product = _adata.product_drops[irandom(array_length(_adata.product_drops) - 1)];
+            inventory_drop_item(_product, 1, x, y);
+        }
+    }
     instance_destroy();
     exit;
 }

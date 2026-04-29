@@ -206,17 +206,15 @@ function scr_populate_forest() {
         }
     }
 
-    // --- Farm Animals in Forest (0-1 per day, 1 guaranteed every 7 days) ---
-    global.forest_days_since_farm_animal += 1;
-    var _spawn_farm = (irandom(1) == 0) || (global.forest_days_since_farm_animal >= 7);
+    // --- Farm Animals in Forest (1-3 per day) ---
+    var _farm_keys        = variable_struct_get_names(global.animal_data);
+    var _farm_spawn_count = irandom_range(1, 3);
 
-    if (_spawn_farm) {
-        global.forest_days_since_farm_animal = 0;
-        var _farm_keys = variable_struct_get_names(global.animal_data);
-        var _farm_key  = _farm_keys[irandom(array_length(_farm_keys) - 1)];
-        var _fdata     = global.animal_data[$ _farm_key];
-        var _variant   = _fdata.variants[irandom(array_length(_fdata.variants) - 1)];
-        var _fspr      = asset_get_index("sprite_" + _farm_key + "_" + _variant);
+    for (var i = 0; i < _farm_spawn_count; i++) {
+        var _farm_key = _farm_keys[irandom(array_length(_farm_keys) - 1)];
+        var _fdata    = global.animal_data[$ _farm_key];
+        var _variant  = _fdata.variants[irandom(array_length(_fdata.variants) - 1)];
+        var _fspr     = asset_get_index("sprite_" + _farm_key + "_" + _variant);
         if (_fspr == -1) _fspr = sprite_chicken_white;
         for (var attempt = 0; attempt < _max_attempts; attempt++) {
             var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;

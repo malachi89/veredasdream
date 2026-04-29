@@ -1,21 +1,11 @@
-// Handle hit interaction (assuming hit by net or weapon)
-// This is a placeholder for actual interaction detection, 
-// needing to be integrated with the weapon/net logic
-if (place_meeting(x, y, obj_net) && !instance_exists(obj_minigame_timing)) {
-    var _inst = instance_create_depth(0, 0, -999, obj_minigame_timing);
-    _inst.difficulty = catch_difficulty;
-    _inst.target_animal = id; // Store reference
-}
-
 frame_anim += 0.1;
 
 if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
 
 if (hp <= 0) {
-    var _data = global.animal_data[$ animal_type];
-    if (_data != undefined && _data.product_drops != undefined && array_length(_data.product_drops) > 0) {
-        var _len = array_length(_data.product_drops);
-        var _product = _data.product_drops[irandom(_len - 1)];
+    var _adata = global.animal_data[$ animal_type];
+    if (_adata != undefined && variable_struct_exists(_adata, "product_drops") && array_length(_adata.product_drops) > 0) {
+        var _product = _adata.product_drops[irandom(array_length(_adata.product_drops) - 1)];
         inventory_drop_item(_product, 1, x, y);
     }
     instance_destroy();

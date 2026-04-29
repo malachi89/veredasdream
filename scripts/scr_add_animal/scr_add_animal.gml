@@ -22,7 +22,8 @@ function scr_add_animal(_animal_type) {
         if (sprite_anim == -1) {
             sprite_anim = sprite_chicken_white;
         }
-        frame_count = sprite_get_number(sprite_anim);
+        sprite_index = sprite_anim;
+        frame_count  = sprite_get_number(sprite_anim);
         
         // Update stats from global data
         var _data  = global.animal_data[$ animal_type];
