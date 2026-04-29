@@ -3,7 +3,7 @@ var _blend = (hurt_flash_timer > 0) ? c_red : c_white;
 if (is_farm_animal) {
     // Farm animals use 4 frames per direction for walking, and have idle offsets
     var _offset = 0;
-    var _frame  = floor(frame_anim) mod 4;
+    var _frame = floor(frame_anim) mod 4;
     
     if (state == ANIMAL_STATE.WANDERING || state == ANIMAL_STATE.FLEEING) {
         switch (dir) {
@@ -15,6 +15,9 @@ if (is_farm_animal) {
     } else {
         _offset = 16; // Default idle
     }
+    // Draw shadow
+    draw_sprite_ext(sprite_index, _offset + _frame, x + 1, y + 0.5, 1, 1, 0, c_black, 0.4);
+    // Draw sprite
     draw_sprite_ext(sprite_index, _offset + _frame, x, y, 1, 1, 0, _blend, 1);
 } else {
     // Forest animals use 4-block mapping: LEFT, RIGHT, DOWN, UP
@@ -24,6 +27,9 @@ if (is_farm_animal) {
     var _dir_index = _dir_map[dir];
 
     var _frame = floor(frame_anim % _frames_per_dir) + (_dir_index * _frames_per_dir);
+    // Draw shadow
+    draw_sprite_ext(sprite_index, _frame, x + 1, y + 0.5, 1, 1, 0, c_black, 0.4);
+    // Draw sprite
     draw_sprite_ext(sprite_index, _frame, x, y, 1, 1, 0, _blend, 1);
 }
 
