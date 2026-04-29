@@ -727,6 +727,7 @@
     {"id":{"name":"sprite_cow_male_blonde","path":"sprites/sprite_cow_male_blonde/sprite_cow_male_blonde.yy",},},
     {"id":{"name":"sprite_cow_male_brown","path":"sprites/sprite_cow_male_brown/sprite_cow_male_brown.yy",},},
     {"id":{"name":"sprite_cow_male_pink","path":"sprites/sprite_cow_male_pink/sprite_cow_male_pink.yy",},},
+    {"id":{"name":"sprite_crafting_material","path":"sprites/sprite_crafting_material/sprite_crafting_material.yy",},},
     {"id":{"name":"sprite_crop_adzuki_bean","path":"sprites/sprite_crop_adzuki_bean/sprite_crop_adzuki_bean.yy",},},
     {"id":{"name":"sprite_crop_aloe","path":"sprites/sprite_crop_aloe/sprite_crop_aloe.yy",},},
     {"id":{"name":"sprite_crop_asparagus","path":"sprites/sprite_crop_asparagus/sprite_crop_asparagus.yy",},},

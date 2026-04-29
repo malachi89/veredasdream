@@ -7,7 +7,8 @@ if (!is_initialized && item_key != "") {
     else if (variable_struct_exists(global.placeable_data, item_key)) _data = global.placeable_data[$ item_key];
     else if (variable_struct_exists(global.material_data, item_key)) _data = global.material_data[$ item_key];
     else if (variable_struct_exists(global.forage_data,   item_key)) _data = global.forage_data[$   item_key];
-    else if (variable_struct_exists(global.animal_product_data, item_key)) _data = global.animal_product_data[$ item_key];
+    else if (variable_struct_exists(global.animal_product_data,     item_key)) _data = global.animal_product_data[$     item_key];
+    else if (variable_struct_exists(global.crafting_material_data, item_key)) _data = global.crafting_material_data[$ item_key];
 
     if (_data != undefined) {
 
@@ -69,7 +70,8 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.placeable_data, item_key)) _name = global.placeable_data[$ item_key].name;
                 else if (variable_struct_exists(global.material_data, item_key)) _name = global.material_data[$ item_key].name;
                 else if (variable_struct_exists(global.forage_data,   item_key)) _name = global.forage_data[$   item_key].name;
-                else if (variable_struct_exists(global.animal_product_data, item_key)) _name = global.animal_product_data[$ item_key].name;
+                else if (variable_struct_exists(global.animal_product_data,     item_key)) _name = global.animal_product_data[$     item_key].name;
+                else if (variable_struct_exists(global.crafting_material_data, item_key)) _name = global.crafting_material_data[$ item_key].name;
 
                 scr_notify_item(quantity, _name);
                 instance_destroy();

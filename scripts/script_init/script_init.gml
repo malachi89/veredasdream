@@ -86,23 +86,23 @@ enum ANIMAL_STATE {
 }
 
 global.animal_data = {
-    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drops: ["egg_chicken_brown_reg", "egg_chicken_white_reg", "chicken_leg"] },
-    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drops: ["milk_reg", "milk_large", "steak"] },
-    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"], product_drops: ["egg_duck_reg", "egg_duck_large"] },
-    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"], product_drops: ["goat_milk_reg", "goat_milk_large", "goat_cheese"] },
-    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"], product_drops: ["chicken_leg", "egg_chicken_large_generic"] },
-    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"], product_drops: ["bacon", "steak"] },
-    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"], product_drops: ["wool"] },
+    chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drops: ["egg_chicken_brown_reg", "egg_chicken_white_reg", "chicken_leg"],  crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
+    cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["milk_reg", "milk_large", "steak"],                              crafting_drops: ["cow_hide_red","cow_hide_orange","cow_hide_yellow","cow_hide_green","cow_hide_blue","cow_hide_lilac","cow_hide_purple","cow_hide_turquoise","cow_hide_pink","cow_hide_lime","cow_hide_amber","cow_hide_brown","cow_hide_black","cow_hide_white"] },
+    duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"],                                       product_drops: ["egg_duck_reg", "egg_duck_large"],                               crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
+    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["goat_milk_reg", "goat_milk_large", "goat_cheese"],             crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"],                                                                                                product_drops: ["chicken_leg", "egg_chicken_large_generic"],                    crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
+    pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"],                                                                                                     product_drops: ["bacon", "steak"],                                              crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"],                                                                                                       product_drops: ["wool"],                                                        crafting_drops: ["yarn_red","yarn_orange","yarn_yellow","yarn_green","yarn_blue","yarn_lilac","yarn_purple","yarn_turquoise","yarn_pink","yarn_lime","yarn_amber","yarn_brown","yarn_black","yarn_white"] },
 };
 
 global.wild_animal_data = {
-    capibara: { name: "Capibara", sprite: sprite_forest_animals_capibara, move_speed: 0.7,  hp: 5, max_hp: 5 },
-    deer:     { name: "Venado",   sprite: sprite_forest_animals_deer,     move_speed: 1.2,  hp: 7, max_hp: 7 },
-    fox:      { name: "Zorro",    sprite: sprite_forest_animals_fox,      move_speed: 1.1,  hp: 4, max_hp: 4 },
-    frog:     { name: "Rana",     sprite: sprite_forest_animals_frog,     move_speed: 0.8,  hp: 2, max_hp: 2 },
-    penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2 },
-    rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3 },
-    turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9 },
+    capibara: { name: "Capibara", sprite: sprite_forest_animals_capibara, move_speed: 0.7,  hp: 5, max_hp: 5, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    deer:     { name: "Venado",   sprite: sprite_forest_animals_deer,     move_speed: 1.2,  hp: 7, max_hp: 7, product_drops: ["string_red","string_orange","string_yellow","string_green","string_blue","string_lilac","string_purple","string_turquoise","string_pink","string_lime","string_amber","string_brown","string_black","string_white"] },
+    fox:      { name: "Zorro",    sprite: sprite_forest_animals_fox,      move_speed: 1.1,  hp: 4, max_hp: 4, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    frog:     { name: "Rana",     sprite: sprite_forest_animals_frog,     move_speed: 0.8,  hp: 2, max_hp: 2, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2, product_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
+    rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3, product_drops: ["rabbit_pelt_red","rabbit_pelt_orange","rabbit_pelt_yellow","rabbit_pelt_green","rabbit_pelt_blue","rabbit_pelt_lilac","rabbit_pelt_purple","rabbit_pelt_turquoise","rabbit_pelt_pink","rabbit_pelt_lime","rabbit_pelt_amber","rabbit_pelt_brown","rabbit_pelt_black","rabbit_pelt_white"] },
+    turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
 };
 
 enum ITEM_TYPE {
@@ -892,3 +892,55 @@ _ap[$ "wool"]                       = { name: "Lana",                      type:
 _ap[$ "goat_cheese"]                = { name: "Queso de Cabra",            type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 17, base_sell_price: 200 };
 _ap[$ "steak"]                      = { name: "Filete",                    type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 18, base_sell_price: 150 };
 _ap[$ "bacon"]                      = { name: "Tocino",                    type: ITEM_TYPE.FOOD,     sprite: sprite_animal_products, subimg: 19, base_sell_price: 120 };
+
+// --- DATOS DE MATERIALES DE COSTURA ---
+// sprite_crafting_material: 9 tipos × 14 colores = 126 frames
+// Orden de colores (subimg dentro del tipo): 0=Rojo 1=Naranja 2=Amarillo 3=Verde 4=Azul
+//   5=Lila 6=Morado 7=Turquesa 8=Rosa 9=Lima 10=Ámbar 11=Café 12=Negro 13=Blanco
+global.crafting_material_data = {};
+var _cm = global.crafting_material_data;
+
+var _cm_colors = [
+    ["red",       "Rojo"],
+    ["orange",    "Naranja"],
+    ["yellow",    "Amarillo"],
+    ["green",     "Verde"],
+    ["blue",      "Azul"],
+    ["lilac",     "Lila"],
+    ["purple",    "Morado"],
+    ["turquoise", "Turquesa"],
+    ["pink",      "Rosa"],
+    ["lime",      "Lima"],
+    ["amber",     "Ámbar"],
+    ["brown",     "Café"],
+    ["black",     "Negro"],
+    ["white",     "Blanco"],
+];
+
+var _cm_types = [
+    // [key_prefix, nombre_es, sell_price]
+    ["thread",      "Hilo",           15],
+    ["cloth",       "Tela",           30],
+    ["string",      "Cuerda",         10],
+    ["leather",     "Cuero",          45],
+    ["pelt",        "Piel",           40],
+    ["feathers",    "Plumas",         25],
+    ["rabbit_pelt", "Piel de Conejo", 35],
+    ["yarn",        "Estambre",       25],
+    ["cow_hide",    "Cuero de Vaca",  50],
+];
+
+var _num_colors = array_length(_cm_colors);
+for (var _mi = 0; _mi < array_length(_cm_types); _mi++) {
+    var _mtype = _cm_types[_mi];
+    for (var _ci = 0; _ci < _num_colors; _ci++) {
+        var _ccolor = _cm_colors[_ci];
+        _cm[$ _mtype[0] + "_" + _ccolor[0]] = {
+            name:            _mtype[1] + " " + _ccolor[1],
+            type:            ITEM_TYPE.MATERIAL,
+            sprite:          sprite_crafting_material,
+            subimg:          _mi * _num_colors + _ci,
+            base_sell_price: _mtype[2]
+        };
+    }
+}

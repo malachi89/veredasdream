@@ -987,7 +987,8 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.forage_data,   _key)) return global.forage_data[$   _key];
     if (variable_struct_exists(global.fish_data,     _key)) return global.fish_data[$     _key];
     if (variable_struct_exists(global.insect_data,   _key)) return global.insect_data[$   _key];
-    if (variable_struct_exists(global.animal_product_data, _key)) return global.animal_product_data[$ _key];
+    if (variable_struct_exists(global.animal_product_data,     _key)) return global.animal_product_data[$     _key];
+    if (variable_struct_exists(global.crafting_material_data, _key)) return global.crafting_material_data[$ _key];
     return undefined;
 }
 function scr_count_item(_key, _player = global.local_player) {

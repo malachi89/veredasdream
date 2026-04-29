@@ -33,9 +33,10 @@ All game-wide data lives in `global.*` structs defined in `script_init.gml`:
 - `global.forage_data` — 119 forage items (mushrooms `forage_m*`, herbs `forage_h*`, flowers `forage_f*`), rarity 1–5
 - `global.fish_data`, `global.fish_pool` — 99 fish with rarity weights; `fish_pool` is a flat array for O(1) random selection
 - `global.insect_data`, `global.insect_pool` — 60 insects (ants, snails, butterflies, moths, crickets, etc.); weighted pool
-- `global.animal_data` — Per-animal stats for `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`: `move_speed`, `hp`, `max_hp`, `variants[]`, `product_drops[]`
-- `global.wild_animal_data` — Forest animals: `capibara`, `deer`, `fox`, `frog`, `penguin`, `rabbit`, `turtle`
+- `global.animal_data` — Per-animal stats for `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`: `move_speed`, `hp`, `max_hp`, `variants[]`, `product_drops[]` (food/product on death), `crafting_drops[]` (raw crafting material, 50% chance on death)
+- `global.wild_animal_data` — Forest animals: `capibara`, `deer`, `fox`, `frog`, `penguin`, `rabbit`, `turtle`. Each has `product_drops[]` (1 guaranteed raw crafting material on death)
 - `global.animal_product_data` — 20 products: eggs, milk, cheese, butter, honey, meat, wool (keyed e.g. `"egg_chicken_brown_reg"`, `"milk_reg"`, `"steak"`, `"wool"`)
+- `global.crafting_material_data` — 126 crafting materials (9 types × 14 colors). Types: `thread`, `cloth`, `string`, `leather`, `pelt`, `feathers`, `rabbit_pelt`, `yarn`, `cow_hide`. Colors: `red orange yellow green blue lilac purple turquoise pink lime amber brown black white`. Keys follow `"<type>_<color>"` (e.g. `"pelt_red"`, `"yarn_white"`). Sprite: `sprite_crafting_material`. Raw drops (from animals): pelt, cow_hide, rabbit_pelt, yarn, feathers, string. Craft-only: leather, thread, cloth. See `CRAFTING.md` for full crafting chains and drop sources.
 - `global.npc_data`, `global.shop_data` — 21 NPCs; only "Miraculos" shop is active
 
 **World state:**
@@ -62,9 +63,9 @@ All game-wide data lives in `global.*` structs defined in `script_init.gml`:
 
 ### Animal Systems — Two Separate Objects
 
-**`obj_farm_animal`** — Real farm animals bought/placed on the farm. `animal_type` and `variant` set via `init_animal_type`/`init_variant` object properties or `scr_add_animal`. Death drops an item from `global.animal_data[$ animal_type].product_drops` via `inventory_drop_item`.
+**`obj_farm_animal`** — Real farm animals bought/placed on the farm. `animal_type` and `variant` set via `init_animal_type`/`init_variant` object properties or `scr_add_animal`. Death: always drops 1 item from `product_drops`, then 50% chance to also drop 1 raw crafting item from `crafting_drops`.
 
-**`obj_wild_animal`** — Forest creatures AND the debug test animals from `scr_populate_test_animals`. Key variables: `animal_key` (the type string), `is_farm_animal` (true for farm types spawned as test animals), `is_test_animal`. Death code: if `is_farm_animal`, drops a product from `global.animal_data[$ animal_key].product_drops`; otherwise simply destroys.
+**`obj_wild_animal`** — Forest creatures AND the debug test animals from `scr_populate_test_animals`. Key variables: `animal_key` (the type string), `is_farm_animal` (true for farm types spawned as test animals), `is_test_animal`. Death code: if `is_farm_animal`, drops 1 product from `global.animal_data[$ animal_key].product_drops`; otherwise drops 1 guaranteed raw crafting item from `global.wild_animal_data[$ animal_key].product_drops`.
 
 Both share `ANIMAL_STATE` (IDLE, WANDERING, FLEEING) and `hurt_flash_timer`.
 
@@ -75,9 +76,9 @@ Rooms are not persistent by default. When the player leaves a room, `scr_capture
 Save data is JSON written to `saves/savegame.json` via `scr_save_game()`. Includes time, money, player position, inventory state, all room states, room drops, and `next_drop_uid`. Loading is attempted at startup in `obj_controller`'s Create event.
 
 ### Item Key System
-Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"fish_00"`, `"egg_chicken_brown_reg"`, `"forage_m00"`). `scr_get_item_data(_key)` searches all databases in order: `seed_data`, `crop_data`, `tool_data`, `placeable_data`, `material_data`, `forage_data`, `fish_data`, `insect_data`, `animal_product_data`. Returns `undefined` if not found.
+Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"fish_00"`, `"egg_chicken_brown_reg"`, `"forage_m00"`, `"pelt_red"`). `scr_get_item_data(_key)` searches all databases in order: `seed_data`, `crop_data`, `tool_data`, `placeable_data`, `material_data`, `forage_data`, `fish_data`, `insect_data`, `animal_product_data`, `crafting_material_data`. Returns `undefined` if not found.
 
-`obj_item_parent` (world-drop pickup) also searches the same databases in its Step event to resolve the sprite for display. Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
+`obj_item_parent` (world-drop pickup) also searches the same databases in its Step event to resolve the sprite and pickup name. **Both `scr_get_item_data` and `obj_item_parent` must be kept in sync when adding a new database.** Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
 
 ### Drop System
 `inventory_drop_item(_key, _qty, _px, _py, _delay=15)` — Creates an `obj_item_parent` on the `"Instances"` layer at the given position, registers it in `global.room_drops`, and (in multiplayer HOST mode) broadcasts the room state. All rooms that need drops must have an `"Instances"` layer.
