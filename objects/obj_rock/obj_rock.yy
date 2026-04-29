@@ -2,18 +2,19 @@
   "$GMObject":"",
   "%Name":"obj_rock",
   "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0"}
+    {"$GMEvent":"v1","%Name":"","eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"obj_rock",
   "overriddenProperties":[],
   "parent":{
     "name":"buildings",
-    "path":"folders/objects/farm/buildings.yy"
+    "path":"folders/objects/farm/buildings.yy",
   },
   "parentObjectId":{
     "name":"obj_collision",
-    "path":"objects/obj_collision/obj_collision.yy"
+    "path":"objects/obj_collision/obj_collision.yy",
   },
   "persistent":false,
   "physicsAngularDamping":0.1,
@@ -34,5 +35,5 @@
   "solid":false,
   "spriteId":null,
   "spriteMaskId":null,
-  "visible":true
+  "visible":true,
 }
