@@ -16,7 +16,7 @@ if (is_farm_animal) {
         _offset = 16; // Default idle
     }
     // Draw shadow
-    draw_sprite_ext(sprite_index, _offset + _frame, x + 1, y + 0.5, 1, 1, 0, c_black, 0.4);
+    draw_sprite_ext(sprite_index, _offset + _frame, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
     // Draw sprite
     draw_sprite_ext(sprite_index, _offset + _frame, x, y, 1, 1, 0, _blend, 1);
 } else {
@@ -28,7 +28,7 @@ if (is_farm_animal) {
 
     var _frame = floor(frame_anim % _frames_per_dir) + (_dir_index * _frames_per_dir);
     // Draw shadow
-    draw_sprite_ext(sprite_index, _frame, x + 1, y + 0.5, 1, 1, 0, c_black, 0.4);
+    draw_sprite_ext(sprite_index, _frame, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
     // Draw sprite
     draw_sprite_ext(sprite_index, _frame, x, y, 1, 1, 0, _blend, 1);
 }

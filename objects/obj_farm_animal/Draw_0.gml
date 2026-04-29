@@ -25,7 +25,7 @@ switch (state) {
 var _blend = (hurt_flash_timer > 0) ? c_red : c_white;
 
 // Draw shadow
-draw_sprite_ext(sprite_anim, _offset + _frame, x + 1, y + 0.5, 1, 1, 0, c_black, 0.4);
+draw_sprite_ext(sprite_anim, _offset + _frame, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
 
 draw_sprite_ext(sprite_anim, _offset + _frame, x, y, 1, 1, 0, _blend, 1);
 
