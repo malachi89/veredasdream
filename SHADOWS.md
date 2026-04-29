@@ -29,7 +29,7 @@ draw_self(); // or draw_sprite(...)
 - **Reasoning**: Slightly larger offset to give a sense of being "taller" or more detached from the ground while moving.
 
 ### Player (`obj_player`, `obj_remote_player`)
-- **Offset**: `x + 1`, `y + 1.3`
+- **Offset**: `x + 1.2`, `y + 0.2`
 - **Alpha**: `0.4`
 - **Reasoning**: Specific offset to ground the player character, providing depth whether walking, running, or riding a horse.
 

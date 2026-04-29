@@ -215,10 +215,10 @@ if (global.net_role == NET_ROLE.HOST) {
 var _f = rem_frame;
 
 if (is_riding && _horse_s != noone) {
-    draw_sprite_ext(_horse_s, _f, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+    draw_sprite_ext(_horse_s, _f, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
     draw_sprite(_horse_s,   _f, x, y);
 } else {
-    draw_sprite_ext(_skin_s, _f, x + 1, y + 1.3, 1, 1, 0, c_black, 0.4);
+    draw_sprite_ext(_skin_s, _f, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
 }
 draw_sprite(_skin_s,    _f, x, y);
 if (_eyes_s >= 0)                   draw_sprite(_eyes_s,    _f, x, y);
