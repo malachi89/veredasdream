@@ -453,9 +453,11 @@ if (sleep_menu_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx, _my, _yes_x1, _yes_y1, _yes_x2, _yes_y2)) {
             sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
             scr_on_sleep_yes();
         } else if (point_in_rectangle(_mx, _my, _no_x1, _no_y1, _no_x2, _no_y2)) {
             sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
         }
     }
 
@@ -490,11 +492,13 @@ if (sleep_prompt_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx2, _my2, _yes_x1b, _yes_y1b, _yes_x2b, _yes_y2b)) {
             sleep_prompt_open = false;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
             sent_sleep_request = true;
             net_send_sleep_response(true);
             scr_notify("Esperando nuevo dia...");
         } else if (point_in_rectangle(_mx2, _my2, _no_x1b, _no_y1b, _no_x2b, _no_y2b)) {
             sleep_prompt_open = false;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
             net_send_sleep_response(false);
         }
     }
@@ -520,6 +524,7 @@ if (shipping_summary_open) {
     if (shipping_summary_pending_close) {
         shipping_summary_open = false;
         shipping_summary_pending_close = false;
+        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
         sent_sleep_request  = false;
         host_wants_sleep    = false;
         client_wants_sleep  = false;
@@ -548,6 +553,7 @@ if (shipping_summary_open) {
         if (mouse_check_button_pressed(mb_left)) {
             if (point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2)) {
                 shipping_summary_pending_close = true;
+                if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
             }
         }
 

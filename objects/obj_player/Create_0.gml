@@ -50,6 +50,7 @@ max_energy = 500;
 energy = 500;
 
 tool_cooldown    = 0;
+tool_locked_frames = 0;
 bugnet_caught    = false;
 bow_drawing           = false;
 bow_sound_id          = -1;

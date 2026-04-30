@@ -152,10 +152,12 @@ if (arrow_shoot_snd_timer > 0) {
     }
 }
 
+if (tool_locked_frames > 0) tool_locked_frames--;
+
 var _mouse_over_ui = instance_exists(obj_inventory)
     && device_mouse_y_to_gui(0) >= obj_inventory.menu_y_start;
 
-if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0) {
+if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACTING && state != STATE.FISHING && tool_cooldown <= 0 && tool_locked_frames <= 0) {
     var _selected_item = inventory_array[selected_slot];
     var _item_key = (is_struct(_selected_item)) ? _selected_item.key : _selected_item;
     var _gx = floor(mouse_x / 16) * 16;
