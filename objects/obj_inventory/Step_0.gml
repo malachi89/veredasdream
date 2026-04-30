@@ -77,7 +77,7 @@ if (_p.shop_open) {
     exit;
 }
 
-if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open)) {
+if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.pause_menu_open)) {
     exit;
 }
 

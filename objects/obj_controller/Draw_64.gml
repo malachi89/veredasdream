@@ -238,3 +238,45 @@ if (chat_open) {
 
     draw_text_transformed_color(_box_x + 10, _box_y + (_box_h / 2), _display_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 }
+
+// --- PAUSE MENU ---
+if (pause_menu_open) {
+    var _pcx = display_get_gui_width()  * 0.5;
+    var _pcy = display_get_gui_height() * 0.5;
+
+    draw_set_alpha(0.65);
+    draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+
+    draw_set_alpha(0.92);
+    draw_roundrect_color_ext(_pcx - 160, _pcy - 100, _pcx + 160, _pcy + 150, 12, 12, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_pcx - 160, _pcy - 100, _pcx + 160, _pcy + 150, 12, 12, c_white, c_white, true);
+
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_text_transformed(_pcx, _pcy - 68, "PAUSA", 2.5, 2.5, 0);
+
+    var _labels    = ["Continuar", "Menu Principal", "Salir"];
+    var _opt_y_off = [-20, 36, 92];
+
+    for (var _i = 0; _i < 3; _i++) {
+        var _oy    = _pcy + _opt_y_off[_i];
+        var _opt_w = 260;
+        var _opt_h = 44;
+        if (pause_menu_selection == _i) {
+            draw_set_alpha(0.85);
+            draw_roundrect_color_ext(_pcx - (_opt_w * 0.5), _oy, _pcx + (_opt_w * 0.5), _oy + _opt_h, 8, 8, c_navy, c_navy, false);
+            draw_set_alpha(1.0);
+            draw_text_transformed_color(_pcx, _oy + (_opt_h * 0.5), _labels[_i], 1.8, 1.8, 0, c_white, c_white, c_white, c_white, 1);
+        } else {
+            draw_set_alpha(1.0);
+            draw_text_transformed_color(_pcx, _oy + (_opt_h * 0.5), _labels[_i], 1.8, 1.8, 0, c_ltgray, c_ltgray, c_ltgray, c_ltgray, 1);
+        }
+    }
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_set_alpha(1.0);
+}

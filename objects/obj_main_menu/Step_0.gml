@@ -85,9 +85,30 @@ if (_confirm) {
     switch (_choice) {
         case "Nueva Granja":
             global.net_role = NET_ROLE.NONE;
+            global.farm_populated = false;
+            global.room_states = {};
+            global.room_drops = {};
+            global.next_drop_uid = 0;
+            global.day = 1;
+            global.year = 1;
+            global.game_hour = 6;
+            global.game_minute = 0;
+            global.season_index = 0;
+            global.season = "spring";
+            global.forest_needs_repopulate = true;
+            global.forest_days_since_rare = 0;
+            global.forest_days_since_rare_insect = 0;
+            global.forest_insects = [];
+            global.forest_wild_animals = [];
+            global.pending_player_room_name = "";
+            global.farm_needs_repopulate_test_animals = false;
             if (instance_exists(obj_controller)) {
                 obj_controller.pending_loaded_game = undefined;
                 obj_controller.load_needs_apply = false;
+                obj_controller.current_room_name = "";
+                obj_controller.time_tick_counter = 0;
+                obj_controller.sleep_menu_open = false;
+                obj_controller.shipping_summary_open = false;
             }
             room_goto(farm);
             break;

@@ -78,7 +78,7 @@ if (global.pending_player_room_name == _room_name && instance_exists(global.loca
 }
 
 // Time is authoritative on the host. Client receives TIME_UPDATE packets instead.
-if (global.net_role != NET_ROLE.CLIENT) {
+if (global.net_role != NET_ROLE.CLIENT && !pause_menu_open) {
     time_tick_counter += 1;
     if (time_tick_counter >= time_frames_per_minute) {
         time_tick_counter = 0;
@@ -305,6 +305,85 @@ else if (chat_open) {
         keyboard_string = "";
     }
     exit; // Skip further input processing while chat is open
+}
+
+// --- PAUSE MENU ---
+if (keyboard_check_pressed(vk_escape)) {
+    if (pause_menu_open) {
+        pause_menu_open = false;
+    } else {
+        var _lp_chk = global.local_player;
+        var _any_ui_open =
+            sleep_menu_open        ||
+            sleep_prompt_open      ||
+            shipping_summary_open  ||
+            (instance_exists(_lp_chk) && (
+                _lp_chk.show_backpack ||
+                _lp_chk.show_shipping ||
+                _lp_chk.show_chest    ||
+                _lp_chk.shop_open     ||
+                _lp_chk.dialog_open
+            ));
+        if (!_any_ui_open) {
+            pause_menu_open = true;
+            pause_menu_selection = 0;
+        }
+    }
+}
+
+if (pause_menu_open) {
+    if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W"))) {
+        pause_menu_selection = (pause_menu_selection - 1 + 3) mod 3;
+    }
+    if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"))) {
+        pause_menu_selection = (pause_menu_selection + 1) mod 3;
+    }
+
+    var _pmx = device_mouse_x_to_gui(0);
+    var _pmy = device_mouse_y_to_gui(0);
+    var _pcx = display_get_gui_width()  * 0.5;
+    var _pcy = display_get_gui_height() * 0.5;
+
+    var _opt_w  = 260;
+    var _opt_h  = 44;
+    var _opt_x1 = _pcx - (_opt_w * 0.5);
+    var _opt_x2 = _pcx + (_opt_w * 0.5);
+    var _opt_y  = [_pcy - 20, _pcy + 36, _pcy + 92];
+
+    for (var _i = 0; _i < 3; _i++) {
+        if (point_in_rectangle(_pmx, _pmy, _opt_x1, _opt_y[_i], _opt_x2, _opt_y[_i] + _opt_h)) {
+            pause_menu_selection = _i;
+        }
+    }
+
+    var _confirm = keyboard_check_pressed(vk_enter)
+                || keyboard_check_pressed(ord("E"))
+                || (mouse_check_button_pressed(mb_left)
+                    && point_in_rectangle(_pmx, _pmy,
+                           _opt_x1, _opt_y[pause_menu_selection],
+                           _opt_x2, _opt_y[pause_menu_selection] + _opt_h));
+
+    if (_confirm) {
+        switch (pause_menu_selection) {
+            case 0: // Continuar
+                pause_menu_open = false;
+                break;
+            case 1: // Menu Principal
+                pause_menu_open = false;
+                if (instance_exists(global.local_player)) instance_destroy(global.local_player);
+                global.local_player = noone;
+                if (instance_exists(obj_inventory)) instance_destroy(obj_inventory);
+                if (instance_exists(obj_camera)) instance_destroy(obj_camera);
+                pending_loaded_game = scr_read_save_game();
+                room_goto(rm_main_menu);
+                break;
+            case 2: // Salir
+                game_end();
+                break;
+        }
+    }
+
+    exit; // Block all further Step processing while paused
 }
 
 if (keyboard_check_pressed(ord("P"))) {

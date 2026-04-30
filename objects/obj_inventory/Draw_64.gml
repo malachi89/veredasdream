@@ -1,5 +1,6 @@
 var _p = local_player;
 if (!instance_exists(_p)) exit;
+if (instance_exists(obj_controller) && obj_controller.pause_menu_open) exit;
 
 var _mx = device_mouse_x_to_gui(0);
 var _my = device_mouse_y_to_gui(0);

@@ -13,7 +13,7 @@ if (dialog_open) {
     exit;
 }
 
-if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open))
+if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open || obj_controller.pause_menu_open))
     || shop_open) {
     state = STATE.IDLE;
     frame_anim = 0;

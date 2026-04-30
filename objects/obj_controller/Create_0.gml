@@ -176,6 +176,10 @@ chat_open = false;
 chat_text = "";
 chat_history = []; // Optional: to store previous commands
 
+// Pause Menu
+pause_menu_open = false;
+pause_menu_selection = 0; // 0=Continuar, 1=Menu Principal, 2=Salir
+
 current_room_name = room_get_name(room);
 pending_loaded_game = scr_read_save_game();
 load_needs_apply = false; // Menu handles it
