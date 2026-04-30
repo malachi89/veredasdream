@@ -178,6 +178,10 @@ function scr_populate_forest() {
     global.forest_wild_animals = [];
 
     var _wild_keys  = variable_struct_get_names(global.wild_animal_data);
+    var _is_saturday = ((global.day - 1) mod 7) == 5;
+    if (!_is_saturday) {
+        _wild_keys = array_filter(_wild_keys, function(_k) { return _k != "bear"; });
+    }
     var _wild_count = irandom_range(10, 15);
     var _wplaced    = [];
 

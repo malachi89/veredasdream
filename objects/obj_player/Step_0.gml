@@ -35,7 +35,9 @@ var _prev_state = state;
 
 if (keyboard_check_pressed(ord("F"))) {
     if (is_riding) {
+        var _was_bear = mount_is_bear;
         is_riding = false;
+        mount_is_bear = false;
         frames_idle = 4;
         frames_walk = 6;
         frames_run  = 8;
@@ -48,18 +50,20 @@ if (keyboard_check_pressed(ord("F"))) {
         var _h_dir = dir;
         if (dir == DIR.UP) _h_dir = DIR.DOWN;
         else if (dir == DIR.DOWN) _h_dir = DIR.UP;
-        var _horse_inst = instance_create_layer(x + _ox, y + _oy, "Instances", obj_horse1);
-        _horse_inst.dir = _h_dir;
-        _horse_inst.x_start = x + _ox;
-        _horse_inst.y_start = y + _oy;
+        var _mount_inst = instance_create_layer(x + _ox, y + _oy, "Instances", obj_horse1);
+        _mount_inst.dir = _h_dir;
+        _mount_inst.x_start = x + _ox;
+        _mount_inst.y_start = y + _oy;
+        _mount_inst.is_bear = _was_bear;
     } else {
-        var _horse = instance_nearest(x, y, obj_horse1);
-        if (_horse != noone && point_distance(x, y, _horse.x, _horse.y) < 40) {
+        var _mount = instance_nearest(x, y, obj_horse_parent);
+        if (_mount != noone && point_distance(x, y, _mount.x, _mount.y) < 40) {
+            mount_is_bear = _mount.is_bear;
             is_riding = true;
             frames_idle = 2;
             frames_walk = 4;
             frames_run  = 6;
-            instance_destroy(_horse);
+            instance_destroy(_mount);
         }
     }
 }
@@ -405,41 +409,68 @@ if (state == STATE.ACTING) {
         image_index = (dir * _fpd) + floor(frame_anim);
     }
 } else {
-    var _s_idle = is_riding ? sprite_player_horse1_body_idle : sprite_player_idle;
-    var _s_walk = is_riding ? sprite_player_horse1_body_walk : sprite_player_walk;
-    var _s_run = is_riding ? sprite_player_horse1_body_run : sprite_player_run;
-    var _anim_data = [
-        [_s_idle, 0.1, frames_idle],
-        [_s_walk, 0.15, frames_walk],
-        [_s_run, 0.25, frames_run]
-    ];
-    var _current = _anim_data[state];
-    sprite_index = _current[0];
-
-    var _prev_frame = floor(frame_anim);
-    frame_anim += _current[1];
-    if (frame_anim >= _current[2]) frame_anim = 0;
-    var _curr_frame = floor(frame_anim);
-
-    if (_curr_frame != _prev_frame) {
-        if (state == STATE.WALK || state == STATE.RUN) {
-            var _f1 = 1;
-            var _f2 = (state == STATE.WALK) ? 4 : 5;
-            if (_curr_frame == _f1 || _curr_frame == _f2) {
-                audio_play_sound(choose(walk1, walk2, walk3), 1, false);
+    if (is_riding && mount_is_bear) {
+        var _s_idle_b = sprite_player_bear_idle_bear_brown;
+        var _s_walk_b = sprite_player_bear_walk_bear_brown;
+        var _s_run_b  = sprite_player_bear_run_bear_brown;
+        var _anim_data_b = [
+            [_s_idle_b, 0.1, frames_idle],
+            [_s_walk_b, 0.15, frames_walk],
+            [_s_run_b,  0.25, frames_run]
+        ];
+        var _current_b = _anim_data_b[state];
+        sprite_index = _current_b[0];
+        var _prev_frame_b = floor(frame_anim);
+        frame_anim += _current_b[1];
+        if (frame_anim >= _current_b[2]) frame_anim = 0;
+        var _curr_frame_b = floor(frame_anim);
+        if (_curr_frame_b != _prev_frame_b) {
+            if (state == STATE.WALK || state == STATE.RUN) {
+                var _f1b = 1;
+                var _f2b = (state == STATE.WALK) ? 2 : 3;
+                if (_curr_frame_b == _f1b || _curr_frame_b == _f2b) {
+                    audio_play_sound(choose(walk1, walk2, walk3), 1, false);
+                }
             }
         }
-    }
+        image_index = (dir * _current_b[2]) + floor(frame_anim);
+    } else {
+        var _s_idle = is_riding ? sprite_player_horse1_body_idle : sprite_player_idle;
+        var _s_walk = is_riding ? sprite_player_horse1_body_walk : sprite_player_walk;
+        var _s_run = is_riding ? sprite_player_horse1_body_run : sprite_player_run;
+        var _anim_data = [
+            [_s_idle, 0.1, frames_idle],
+            [_s_walk, 0.15, frames_walk],
+            [_s_run, 0.25, frames_run]
+        ];
+        var _current = _anim_data[state];
+        sprite_index = _current[0];
 
-    var _dir_idx = dir;
-    if (is_riding) {
-        if (state == STATE.IDLE) _dir_idx = dir;
-        else {
-            if (dir == DIR.DOWN) _dir_idx = 0;
-            else if (dir == DIR.UP) _dir_idx = 1;
+        var _prev_frame = floor(frame_anim);
+        frame_anim += _current[1];
+        if (frame_anim >= _current[2]) frame_anim = 0;
+        var _curr_frame = floor(frame_anim);
+
+        if (_curr_frame != _prev_frame) {
+            if (state == STATE.WALK || state == STATE.RUN) {
+                var _f1 = 1;
+                var _f2 = (state == STATE.WALK) ? 4 : 5;
+                if (_curr_frame == _f1 || _curr_frame == _f2) {
+                    audio_play_sound(choose(walk1, walk2, walk3), 1, false);
+                }
+            }
         }
+
+        var _dir_idx = dir;
+        if (is_riding) {
+            if (state == STATE.IDLE) _dir_idx = dir;
+            else {
+                if (dir == DIR.DOWN) _dir_idx = 0;
+                else if (dir == DIR.UP) _dir_idx = 1;
+            }
+        }
+        image_index = (_dir_idx * _current[2]) + floor(frame_anim);
     }
-    image_index = (_dir_idx * _current[2]) + floor(frame_anim);
 }
 
 // PLAYER_STATE broadcast at 15 Hz for multiplayer position sync

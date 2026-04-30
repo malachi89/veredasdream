@@ -21,6 +21,7 @@ if (is_local) global.local_player = id;
 
 // Variables para controlar la animación de acción
 is_riding = false;
+mount_is_bear = false;
 action_sprite_skin = -1;
 action_sprite_tool = -1;
 action_sprite_hair = -1;

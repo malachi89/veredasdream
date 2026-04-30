@@ -6,6 +6,7 @@ dir       = DIR.DOWN;
 rem_state = STATE.IDLE;
 rem_frame = 0.0;
 is_riding = false;
+mount_is_bear = false;
 act_skin    = -1;
 act_tool    = -1;
 act_hair    = -1;

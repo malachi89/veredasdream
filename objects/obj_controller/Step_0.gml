@@ -74,6 +74,7 @@ if (global.pending_player_room_name == _room_name && instance_exists(global.loca
     global.local_player.y        = global.pending_player_y;
     global.local_player.dir      = global.pending_player_dir;
     global.local_player.is_riding = false;
+    global.local_player.mount_is_bear = false;
     global.pending_player_room_name = "";
 }
 

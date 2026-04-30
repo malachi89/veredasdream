@@ -7,7 +7,14 @@ var _saddle_s = noone;
 
 if (global.net_role == NET_ROLE.HOST) {
     // Remote player is the guest → sprite_player2_*
-    if (is_riding) {
+    if (is_riding && mount_is_bear) {
+        _horse_s   = get_sprite_set(sprite_player_bear_idle_bear_brown,    sprite_player_bear_walk_bear_brown,    sprite_player_bear_run_bear_brown,    -1);
+        _skin_s    = get_sprite_set(sprite_player2_bear_idle_skins_3,      sprite_player2_bear_walk_skins_3,      sprite_player2_bear_run_skins_3,      -1);
+        _eyes_s    = get_sprite_set(sprite_player2_bear_idle_eyes_male_brown, sprite_player2_bear_walk_eyes_male_brown, sprite_player2_bear_run_eyes_male_brown, -1);
+        _clothes_s = get_sprite_set(sprite_player2_bear_idle_clothes_blue, sprite_player2_bear_walk_clothes_blue, sprite_player2_bear_run_clothes_blue, -1);
+        _hair_s    = get_sprite_set(sprite_player2_bear_idle_hair_josh_brown, sprite_player2_bear_walk_hair_josh_brown, sprite_player2_bear_run_hair_josh_brown, -1);
+        _saddle_s  = noone;
+    } else if (is_riding) {
         switch (_st) {
             case STATE.WALK:
                 _skin_s    = sprite_player2_horse1_body_walk;
@@ -153,7 +160,14 @@ if (global.net_role == NET_ROLE.HOST) {
     }
 } else {
     // Remote player is the host → sprite_player_*
-    if (is_riding) {
+    if (is_riding && mount_is_bear) {
+        _horse_s   = get_sprite_set(sprite_player_bear_idle_bear_brown,  sprite_player_bear_walk_bear_brown,  sprite_player_bear_run_bear_brown,  -1);
+        _skin_s    = get_sprite_set(sprite_player_bear_idle_skins_2,     sprite_player_bear_walk_skins_2,     sprite_player_bear_run_skins_2,     -1);
+        _eyes_s    = get_sprite_set(sprite_player_bear_idle_eyes_female_brown, sprite_player_bear_walk_eyes_female_brown, sprite_player_bear_run_eyes_female_brown, -1);
+        _clothes_s = get_sprite_set(sprite_player_bear_idle_clothes_purple, sprite_player_bear_walk_clothes_purple, sprite_player_bear_run_clothes_purple, -1);
+        _hair_s    = get_sprite_set(sprite_player_bear_idle_hair_fawn_black, sprite_player_bear_walk_hair_fawn_black, sprite_player_bear_run_hair_fawn_black, -1);
+        _saddle_s  = noone;
+    } else if (is_riding) {
         switch (_st) {
             case STATE.WALK:
                 _skin_s    = sprite_player_horse1_body_walk;

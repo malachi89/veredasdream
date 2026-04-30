@@ -1,5 +1,7 @@
 event_inherited();
 
+is_bear = false;
+
 sprite_walk    = sprite_horse_1_run;
 sprite_idle    = sprite_horse_1_idle;
 sprite_prepare = sprite_horse_1_preparing_to_eat;

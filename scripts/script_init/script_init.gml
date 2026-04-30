@@ -103,6 +103,7 @@ global.wild_animal_data = {
     penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2, product_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3, product_drops: ["rabbit_pelt_red","rabbit_pelt_orange","rabbit_pelt_yellow","rabbit_pelt_green","rabbit_pelt_blue","rabbit_pelt_lilac","rabbit_pelt_purple","rabbit_pelt_turquoise","rabbit_pelt_pink","rabbit_pelt_lime","rabbit_pelt_amber","rabbit_pelt_brown","rabbit_pelt_black","rabbit_pelt_white"] },
     turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    bear:     { name: "Oso",      sprite: sprite_player_bear_walk_bear_brown, move_speed: 0.8,  hp: 25, max_hp: 25, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"], frame_order: [0, 1, 2, 3] },
 };
 
 enum ITEM_TYPE {

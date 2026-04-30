@@ -3,6 +3,33 @@ var _saddle = saddle_idle;
 var _subimg = 0;
 var _xscale = 1;
 
+if (is_bear) {
+    switch (state) {
+        case HORSE_STATE.PACING:
+            _sprite = sprite_player_bear_walk_bear_brown;
+            _saddle = -1;
+            switch (dir) {
+                case HORSE_DIR.DOWN:  _subimg = 0  + floor(frame_anim); break;
+                case HORSE_DIR.UP:    _subimg = 4  + floor(frame_anim); break;
+                case HORSE_DIR.RIGHT: _subimg = 8  + floor(frame_anim); break;
+                case HORSE_DIR.LEFT:  _subimg = 12 + floor(frame_anim); break;
+            }
+        break;
+        default: // IDLE / eating
+            _sprite = sprite_player_bear_idle_bear_brown;
+            _saddle = -1;
+            switch (dir) {
+                case HORSE_DIR.DOWN:  _subimg = 0 + floor(frame_anim); break;
+                case HORSE_DIR.UP:    _subimg = 2 + floor(frame_anim); break;
+                case HORSE_DIR.RIGHT: _subimg = 4 + floor(frame_anim); break;
+                case HORSE_DIR.LEFT:  _subimg = 6 + floor(frame_anim); break;
+            }
+        break;
+    }
+    draw_sprite_ext(_sprite, _subimg, x, y, _xscale, 1, 0, c_white, 1);
+    exit;
+}
+
 switch (state) {
     case HORSE_STATE.PACING:
         _sprite = sprite_walk;
@@ -55,4 +82,4 @@ switch (state) {
 // Dibujar Caballo
 draw_sprite_ext(_sprite, _subimg, x, y, _xscale, 1, 0, c_white, 1);
 // Dibujar Montura (encima)
-draw_sprite_ext(_saddle, _subimg, x, y, _xscale, 1, 0, c_white, 1);
+if (_saddle >= 0) draw_sprite_ext(_saddle, _subimg, x, y, _xscale, 1, 0, c_white, 1);

@@ -353,6 +353,7 @@ function net_send_player_state() {
     buffer_write(_buf, buffer_u8,     _lp.state);
     buffer_write(_buf, buffer_f32,    _lp.image_index);
     buffer_write(_buf, buffer_u8,     _lp.is_riding ? 1 : 0);
+    buffer_write(_buf, buffer_u8,     _lp.mount_is_bear ? 1 : 0);
     if (_lp.state == STATE.ACTING || _lp.state == STATE.FISHING) {
         buffer_write(_buf, buffer_s32, _lp.action_sprite_skin);
         buffer_write(_buf, buffer_s32, _lp.action_sprite_tool);
@@ -372,6 +373,7 @@ function net_handle_player_state(_payload) {
     var _pstate    = buffer_read(_payload, buffer_u8);
     var _frame     = buffer_read(_payload, buffer_f32);
     var _riding    = buffer_read(_payload, buffer_u8) != 0;
+    var _bear      = buffer_read(_payload, buffer_u8) != 0;
     var _act_skin = -1, _act_tool = -1, _act_hair = -1, _act_clothes = -1, _act_eyes = -1;
     if (_pstate == STATE.ACTING || _pstate == STATE.FISHING) {
         _act_skin    = buffer_read(_payload, buffer_s32);
@@ -404,6 +406,7 @@ function net_handle_player_state(_payload) {
         _rp.rem_state = _pstate;
         _rp.rem_frame = _frame;
         _rp.is_riding = _riding;
+        _rp.mount_is_bear = _bear;
         _rp.room_name = _room_name;
         if (_pstate == STATE.ACTING || _pstate == STATE.FISHING) {
             _rp.act_skin    = _act_skin;

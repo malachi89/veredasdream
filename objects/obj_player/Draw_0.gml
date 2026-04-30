@@ -20,7 +20,14 @@ if (global.net_role == NET_ROLE.CLIENT) {
     // Guest player: draw with sprite_player2_* sprites
     var _tool_s = -1;
 
-    if (is_riding) {
+    if (is_riding && mount_is_bear) {
+        _horse_s   = get_sprite_set(sprite_player_bear_idle_bear_brown,      sprite_player_bear_walk_bear_brown,      sprite_player_bear_run_bear_brown,      -1);
+        _skin_s    = get_sprite_set(sprite_player2_bear_idle_skins_3,        sprite_player2_bear_walk_skins_3,        sprite_player2_bear_run_skins_3,        -1);
+        _eyes_s    = get_sprite_set(sprite_player2_bear_idle_eyes_male_brown,   sprite_player2_bear_walk_eyes_male_brown,   sprite_player2_bear_run_eyes_male_brown,   -1);
+        _clothes_s = get_sprite_set(sprite_player2_bear_idle_clothes_blue,   sprite_player2_bear_walk_clothes_blue,   sprite_player2_bear_run_clothes_blue,   -1);
+        _hair_s    = get_sprite_set(sprite_player2_bear_idle_hair_josh_brown,  sprite_player2_bear_walk_hair_josh_brown,  sprite_player2_bear_run_hair_josh_brown,  -1);
+        _saddle_s  = noone;
+    } else if (is_riding) {
         switch (state) {
             case STATE.WALK:
                 _skin_s    = sprite_player2_horse1_body_walk;
@@ -180,7 +187,14 @@ if (global.net_role == NET_ROLE.CLIENT) {
 
 } else {
     // Host player: draw with original sprite_player_* sprites
-    if (is_riding) {
+    if (is_riding && mount_is_bear) {
+        _horse_s   = get_sprite_set(sprite_player_bear_idle_bear_brown,  sprite_player_bear_walk_bear_brown,  sprite_player_bear_run_bear_brown,  -1);
+        _skin_s    = get_sprite_set(sprite_player_bear_idle_skins_2,     sprite_player_bear_walk_skins_2,     sprite_player_bear_run_skins_2,     -1);
+        _eyes_s    = get_sprite_set(sprite_player_bear_idle_eyes_female_brown, sprite_player_bear_walk_eyes_female_brown, sprite_player_bear_run_eyes_female_brown, -1);
+        _clothes_s = get_sprite_set(sprite_player_bear_idle_clothes_purple, sprite_player_bear_walk_clothes_purple, sprite_player_bear_run_clothes_purple, -1);
+        _hair_s    = get_sprite_set(sprite_player_bear_idle_hair_fawn_black, sprite_player_bear_walk_hair_fawn_black, sprite_player_bear_run_hair_fawn_black, -1);
+        _saddle_s  = noone;
+    } else if (is_riding) {
         _skin_s    = get_sprite_set(sprite_player_horse1_body_idle,    sprite_player_horse1_body_walk,    sprite_player_horse1_body_run,    -1);
         _clothes_s = get_sprite_set(sprite_player_horse1_clothes_idle, sprite_player_horse1_clothes_walk, sprite_player_horse1_clothes_run, -1);
         _eyes_s    = get_sprite_set(sprite_player_horse1_eyes_idle,    sprite_player_horse1_eyes_walk,    sprite_player_horse1_eyes_run,    -1);

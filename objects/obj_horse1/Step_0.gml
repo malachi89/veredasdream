@@ -44,7 +44,8 @@ switch (state) {
     break;
 
     case HORSE_STATE.PACING:
-        if (frame_anim >= 6) frame_anim = 0;
+        if (is_bear) { if (frame_anim >= 4) frame_anim = 0; }
+        else if (frame_anim >= 6) frame_anim = 0;
         if (dir == HORSE_DIR.RIGHT) {
             x += move_speed;
             if (x >= x_start + pacing_dist) dir = HORSE_DIR.LEFT;

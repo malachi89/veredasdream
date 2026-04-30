@@ -208,7 +208,8 @@ function scr_capture_current_room_state() {
             obj: object_get_name(_inst.object_index),
             x: _inst.x,
             y: _inst.y,
-            dir: _inst.dir
+            dir: _inst.dir,
+            is_bear: _inst.is_bear
         });
     }
 
@@ -448,6 +449,7 @@ function scr_restore_room_state(_room_name) {
             with (obj_horse_parent) { if (x == _hd.x && y == _hd.y) { _inst = id; break; } }
             if (_inst == noone) _inst = instance_create_layer(_hd.x, _hd.y, "Instances", _obj);
             if (variable_instance_exists(_inst, "dir")) _inst.dir = _hd.dir;
+            if (variable_struct_exists(_hd, "is_bear")) _inst.is_bear = _hd.is_bear;
         }
     }
 
@@ -759,6 +761,7 @@ function scr_apply_loaded_game(_save_data) {
             global.local_player.y        = global.pending_player_y;
             global.local_player.dir      = global.pending_player_dir;
             global.local_player.is_riding = false;
+            global.local_player.mount_is_bear = false;
         }
         scr_restore_room_state(room_get_name(room));
         scr_restore_room_drops(room_get_name(room));
@@ -774,6 +777,7 @@ function scr_sleep_and_save() {
     var _lp = global.local_player;
     if (instance_exists(_lp)) {
         _lp.is_riding = false;
+        _lp.mount_is_bear = false;
         _lp.state     = STATE.IDLE;
         _lp.dir       = DIR.RIGHT;
         _lp.x         = _bed.x + 40;
@@ -828,6 +832,7 @@ function scr_sleep_and_save_mp() {
     var _lp = global.local_player;
     if (instance_exists(_lp)) {
         _lp.is_riding = false;
+        _lp.mount_is_bear = false;
         _lp.state     = STATE.IDLE;
         _lp.dir       = DIR.RIGHT;
         _lp.x         = _bed.x + 40;
@@ -1091,4 +1096,3 @@ function scr_setup_forest_trees() {
         }
     }
 }
-
