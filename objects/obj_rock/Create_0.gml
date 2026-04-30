@@ -1,5 +1,5 @@
 /// Create Event
-sprite_index = sprite_rocks_ores;
+sprite_index = choose(sprite_rock1, sprite_rock2);
 image_speed = 0;
-image_index = irandom(2); // First 3 frames are rock types
+image_index = 0;
 hits_remaining = 10;

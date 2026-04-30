@@ -945,3 +945,12 @@ for (var _mi = 0; _mi < array_length(_cm_types); _mi++) {
         };
     }
 }
+
+global.cave_repopulate = {
+    cave_1: true,
+    cave_2: true,
+    cave_3: true,
+    cave_4: true,
+    cave_5: true,
+    cave_6: true,
+};

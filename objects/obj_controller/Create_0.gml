@@ -56,6 +56,10 @@ function start_new_day() {
     }
 
     global.forest_needs_repopulate = true;
+    var _cave_keys = struct_get_names(global.cave_repopulate);
+    for (var _i = 0; _i < array_length(_cave_keys); _i++) {
+        global.cave_repopulate[$ _cave_keys[_i]] = true;
+    }
     if (global.debug_test_animals) global.farm_needs_repopulate_test_animals = true;
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();

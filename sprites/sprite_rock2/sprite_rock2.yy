@@ -3,8 +3,8 @@
   "%Name":"sprite_rock2",
   "bboxMode":0,
   "bbox_bottom":15,
-  "bbox_left":3,
-  "bbox_right":27,
+  "bbox_left":1,
+  "bbox_right":14,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -12,21 +12,21 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"v1","%Name":"959dc25d-8893-468f-b679-34ce8658f8c8","name":"959dc25d-8893-468f-b679-34ce8658f8c8","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"12680a16-e904-4e9e-bf40-08c8316c9d1a","name":"12680a16-e904-4e9e-bf40-08c8316c9d1a","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
   "height":16,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"d8b29f14-218a-447b-bcf0-d09338f38506","blendMode":0,"displayName":"default","isLocked":false,"name":"d8b29f14-218a-447b-bcf0-d09338f38506","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"1c5af33d-69ab-499a-92b8-68981a92072f","blendMode":0,"displayName":"default","isLocked":false,"name":"1c5af33d-69ab-499a-92b8-68981a92072f","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"sprite_rock2",
   "nineSlice":null,
   "origin":0,
   "parent":{
-    "name":"cave",
-    "path":"folders/sprites/cave.yy",
+    "name":"ores_rocks",
+    "path":"folders/sprites/cave/ores_rocks.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",
@@ -69,8 +69,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"959dc25d-8893-468f-b679-34ce8658f8c8","path":"sprites/sprite_rock2/sprite_rock2.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"bf37ad93-a939-4126-b2db-8ce2254c4673","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"12680a16-e904-4e9e-bf40-08c8316c9d1a","path":"sprites/sprite_rock2/sprite_rock2.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"b82742c5-c6fb-4881-9b21-cce84ecfe4a6","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,
@@ -86,5 +86,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":32,
+  "width":16,
 }

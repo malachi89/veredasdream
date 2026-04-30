@@ -69,6 +69,15 @@ if (global.forest_needs_repopulate && _room_name == "forest"
     scr_capture_current_room_state();
 }
 
+if (struct_exists(global.cave_repopulate, _room_name)
+        && global.cave_repopulate[$ _room_name]
+        && instance_exists(global.local_player)
+        && instance_exists(obj_inventory)) {
+    global.cave_repopulate[$ _room_name] = false;
+    scr_populate_cave();
+    scr_capture_current_room_state();
+}
+
 if (global.pending_player_room_name == _room_name && instance_exists(global.local_player)) {
     global.local_player.x        = global.pending_player_x;
     global.local_player.y        = global.pending_player_y;
