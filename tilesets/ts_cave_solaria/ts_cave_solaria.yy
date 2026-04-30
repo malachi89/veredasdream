@@ -1,11 +1,19 @@
 {
   "$GMTileSet":"v1",
   "%Name":"ts_cave_solaria",
-  "autoTileSets":[],
+  "autoTileSets":[
+    {"$GMAutoTileSet":"","%Name":"autotile_1","closed_edge":false,"name":"autotile_1","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[5,64,62,63,2,33,65,3,192,66,31,4,1,34,35,160,],},
+    {"$GMAutoTileSet":"","%Name":"autotile_2","closed_edge":false,"name":"autotile_2","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[218,250,248,249,188,219,252,189,186,251,217,190,187,220,221,223,],},
+    {"$GMAutoTileSet":"","%Name":"autotile_3","closed_edge":false,"name":"autotile_3","resourceType":"GMAutoTileSet","resourceVersion":"2.0","tiles":[311,343,341,342,281,312,345,282,279,344,310,283,280,313,314,346,],},
+  ],
   "macroPageTiles":{
-    "SerialiseHeight":0,
-    "SerialiseWidth":0,
-    "TileSerialiseData":[],
+    "SerialiseHeight":14,
+    "SerialiseWidth":18,
+    "TileCompressedData":[
+      -31,0,1,164,-5,0,3,225,0,11,-5,0,1,103,-31,0,1,170,-11,0,1,101,-27,0,1,73,-13,0,1,11,-8,0,1,70,-5,0,
+      1,135,-41,0,1,72,-13,0,1,164,-26,0,1,170,-7,0,1,102,-14,0,
+    ],
+    "TileDataFormat":1,
   },
   "name":"ts_cave_solaria",
   "out_columns":32,

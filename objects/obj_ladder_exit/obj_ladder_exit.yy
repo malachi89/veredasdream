@@ -1,7 +1,9 @@
 {
   "$GMObject":"",
   "%Name":"obj_ladder_exit",
-  "eventList":[],
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
   "name":"obj_ladder_exit",
   "overriddenProperties":[],

@@ -97,6 +97,7 @@ shop_msg_timer = 0;
 dialog_open     = false;
 dialog_npc_name = "";
 dialog_text     = "";
+prev_on_door = false;
 
 // --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---
 function add_item(_item_key, _qty = 1) {
@@ -104,6 +105,8 @@ function add_item(_item_key, _qty = 1) {
     if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.material_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.ore_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.gemstone_data, _item_key)) _is_stackable = true;
 
     if (_is_stackable) {
         for (var i = 0; i < total_slots; i++) {

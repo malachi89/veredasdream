@@ -13,7 +13,7 @@ if (dialog_open) {
     exit;
 }
 
-if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open || obj_controller.pause_menu_open))
+if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open || obj_controller.pause_menu_open || obj_controller.mine_prompt_open))
     || shop_open) {
     state = STATE.IDLE;
     frame_anim = 0;
@@ -121,30 +121,73 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
             dialog_text = "Animales: " + _astr + "\nPlantas y setas: " + _fstr;
             dialog_open = true;
         }
-    } else {
-        var _npc = instance_nearest(x, y, obj_npc);
-        if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
-            var _shop_entry = global.shop_data[$ _npc.npc_key];
-            if (_shop_entry != undefined) {
-                shop_open      = true;
-                shop_npc_key   = _npc.npc_key;
-                shop_scroll    = 0;
-                shop_msg       = "";
-                shop_msg_timer = 0;
-            } else {
-                if (dialog_open) {
-                    dialog_open = false;
-                } else {
-                    dialog_open     = true;
-                    dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
-                    dialog_text     = "Hola campeon, echele ganas";
+        } else {
+            var _did_interact = false;
+
+            // Cave door interaction (E key only for locked doors now; open doors auto-enter on collision)
+            var _locked_door = instance_nearest(x, y, obj_cave_door_closed);
+            if (_locked_door != noone && point_distance(x, y, _locked_door.x, _locked_door.y) < 40) {
+                var _unlocked = (_locked_door.door_index >= 0 && global.mine_unlocks[_locked_door.door_index]);
+                if (!_unlocked) {
+                    _did_interact = true;
+                    dialog_npc_name = "Puerta Bloqueada";
+                    dialog_text = "Completa los 10 pisos de la mina anterior para desbloquear esta.";
+                    dialog_open = true;
                 }
             }
-        } else if (dialog_open) {
-            dialog_open = false;
+
+            // Mine ladder down (inside mine)
+            if (!_did_interact && global.mine_state.active && global.mine_state.floor < 10) {
+                var _ld = instance_nearest(x, y, obj_ladder_down);
+                if (_ld != noone && point_distance(x, y, _ld.x, _ld.y) < 40) {
+                    _did_interact = true;
+                    if (instance_exists(obj_controller)) {
+                        obj_controller.mine_prompt_open = true;
+                        obj_controller.mine_prompt_type = "down";
+                        obj_controller.mine_prompt_selection = 0;
+                    }
+                }
+            }
+
+            // Mine exit ladder (inside mine)
+            if (!_did_interact && global.mine_state.active) {
+                var _lex = instance_nearest(x, y, obj_ladder_exit);
+                if (_lex != noone && point_distance(x, y, _lex.x, _lex.y) < 40) {
+                    _did_interact = true;
+                    if (instance_exists(obj_controller)) {
+                        obj_controller.mine_prompt_open = true;
+                        obj_controller.mine_prompt_type = "exit";
+                        obj_controller.mine_prompt_selection = 0;
+                    }
+                }
+            }
+
+            // NPC interaction
+            if (!_did_interact) {
+                var _npc = instance_nearest(x, y, obj_npc);
+                if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
+                    var _shop_entry = global.shop_data[$ _npc.npc_key];
+                    if (_shop_entry != undefined) {
+                        shop_open      = true;
+                        shop_npc_key   = _npc.npc_key;
+                        shop_scroll    = 0;
+                        shop_msg       = "";
+                        shop_msg_timer = 0;
+                    } else {
+                        if (dialog_open) {
+                            dialog_open = false;
+                        } else {
+                            dialog_open     = true;
+                            dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
+                            dialog_text     = "Hola campeon, echele ganas";
+                        }
+                    }
+                } else if (dialog_open) {
+                    dialog_open = false;
+                }
+            }
         }
     }
-}
 
 if (tool_cooldown > 0) tool_cooldown--;
 
@@ -233,8 +276,8 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
     if (_mag == 0) {
         state = STATE.IDLE;
     } else {
-        if (is_riding) state = _run ? STATE.WALK : STATE.RUN;
-        else state = _run ? STATE.RUN : STATE.WALK;
+        if (is_riding) state = _run ? STATE.RUN : STATE.WALK;
+        else state = _run ? STATE.WALK : STATE.RUN;
         if (abs(_h) > abs(_v)) dir = (_h > 0) ? DIR.RIGHT : DIR.LEFT;
         else dir = (_v > 0) ? DIR.DOWN : DIR.UP;
     }
@@ -246,7 +289,30 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
     _my = (_mag != 0) ? (_v / _mag) * _spd : 0;
 }
 
-move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign], 4, 0, 0, -1, -1);
+move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign, obj_ladder_down, obj_ladder_exit], 4, 0, 0, -1, -1);
+
+// Auto-enter open mine door when walking through it
+if (!global.mine_state.active) {
+    var _near_door = false;
+    var _door_inst = instance_nearest(x, y, obj_cave_door_open);
+    if (_door_inst != noone && point_distance(x, y, _door_inst.x, _door_inst.y) < 20) {
+        _near_door = true;
+        if (!prev_on_door) {
+            scr_enter_cave_mine(_door_inst.door_index);
+        }
+    }
+    if (!_near_door) {
+        _door_inst = instance_nearest(x, y, obj_cave_door_closed);
+        if (_door_inst != noone && _door_inst.door_index >= 0 && global.mine_unlocks[_door_inst.door_index]
+                && point_distance(x, y, _door_inst.x, _door_inst.y) < 20) {
+            _near_door = true;
+            if (!prev_on_door) {
+                scr_enter_cave_mine(_door_inst.door_index);
+            }
+        }
+    }
+    prev_on_door = _near_door;
+}
 
 if (state != _prev_state) frame_anim = 0;
 

@@ -40,5 +40,5 @@
     "path":"sprites/tile_transition/tile_transition.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

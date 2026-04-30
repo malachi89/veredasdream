@@ -1,5 +1,12 @@
+function scr_current_room_key() {
+    if (global.mine_state.active) {
+        return "mine_" + string(global.mine_state.door_index) + "_floor_" + string(global.mine_state.floor);
+    }
+    return room_get_name(room);
+}
+
 function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
-    var _room_name = room_get_name(room);
+    var _room_name = scr_current_room_key();
     if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
         // Route through host so the drop UID is host-authoritative.
         // No local instance — host creates it and broadcasts back via WEVT_ROOM_REFRESH.
@@ -143,7 +150,7 @@ function scr_get_room_state(_room_name) {
 }
 
 function scr_capture_current_room_state() {
-    var _room_name = room_get_name(room);
+    var _room_name = scr_current_room_key();
     var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [] };
     
     // Capture Regular Crops
@@ -267,7 +274,19 @@ function scr_capture_current_room_state() {
     var _rock_state = [];
     for (var i = 0; i < instance_number(obj_rock); i++) {
         var _inst = instance_find(obj_rock, i);
-        array_push(_rock_state, { x: _inst.x, y: _inst.y, sprite_name: sprite_get_name(_inst.sprite_index), image_index: _inst.image_index, hits_remaining: _inst.hits_remaining });
+        array_push(_rock_state, {
+            x: _inst.x, y: _inst.y,
+            sprite_name: sprite_get_name(_inst.sprite_index),
+            image_index: _inst.image_index,
+            hits_remaining: _inst.hits_remaining,
+            max_hits: _inst.max_hits,
+            is_ore_rock: _inst.is_ore_rock,
+            is_coal_rock: _inst.is_coal_rock,
+            is_gemstone_rock: _inst.is_gemstone_rock,
+            ore_type_index: _inst.ore_type_index,
+            ore_item_key: _inst.ore_item_key,
+            hit_counter: _inst.hit_counter
+        });
     }
     _state.rocks = _rock_state;
 
@@ -536,6 +555,13 @@ function scr_restore_room_state(_room_name) {
             if (_spr != -1) _inst.sprite_index = _spr;
             _inst.image_index = variable_struct_exists(_r, "image_index") ? _r.image_index : 0;
             _inst.hits_remaining = variable_struct_exists(_r, "hits_remaining") ? _r.hits_remaining : 10;
+            _inst.max_hits = variable_struct_exists(_r, "max_hits") ? _r.max_hits : 10;
+            _inst.is_ore_rock = variable_struct_exists(_r, "is_ore_rock") ? _r.is_ore_rock : false;
+            _inst.is_coal_rock = variable_struct_exists(_r, "is_coal_rock") ? _r.is_coal_rock : false;
+            _inst.is_gemstone_rock = variable_struct_exists(_r, "is_gemstone_rock") ? _r.is_gemstone_rock : false;
+            _inst.ore_type_index = variable_struct_exists(_r, "ore_type_index") ? _r.ore_type_index : -1;
+            _inst.ore_item_key = variable_struct_exists(_r, "ore_item_key") ? _r.ore_item_key : "";
+            _inst.hit_counter = variable_struct_exists(_r, "hit_counter") ? _r.hit_counter : 0;
         }
     }
 }
@@ -651,12 +677,14 @@ function scr_save_game() {
     }
 
     var _save_data = {
-        version: 2,
+        version: 3,
         time: { minute: global.game_minute, hour: global.game_hour, day: global.day, year: global.year, season_index: global.season_index, season: global.season },
         players: _players_arr,
         room_states: global.room_states,
         room_drops: global.room_drops,
-        next_drop_uid: global.next_drop_uid
+        next_drop_uid: global.next_drop_uid,
+        mine_unlocks: global.mine_unlocks,
+        mine_progress: global.mine_progress
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     show_debug_message("Game saved to: " + global.save_file_path);
@@ -682,6 +710,8 @@ function scr_apply_loaded_game(_save_data) {
     global.farm_populated = variable_struct_exists(global.room_states, "farm");
     global.room_drops = _save_data.room_drops;
     global.next_drop_uid = _save_data.next_drop_uid;
+    if (variable_struct_exists(_save_data, "mine_unlocks")) global.mine_unlocks = _save_data.mine_unlocks;
+    if (variable_struct_exists(_save_data, "mine_progress")) global.mine_progress = _save_data.mine_progress;
 
     // Migrar guardados v1 -> v2
     var _players_arr;
@@ -994,6 +1024,8 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.insect_data,   _key)) return global.insect_data[$   _key];
     if (variable_struct_exists(global.animal_product_data,     _key)) return global.animal_product_data[$     _key];
     if (variable_struct_exists(global.crafting_material_data, _key)) return global.crafting_material_data[$ _key];
+    if (variable_struct_exists(global.ore_data, _key)) return global.ore_data[$ _key];
+    if (variable_struct_exists(global.gemstone_data, _key)) return global.gemstone_data[$ _key];
     return undefined;
 }
 function scr_count_item(_key, _player = global.local_player) {

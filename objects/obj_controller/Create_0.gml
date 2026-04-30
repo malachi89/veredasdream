@@ -194,3 +194,8 @@ fade_speed = 1.0 / (room_speed * 1.5); // 1.5 seconds fade duration
 is_fading_in = true;
 
 minigame_difficulty = 0; // 0: Easy, 1: Moderate, 2: Hard, 3: Extreme
+
+// Mine prompt
+mine_prompt_open = false;
+mine_prompt_type = "";
+mine_prompt_selection = 0;

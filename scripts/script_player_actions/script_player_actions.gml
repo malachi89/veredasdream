@@ -273,14 +273,56 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                             if (_rock_to_remove != noone) {
                                 audio_play_sound(pickaxe, 1, false);
                                 var _dmg_pk = 1 + _tier_stats.hits_required;
-                                _rock_to_remove.hits_remaining -= _dmg_pk;
-                                if (_rock_to_remove.hits_remaining <= 0) {
-                                    var _stone_qty = irandom_range(1, 3);
-                                    if (random(1) < _tier_stats.double_drop_chance) _stone_qty *= 2;
-                                    inventory_drop_item("stone", _stone_qty, _rock_to_remove.x, _rock_to_remove.y);
-                                    instance_destroy(_rock_to_remove);
+                                var _can_mine = true;
+
+                                if (_rock_to_remove.is_ore_rock) {
+                                    var _pk_tier = (is_struct(_item_data) && variable_struct_exists(_item_data, "quality")) ? _item_data.quality : QUALITY.OXIDADO;
+                                    var _ore_tier = _rock_to_remove.ore_type_index + 1;
+                                    var _tdiff = _ore_tier - _pk_tier;
+
+                                    if (_tdiff >= 3) {
+                                        scr_notify("Necesitas un pico mas fuerte");
+                                        _can_mine = false;
+                                    } else if (_tdiff == 2) {
+                                        _rock_to_remove.hit_counter++;
+                                        if (_rock_to_remove.hit_counter mod 2 != 0) _can_mine = false;
+                                    }
                                 }
-                                if (!_skip_energy) self.energy -= 2;
+
+                                if (_can_mine) {
+                                    _rock_to_remove.hits_remaining -= _dmg_pk;
+                                    if (_rock_to_remove.hits_remaining <= 0) {
+                                        if (_rock_to_remove.is_gemstone_rock) {
+                                            var _gkey = global.gemstone_pool[irandom(array_length(global.gemstone_pool) - 1)];
+                                            inventory_drop_item(_gkey, 1, _rock_to_remove.x, _rock_to_remove.y);
+                                        } else if (_rock_to_remove.is_coal_rock) {
+                                            var _coal_qty = irandom_range(1, 3);
+                                            if (random(1) < _tier_stats.double_drop_chance) _coal_qty *= 2;
+                                            inventory_drop_item("coal", _coal_qty, _rock_to_remove.x, _rock_to_remove.y);
+                                        } else if (_rock_to_remove.is_ore_rock) {
+                                            var _qty = irandom_range(1, 3);
+                                            if (random(1) < _tier_stats.double_drop_chance) _qty *= 2;
+                                            inventory_drop_item(_rock_to_remove.ore_item_key, _qty, _rock_to_remove.x, _rock_to_remove.y);
+                                        } else {
+                                            var _stone_qty = irandom_range(1, 3);
+                                            if (random(1) < _tier_stats.double_drop_chance) _stone_qty *= 2;
+                                            inventory_drop_item("stone", _stone_qty, _rock_to_remove.x, _rock_to_remove.y);
+                                        }
+                                        if (global.mine_state.active && global.mine_state.floor < 10 && random(1) < 0.03) {
+                                            if (!instance_position(_rock_to_remove.x, _rock_to_remove.y, obj_ladder_down)
+                                                    && !instance_position(_rock_to_remove.x, _rock_to_remove.y, obj_rock)) {
+                                                instance_create_layer(_rock_to_remove.x, _rock_to_remove.y, "Instances", obj_ladder_down);
+                                            }
+                                        }
+                                        instance_destroy(_rock_to_remove);
+                                        if (global.mine_state.active && global.mine_state.floor < 10
+                                                && instance_number(obj_rock) == 0 && instance_number(obj_ladder_down) == 0) {
+                                            instance_create_layer(self.x, self.y - 16, "Instances", obj_ladder_down);
+                                            scr_notify("Aparecio una escalera...");
+                                        }
+                                    }
+                                }
+                                if (!_skip_energy && _can_mine) self.energy -= 2;
                             }
                         }
                     }

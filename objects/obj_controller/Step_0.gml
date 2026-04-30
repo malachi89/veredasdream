@@ -34,9 +34,23 @@ if (!global.farm_populated && room_get_name(room) == "farm"
 var _room_name = room_get_name(room);
 if (current_room_name != _room_name) {
     current_room_name = _room_name;
-    room_change_pending = false; // client: ROOM_SNAPSHOT arrived and room_goto fired
+    room_change_pending = false;
 
-    // Snap camera to player on room entry so it doesn't pan violently from the old room.
+    // Position player before camera snap to avoid one-frame glitch
+    if (global.pending_player_room_name == _room_name && instance_exists(global.local_player)) {
+        global.local_player.x        = global.pending_player_x;
+        global.local_player.y        = global.pending_player_y;
+        global.local_player.dir      = global.pending_player_dir;
+        global.local_player.is_riding = false;
+        global.local_player.mount_is_bear = false;
+        global.pending_player_room_name = "";
+        if (global.mine_state.active && instance_exists(obj_ladder_exit)) {
+            global.local_player.x = obj_ladder_exit.x + 8;
+            global.local_player.y = obj_ladder_exit.y + sprite_get_height(obj_ladder_exit.sprite_index) + 16;
+        }
+    }
+
+    // Snap camera to player on room entry
     if (instance_exists(obj_camera) && instance_exists(global.local_player)) {
         var _cam_w = obj_camera.cam_width;
         var _cam_h = obj_camera.cam_height;
@@ -45,8 +59,11 @@ if (current_room_name != _room_name) {
         camera_set_view_pos(obj_camera.cam, _snap_x, _snap_y);
     }
 
-    scr_restore_room_state(_room_name);
-    scr_restore_room_drops(_room_name);
+    var _state_key = global.mine_state.active
+        ? ("mine_" + string(global.mine_state.door_index) + "_floor_" + string(global.mine_state.floor))
+        : _room_name;
+    scr_restore_room_state(_state_key);
+    scr_restore_room_drops(_state_key);
     if (_room_name == "forest" && !global.forest_needs_repopulate) {
         scr_restore_forest_insects();
         scr_restore_forest_wild_animals();
@@ -74,11 +91,18 @@ if (struct_exists(global.cave_repopulate, _room_name)
         && instance_exists(global.local_player)
         && instance_exists(obj_inventory)) {
     global.cave_repopulate[$ _room_name] = false;
-    scr_populate_cave();
-    scr_capture_current_room_state();
+    if (global.mine_state.active) {
+        scr_populate_cave(global.mine_state.ore_type, global.mine_state.floor);
+        scr_capture_current_room_state();
+    } else {
+        scr_populate_cave();
+        scr_capture_current_room_state();
+    }
 }
 
-if (global.pending_player_room_name == _room_name && instance_exists(global.local_player)) {
+// Room change detection now handles pending player positioning above.
+// Keep this as a safety fallback for edge cases (e.g. save load with same room).
+if (global.pending_player_room_name == _room_name && instance_exists(global.local_player) && current_room_name == _room_name) {
     global.local_player.x        = global.pending_player_x;
     global.local_player.y        = global.pending_player_y;
     global.local_player.dir      = global.pending_player_dir;
@@ -303,6 +327,14 @@ else if (chat_open) {
                 }
                 show_debug_message("================");
                 scr_notify("MP debug impreso en consola");
+            } else if (_cmd == "unlock" && array_length(_parts) >= 2) {
+                var _unlock_idx = real(_parts[1]);
+                if (_unlock_idx >= 0 && _unlock_idx < 8) {
+                    global.mine_unlocks[_unlock_idx] = true;
+                    scr_notify("Puerta " + string(_unlock_idx) + " desbloqueada");
+                } else {
+                    scr_notify("Indice de puerta invalido (0-7)");
+                }
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
@@ -527,6 +559,55 @@ if (sleep_prompt_open) {
     if (keyboard_check_pressed(vk_escape)) {
         sleep_prompt_open = false;
         net_send_sleep_response(false);
+    }
+}
+
+// --- MINE PROMPT (ladder down / exit) ---
+if (mine_prompt_open) {
+    var _mx3 = device_mouse_x_to_gui(0);
+    var _my3 = device_mouse_y_to_gui(0);
+    var _cx3 = display_get_gui_width() * 0.5;
+    var _cy3 = display_get_gui_height() * 0.5;
+    var _yes_x3 = _cx3 - 120; var _yes_y3 = _cy3 + 20;
+    var _yes_x4 = _cx3 - 20;  var _yes_y4 = _cy3 + 78;
+    var _no_x3  = _cx3 + 20;  var _no_y3  = _cy3 + 20;
+    var _no_x4  = _cx3 + 120; var _no_y4  = _cy3 + 78;
+
+    if (point_in_rectangle(_mx3, _my3, _yes_x3, _yes_y3, _yes_x4, _yes_y4)) mine_prompt_selection = 0;
+    if (point_in_rectangle(_mx3, _my3, _no_x3, _no_y3, _no_x4, _no_y4))     mine_prompt_selection = 1;
+    if (keyboard_check_pressed(vk_left)  || keyboard_check_pressed(ord("A"))) mine_prompt_selection = 0;
+    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) mine_prompt_selection = 1;
+
+    if (mouse_check_button_pressed(mb_left)) {
+        if (point_in_rectangle(_mx3, _my3, _yes_x3, _yes_y3, _yes_x4, _yes_y4)) {
+            mine_prompt_open = false;
+            if (mine_prompt_type == "down") {
+                scr_go_deeper();
+            } else if (mine_prompt_type == "exit") {
+                scr_exit_mine();
+            }
+        } else if (point_in_rectangle(_mx3, _my3, _no_x3, _no_y3, _no_x4, _no_y4)) {
+            mine_prompt_open = false;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+        }
+    }
+
+    if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
+        if (mine_prompt_selection == 0) {
+            mine_prompt_open = false;
+            if (mine_prompt_type == "down") {
+                scr_go_deeper();
+            } else if (mine_prompt_type == "exit") {
+                scr_exit_mine();
+            }
+        } else {
+            mine_prompt_open = false;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+        }
+    }
+    if (keyboard_check_pressed(vk_escape)) {
+        mine_prompt_open = false;
+        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
     }
 }
 

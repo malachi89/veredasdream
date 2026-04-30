@@ -1,5 +1,6 @@
-function scr_populate_cave() {
+function scr_populate_cave(_ore_type = -1, _floor = 1) {
     with (obj_rock) instance_destroy();
+    with (obj_ladder_down) instance_destroy();
 
     var _margin   = 32;
     var _spawn_safe_radius = 192;
@@ -13,8 +14,11 @@ function scr_populate_cave() {
     var _spawn_x = (_spawn_point != noone) ? _spawn_point.x : -1;
     var _spawn_y = (_spawn_point != noone) ? _spawn_point.y : -1;
 
+    var _ore_pct = (_ore_type >= 0) ? (5 + _floor * 3) : 0;
+    var _coal_pct = (_ore_type >= 0) ? 4 : 0;
+    var _gem_pct = (_ore_type >= 0) ? 1 : 0;
+
     for (var _f = 0; _f < _num_form; _f++) {
-        // Find a valid seed position on 16-px grid
         var _placed  = [];
         var _found   = false;
 
@@ -22,7 +26,7 @@ function scr_populate_cave() {
             var _gx = _margin + (irandom((room_width  - 2 * _margin) div 16 - 1)) * 16;
             var _gy = _margin + (irandom((room_height - 2 * _margin) div 16 - 1)) * 16;
             var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _gx + 8, _gy + 8) != 0);
-            var _near_spawn = (_spawn_x != -1) && (distance_to_point(_gx, _gy) < _spawn_safe_radius);
+            var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _gx, _gy) < _spawn_safe_radius);
             if (!_has_wall
                     && !_near_spawn
                     && !instance_position(_gx + 8, _gy + 8, obj_collision)
@@ -34,12 +38,10 @@ function scr_populate_cave() {
         }
         if (!_found) continue;
 
-        // Grow formation (up to 5 extra rocks)
         var _size = irandom_range(1, 6);
         for (var _i = 0; _i < _size - 1; _i++) {
             var _base = _placed[irandom(array_length(_placed) - 1)];
 
-            // Shuffle direction indices
             var _order = [0, 1, 2, 3];
             for (var _d = 3; _d > 0; _d--) {
                 var _s   = irandom(_d);
@@ -53,7 +55,7 @@ function scr_populate_cave() {
                 var _nx  = _base.x + _dir[0];
                 var _ny  = _base.y + _dir[1];
                 var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _nx + 8, _ny + 8) != 0);
-                var _near_spawn = (_spawn_x != -1) && (distance_to_point(_nx, _ny) < _spawn_safe_radius);
+                var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _nx, _ny) < _spawn_safe_radius);
 
                 var _overlap_placement = false;
                 for (var _p = 0; _p < array_length(_placed); _p++) {
@@ -76,9 +78,32 @@ function scr_populate_cave() {
             }
         }
 
-        // Spawn obj_rock at each position
         for (var _i = 0; _i < array_length(_placed); _i++) {
-            instance_create_layer(_placed[_i].x, _placed[_i].y, "Instances", obj_rock);
+            var _px = _placed[_i].x;
+            var _py = _placed[_i].y;
+            var _inst = instance_create_layer(_px, _py, "Instances", obj_rock);
+
+            if (_ore_type >= 0) {
+                var _roll = random(100);
+                if (_roll < _gem_pct) {
+                    _inst.is_gemstone_rock = true;
+                    _inst.sprite_index = sprite_rock_ore_gemstone1;
+                    _inst.hits_remaining = 15;
+                    _inst.max_hits = 15;
+                } else if (_roll < _gem_pct + _coal_pct) {
+                    _inst.is_coal_rock = true;
+                    _inst.sprite_index = sprite_rock_ore_coal;
+                    _inst.hits_remaining = 8;
+                    _inst.max_hits = 8;
+                } else if (_roll < _gem_pct + _coal_pct + _ore_pct) {
+                    _inst.is_ore_rock = true;
+                    _inst.ore_type_index = _ore_type;
+                    _inst.ore_item_key = "ore_" + global.ore_names[_ore_type];
+                    _inst.sprite_index = global.ore_rock_sprites[_ore_type];
+                    _inst.hits_remaining = 10 + _ore_type * 5;
+                    _inst.max_hits = _inst.hits_remaining;
+                }
+            }
         }
     }
 }

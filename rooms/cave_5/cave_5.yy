@@ -257,7 +257,17 @@
           2,22,38,-33,0,-51,-2147483648,2,22,38,-33,0,-51,-2147483648,2,22,38,-33,0,-51,-2147483648,2,22,20,-84,
           11,1,19,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_cave","path":"tilesets/ts_cave/ts_cave.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_ground","depth":200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_ground","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":48,"SerialiseWidth":86,"TileCompressedData":[-4128,58,],"TileDataFormat":1,},"tilesetId":{"name":"ts_cave","path":"tilesets/ts_cave/ts_cave.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+    {"$GMRTileLayer":"","%Name":"Tiles_cave_solaria","depth":200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_cave_solaria","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":48,"SerialiseWidth":86,"TileCompressedData":[
+          -199,-2147483648,1,164,-157,-2147483648,1,11,-35,-2147483648,1,164,-41,-2147483648,1,11,-75,-2147483648,
+          1,164,-6,-2147483648,1,135,-306,-2147483648,1,225,-47,-2147483648,1,170,-33,-2147483648,1,11,-111,-2147483648,
+          1,11,-201,-2147483648,1,102,-98,-2147483648,1,11,-94,-2147483648,1,102,-117,-2147483648,1,102,-114,-2147483648,
+          1,11,-126,-2147483648,1,225,-468,-2147483648,1,11,-82,-2147483648,1,135,-128,-2147483648,1,225,-225,
+          -2147483648,1,170,-92,-2147483648,1,11,-33,-2147483648,1,11,-48,-2147483648,1,135,-56,-2147483648,1,
+          225,-297,-2147483648,1,170,-182,-2147483648,1,11,-24,-2147483648,1,11,-9,-2147483648,1,225,-12,-2147483648,
+          1,11,-34,-2147483648,1,135,-47,-2147483648,1,135,-112,-2147483648,1,11,-193,-2147483648,1,170,-27,-2147483648,
+          1,11,-19,-2147483648,1,170,-245,-2147483648,
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_cave_solaria","path":"tilesets/ts_cave_solaria/ts_cave_solaria.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+    {"$GMRTileLayer":"","%Name":"Tiles_ground","depth":300,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_ground","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":48,"SerialiseWidth":86,"TileCompressedData":[-4128,58,],"TileDataFormat":1,},"tilesetId":{"name":"ts_cave","path":"tilesets/ts_cave/ts_cave.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
   ],
   "name":"cave_5",
   "parent":{

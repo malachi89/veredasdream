@@ -115,7 +115,8 @@ enum ITEM_TYPE {
     CROP,       // El fruto ya cosechado (el tomate, el trigo)
     FISH,       // Peces capturados
     PLACEABLE,  // Objetos que se pueden colocar: cofres, decoracion, etc.
-    INSECT      // Insectos capturados con la red
+    INSECT,      // Insectos capturados con la red
+    ORE         // Minerales de la mina
 }
 
 enum TOOL_TYPE {
@@ -410,8 +411,77 @@ global.material_data = {
         type: ITEM_TYPE.MATERIAL,
         sprite: sprite_material_stone,
         subimg: 0
+    },
+    coal: {
+        name: "Carbon",
+        type: ITEM_TYPE.MATERIAL,
+        sprite: sprite_coal,
+        subimg: 0,
+        base_sell_price: 5
     }
 };
+
+// --- DATOS DE MINERALES (MINA) ---
+global.ore_names = ["bronce", "plata", "oro", "broncastanio", "chubestanio", "picastanio", "hitlerstanio", "vitolanio"];
+global.ore_data = {};
+var _od = global.ore_data;
+var _ore_sell = [10, 20, 40, 80, 160, 320, 640, 1280];
+for (var _oi = 0; _oi < 8; _oi++) {
+    var _on = global.ore_names[_oi];
+    _od[$ "ore_" + _on] = {
+        name: string_upper(string_char_at(_on, 1)) + string_copy(_on, 2, string_length(_on) - 1),
+        type: ITEM_TYPE.ORE,
+        sprite: sprite_metals,
+        subimg: _oi,
+        base_sell_price: _ore_sell[_oi]
+    };
+}
+
+global.ore_rock_sprites = [
+    sprite_rock_ore_bronce,
+    sprite_rock_ore_plata,
+    sprite_rock_ore_oro,
+    sprite_rock_ore_broncastanio,
+    sprite_rock_ore_chubestanio,
+    sprite_rock_ore_picastanio,
+    sprite_rock_ore_hitlerstanio,
+    sprite_rock_ore_vitolanio
+];
+
+global.mine_state = {
+    active: false,
+    door_index: -1,
+    ore_type: -1,
+    floor: 1,
+    entry_door_x: 0,
+    entry_door_y: 0
+};
+
+global.mine_unlocks = [true, false, false, false, false, false, false, false];
+global.mine_progress = [0, 0, 0, 0, 0, 0, 0, 0];
+global.mine_floor_room_assigned = {};
+
+global.gemstone_data = {};
+var _gd = global.gemstone_data;
+_gd[$ "gemstone_ruby"]          = { name: "Rubi",          type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 0,  rarity: 30, base_sell_price: 75   };
+_gd[$ "gemstone_sapphire"]      = { name: "Zafiro",        type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 1,  rarity: 25, base_sell_price: 100  };
+_gd[$ "gemstone_emerald"]       = { name: "Esmeralda",     type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 2,  rarity: 20, base_sell_price: 150  };
+_gd[$ "gemstone_topaz"]         = { name: "Topacio",       type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 3,  rarity: 18, base_sell_price: 200  };
+_gd[$ "gemstone_pink_sapphire"] = { name: "Zafiro Rosa",   type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 4,  rarity: 15, base_sell_price: 300  };
+_gd[$ "gemstone_turquoise"]     = { name: "Turquesa",      type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 5,  rarity: 12, base_sell_price: 400  };
+_gd[$ "gemstone_aquamarine"]    = { name: "Aguamarina",    type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 6,  rarity: 10, base_sell_price: 500  };
+_gd[$ "gemstone_amethyst"]      = { name: "Amatista",      type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 7,  rarity: 8,  base_sell_price: 650  };
+_gd[$ "gemstone_pearl"]         = { name: "Perla",         type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 8,  rarity: 6,  base_sell_price: 800  };
+_gd[$ "gemstone_diamond"]       = { name: "Diamante",      type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 9,  rarity: 4,  base_sell_price: 1000 };
+_gd[$ "gemstone_pink_diamond"]  = { name: "Diamante Rosa", type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 10, rarity: 2,  base_sell_price: 1500 };
+_gd[$ "gemstone_alexandrite"]   = { name: "Alejandrita",   type: ITEM_TYPE.ORE, sprite: sprite_gemstones, subimg: 11, rarity: 1,  base_sell_price: 2500 };
+
+global.gemstone_pool = [];
+var _gkeys = variable_struct_get_names(global.gemstone_data);
+for (var _gi = 0; _gi < array_length(_gkeys); _gi++) {
+    var _gd_entry = global.gemstone_data[$ _gkeys[_gi]];
+    repeat (_gd_entry.rarity) { array_push(global.gemstone_pool, _gkeys[_gi]); }
+}
 
 // --- DATOS DE RECOLECCIÓN DEL BOSQUE ---
 // Sell prices by rarity: 1=5, 2=12, 3=25, 4=60, 5=150
