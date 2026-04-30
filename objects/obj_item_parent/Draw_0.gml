@@ -7,6 +7,13 @@ if (is_initialized) {
     var _dx       = x + col_offset;
     var _dy       = y - 8;
 
+    draw_sprite_part_ext(
+        item_sprite, subimg,
+        _x_offset, _y_offset, _fw, _fh,
+        _dx + 1, _dy + 0.5,
+        _s, _s, c_black, 0.4
+    );
+
     if (string_starts_with(item_key, "forage_")) {
         var _pulse      = (sin(current_time * 0.004 + (x + y) * 0.05) + 1) * 0.5;
         var _glow_alpha = lerp(0.25, 0.55, _pulse);
