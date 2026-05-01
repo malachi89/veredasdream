@@ -243,6 +243,22 @@ else if (chat_open) {
                         scr_notify("Estacion invalida. Usa: spring summer fall winter");
                     }
                 }
+            } else if (_cmd == "spawn_enemy" && array_length(_parts) >= 2) {
+                var _ename = _parts[1];
+                var _edata = global.enemy_data[$ _ename];
+                if (_edata != undefined && variable_struct_exists(_edata, "object")) {
+                    var _eobj = _edata.object;
+                    var _ex = floor(mouse_x / 16) * 16 + 8;
+                    var _ey = floor(mouse_y / 16) * 16 + 8;
+                    if (!instance_position(_ex, _ey, obj_collision)) {
+                        var _inst = instance_create_layer(_ex, _ey, "Instances", _eobj);
+                        scr_notify("Generado: " + _edata.name + " en (" + string(_ex) + ", " + string(_ey) + ")");
+                    } else {
+                        scr_notify("No hay espacio disponible");
+                    }
+                } else {
+                    scr_notify("Enemigo desconocido: " + _ename);
+                }
             } else if (_cmd == "spawn_player2") {
                 // Phase 2 test harness: spawn a second player (non-local) at the cursor.
                 var _p2 = noone;

@@ -13,6 +13,10 @@ if (hp <= 0) {
             var _product = _adata.product_drops[irandom(array_length(_adata.product_drops) - 1)];
             inventory_drop_item(_product, 1, x, y);
         }
+        if (_adata != undefined && variable_struct_exists(_adata, "crafting_drops") && array_length(_adata.crafting_drops) > 0 && irandom(1) == 0) {
+            var _cd = _adata.crafting_drops;
+            inventory_drop_item(_cd[irandom(array_length(_cd) - 1)], 1, x, y);
+        }
     } else {
         var _wdata = global.wild_animal_data[$ animal_key];
         if (_wdata != undefined && variable_struct_exists(_wdata, "product_drops") && array_length(_wdata.product_drops) > 0) {

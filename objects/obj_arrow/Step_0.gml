@@ -16,14 +16,22 @@ if (x < 0 || x > room_width || y < 0 || y > room_height) {
 // Animal collision - use instance_place for better accuracy and mask support
 var _hit = instance_place(x, y, obj_wild_animal);
 if (_hit == noone) _hit = instance_place(x, y, obj_farm_animal);
+if (_hit == noone) _hit = instance_place(x, y, obj_enemy);
 
 if (_hit != noone) {
     audio_play_sound(sound_arrow_hit, 1, false);
     _hit.hp -= damage;
     _hit.hurt_flash_timer = 15;
     
-    // Forest animals panic and run faster when hit
-    if (object_get_name(_hit.object_index) == "obj_wild_animal") {
+    var _obj_name = object_get_name(_hit.object_index);
+    
+    if (object_is_ancestor(_hit.object_index, obj_enemy)) {
+        if (variable_instance_exists(_hit, "hurt_anim_timer")) _hit.hurt_anim_timer = 15;
+        if (_hit.hp > 0) {
+            _hit.state = ANIMAL_STATE.CHASING;
+            _hit.chase_timer = _hit.chase_timer_max;
+        }
+    } else if (_obj_name == "obj_wild_animal") {
         if (_hit.animal_key == "bear") {
             var _segments = [[0.00, 1.00], [4.50, 5.70], [5.70, 7.50]];
             var _s = _segments[irandom(2)];

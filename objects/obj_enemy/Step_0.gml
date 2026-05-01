@@ -1,0 +1,103 @@
+depth = -bbox_bottom;
+
+frame_anim += 0.15;
+while (frame_anim >= anim_frames) frame_anim -= anim_frames;
+while (frame_anim < 0) frame_anim += anim_frames;
+
+if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
+
+if (is_dying > 0) {
+    is_dying -= 1;
+    if (is_dying <= 0) {
+        if (array_length(product_drops) > 0) {
+            inventory_drop_item(product_drops[irandom(array_length(product_drops) - 1)], 1, x, y);
+        }
+        instance_destroy();
+    }
+    exit;
+}
+
+if (hp <= 0) {
+    is_dying = death_anim_frames;
+    exit;
+}
+
+switch (state) {
+    case ANIMAL_STATE.IDLE:
+        idle_timer -= 1;
+        if (idle_timer <= 0) {
+            state            = ANIMAL_STATE.WANDERING;
+            dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
+            wander_steps     = max_wander_steps;
+        }
+    break;
+
+    case ANIMAL_STATE.WANDERING:
+        var _dx = 0;
+        var _dy = 0;
+        if (dir == DIR.LEFT) _dx = -move_speed;
+        else if (dir == DIR.RIGHT) _dx = move_speed;
+        else if (dir == DIR.UP) _dy = -move_speed;
+        else if (dir == DIR.DOWN) _dy = move_speed;
+
+        if (!place_meeting(x + _dx, y + _dy, obj_collision)) {
+            x += _dx;
+            y += _dy;
+        } else {
+            dir = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
+        }
+        wander_steps -= 1;
+        if (wander_steps <= 0) {
+            state            = ANIMAL_STATE.IDLE;
+            idle_timer       = irandom_range(60, 240);
+            max_wander_steps = irandom_range(30, 120);
+        }
+    break;
+
+    case ANIMAL_STATE.CHASING:
+        if (!instance_exists(obj_player)) {
+            state       = ANIMAL_STATE.IDLE;
+            chase_timer = 0;
+            break;
+        }
+
+        var _pdir = point_direction(x, y, obj_player.x, obj_player.y);
+        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
+
+        if (_pdir >= 45 && _pdir < 135) dir = DIR.UP;
+        else if (_pdir >= 135 && _pdir < 225) dir = DIR.LEFT;
+        else if (_pdir >= 225 && _pdir < 315) dir = DIR.DOWN;
+        else dir = DIR.RIGHT;
+
+        if (_dist > 28) {
+            var _cspeed = move_speed * chase_speed_mult;
+            var _cdx = lengthdir_x(_cspeed, _pdir);
+            var _cdy = lengthdir_y(_cspeed, _pdir);
+
+            if (!place_meeting(x + _cdx, y + _cdy, obj_collision)) {
+                x += _cdx;
+                y += _cdy;
+            } else {
+                if (!place_meeting(x + _cdx, y, obj_collision)) x += _cdx;
+                if (!place_meeting(x, y + _cdy, obj_collision)) y += _cdy;
+            }
+        }
+
+        if (attack_cooldown > 0) attack_cooldown--;
+
+        if (attack_cooldown <= 0 && _dist < attack_range && obj_player.hp > 0) {
+            obj_player.hp -= attack_damage;
+            obj_player.hurt_timer = 60;
+            audio_play_sound(sound_hurt, 1, false);
+            attack_cooldown = attack_cooldown_max;
+        }
+
+        if (_dist > 500) chase_timer -= 3;
+        else chase_timer--;
+
+        if (chase_timer <= 0) {
+            state      = ANIMAL_STATE.IDLE;
+            idle_timer = irandom_range(60, 240);
+        }
+    break;
+}
