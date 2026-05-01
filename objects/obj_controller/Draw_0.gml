@@ -34,7 +34,7 @@ if (show_selector) {
 
             draw_set_alpha(0.5);
 
-            draw_sprite(_data.sprite, _data.subimg, gx + _off_x, gy + _off_y);
+            draw_sprite(_data.sprite, _data.subimg, _sx1 + _off_x, _sy1 + _off_y);
             draw_set_alpha(1.0);
         }
     }

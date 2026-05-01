@@ -10,6 +10,8 @@ if (!is_initialized && item_key != "") {
     else if (variable_struct_exists(global.animal_product_data,     item_key)) _data = global.animal_product_data[$     item_key];
     else if (variable_struct_exists(global.crafting_material_data, item_key)) _data = global.crafting_material_data[$ item_key];
     else if (variable_struct_exists(global.ore_data, item_key)) _data = global.ore_data[$ item_key];
+    else if (variable_struct_exists(global.bar_data, item_key)) _data = global.bar_data[$ item_key];
+    else if (variable_struct_exists(global.jam_data, item_key)) _data = global.jam_data[$ item_key];
     else if (variable_struct_exists(global.gemstone_data, item_key)) _data = global.gemstone_data[$ item_key];
 
     if (_data != undefined) {
@@ -75,6 +77,8 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.animal_product_data,     item_key)) _name = global.animal_product_data[$     item_key].name;
                 else if (variable_struct_exists(global.crafting_material_data, item_key)) _name = global.crafting_material_data[$ item_key].name;
                 else if (variable_struct_exists(global.ore_data, item_key)) _name = global.ore_data[$ item_key].name;
+                else if (variable_struct_exists(global.bar_data, item_key)) _name = global.bar_data[$ item_key].name;
+                else if (variable_struct_exists(global.jam_data, item_key)) _name = global.jam_data[$ item_key].name;
                 else if (variable_struct_exists(global.gemstone_data, item_key)) _name = global.gemstone_data[$ item_key].name;
 
                 scr_notify_item(quantity, _name);

@@ -25,11 +25,15 @@ enum NET_CMD {
     CMD_SHOP_BUY     = 38,
     CMD_BUY_BUILDING = 39,
     CMD_UPGRADE_TOOL = 40,
-    CMD_DROP         = 41,
-    INVENTORY_UPDATE = 48,
-    MONEY_UPDATE     = 49,
-    ENERGY_UPDATE    = 50,
-    WORLD_EVENT      = 64,
+    CMD_DROP           = 41,
+    CMD_MINE_ENTER     = 42,
+    CMD_MINE_GO_DEEPER = 43,
+    CMD_MINE_EXIT      = 44,
+    INVENTORY_UPDATE   = 48,
+    MONEY_UPDATE       = 49,
+    ENERGY_UPDATE      = 50,
+    MINE_STATE_UPDATE  = 51,
+    WORLD_EVENT        = 64,
     TIME_UPDATE      = 65,
     NEW_DAY          = 66,
     SLEEP_REQUEST    = 80,
@@ -89,7 +93,7 @@ global.animal_data = {
     chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drops: ["egg_chicken_brown_reg", "egg_chicken_white_reg", "chicken_leg"],  crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["milk_reg", "milk_large", "steak"],                              crafting_drops: ["cow_hide_red","cow_hide_orange","cow_hide_yellow","cow_hide_green","cow_hide_blue","cow_hide_lilac","cow_hide_purple","cow_hide_turquoise","cow_hide_pink","cow_hide_lime","cow_hide_amber","cow_hide_brown","cow_hide_black","cow_hide_white"] },
     duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"],                                       product_drops: ["egg_duck_reg", "egg_duck_large"],                               crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
-    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["goat_milk_reg", "goat_milk_large", "goat_cheese"],             crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
+    goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["goat_milk_reg", "goat_milk_large"],                          crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
     ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"],                                                                                                product_drops: ["chicken_leg", "egg_chicken_large_generic"],                    crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"],                                                                                                     product_drops: ["bacon", "steak"],                                              crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
     sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"],                                                                                                       product_drops: ["wool"],                                                        crafting_drops: ["yarn_red","yarn_orange","yarn_yellow","yarn_green","yarn_blue","yarn_lilac","yarn_purple","yarn_turquoise","yarn_pink","yarn_lime","yarn_amber","yarn_brown","yarn_black","yarn_white"] },
@@ -116,7 +120,9 @@ enum ITEM_TYPE {
     FISH,       // Peces capturados
     PLACEABLE,  // Objetos que se pueden colocar: cofres, decoracion, etc.
     INSECT,      // Insectos capturados con la red
-    ORE         // Minerales de la mina
+    ORE,        // Minerales de la mina
+    BAR,        // Lingotes de metal
+    JAM         // Mermelada
 }
 
 enum TOOL_TYPE {
@@ -249,6 +255,24 @@ global.crop_data = {
      grapes:        { name: "Uva",      seasons: [SEASON.FALL], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 298, base_buy_price: 150, base_sell_price: 110 },
     apple:         { name: "Manzana",  seasons: [SEASON.FALL], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 282, base_buy_price: 120, base_sell_price: 90, is_fruit_tree: true, sprite_width: 32, sprite_height: 48 }
 };
+
+// --- MERMELADAS ---
+global.jam_data = {};
+var _jd = global.jam_data;
+var _jam_crops = ["cherry","apricot","strawberry","spring_onion","potato","onion","carrot","blueberry","parsnip","cabbage","cauliflower","rice","broccoli","asparagus","tomato","banana","orange","mango","peach","sunflower","hot_pepper","corn","green_pepper","melon","watermelon","cucumber","eggplant","pineapple","green_beans","adzuki_bean","wild_berry","wheat","aloe","beetroot","pumpkin","grapes","apple"];
+for (var _ji = 0; _ji < array_length(_jam_crops); _ji++) {
+    var _jc = _jam_crops[_ji];
+    var _crop_data = global.crop_data[$ _jc];
+    if (_crop_data != undefined) {
+        _jd[$ "jam_" + _jc] = {
+            name: "Mermelada de " + _crop_data.name,
+            type: ITEM_TYPE.JAM,
+            sprite: sprite_jam,
+            subimg: 0,
+            base_sell_price: round(_crop_data.base_sell_price * 2.5)
+        };
+    }
+}
 
 // --- BASE DE DATOS DE HERRAMIENTAS Y ARMAS
 global.tool_data = {
@@ -396,6 +420,83 @@ global.placeable_data = {
         droppable: true,
         base_buy_price: 100,
         base_sell_price: 50
+    },
+    machine_curtidora: {
+        name: "Curtidora",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_curtidora,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 200,
+        base_sell_price: 100,
+        machine_type: "curtidora"
+    },
+    machine_telar: {
+        name: "Telar",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_telar,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 300,
+        base_sell_price: 150,
+        machine_type: "telar"
+    },
+    machine_mantequillera: {
+        name: "Mantequillera",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_mantequillera,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 250,
+        base_sell_price: 125,
+        machine_type: "mantequillera"
+    },
+    machine_mermeladora: {
+        name: "Mermeladora",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_mermeladora,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 400,
+        base_sell_price: 200,
+        machine_type: "mermeladora"
+    },
+    machine_prensa_queso: {
+        name: "Prensa de Queso",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_prensa_queso,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 250,
+        base_sell_price: 125,
+        machine_type: "prensa_queso"
+    },
+    machine_horno: {
+        name: "Horno",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_horno,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 350,
+        base_sell_price: 175,
+        machine_type: "horno"
+    },
+    machine_colmena: {
+        name: "Colmena",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_colmena,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_buy_price: 500,
+        base_sell_price: 250,
+        machine_type: "colmena"
     }
 };
 
@@ -447,6 +548,20 @@ global.ore_rock_sprites = [
     sprite_rock_ore_hitlerstanio,
     sprite_rock_ore_vitolanio
 ];
+
+global.bar_data = {};
+var _bd = global.bar_data;
+var _bar_sell = [20, 40, 80, 160, 320, 640, 1280, 2560];
+for (var _bi = 0; _bi < 8; _bi++) {
+    var _bn = global.ore_names[_bi];
+    _bd[$ "bar_" + _bn] = {
+        name: "Lingote de " + (string_upper(string_char_at(_bn, 1)) + string_copy(_bn, 2, string_length(_bn) - 1)),
+        type: ITEM_TYPE.BAR,
+        sprite: sprite_metals,
+        subimg: _bi + 8,
+        base_sell_price: _bar_sell[_bi]
+    };
+}
 
 global.mine_state = {
     active: false,
@@ -1024,3 +1139,130 @@ global.cave_repopulate = {
     cave_5: true,
     cave_6: true,
 };
+
+// --- DATOS DE MÁQUINAS ---
+global.machine_data = {
+    curtidora: {
+        name: "Curtidora",
+        sprite: sprite_machine_curtidora,
+        anim_frames: 3,
+        process_time: 600,
+        preserve_color: true,
+        color_inputs: ["pelt", "cow_hide", "rabbit_pelt"],
+        color_output: "leather"
+    },
+    telar: {
+        name: "Telar",
+        sprite: sprite_machine_telar,
+        anim_frames: 7,
+        process_time: 600,
+        preserve_color: true,
+        color_inputs: ["yarn", "thread"],
+        color_outputs: ["thread", "cloth"]
+    },
+    mantequillera: {
+        name: "Mantequillera",
+        sprite: sprite_machine_mantequillera,
+        anim_frames: 3,
+        process_time: 480,
+        preserve_color: false,
+        recipes: [
+            { input: "milk_reg", output: "butter", qty: 1 },
+            { input: "milk_large", output: "butter", qty: 2 },
+            { input: "egg_chicken_white_reg", output: "mayonaise", qty: 1 },
+            { input: "egg_chicken_brown_reg", output: "mayonaise", qty: 1 },
+            { input: "egg_chicken_white_large", output: "mayonaise", qty: 2 },
+            { input: "egg_chicken_brown_large", output: "mayonaise", qty: 2 },
+            { input: "egg_duck_reg", output: "mayonaise", qty: 1 },
+            { input: "egg_duck_large", output: "mayonaise", qty: 2 },
+            { input: "egg_chicken_large_generic", output: "mayonaise", qty: 2 }
+        ]
+    },
+    mermeladora: {
+        name: "Mermeladora",
+        sprite: sprite_machine_mermeladora,
+        anim_frames: 3,
+        process_time: 900,
+        preserve_color: false,
+        recipe_type: "fruit_to_jam"
+    },
+    prensa_queso: {
+        name: "Prensa de Queso",
+        sprite: sprite_machine_prensa_queso,
+        anim_frames: 4,
+        process_time: 720,
+        preserve_color: false,
+        recipes: [
+            { input: "milk_reg", output: "cheese", qty: 1 },
+            { input: "milk_large", output: "cheese", qty: 2 },
+            { input: "goat_milk_reg", output: "goat_cheese", qty: 1 },
+            { input: "goat_milk_large", output: "goat_cheese", qty: 2 }
+        ]
+    },
+    horno: {
+        name: "Horno",
+        sprite: sprite_machine_horno,
+        anim_frames: 4,
+        process_time: 1200,
+        preserve_color: false,
+        recipes: [
+            { input: "wood", output: "coal", qty: 1 },
+            { input: "ore_bronce", output: "bar_bronce", qty: 1 },
+            { input: "ore_plata", output: "bar_plata", qty: 1 },
+            { input: "ore_oro", output: "bar_oro", qty: 1 },
+            { input: "ore_broncastanio", output: "bar_broncastanio", qty: 1 },
+            { input: "ore_chubestanio", output: "bar_chubestanio", qty: 1 },
+            { input: "ore_picastanio", output: "bar_picastanio", qty: 1 },
+            { input: "ore_hitlerstanio", output: "bar_hitlerstanio", qty: 1 },
+            { input: "ore_vitolanio", output: "bar_vitolanio", qty: 1 }
+        ]
+    },
+    colmena: {
+        name: "Colmena",
+        sprite: sprite_machine_colmena,
+        anim_frames: 6,
+        process_time: 3600,
+        preserve_color: false,
+        passive: true,
+        output: "honey",
+        output_qty: 1
+    }
+};
+
+function scr_match_machine_recipe(_machine_type, _item_key) {
+    var _md = global.machine_data[$ _machine_type];
+    if (_md == undefined) return undefined;
+
+    if (_md.preserve_color) {
+        for (var _pi = 0; _pi < array_length(_md.color_inputs); _pi++) {
+            var _prefix = _md.color_inputs[_pi] + "_";
+            if (string_starts_with(_item_key, _prefix)) {
+                var _suffix = string_copy(_item_key, string_length(_prefix) + 1, string_length(_item_key));
+                var _out_prefix = variable_struct_exists(_md, "color_outputs") ? _md.color_outputs[_pi] : _md.color_output;
+                return { output: _out_prefix + "_" + _suffix, qty: 1 };
+            }
+        }
+        return undefined;
+    }
+
+    if (variable_struct_exists(_md, "recipe_type") && _md.recipe_type == "fruit_to_jam") {
+        if (variable_struct_exists(global.crop_data, _item_key)) {
+            var _jam_key = "jam_" + _item_key;
+            if (variable_struct_exists(global.jam_data, _jam_key)) {
+                return { output: _jam_key, qty: 1 };
+            }
+        }
+        return undefined;
+    }
+
+    if (variable_struct_exists(_md, "recipes")) {
+        for (var _ri = 0; _ri < array_length(_md.recipes); _ri++) {
+            var _r = _md.recipes[_ri];
+            if (_r.input == _item_key) {
+                return { output: _r.output, qty: _r.qty };
+            }
+        }
+    }
+
+    return undefined;
+}

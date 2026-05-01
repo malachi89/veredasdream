@@ -1,5 +1,7 @@
 // Destroy room-layout duplicate when a persistent player already exists in this session.
-if (instance_exists(global.local_player) && global.local_player != id) {
+// Exception: ghost players (is_local=false) are intentionally created by net_handle_handshake.
+var _creating_ghost = variable_instance_exists(id, "is_local") && !is_local;
+if (!_creating_ghost && instance_exists(global.local_player) && global.local_player != id) {
     instance_destroy();
     exit;
 }
@@ -106,7 +108,10 @@ function add_item(_item_key, _qty = 1) {
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.material_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.ore_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.bar_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.jam_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.gemstone_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.placeable_data, _item_key)) _is_stackable = true;
 
     if (_is_stackable) {
         for (var i = 0; i < total_slots; i++) {
@@ -216,4 +221,48 @@ if (is_host) {
     add_item("sword", 1);
     add_item("bow", 1);
     add_item("parsnip_seeds", 10);
+
+    // Máquinas (1 each)
+    add_item("machine_curtidora", 1);
+    add_item("machine_telar", 1);
+    add_item("machine_mantequillera", 1);
+    add_item("machine_mermeladora", 1);
+    add_item("machine_prensa_queso", 1);
+    add_item("machine_horno", 1);
+    add_item("machine_colmena", 1);
+
+    // Curtidora — pieles (10 each)
+    add_item("pelt_red", 10);
+    add_item("cow_hide_red", 10);
+    add_item("rabbit_pelt_red", 10);
+
+    // Telar — hilado/tejido (10 each)
+    add_item("yarn_red", 10);
+    add_item("thread_red", 10);
+
+    // Prensa de queso — leches (10 each)
+    add_item("milk_reg", 10);
+    add_item("milk_large", 10);
+    add_item("goat_milk_reg", 10);
+    add_item("goat_milk_large", 10);
+
+    // Mantequillera — huevos (10 each)
+    add_item("egg_chicken_brown_reg", 10);
+    add_item("egg_duck_reg", 10);
+
+    // Horno — minerales y madera (10 each)
+    add_item("ore_bronce", 10);
+    add_item("ore_plata", 10);
+    add_item("ore_oro", 10);
+    add_item("ore_broncastanio", 10);
+    add_item("ore_chubestanio", 10);
+    add_item("ore_picastanio", 10);
+    add_item("ore_hitlerstanio", 10);
+    add_item("ore_vitolanio", 10);
+    add_item("wood", 10);
+
+    // Mermeladora — frutas (10 each)
+    add_item("strawberry", 10);
+    add_item("tomato", 10);
+    add_item("blueberry", 10);
 }

@@ -1,4 +1,9 @@
 function scr_exit_mine() {
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_mine_exit();
+        return;
+    }
+
     var _di = global.mine_state.door_index;
     if (_di >= 0 && global.mine_state.floor > global.mine_progress[_di]) {
         global.mine_progress[_di] = global.mine_state.floor;

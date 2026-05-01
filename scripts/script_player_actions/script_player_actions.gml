@@ -460,25 +460,44 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
         // Bloquear si el selector está en rojo (distancia o colisión con jugador)
         if (instance_exists(obj_controller) && obj_controller.selector_color == c_red) exit;
 
-        var _can_place = !instance_position(_gx + 8, _gy + 8, obj_collision) &&
-                         !instance_position(_gx + 8, _gy + 8, obj_crop) &&
-                         !instance_position(_gx + 8, _gy + 8, obj_tree) &&
-                         !instance_position(_gx + 8, _gy + 8, obj_item_parent) &&
-                         _gx >= 0 && _gy >= 0 && _gx < room_width - 16 && _gy < room_height - 16;
+        var _data = global.placeable_data[$ _item_key];
+        var _spr = _data.sprite;
+        var _tw = ceil(sprite_get_width(_spr) / 16);
+        var _th = ceil(sprite_get_height(_spr) / 16);
+        var _px_end = _gx + _tw * 16;
+        var _py_end = _gy + _th * 16;
+
+        var _can_place = true;
+        for (var _tx = _gx; _tx < _px_end; _tx += 16) {
+            for (var _ty = _gy; _ty < _py_end; _ty += 16) {
+                if (instance_position(_tx + 8, _ty + 8, obj_collision) ||
+                    instance_position(_tx + 8, _ty + 8, obj_crop) ||
+                    instance_position(_tx + 8, _ty + 8, obj_tree) ||
+                    instance_position(_tx + 8, _ty + 8, obj_item_parent)) {
+                    _can_place = false;
+                    break;
+                }
+            }
+            if (!_can_place) break;
+        }
+        _can_place = _can_place && _gx >= 0 && _gy >= 0 && _px_end <= room_width && _py_end <= room_height;
 
         // Verificar que el jugador no esté en el camino
         if (_can_place) {
-            if (collision_rectangle(_gx, _gy, _gx + 15, _gy + 15, self, false, true)) {
+            if (collision_rectangle(_gx, _gy, _px_end - 1, _py_end - 1, self, false, true)) {
                 _can_place = false;
             }
         }
 
         if (_can_place && !_anim_only) {
-            var _data = global.placeable_data[$ _item_key];
             var _off_x = variable_struct_exists(_data, "place_offset_x") ? _data.place_offset_x : 0;
             var _off_y = variable_struct_exists(_data, "place_offset_y") ? _data.place_offset_y : 0;
 
-            var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
+            if (variable_struct_exists(_data, "machine_type")) {
+                var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_machine, { machine_type: _data.machine_type });
+            } else {
+                var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
+            }
 
             // Gastar item del inventario
             var _inv_slot = self.inventory_array[self.selected_slot];

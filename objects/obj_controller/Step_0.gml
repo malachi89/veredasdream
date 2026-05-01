@@ -89,7 +89,8 @@ if (global.forest_needs_repopulate && _room_name == "forest"
 if (struct_exists(global.cave_repopulate, _room_name)
         && global.cave_repopulate[$ _room_name]
         && instance_exists(global.local_player)
-        && instance_exists(obj_inventory)) {
+        && instance_exists(obj_inventory)
+        && global.net_role != NET_ROLE.CLIENT) {
     global.cave_repopulate[$ _room_name] = false;
     if (global.mine_state.active) {
         scr_populate_cave(global.mine_state.ore_type, global.mine_state.floor);
@@ -97,6 +98,12 @@ if (struct_exists(global.cave_repopulate, _room_name)
     } else {
         scr_populate_cave();
         scr_capture_current_room_state();
+    }
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        var _state_key = global.mine_state.active
+            ? "mine_" + string(global.mine_state.door_index) + "_floor_" + string(global.mine_state.floor)
+            : _room_name;
+        net_broadcast_room_state(_state_key);
     }
 }
 
@@ -701,6 +708,14 @@ if (instance_exists(_lp) && !sleep_menu_open && !_lp.show_backpack) {
                 var _selected_item_data = (is_struct(_slot_content)) ? scr_get_item_data(_item_key) : undefined;
                 var _is_fruit_tree_seed = variable_struct_exists(_selected_item_data, "is_fruit_tree") && _selected_item_data.is_fruit_tree;
 
+                var _is_placeable_data = _is_placeable ? global.placeable_data[$ _item_key] : undefined;
+                var _placeable_tiles_w = 1;
+                var _placeable_tiles_h = 1;
+                if (_is_placeable_data != undefined && _is_placeable_data.sprite != undefined) {
+                    _placeable_tiles_w = ceil(sprite_get_width(_is_placeable_data.sprite) / 16);
+                    _placeable_tiles_h = ceil(sprite_get_height(_is_placeable_data.sprite) / 16);
+                }
+
                 var _can_actually_place = false;
 
                 if (_is_fruit_tree_seed) {
@@ -726,7 +741,14 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                                     (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, xx, yy) != 0)) {
                                     _tree_area_clear = false;
                                     break;
-                                }
+            }
+            if (_is_placeable) {
+                var _pdata = global.placeable_data[$ _item_key];
+                if (_pdata != undefined && _pdata.sprite != undefined) {
+                    selector_w = ceil(sprite_get_width(_pdata.sprite) / 16);
+                    selector_h = ceil(sprite_get_height(_pdata.sprite) / 16);
+                }
+            }
                             }
                             if (!_tree_area_clear) break;
                         }
@@ -734,21 +756,35 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                     _can_actually_place = _tree_area_clear && (_actual_dist <= 32); // Add distance check for trees
                 } else {
                     // Existing logic for normal crops and placeable objects
-                    var _occupied = instance_position(gx + 8, gy + 8, obj_collision) || 
-                                    instance_position(gx + 8, gy + 8, obj_crop) || 
-                                    instance_position(gx + 8, gy + 8, obj_tree) || 
-                                    instance_position(gx + 8, gy + 8, obj_item_parent);
+                    var _tw = _is_placeable ? _placeable_tiles_w : 1;
+                    var _th = _is_placeable ? _placeable_tiles_h : 1;
+                    var _px_end = gx + _tw * 16;
+                    var _py_end = gy + _th * 16;
+
+                    var _occupied = false;
+                    for (var _tx = gx; _tx < _px_end; _tx += 16) {
+                        for (var _ty = gy; _ty < _py_end; _ty += 16) {
+                            if (instance_position(_tx + 8, _ty + 8, obj_collision) ||
+                                instance_position(_tx + 8, _ty + 8, obj_crop) ||
+                                instance_position(_tx + 8, _ty + 8, obj_tree) ||
+                                instance_position(_tx + 8, _ty + 8, obj_item_parent)) {
+                                _occupied = true;
+                                break;
+                            }
+                        }
+                        if (_occupied) break;
+                    }
                     
-                    var _collides_with_player = collision_rectangle(gx, gy, gx + 15, gy + 15, obj_player, false, true);
+                    var _collides_with_player = collision_rectangle(gx, gy, _px_end - 1, _py_end - 1, obj_player, false, true);
                     
-                    var _in_bounds = gx >= 0 && gy >= 0 && gx < room_width - 16 && gy < room_height - 16;
+                    var _in_bounds = gx >= 0 && gy >= 0 && _px_end <= room_width && _py_end <= room_height;
                     
                     var _current_tile_at_gxgy = (_map_id != -1) ? tilemap_get_at_pixel(_map_id, gx, gy) : 0; // Use _gx, _gy directly
                     var _is_tillable_ground = (_map_id != -1 && (_current_tile_at_gxgy == 72 || _current_tile_at_gxgy == 168)) && (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, gx, gy) == 0);
                     
                     _can_actually_place = (_actual_dist <= 32 || _is_placeable) && !_occupied && !_collides_with_player && _in_bounds;
                     
-                    if (_is_seed) { // Only if it's a normal seed, it needs tilled soil
+                    if (_is_seed && !_is_placeable) { // Only if it's a normal seed, it needs tilled soil
                         _can_actually_place = _can_actually_place && _is_tillable_ground;
                     }
                 }

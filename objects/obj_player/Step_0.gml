@@ -124,6 +124,53 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
         } else {
             var _did_interact = false;
 
+            // Machine interaction
+            if (!_did_interact) {
+                var _machine = instance_nearest(x, y, obj_machine);
+                if (_machine != noone && point_distance(x, y, _machine.x, _machine.y) < 48) {
+                    if (_machine.state == 2) {
+                        if (add_item(_machine.output_key, _machine.output_qty)) {
+                            _machine.state = 0;
+                            _machine.image_index = 0;
+                            _machine.input_key = "";
+                            var _out_name = "";
+                            var _od = scr_get_item_data(_machine.output_key);
+                            if (_od != undefined) _out_name = _od.name;
+                            _machine.output_key = "";
+                            _machine.output_qty = 0;
+                            if (_machine.passive) _machine.passive_timer = 300;
+                            if (_out_name != "") scr_notify(_out_name + " recogido");
+                            else scr_notify("Producto recogido");
+                        } else {
+                            scr_notify("Inventario lleno");
+                        }
+                        _did_interact = true;
+                    } else if (_machine.state == 0 && !_machine.passive) {
+                        var _selected = inventory_array[selected_slot];
+                        var _sk = is_struct(_selected) ? _selected.key : "";
+                        if (_sk != "" && _sk != -1) {
+                            var _md = global.machine_data[$ _machine.machine_type];
+                            var _recipe = scr_match_machine_recipe(_machine.machine_type, _sk);
+                            if (is_struct(_recipe)) {
+                                if (is_struct(_selected)) {
+                                    _selected.quantity -= 1;
+                                    if (_selected.quantity <= 0) inventory_array[selected_slot] = -1;
+                                }
+                                _machine.input_key = _sk;
+                                _machine.output_key = _recipe.output;
+                                _machine.output_qty = _recipe.qty;
+                                _machine.state = 1;
+                                _machine.timer = _md.process_time;
+                                _machine.image_speed = 0;
+                                _machine.image_index = 1;
+                                scr_notify("Procesando...");
+                                _did_interact = true;
+                            }
+                        }
+                    }
+                }
+            }
+
             // Cave door interaction (E key only for locked doors now; open doors auto-enter on collision)
             var _locked_door = instance_nearest(x, y, obj_cave_door_closed);
             if (_locked_door != noone && point_distance(x, y, _locked_door.x, _locked_door.y) < 40) {
@@ -240,7 +287,7 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
             scr_use_item(_selected_item, _gx, _gy);
             if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
                 scr_capture_current_room_state();
-                net_broadcast_room_state(room_get_name(room));
+                net_broadcast_room_state(scr_current_room_key());
             }
         }
         tool_cooldown = 50;
@@ -259,7 +306,7 @@ if (bow_drawing && !mouse_check_button(mb_left)) {
         _arr.damage = bow_quality + 1;
         if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
             scr_capture_current_room_state();
-            net_broadcast_room_state(room_get_name(room));
+            net_broadcast_room_state(scr_current_room_key());
         }
     } else {
         var _bow_item = inventory_array[selected_slot];
@@ -347,7 +394,7 @@ if (state == STATE.ACTING) {
                     instance_destroy(_nearest);
                     if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
                         scr_capture_current_room_state();
-                        net_broadcast_room_state(room_get_name(room));
+                        net_broadcast_room_state(scr_current_room_key());
                     }
                 } else {
                     scr_notify("¡Fallaste!");

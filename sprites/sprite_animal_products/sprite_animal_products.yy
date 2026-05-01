@@ -44,8 +44,8 @@
   "nineSlice":null,
   "origin":0,
   "parent":{
-    "name":"farm_animals",
-    "path":"folders/sprites/animals/farm_animals.yy",
+    "name":"materials",
+    "path":"folders/sprites/materials.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

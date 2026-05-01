@@ -1,4 +1,9 @@
 function scr_go_deeper() {
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_mine_go_deeper();
+        return;
+    }
+
     scr_capture_current_room_state();
 
     global.mine_state.floor++;

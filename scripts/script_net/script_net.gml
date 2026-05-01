@@ -12,19 +12,19 @@
 
 // --- Send helpers ---
 
-// Begin a new outgoing packet. Returns a buffer with a 3-byte header written.
+// Begin a new outgoing packet. Returns a buffer with a 5-byte header written.
 // Caller writes payload bytes, then calls net_send() to finalise and send.
 function net_begin(_cmd) {
     var _buf = buffer_create(256, buffer_grow, 1);
-    buffer_write(_buf, buffer_u16, 0);   // placeholder for payload_size
-    buffer_write(_buf, buffer_u8, _cmd);
+    buffer_write(_buf, buffer_u32, 0);   // placeholder for payload_size (4 bytes)
+    buffer_write(_buf, buffer_u8, _cmd); // cmd at offset 4
     return _buf;
 }
 
 // Finalise size, send, and free the buffer.
 function net_send(_socket, _buf) {
-    var _payload_size = buffer_tell(_buf) - 3;
-    buffer_poke(_buf, 0, buffer_u16, _payload_size);
+    var _payload_size = buffer_tell(_buf) - 5;
+    buffer_poke(_buf, 0, buffer_u32, _payload_size);
     network_send_packet(_socket, _buf, buffer_tell(_buf));
     buffer_delete(_buf);
 }
@@ -32,8 +32,8 @@ function net_send(_socket, _buf) {
 // Broadcast to all connected peers (host sends to client; client sends to host).
 function net_broadcast(_buf) {
     if (!instance_exists(obj_net)) return;
-    var _payload_size = buffer_tell(_buf) - 3;
-    buffer_poke(_buf, 0, buffer_u16, _payload_size);
+    var _payload_size = buffer_tell(_buf) - 5;
+    buffer_poke(_buf, 0, buffer_u32, _payload_size);
     var _total = buffer_tell(_buf);
     if (global.net_role == NET_ROLE.HOST && obj_net.peer_socket >= 0) {
         network_send_packet(obj_net.peer_socket, _buf, _total);
@@ -53,17 +53,17 @@ function net_process_incoming(_raw_buf, _raw_size, _from_socket) {
     _net.recv_fill += _raw_size;
 
     var _pos = 0;
-    while (_pos + 3 <= _net.recv_fill) {
-        var _payload_size = buffer_peek(_net.recv_buf, _pos,     buffer_u16);
-        var _total        = 3 + _payload_size;
+    while (_pos + 5 <= _net.recv_fill) {
+        var _payload_size = buffer_peek(_net.recv_buf, _pos,     buffer_u32);
+        var _total        = 5 + _payload_size;
         if (_pos + _total > _net.recv_fill) break; // incomplete packet — wait
 
-        var _cmd = buffer_peek(_net.recv_buf, _pos + 2, buffer_u8);
+        var _cmd = buffer_peek(_net.recv_buf, _pos + 4, buffer_u8);
 
         // Slice payload into its own buffer for the handler
         var _payload = buffer_create(_payload_size + 1, buffer_fixed, 1);
         if (_payload_size > 0) {
-            buffer_copy(_net.recv_buf, _pos + 3, _payload_size, _payload, 0);
+            buffer_copy(_net.recv_buf, _pos + 5, _payload_size, _payload, 0);
         }
         buffer_seek(_payload, buffer_seek_start, 0);
 
@@ -128,11 +128,23 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.CMD_DROP:
             net_handle_drop(_payload);
             break;
+        case NET_CMD.CMD_MINE_ENTER:
+            net_handle_mine_enter(_payload);
+            break;
+        case NET_CMD.CMD_MINE_GO_DEEPER:
+            net_handle_mine_go_deeper(_payload);
+            break;
+        case NET_CMD.CMD_MINE_EXIT:
+            net_handle_mine_exit(_payload);
+            break;
         case NET_CMD.CMD_CHEST_SLOT:
             net_handle_chest_slot(_payload);
             break;
         case NET_CMD.INVENTORY_UPDATE:
             net_handle_inventory_update(_payload);
+            break;
+        case NET_CMD.MINE_STATE_UPDATE:
+            net_handle_mine_state_update(_payload);
             break;
         case NET_CMD.MONEY_UPDATE:
             net_handle_money_update(_payload);
@@ -206,7 +218,7 @@ function net_handle_handshake(_payload, _client_socket) {
         if (instance_exists(obj_net.remote_player_ghost)) {
             instance_destroy(obj_net.remote_player_ghost);
         }
-        var _g = instance_create_layer(-2000, -2000, "Instances", _obj_p);
+        var _g = instance_create_layer(-2000, -2000, "Instances", _obj_p, { is_local: false });
         _g.player_id  = 2;
         _g.is_local   = false;
         _g.is_host    = false;
@@ -262,10 +274,15 @@ function net_send_full_snapshot(_client_socket) {
             money:     500,
             energy:    500
         },
-        room_states:    global.room_states,
-        room_drops:     global.room_drops,
-        next_drop_uid:  global.next_drop_uid,
-        farm_populated: global.farm_populated
+        room_states:              global.room_states,
+        room_drops:               global.room_drops,
+        next_drop_uid:            global.next_drop_uid,
+        farm_populated:           global.farm_populated,
+        mine_state:               global.mine_state,
+        mine_unlocks:             global.mine_unlocks,
+        mine_progress:            global.mine_progress,
+        mine_floor_room_assigned: global.mine_floor_room_assigned,
+        cave_repopulate:          global.cave_repopulate
     };
 
     var _json = json_stringify(_snap);
@@ -290,7 +307,12 @@ function net_handle_full_snapshot(_payload) {
     global.room_states    = _snap.room_states;
     global.room_drops     = _snap.room_drops;
     global.next_drop_uid  = _snap.next_drop_uid;
-    global.farm_populated = _snap.farm_populated;
+    global.farm_populated           = _snap.farm_populated;
+    global.mine_state               = _snap.mine_state;
+    global.mine_unlocks             = _snap.mine_unlocks;
+    global.mine_progress            = _snap.mine_progress;
+    global.mine_floor_room_assigned = _snap.mine_floor_room_assigned;
+    global.cave_repopulate          = _snap.cave_repopulate;
 
     // Destroy any existing players, spawn player2 as local player
     with (obj_player) instance_destroy();
@@ -598,8 +620,7 @@ function net_handle_room_change(_payload) {
 function net_send_room_snapshot(_room_name, _target_x, _target_y) {
     if (!instance_exists(obj_net) || !obj_net.is_connected) return;
 
-    var _state = variable_struct_exists(global.room_states, _room_name)
-                 ? global.room_states[$ _room_name] : {};
+    var _state = scr_get_room_state(_room_name);
     var _drops = variable_struct_exists(global.room_drops, _room_name)
                  ? global.room_drops[$  _room_name] : [];
 
@@ -856,7 +877,10 @@ function net_handle_world_event(_payload) {
             var _drops_json = buffer_read(_payload, buffer_string);
             global.room_states[$ _room_name] = json_parse(_state_json);
             global.room_drops[$  _room_name] = json_parse(_drops_json);
-            if (_room_name == room_get_name(room) && instance_exists(obj_controller)) {
+            var _mine_key = global.mine_state.active
+                ? "mine_" + string(global.mine_state.door_index) + "_floor_" + string(global.mine_state.floor)
+                : room_get_name(room);
+            if ((_room_name == room_get_name(room) || _room_name == _mine_key) && instance_exists(obj_controller)) {
                 with (obj_controller) {
                     scr_restore_room_state(_room_name);
                     scr_restore_room_drops(_room_name);
@@ -967,7 +991,7 @@ function net_handle_use_item(_payload) {
     with (_obj_rp) {
         if (player_id == 2) { _client_room = room_name; break; }
     }
-    if (_client_room != "" && _client_room != room_get_name(room)) {
+    if (_client_room == "" || _client_room != room_get_name(room)) {
         return;
     }
 
@@ -1011,7 +1035,7 @@ function net_handle_use_item(_payload) {
 
     // Broadcast updated room state so both players see the world change
     scr_capture_current_room_state();
-    net_broadcast_room_state(room_get_name(room));
+    net_broadcast_room_state(scr_current_room_key());
 }
 
 // --- Room state broadcast (host → client) ---
@@ -1148,6 +1172,152 @@ function net_handle_pickup(_payload) {
 
     // Broadcast so global.room_drops is identical on both machines
     net_broadcast_room_state(_room_name);
+}
+
+// --- Mine navigation (client ↔ host) ---
+
+function net_send_mine_enter(_door_index, _door_x, _door_y) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_MINE_ENTER);
+    buffer_write(_buf, buffer_u8, _door_index);
+    buffer_write(_buf, buffer_s32, _door_x);
+    buffer_write(_buf, buffer_s32, _door_y);
+    net_broadcast(_buf);
+}
+
+function net_send_mine_go_deeper() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_MINE_GO_DEEPER);
+    net_broadcast(_buf);
+}
+
+function net_send_mine_exit() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_MINE_EXIT);
+    net_broadcast(_buf);
+}
+
+function net_send_mine_state_update() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _data = {
+        mine_state:               global.mine_state,
+        mine_unlocks:             global.mine_unlocks,
+        mine_progress:            global.mine_progress,
+        mine_floor_room_assigned: global.mine_floor_room_assigned,
+        cave_repopulate:          global.cave_repopulate,
+        target_room_name:         global.pending_player_room_name,
+        target_x:                 global.pending_player_x,
+        target_y:                 global.pending_player_y
+    };
+    var _buf = net_begin(NET_CMD.MINE_STATE_UPDATE);
+    buffer_write(_buf, buffer_string, json_stringify(_data));
+    net_broadcast(_buf);
+}
+
+function net_handle_mine_enter(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _door_index = buffer_read(_payload, buffer_u8);
+    var _door_x = buffer_read(_payload, buffer_s32);
+    var _door_y = buffer_read(_payload, buffer_s32);
+
+    var _start_floor = max(1, global.mine_progress[_door_index]);
+
+    global.mine_state.active = true;
+    global.mine_state.door_index = _door_index;
+    global.mine_state.ore_type = _door_index;
+    global.mine_state.floor = _start_floor;
+    global.mine_state.entry_door_x = _door_x;
+    global.mine_state.entry_door_y = _door_y;
+
+    var _floor_key = "mine_" + string(_door_index) + "_floor_" + string(_start_floor);
+    var _room_name;
+    if (struct_exists(global.room_states, _floor_key) && struct_exists(global.mine_floor_room_assigned, _floor_key)) {
+        _room_name = global.mine_floor_room_assigned[$ _floor_key];
+    } else {
+        _room_name = "cave_" + string(irandom(5) + 1);
+        global.mine_floor_room_assigned[$ _floor_key] = _room_name;
+        global.cave_repopulate[$ _room_name] = true;
+    }
+
+    global.pending_player_room_name = _room_name;
+    global.pending_player_x = 64;
+    global.pending_player_y = 64;
+    global.pending_player_dir = DIR.DOWN;
+
+    net_send_mine_state_update();
+}
+
+function net_handle_mine_go_deeper(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+
+    global.mine_state.floor++;
+    var _di = global.mine_state.door_index;
+
+    if (global.mine_state.floor > global.mine_progress[_di]) {
+        global.mine_progress[_di] = global.mine_state.floor;
+    }
+
+    if (global.mine_state.floor >= 10) {
+        var _next = _di + 1;
+        if (_next < 8) {
+            global.mine_unlocks[_next] = true;
+        }
+    }
+
+    var _floor_key = "mine_" + string(_di) + "_floor_" + string(global.mine_state.floor);
+    var _room_name;
+    if (struct_exists(global.room_states, _floor_key) && struct_exists(global.mine_floor_room_assigned, _floor_key)) {
+        _room_name = global.mine_floor_room_assigned[$ _floor_key];
+    } else {
+        _room_name = "cave_" + string(irandom(5) + 1);
+        global.mine_floor_room_assigned[$ _floor_key] = _room_name;
+        global.cave_repopulate[$ _room_name] = true;
+    }
+
+    global.pending_player_room_name = _room_name;
+    global.pending_player_x = 64;
+    global.pending_player_y = 64;
+    global.pending_player_dir = DIR.DOWN;
+
+    net_send_mine_state_update();
+}
+
+function net_handle_mine_exit(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+
+    var _di = global.mine_state.door_index;
+    if (_di >= 0 && global.mine_state.floor > global.mine_progress[_di]) {
+        global.mine_progress[_di] = global.mine_state.floor;
+    }
+
+    var _ex = global.mine_state.entry_door_x;
+    var _ey = global.mine_state.entry_door_y;
+    global.mine_state.active = false;
+    global.mine_state.floor = 1;
+
+    global.pending_player_room_name = "cave_entrance";
+    global.pending_player_x = _ex;
+    global.pending_player_y = _ey + 32;
+    global.pending_player_dir = DIR.DOWN;
+
+    net_send_mine_state_update();
+}
+
+function net_handle_mine_state_update(_payload) {
+    var _data = json_parse(buffer_read(_payload, buffer_string));
+    global.mine_state               = _data.mine_state;
+    global.mine_unlocks             = _data.mine_unlocks;
+    global.mine_progress            = _data.mine_progress;
+    global.mine_floor_room_assigned = _data.mine_floor_room_assigned;
+    global.cave_repopulate          = _data.cave_repopulate;
+    global.pending_player_room_name = _data.target_room_name;
+    global.pending_player_x         = _data.target_x;
+    global.pending_player_y         = _data.target_y;
+    if (instance_exists(global.local_player)) {
+        global.pending_player_dir = global.local_player.dir;
+    }
+    var _target = asset_get_index(_data.target_room_name);
+    if (_target >= 0) room_goto(_target);
 }
 
 // --- CMD_CHEST_SLOT (either player → peer) ---

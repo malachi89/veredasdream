@@ -2,6 +2,16 @@ function scr_enter_cave_mine(_door_index) {
     var _player = global.local_player;
     if (!instance_exists(_player)) exit;
 
+    var _door = instance_nearest(_player.x, _player.y, obj_cave_door_open);
+    if (_door == noone) _door = instance_nearest(_player.x, _player.y, obj_cave_door_closed);
+    var _door_x = (_door != noone) ? _door.x : 0;
+    var _door_y = (_door != noone) ? _door.y : 0;
+
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_mine_enter(_door_index, _door_x, _door_y);
+        return;
+    }
+
     scr_capture_current_room_state();
 
     var _start_floor = max(1, global.mine_progress[_door_index]);
@@ -11,8 +21,6 @@ function scr_enter_cave_mine(_door_index) {
     global.mine_state.ore_type = _door_index;
     global.mine_state.floor = _start_floor;
 
-    var _door = instance_nearest(_player.x, _player.y, obj_cave_door_open);
-    if (_door == noone) _door = instance_nearest(_player.x, _player.y, obj_cave_door_closed);
     if (_door != noone) {
         global.mine_state.entry_door_x = _door.x;
         global.mine_state.entry_door_y = _door.y;

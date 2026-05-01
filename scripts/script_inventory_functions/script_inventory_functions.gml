@@ -145,13 +145,26 @@ function scr_restore_forest_wild_animals() {
 }
 
 function scr_get_room_state(_room_name) {
-    if (!variable_struct_exists(global.room_states, _room_name)) global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [] };
-    return global.room_states[$ _room_name];
+    if (!variable_struct_exists(global.room_states, _room_name)) {
+        global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [], animals: [], wild_animals: [], machines: [] };
+    }
+    var _s = global.room_states[$ _room_name];
+    // Defensive fill — guards against {} sent for unvisited rooms in multiplayer ROOM_SNAPSHOT
+    if (!variable_struct_exists(_s, "crops"))        _s.crops        = [];
+    if (!variable_struct_exists(_s, "tilled_tiles")) _s.tilled_tiles = [];
+    if (!variable_struct_exists(_s, "chests"))       _s.chests       = [];
+    if (!variable_struct_exists(_s, "buildings"))    _s.buildings    = [];
+    if (!variable_struct_exists(_s, "horses"))       _s.horses       = [];
+    if (!variable_struct_exists(_s, "common_trees")) _s.common_trees = [];
+    if (!variable_struct_exists(_s, "rocks"))        _s.rocks        = [];
+    if (!variable_struct_exists(_s, "animals"))      _s.animals      = [];
+    if (!variable_struct_exists(_s, "wild_animals")) _s.wild_animals = [];
+    return _s;
 }
 
 function scr_capture_current_room_state() {
     var _room_name = scr_current_room_key();
-    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [], machines: [] };
     
     // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
@@ -204,6 +217,24 @@ function scr_capture_current_room_state() {
                 obj: object_get_name(_obj),
                 x: _inst.x,
                 y: _inst.y
+            });
+        }
+    }
+
+    // Capture Machines
+    if (variable_struct_exists(_state, "machines")) {
+        for (var i = 0; i < instance_number(obj_machine); i++) {
+            var _inst = instance_find(obj_machine, i);
+            array_push(_state.machines, {
+                x: _inst.x,
+                y: _inst.y,
+                machine_type: _inst.machine_type,
+                state: _inst.state,
+                timer: _inst.timer,
+                passive_timer: _inst.passive_timer,
+                input_key: _inst.input_key,
+                output_key: _inst.output_key,
+                output_qty: _inst.output_qty
             });
         }
     }
@@ -416,6 +447,44 @@ function scr_restore_room_state(_room_name) {
                 _inst.image_index = 0;
             }
             _inst.storage_array = _cd.storage_array;
+        }
+    }
+
+    // ---- MACHINES ----
+    if (variable_struct_exists(_state, "machines")) {
+        var _mach_map = _build_xy_map(_state.machines);
+        var _to_destroy = [];
+        with (obj_machine) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_mach_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+        for (var i = 0; i < array_length(_state.machines); i++) {
+            var _md = _state.machines[i];
+            if (_md.x < 0 || _md.y < 0 || _md.x >= room_width - 16 || _md.y >= room_height - 16) continue;
+            var _inst = noone;
+            with (obj_machine) { if (x == _md.x && y == _md.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_md.x, _md.y, "Instances", obj_machine, { machine_type: _md.machine_type });
+            }
+            _inst.state = _md.state;
+            _inst.timer = _md.timer;
+            _inst.passive_timer = variable_struct_exists(_md, "passive_timer") ? _md.passive_timer : 0;
+            _inst.input_key = _md.input_key;
+            _inst.output_key = _md.output_key;
+            _inst.output_qty = _md.output_qty;
+            if (_inst.state == 1) {
+                _inst.image_speed = 0;
+                _inst.image_index = 1;
+            } else if (_inst.state == 2) {
+                _inst.image_speed = 0;
+                _inst.image_index = _inst.anim_frames;
+                _inst.done_signal = 60;
+            } else {
+                _inst.image_speed = 0;
+                _inst.image_index = 0;
+            }
         }
     }
 
@@ -1025,6 +1094,8 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.animal_product_data,     _key)) return global.animal_product_data[$     _key];
     if (variable_struct_exists(global.crafting_material_data, _key)) return global.crafting_material_data[$ _key];
     if (variable_struct_exists(global.ore_data, _key)) return global.ore_data[$ _key];
+    if (variable_struct_exists(global.bar_data, _key)) return global.bar_data[$ _key];
+    if (variable_struct_exists(global.jam_data, _key)) return global.jam_data[$ _key];
     if (variable_struct_exists(global.gemstone_data, _key)) return global.gemstone_data[$ _key];
     return undefined;
 }
