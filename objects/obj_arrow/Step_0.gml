@@ -28,14 +28,18 @@ if (_hit != noone) {
             var _segments = [[0.00, 1.00], [4.50, 5.70], [5.70, 7.50]];
             var _s = _segments[irandom(2)];
             scr_play_sound_clip(sound_bear, _s[0], _s[1]);
+            _hit.state = ANIMAL_STATE.CHASING;
+            _hit.chase_timer = 360;
+            _hit.is_panicked = true;
+        } else {
+            _hit.is_panicked = true;
+            _hit.flee_timer = 180;
+            _hit.state = ANIMAL_STATE.FLEEING;
         }
-        _hit.is_panicked = true;
-        _hit.flee_timer = 180; // Panicked flee lasts longer
     } else {
         _hit.flee_timer = 90;
+        _hit.state = ANIMAL_STATE.FLEEING;
     }
-    
-    _hit.state = ANIMAL_STATE.FLEEING;
     var _fdir = point_direction(x, y, _hit.x, _hit.y);
     if (_fdir >= 45 && _fdir < 135)       _hit.dir = DIR.UP;
     else if (_fdir >= 135 && _fdir < 225) _hit.dir = DIR.LEFT;

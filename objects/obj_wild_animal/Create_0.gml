@@ -13,3 +13,5 @@ wander_steps     = 0;
 max_wander_steps = irandom_range(30, 120);
 flee_timer       = 0;
 hurt_flash_timer = 0;
+chase_timer       = 0;
+attack_cooldown   = 0;

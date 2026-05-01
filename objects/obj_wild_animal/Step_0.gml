@@ -24,7 +24,7 @@ if (hp <= 0) {
     exit;
 }
 
-if (state != ANIMAL_STATE.FLEEING && instance_exists(obj_player)) {
+if (state != ANIMAL_STATE.FLEEING && state != ANIMAL_STATE.CHASING && instance_exists(obj_player)) {
     if (point_distance(x, y, obj_player.x, obj_player.y) < 80) {
         state      = ANIMAL_STATE.FLEEING;
         flee_timer = 90;
@@ -93,6 +93,60 @@ switch (state) {
         flee_timer--;
         if (flee_timer <= 0) {
             state      = ANIMAL_STATE.IDLE;
+            idle_timer = irandom_range(60, 240);
+            is_panicked = false;
+        }
+    break;
+
+    case ANIMAL_STATE.CHASING:
+        if (!instance_exists(obj_player)) {
+            state = ANIMAL_STATE.IDLE;
+            chase_timer = 0;
+            break;
+        }
+
+        var _pdir = point_direction(x, y, obj_player.x, obj_player.y);
+        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
+
+        // Face toward player
+        if (_pdir >= 45 && _pdir < 135) dir = DIR.UP;
+        else if (_pdir >= 135 && _pdir < 225) dir = DIR.LEFT;
+        else if (_pdir >= 225 && _pdir < 315) dir = DIR.DOWN;
+        else dir = DIR.RIGHT;
+
+        // Stop at 28px to avoid jittering into the player
+        if (_dist > 28) {
+            var _cspeed = move_speed * 2.5;
+            var _cdx = lengthdir_x(_cspeed, _pdir);
+            var _cdy = lengthdir_y(_cspeed, _pdir);
+
+            if (!place_meeting(x + _cdx, y + _cdy, obj_collision)) {
+                x += _cdx;
+                y += _cdy;
+            } else {
+                if (!place_meeting(x + _cdx, y, obj_collision)) x += _cdx;
+                if (!place_meeting(x, y + _cdy, obj_collision)) y += _cdy;
+            }
+        }
+
+        if (attack_cooldown > 0) attack_cooldown--;
+
+        // Bear attacks player directly when within range
+        if (attack_cooldown <= 0 && _dist < 32 && obj_player.hp > 0) {
+            obj_player.hp -= 2;
+            obj_player.hurt_timer = 60;
+            audio_play_sound(sound_hurt, 1, false);
+            attack_cooldown = 60;
+        }
+
+        if (_dist > 500) {
+            chase_timer -= 3;
+        } else {
+            chase_timer--;
+        }
+
+        if (chase_timer <= 0) {
+            state = ANIMAL_STATE.IDLE;
             idle_timer = irandom_range(60, 240);
             is_panicked = false;
         }

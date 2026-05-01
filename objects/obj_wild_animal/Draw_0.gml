@@ -23,15 +23,22 @@ if (is_farm_animal) {
     // Forest animals: use frame_order from data if defined, otherwise default LEFT/RIGHT/DOWN/UP
     var _wdata = global.wild_animal_data[$ animal_key];
     var _dir_map = (variable_struct_exists(_wdata, "frame_order")) ? _wdata.frame_order : [2, 3, 1, 0];
-    var _frame_count = sprite_get_number(sprite_index);
+    var _sprite = sprite_index;
+
+    // CHASING bears use the attack sprite
+    if (animal_key == "bear" && state == ANIMAL_STATE.CHASING) {
+        _sprite = sprite_player_bear_attack_bear_brown;
+    }
+
+    var _frame_count = sprite_get_number(_sprite);
     var _frames_per_dir = _frame_count / 4;
     var _dir_index = _dir_map[dir];
 
     var _frame = floor(frame_anim % _frames_per_dir) + (_dir_index * _frames_per_dir);
     // Draw shadow
-    draw_sprite_ext(sprite_index, _frame, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
+    draw_sprite_ext(_sprite, _frame, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
     // Draw sprite
-    draw_sprite_ext(sprite_index, _frame, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_sprite, _frame, x, y, 1, 1, 0, _blend, 1);
 }
 
 // Draw health bar if damaged

@@ -86,7 +86,8 @@ enum HORSE_DIR {
 enum ANIMAL_STATE {
     IDLE,
     WANDERING,
-    FLEEING
+    FLEEING,
+    CHASING
 }
 
 global.animal_data = {
