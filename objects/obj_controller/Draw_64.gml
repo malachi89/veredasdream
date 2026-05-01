@@ -44,6 +44,18 @@ if (instance_exists(_lp)) {
     draw_set_valign(fa_top);
     draw_text_transformed_color(_ebx + 5, _eby + _ebh + 5, "ENERGIA", 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 
+    // --- HEALTH HEARTS ---
+    var _hhx = _ebx;
+    var _hhy = _eby + _ebh + 30;
+    var _hp_rem = _p.hp;
+    for (var i = 0; i < 10; i++) {
+        var _frame;
+        if (_hp_rem >= 2)      { _frame = 0; _hp_rem -= 2; }
+        else if (_hp_rem == 1) { _frame = 1; _hp_rem -= 1; }
+        else                     _frame = 2;
+        draw_sprite_ext(sprite_health, _frame, _hhx + i * 34, _hhy, 2, 2, 0, c_white, 1);
+    }
+
     // Multiplayer role badge
     if (global.net_role != NET_ROLE.NONE) {
         var _role_text = (global.net_role == NET_ROLE.HOST) ? "ANFITRION" : "INVITADO";

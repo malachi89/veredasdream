@@ -12,6 +12,7 @@ function get_sprite_set(_idle, _walk, _run, _action)
     }
 }
 
+var _blend = (hurt_timer > 0) ? c_red : c_white;
 var _skin_s, _clothes_s, _eyes_s, _hair_s;
 var _horse_s  = noone;
 var _saddle_s = noone;
@@ -174,16 +175,16 @@ if (global.net_role == NET_ROLE.CLIENT) {
 
     if (is_riding && _horse_s != noone) {
         draw_sprite_ext(_horse_s, image_index, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
-        draw_sprite(_horse_s,   image_index, x, y);
+        draw_sprite_ext(_horse_s,   image_index, x, y, 1, 1, 0, _blend, 1);
     } else {
         draw_sprite_ext(_skin_s, image_index, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
     }
-    draw_sprite(_skin_s,    image_index, x, y);
-    if (_eyes_s >= 0)                   draw_sprite(_eyes_s,    image_index, x, y);
-    draw_sprite(_clothes_s, image_index, x, y);
-    draw_sprite(_hair_s,    image_index, x, y);
-    if (is_riding && _saddle_s != noone) draw_sprite(_saddle_s, image_index, x, y);
-    if (!is_riding && _tool_s >= 0)      draw_sprite(_tool_s,   image_index, x, y);
+    draw_sprite_ext(_skin_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    if (_eyes_s >= 0)                   draw_sprite_ext(_eyes_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_clothes_s, image_index, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_hair_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    if (is_riding && _saddle_s != noone) draw_sprite_ext(_saddle_s, image_index, x, y, 1, 1, 0, _blend, 1);
+    if (!is_riding && _tool_s >= 0)      draw_sprite_ext(_tool_s,   image_index, x, y, 1, 1, 0, _blend, 1);
 
 } else {
     // Host player: draw with original sprite_player_* sprites
@@ -210,16 +211,16 @@ if (global.net_role == NET_ROLE.CLIENT) {
 
     if (is_riding && _horse_s != noone) {
         draw_sprite_ext(_horse_s, image_index, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
-        draw_sprite(_horse_s,   image_index, x, y);
+        draw_sprite_ext(_horse_s,   image_index, x, y, 1, 1, 0, _blend, 1);
     } else {
         draw_sprite_ext(_skin_s, image_index, x + 1.2, y + 0.2, 1, 1, 0, c_black, 0.4);
     }
-    draw_sprite(_skin_s,    image_index, x, y);
-    draw_sprite(_eyes_s,    image_index, x, y);
-    draw_sprite(_clothes_s, image_index, x, y);
-    draw_sprite(_hair_s,    image_index, x, y);
-    if (is_riding && _saddle_s != noone) draw_sprite(_saddle_s, image_index, x, y);
+    draw_sprite_ext(_skin_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_eyes_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_clothes_s, image_index, x, y, 1, 1, 0, _blend, 1);
+    draw_sprite_ext(_hair_s,    image_index, x, y, 1, 1, 0, _blend, 1);
+    if (is_riding && _saddle_s != noone) draw_sprite_ext(_saddle_s, image_index, x, y, 1, 1, 0, _blend, 1);
     if ((state == STATE.ACTING || state == STATE.FISHING) && !is_riding) {
-        draw_sprite(action_sprite_tool, image_index, x, y);
+        draw_sprite_ext(action_sprite_tool, image_index, x, y, 1, 1, 0, _blend, 1);
     }
 }

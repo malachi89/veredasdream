@@ -24,6 +24,11 @@ if (_hit != noone) {
     
     // Forest animals panic and run faster when hit
     if (object_get_name(_hit.object_index) == "obj_wild_animal") {
+        if (_hit.animal_key == "bear") {
+            var _segments = [[0.00, 1.00], [4.50, 5.70], [5.70, 7.50]];
+            var _s = _segments[irandom(2)];
+            scr_play_sound_clip(sound_bear, _s[0], _s[1]);
+        }
         _hit.is_panicked = true;
         _hit.flee_timer = 180; // Panicked flee lasts longer
     } else {

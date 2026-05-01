@@ -4,6 +4,8 @@ if (!is_local) {
     exit;
 }
 
+if (hurt_timer > 0) hurt_timer--;
+
 if (dialog_open) {
     if (keyboard_check_pressed(ord("E"))) dialog_open = false;
     state = STATE.IDLE;
@@ -142,6 +144,7 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                             if (_machine.passive) _machine.passive_timer = 300;
                             if (_out_name != "") scr_notify(_out_name + " recogido");
                             else scr_notify("Producto recogido");
+                            scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
                         } else {
                             scr_notify("Inventario lleno");
                         }
@@ -239,14 +242,6 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
 
 if (tool_cooldown > 0) tool_cooldown--;
 
-if (arrow_shoot_snd_timer > 0) {
-    arrow_shoot_snd_timer--;
-    if (arrow_shoot_snd_timer == 0 && arrow_shoot_snd_id != -1) {
-        audio_stop_sound(arrow_shoot_snd_id);
-        arrow_shoot_snd_id = -1;
-    }
-}
-
 if (tool_locked_frames > 0) tool_locked_frames--;
 
 var _mouse_over_ui = instance_exists(obj_inventory)
@@ -298,9 +293,7 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
 // Bow fire: runs every step — not gated on STATE.ACTING so it always catches the release
 if (bow_drawing && !mouse_check_button(mb_left)) {
     bow_drawing = false;
-    arrow_shoot_snd_id = audio_play_sound(sound_arrow_shoot, 1, false);
-    audio_sound_set_track_position(arrow_shoot_snd_id, 1.85);
-    arrow_shoot_snd_timer = 9; // stop at 2.00s (0.15s × 60fps)
+    scr_play_sound_clip(sound_arrow_shoot, 1.85, 2.00);
     if (global.net_role != NET_ROLE.CLIENT) {
         energy -= 5;
         var _arr = instance_create_layer(x + 16, y + 16, "Instances", obj_arrow);
@@ -338,6 +331,31 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
 }
 
 move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign, obj_ladder_down, obj_ladder_exit], 4, 0, 0, -1, -1);
+
+// Dano por contacto con animales salvajes que huyen
+if (hurt_timer <= 0 && hp > 0) {
+    var _anim = instance_place(x, y, obj_wild_animal);
+    if (_anim != noone && _anim.state == ANIMAL_STATE.FLEEING) {
+        hp -= 1;
+        hurt_timer = 60;
+        audio_play_sound(sound_hurt, 1, false);
+    }
+}
+
+// Muerte por HP = 0
+if (hp <= 0) {
+    hp = max_hp;
+    energy = max_energy;
+    var _lost = floor(money * 0.1);
+    money = max(0, money - _lost);
+    scr_notify("Te has desmayado! Has perdido MXN$ " + string(_lost));
+    var _bed = instance_find(obj_bed, 0);
+    if (_bed != noone) {
+        x = _bed.x + 40;
+        y = _bed.y + 18;
+        dir = DIR.RIGHT;
+    }
+}
 
 // Auto-enter open mine door when walking through it
 if (!global.mine_state.active) {

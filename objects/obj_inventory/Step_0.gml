@@ -69,7 +69,14 @@ if (_p.shop_open) {
                             }
                         }
                         with (_p) add_item(_entry.item_key, 1);
-                        _p.shop_msg       = "Comprado!";
+                        scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
+                        if (_is_wb) {
+                            var _idata_msg = scr_get_item_data(_entry.item_key);
+                            var _iname_msg = (_idata_msg != undefined) ? _idata_msg.name : _entry.item_key;
+                            _p.shop_msg = _iname_msg + " creado!";
+                        } else {
+                            _p.shop_msg = "Comprado!";
+                        }
                         _p.shop_msg_timer = 90;
                     }
                 } else if (!_can_afford) {

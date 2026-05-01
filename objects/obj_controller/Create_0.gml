@@ -86,6 +86,10 @@ function start_new_day() {
         }
     }
 
+    if (instance_exists(global.local_player)) {
+        global.local_player.hp = global.local_player.max_hp;
+    }
+
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
 
@@ -196,6 +200,8 @@ is_fading_in = true;
 minigame_difficulty = 0; // 0: Easy, 1: Moderate, 2: Hard, 3: Extreme
 
 // Mine prompt
+global.sound_clips = [];
+
 mine_prompt_open = false;
 mine_prompt_type = "";
 mine_prompt_selection = 0;

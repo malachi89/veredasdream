@@ -82,6 +82,7 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.gemstone_data, item_key)) _name = global.gemstone_data[$ item_key].name;
 
                 scr_notify_item(quantity, _name);
+                scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
                 instance_destroy();
             }
         }

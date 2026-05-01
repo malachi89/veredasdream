@@ -460,7 +460,15 @@ if (_p.shop_open) {
             var _idata   = scr_get_item_data(_entry.item_key);
             var _ry      = _list_y + _i * _row;
             var _hovered = (_dmx >= _px1 + 6 && _dmx <= _px2 - 6 && _dmy >= _ry && _dmy <= _ry + _row - 2);
-            if (_hovered) {
+            if (_is_workbench) {
+                var _row_col = (_i mod 2 == 0) ? make_color_rgb(50, 50, 55) : make_color_rgb(38, 38, 42);
+                draw_set_alpha(_hovered ? 0.7 : 0.4);
+                draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, _row_col, _row_col, false);
+                draw_set_alpha(1.0);
+                if (_hovered) {
+                    draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, c_silver, c_silver, true);
+                }
+            } else if (_hovered) {
                 draw_set_alpha(0.35);
                 draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, c_white, c_white, false);
                 draw_set_alpha(1.0);

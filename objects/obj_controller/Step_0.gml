@@ -196,10 +196,16 @@ else if (chat_open) {
                     global.local_player.energy = clamp(real(_parts[1]), 0, global.local_player.max_energy);
                     scr_notify("Energia: " + string(global.local_player.energy));
                 }
+            } else if (_cmd == "set_hp" && array_length(_parts) >= 2) {
+                if (instance_exists(global.local_player)) {
+                    global.local_player.hp = clamp(real(_parts[1]), 0, global.local_player.max_hp);
+                    scr_notify("HP: " + string(global.local_player.hp));
+                }
             } else if (_cmd == "heal") {
                 if (instance_exists(global.local_player)) {
                     global.local_player.energy = global.local_player.max_energy;
-                    scr_notify("Energia restaurada");
+                    global.local_player.hp = global.local_player.max_hp;
+                    scr_notify("Energia y salud restauradas");
                 }
             } else if (_cmd == "set_day" && array_length(_parts) >= 2) {
                 if (global.net_role == NET_ROLE.CLIENT) {
@@ -800,6 +806,17 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                 }
             }
         }
+    }
+}
+
+var _sc = global.sound_clips;
+for (var _i = array_length(_sc) - 1; _i >= 0; _i--) {
+    _sc[_i].timer--;
+    if (_sc[_i].timer <= 0) {
+        if (audio_is_playing(_sc[_i].id)) {
+            audio_stop_sound(_sc[_i].id);
+        }
+        array_delete(_sc, _i, 1);
     }
 }
 

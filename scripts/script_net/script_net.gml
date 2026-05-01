@@ -272,7 +272,8 @@ function net_send_full_snapshot(_client_socket) {
             y:         instance_exists(global.local_player) ? global.local_player.y       : 192,
             dir:       DIR.DOWN,
             money:     500,
-            energy:    500
+            energy:    500,
+            hp:        20
         },
         room_states:              global.room_states,
         room_drops:               global.room_drops,
@@ -323,6 +324,7 @@ function net_handle_full_snapshot(_payload) {
     _p.is_host   = false;
     _p.money     = _snap.player2.money;
     _p.energy    = _snap.player2.energy;
+    if (variable_struct_exists(_snap.player2, "hp")) _p.hp = _snap.player2.hp;
     _p.add_item("watering_can", 1);
     _p.add_item("pickaxe", 1);
     _p.add_item("axe", 1);
