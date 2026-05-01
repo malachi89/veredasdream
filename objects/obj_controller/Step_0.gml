@@ -745,8 +745,8 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
             if (_is_placeable) {
                 var _pdata = global.placeable_data[$ _item_key];
                 if (_pdata != undefined && _pdata.sprite != undefined) {
-                    selector_w = ceil(sprite_get_width(_pdata.sprite) / 16);
-                    selector_h = ceil(sprite_get_height(_pdata.sprite) / 16);
+                    selector_w = variable_struct_exists(_pdata, "tile_w") ? _pdata.tile_w : ceil(sprite_get_width(_pdata.sprite) / 16);
+                    selector_h = variable_struct_exists(_pdata, "tile_h") ? _pdata.tile_h : ceil(sprite_get_height(_pdata.sprite) / 16);
                 }
             }
                             }

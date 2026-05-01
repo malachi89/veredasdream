@@ -1145,6 +1145,27 @@ function scr_remove_item(_key, _qty, _player = global.local_player) {
     return true;
 }
 
+function scr_count_item_group(_group_keys, _player = global.local_player) {
+    var _total = 0;
+    for (var _gi = 0; _gi < array_length(_group_keys); _gi++) {
+        _total += scr_count_item(_group_keys[_gi], _player);
+    }
+    return _total;
+}
+
+function scr_remove_items_from_group(_group_keys, _qty, _player = global.local_player) {
+    var _left = _qty;
+    for (var _gi = 0; _gi < array_length(_group_keys) && _left > 0; _gi++) {
+        var _available = scr_count_item(_group_keys[_gi], _player);
+        if (_available > 0) {
+            var _remove = min(_available, _left);
+            scr_remove_item(_group_keys[_gi], _remove, _player);
+            _left -= _remove;
+        }
+    }
+    return (_left == 0);
+}
+
 function scr_notify_item(_qty, _name) {
     if (instance_exists(obj_controller)) {
         // Check if an item notification for this item type already exists

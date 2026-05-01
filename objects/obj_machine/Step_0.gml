@@ -21,7 +21,7 @@ if (state == 1) {
             output_weight = round(random_range(_recipe.weight_min, _recipe.weight_max) * 100) / 100;
         }
     } else {
-        var _frame = 1 + (timer div 6) mod anim_frames;
+        var _frame = 1 + ((process_time - timer) div 6) mod anim_frames;
         image_index = _frame;
     }
 }
@@ -33,20 +33,6 @@ if (state == 2) {
         image_index = anim_frames;
     } else {
         image_index = anim_frames - 1;
-    }
-}
-
-var _lp = global.local_player;
-if (instance_exists(_lp) && state == 0 && mouse_check_button_pressed(mb_right)) {
-    var _dist = point_distance(x, y, _lp.x, _lp.y);
-    if (_dist < 48) {
-        var _item_key = "machine_" + machine_type;
-        if (_lp.add_item(_item_key, 1)) {
-            scr_notify("Maquina recogida");
-            instance_destroy();
-        } else {
-            scr_notify("Inventario lleno");
-        }
     }
 }
 

@@ -107,7 +107,7 @@ global.wild_animal_data = {
     penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2, product_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3, product_drops: ["rabbit_pelt_red","rabbit_pelt_orange","rabbit_pelt_yellow","rabbit_pelt_green","rabbit_pelt_blue","rabbit_pelt_lilac","rabbit_pelt_purple","rabbit_pelt_turquoise","rabbit_pelt_pink","rabbit_pelt_lime","rabbit_pelt_amber","rabbit_pelt_brown","rabbit_pelt_black","rabbit_pelt_white"] },
     turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
-    bear:     { name: "Oso",      sprite: sprite_player_bear_walk_bear_brown, move_speed: 0.8,  hp: 25, max_hp: 25, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"], frame_order: [0, 1, 2, 3] },
+    bear:     { name: "Oso",      sprite: sprite_player_bear_walk_bear_brown, move_speed: 0.8,  hp: 25, max_hp: 25, product_drops: ["honey","honey","honey","honey","honey","pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"], frame_order: [0, 1, 2, 3] },
 };
 
 enum ITEM_TYPE {
@@ -416,6 +416,8 @@ global.placeable_data = {
         subimg: 0,
         offset_x: 8,
         place_offset_x: 0,
+        tile_w: 1,
+        tile_h: 1,
         sellable: true,
         droppable: true,
         base_buy_price: 100,
@@ -497,6 +499,16 @@ global.placeable_data = {
         base_buy_price: 500,
         base_sell_price: 250,
         machine_type: "colmena"
+    },
+    workbench: {
+        name: "Mesa de Trabajo",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_workbench,
+        subimg: 0,
+        sellable: false,
+        droppable: true,
+        base_sell_price: 0,
+        is_workbench: true
     }
 };
 
@@ -805,6 +817,7 @@ _tp[$ "watering_can"] = [
 
 // --- NPC DATA ---
 global.npc_data = {
+    workbench:  { name: "Mesa de Trabajo" },
     Miraculos:  { name: "Miraculos", skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "lyria",      hair_color: "black",  clothes_color: "blue",   dialog_id: -1 },
     Jose:       { name: "José",      skin: 2, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
     Maria:      { name: "María",     skin: 3, eye_type: "female", eye_color: "black",  hair_style: "iridessa",   hair_color: "brown",  clothes_color: "pink",   dialog_id: -1 },
@@ -877,9 +890,86 @@ global.shop_data[$ "Miraculos"] = {
     ]
 };
 
+// --- GRUPOS DE ITEMS PARA RECETAS ---
+var _colors = ["red","orange","yellow","green","blue","lilac","purple","turquoise","pink","lime","amber","brown","black","white"];
+var _milk_keys    = ["milk_reg","milk_large","goat_milk_reg","goat_milk_large"];
+var _leather_keys = [];
+var _yarn_keys    = [];
+var _crop_keys    = ["cherry","apricot","strawberry","spring_onion","potato","onion","carrot","blueberry","parsnip","cabbage","cauliflower","rice","broccoli","asparagus","tomato","banana","orange","mango","peach","sunflower","hot_pepper","corn","green_pepper","melon","watermelon","cucumber","eggplant","pineapple","green_beans","adzuki_bean","wild_berry","wheat","aloe","beetroot","pumpkin","grapes","apple"];
+for (var _ci = 0; _ci < array_length(_colors); _ci++) {
+    array_push(_leather_keys, "pelt_" + _colors[_ci], "cow_hide_" + _colors[_ci], "rabbit_pelt_" + _colors[_ci]);
+    array_push(_yarn_keys, "yarn_" + _colors[_ci]);
+}
+global.item_groups = {
+    milk_any:    _milk_keys,
+    leather_any: _leather_keys,
+    yarn_any:    _yarn_keys,
+    crop_any:    _crop_keys
+};
+
 global.shop_data[$ "Carlos"] = { available: false, items: [] };
 global.shop_data[$ "Pedro"]  = { available: false, items: [] };
 global.shop_data[$ "Jorge"]  = { available: false, items: [] };
+
+global.shop_data[$ "workbench"] = {
+    available: true,
+    items: [
+        { item_key: "workbench",
+          price_money: 0, price_items: [
+            { key: "wood",  qty: 30 },
+            { key: "stone", qty: 20 }
+          ]},
+        { item_key: "chest",
+          price_money: 0, price_items: [
+            { key: "wood",  qty: 50 }
+          ]},
+        { item_key: "machine_curtidora",
+          price_money: 0, price_items: [
+            { key: "wood",      qty: 50 },
+            { key: "stone",     qty: 10 },
+            { key: "bar_plata", qty: 3  },
+            { key: "leather_any", qty: 10, name: "Cuero/Piel", group_keys: global.item_groups.leather_any }
+          ]},
+        { item_key: "machine_telar",
+          price_money: 0, price_items: [
+            { key: "wood",       qty: 15 },
+            { key: "coal",       qty: 5  },
+            { key: "bar_bronce", qty: 3  },
+            { key: "yarn_any",   qty: 10, name: "Estambre", group_keys: global.item_groups.yarn_any }
+          ]},
+        { item_key: "machine_mantequillera",
+          price_money: 0, price_items: [
+            { key: "wood",       qty: 50 },
+            { key: "stone",      qty: 50 },
+            { key: "bar_bronce", qty: 3  },
+            { key: "milk_any",   qty: 10, name: "Leche", group_keys: global.item_groups.milk_any }
+          ]},
+        { item_key: "machine_mermeladora",
+          price_money: 0, price_items: [
+            { key: "wood",      qty: 30 },
+            { key: "bar_plata", qty: 3  },
+            { key: "crop_any",  qty: 10, name: "Fruta/Verdura", group_keys: global.item_groups.crop_any }
+          ]},
+        { item_key: "machine_prensa_queso",
+          price_money: 0, price_items: [
+            { key: "wood",    qty: 60 },
+            { key: "stone",   qty: 30 },
+            { key: "bar_oro", qty: 3  },
+            { key: "milk_any", qty: 10, name: "Leche", group_keys: global.item_groups.milk_any }
+          ]},
+        { item_key: "machine_horno",
+          price_money: 0, price_items: [
+            { key: "stone", qty: 80 },
+            { key: "coal",  qty: 10 }
+          ]},
+        { item_key: "machine_colmena",
+          price_money: 0, price_items: [
+            { key: "wood",             qty: 20 },
+            { key: "honey",            qty: 3  },
+            { key: "bar_broncastanio", qty: 5  }
+          ]},
+    ]
+};
 
 // --- DATOS DE PESCA ---
 global.fish_data = {};

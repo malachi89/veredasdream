@@ -223,6 +223,8 @@ if (is_host) {
     add_item("bow", 1);
     add_item("parsnip_seeds", 10);
 
+    add_item("workbench", 1);
+
     // Máquinas (1 each)
     add_item("machine_curtidora", 1);
     add_item("machine_telar", 1);
@@ -266,4 +268,14 @@ if (is_host) {
     add_item("strawberry", 10);
     add_item("tomato", 10);
     add_item("blueberry", 10);
+
+    // Materiales para craftear todo el banco de trabajo
+    add_item("wood",            310);
+    add_item("stone",           200);
+    add_item("coal",             20);
+    add_item("bar_bronce",       10);
+    add_item("bar_plata",        10);
+    add_item("bar_oro",           5);
+    add_item("bar_broncastanio",  5);
+    add_item("honey",             5);
 }

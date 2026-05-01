@@ -20,7 +20,7 @@ if (_p.shop_open) {
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
     var _sn      = array_length(_sitems);
-    var _visible = 8;
+    var _visible = (_p.shop_npc_key == "workbench") ? 7 : 8;
 
     var _wheel = mouse_wheel_down() - mouse_wheel_up();
     _p.shop_scroll = clamp(_p.shop_scroll + _wheel, 0, max(0, _sn - _visible));
@@ -30,10 +30,12 @@ if (_p.shop_open) {
         var _smy  = device_mouse_y_to_gui(0);
         var _sgw  = display_get_gui_width();
         var _sgh  = display_get_gui_height();
-        var _spw  = 520;
-        var _srow = 44;
+        var _is_wb = (_p.shop_npc_key == "workbench");
+        var _spw  = _is_wb ? 760 : 520;
+        var _srow = _is_wb ? 64 : 44;
         var _spx1 = (_sgw - _spw) / 2;
-        var _spy1 = _sgh * 0.12 + 48;
+        var _spy_panel = _sgh * (_is_wb ? 0.10 : 0.12);
+        var _spy1 = _spy_panel + (_is_wb ? 74 : 52);
 
         for (var _si = 0; _si < _visible; _si++) {
             var _sidx = _si + _p.shop_scroll;
@@ -45,8 +47,11 @@ if (_p.shop_open) {
                 var _can_afford = _p.money >= _entry.price_money;
                 var _items_ok   = true;
                 for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
-                    var _req = _entry.price_items[_sj];
-                    if (scr_count_item(_req.key) < _req.qty) { _items_ok = false; break; }
+                    var _req  = _entry.price_items[_sj];
+                    var _have = variable_struct_exists(_req, "group_keys")
+                        ? scr_count_item_group(_req.group_keys)
+                        : scr_count_item(_req.key);
+                    if (_have < _req.qty) { _items_ok = false; break; }
                 }
                 if (_can_afford && _items_ok) {
                     if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
@@ -57,7 +62,11 @@ if (_p.shop_open) {
                         _p.money -= _entry.price_money;
                         for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
                             var _req = _entry.price_items[_sj];
-                            scr_remove_item(_req.key, _req.qty);
+                            if (variable_struct_exists(_req, "group_keys")) {
+                                scr_remove_items_from_group(_req.group_keys, _req.qty);
+                            } else {
+                                scr_remove_item(_req.key, _req.qty);
+                            }
                         }
                         with (_p) add_item(_entry.item_key, 1);
                         _p.shop_msg       = "Comprado!";

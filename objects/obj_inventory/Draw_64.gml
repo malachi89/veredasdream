@@ -406,18 +406,19 @@ if (_p.dialog_open) {
 if (_p.shop_open) {
     var _gw  = display_get_gui_width();
     var _gh  = display_get_gui_height();
-    var _pw  = 520;
-    var _ph  = 460;
+    var _is_workbench = (_p.shop_npc_key == "workbench");
+    var _pw  = _is_workbench ? 760 : 520;
+    var _ph  = _is_workbench ? 580 : 460;
     var _px1 = (_gw - _pw) / 2;
-    var _py1 = _gh * 0.12;
+    var _py1 = _gh * 0.10;
     var _px2 = _px1 + _pw;
     var _py2 = _py1 + _ph;
 
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
     var _sn      = array_length(_sitems);
-    var _visible = 8;
-    var _row     = 44;
+    var _visible = _is_workbench ? 7 : 8;
+    var _row     = _is_workbench ? 64 : 44;
     var _clerk   = variable_struct_exists(global.npc_data, _p.shop_npc_key) ? global.npc_data[$ _p.shop_npc_key].name : _p.shop_npc_key;
 
     draw_set_alpha(0.72);
@@ -432,13 +433,14 @@ if (_p.shop_open) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_top);
     draw_text_transformed_color(_px1 + _pw / 2, _py1 + 10, _clerk, 2.2, 2.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+    var _header_line_y = _py1 + (_is_workbench ? 66 : 46);
     draw_set_color(c_silver);
-    draw_line(_px1 + 10, _py1 + 46, _px2 - 10, _py1 + 46);
+    draw_line(_px1 + 10, _header_line_y, _px2 - 10, _header_line_y);
     draw_set_halign(fa_right);
     draw_set_color(c_silver);
     draw_text_transformed(_px2 - 14, _py1 + 14, "[ESC] Cerrar", 1.1, 1.1, 0);
 
-    var _list_y = _py1 + 52;
+    var _list_y = _header_line_y + 8;
     var _dmx    = device_mouse_x_to_gui(0);
     var _dmy    = device_mouse_y_to_gui(0);
 
@@ -463,26 +465,118 @@ if (_p.shop_open) {
                 draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, c_white, c_white, false);
                 draw_set_alpha(1.0);
             }
+            // --- Nombre e icono del resultado ---
             if (_idata != undefined) {
-                var _f = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
-                var _sz = 16 / sprite_get_width(_idata.sprite);
-                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.4 * _sz, 1.4 * _sz, 0, c_white, 1.0);
+                var _f  = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
+                var _sz = 16 / max(sprite_get_width(_idata.sprite), sprite_get_height(_idata.sprite));
+                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
-                draw_text_transformed_color(_px1 + 50, _ry + _row / 2, _idata.name, 1.4, 1.4, 0, c_white, c_white, c_white, c_white, 1.0);
+                var _name_scale = _is_workbench ? 1.7 : 1.4;
+                draw_text_transformed_color(_px1 + 52, _ry + _row / 2, _idata.name, _name_scale, _name_scale, 0, c_white, c_white, c_white, c_white, 1.0);
             }
-            var _price_str = "MXN$ " + string(_entry.price_money);
-            for (var _j = 0; _j < array_length(_entry.price_items); _j++) {
-                var _req      = _entry.price_items[_j];
-                var _req_data = scr_get_item_data(_req.key);
-                var _req_name = (_req_data != undefined) ? _req_data.name : _req.key;
-                _price_str   += " + " + string(_req.qty) + " " + _req_name;
+
+            if (_is_workbench) {
+                // --- Ingredientes como cajas de sprite ---
+                var _bw   = 96;
+                var _bh   = 48;
+                var _gap  = 6;
+                var _n    = array_length(_entry.price_items);
+                var _ingr_total_w = _n * _bw + (_n - 1) * _gap;
+                var _ix0  = _px2 - 14 - _ingr_total_w;
+                var _iy0  = _ry + (_row - _bh) / 2;
+                var _tooltip_str = "";
+                var _tooltip_x   = 0;
+                var _tooltip_y   = 0;
+
+                for (var _j = 0; _j < _n; _j++) {
+                    var _req  = _entry.price_items[_j];
+                    var _lkey = variable_struct_exists(_req, "group_keys") ? _req.group_keys[0] : _req.key;
+                    var _rid  = scr_get_item_data(_lkey);
+                    var _have = variable_struct_exists(_req, "group_keys")
+                        ? scr_count_item_group(_req.group_keys, _p)
+                        : scr_count_item(_req.key, _p);
+                    var _ok   = (_have >= _req.qty);
+                    var _bx   = _ix0 + _j * (_bw + _gap);
+                    var _by   = _iy0;
+
+                    // fondo
+                    draw_set_alpha(0.45);
+                    draw_roundrect_color_ext(_bx, _by, _bx + _bw, _by + _bh, 5, 5,
+                        _ok ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10),
+                        _ok ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10), false);
+                    draw_set_alpha(1.0);
+                    draw_roundrect_color_ext(_bx, _by, _bx + _bw, _by + _bh, 5, 5,
+                        _ok ? c_lime : c_red, _ok ? c_lime : c_red, true);
+
+                    // sprite — mitad izquierda
+                    if (_rid != undefined) {
+                        var _rf  = variable_struct_exists(_rid, "row") ? (_rid.row * 3) + _rid.subimg : _rid.subimg;
+                        var _rsz = 16 / max(sprite_get_width(_rid.sprite), sprite_get_height(_rid.sprite));
+                        draw_sprite_ext(_rid.sprite, _rf, _bx + 10, _by + _bh / 2 - 17, 2.4 * _rsz, 2.4 * _rsz, 0, c_white, 1.0);
+                    }
+
+                    // cantidad — mitad derecha
+                    draw_set_font(fnt_pixel_operator);
+                    draw_set_halign(fa_center);
+                    draw_set_valign(fa_middle);
+                    draw_set_color(_ok ? c_lime : c_red);
+                    draw_text_transformed(_bx + 68, _by + _bh / 2, string(_req.qty), 1.6, 1.6, 0);
+
+                    // hover — preparar tooltip
+                    if (_dmx >= _bx && _dmx <= _bx + _bw && _dmy >= _by && _dmy <= _by + _bh) {
+                        var _item_name = variable_struct_exists(_req, "name") ? _req.name
+                                       : (_rid != undefined ? _rid.name : _req.key);
+                        if (variable_struct_exists(_req, "group_keys")) {
+                            _tooltip_str = string(_req.qty) + " " + _item_name + " (cualquier tipo o color)";
+                        } else {
+                            _tooltip_str = string(_req.qty) + " piezas de " + _item_name;
+                        }
+                        _tooltip_x = _dmx;
+                        _tooltip_y = _by - 6;
+                    }
+                }
+
+                // dibujar tooltip encima de todo
+                if (_tooltip_str != "") {
+                    draw_set_font(fnt_pixel_operator);
+                    var _tw = string_width(_tooltip_str) * 1.3 + 16;
+                    var _th = 24;
+                    var _tx = clamp(_tooltip_x - _tw / 2, _px1 + 6, _px2 - _tw - 6);
+                    var _ty = _tooltip_y - _th;
+                    draw_set_alpha(0.88);
+                    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 4, 4, c_black, c_black, false);
+                    draw_set_alpha(1.0);
+                    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 4, 4, c_silver, c_silver, true);
+                    draw_set_halign(fa_center);
+                    draw_set_valign(fa_middle);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_tx + _tw / 2, _ty + _th / 2, _tooltip_str, 1.3, 1.3, 0);
+                }
+            } else {
+                // --- Precio en texto para tiendas NPC ---
+                var _price_str = (_entry.price_money > 0) ? "MXN$ " + string(_entry.price_money) : "";
+                for (var _j = 0; _j < array_length(_entry.price_items); _j++) {
+                    var _req      = _entry.price_items[_j];
+                    var _req_name = variable_struct_exists(_req, "name") ? _req.name
+                                  : (scr_get_item_data(_req.key) != undefined ? scr_get_item_data(_req.key).name : _req.key);
+                    if (_price_str != "") _price_str += " + ";
+                    _price_str += string(_req.qty) + " " + _req_name;
+                }
+                var _can_afford = _p.money >= _entry.price_money;
+                var _draw_items_ok = true;
+                for (var _dj = 0; _dj < array_length(_entry.price_items); _dj++) {
+                    var _dreq  = _entry.price_items[_dj];
+                    var _dhave = variable_struct_exists(_dreq, "group_keys")
+                        ? scr_count_item_group(_dreq.group_keys, _p)
+                        : scr_count_item(_dreq.key, _p);
+                    if (_dhave < _dreq.qty) { _draw_items_ok = false; break; }
+                }
+                var _price_col = (_can_afford && _draw_items_ok) ? c_lime : c_red;
+                draw_set_halign(fa_right);
+                draw_set_valign(fa_middle);
+                draw_text_transformed_color(_px2 - 14, _ry + _row / 2, _price_str, 1.3, 1.3, 0, _price_col, _price_col, _price_col, _price_col, 1.0);
             }
-            var _can_afford = _p.money >= _entry.price_money;
-            var _price_col  = _can_afford ? c_lime : c_red;
-            draw_set_halign(fa_right);
-            draw_set_valign(fa_middle);
-            draw_text_transformed_color(_px2 - 14, _ry + _row / 2, _price_str, 1.3, 1.3, 0, _price_col, _price_col, _price_col, _price_col, 1.0);
         }
         if (_p.shop_scroll > 0) {
             draw_set_halign(fa_center);
@@ -495,15 +589,16 @@ if (_p.shop_open) {
         }
     }
 
+    var _footer_line_y = _py2 - (_is_workbench ? 50 : 38);
     draw_set_color(c_silver);
-    draw_line(_px1 + 10, _py2 - 38, _px2 - 10, _py2 - 38);
+    draw_line(_px1 + 10, _footer_line_y, _px2 - 10, _footer_line_y);
     draw_set_halign(fa_left);
     draw_set_valign(fa_middle);
-    draw_text_transformed_color(_px1 + 14, _py2 - 19, "MXN$ " + string(_p.money), 1.4, 1.4, 0, c_lime, c_lime, c_green, c_green, 1.0);
+    draw_text_transformed_color(_px1 + 14, _footer_line_y + 16, "MXN$ " + string(_p.money), 1.4, 1.4, 0, c_lime, c_lime, c_green, c_green, 1.0);
 
     if (_p.shop_msg_timer > 0) {
         var _msg_alpha = min(1.0, _p.shop_msg_timer / 20.0);
         draw_set_halign(fa_right);
-        draw_text_transformed_color(_px2 - 14, _py2 - 19, _p.shop_msg, 1.4, 1.4, 0, c_yellow, c_yellow, c_yellow, c_yellow, _msg_alpha);
+        draw_text_transformed_color(_px2 - 14, _footer_line_y + 16, _p.shop_msg, 1.4, 1.4, 0, c_yellow, c_yellow, c_yellow, c_yellow, _msg_alpha);
     }
 }

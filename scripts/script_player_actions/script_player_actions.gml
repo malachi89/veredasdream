@@ -230,6 +230,33 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                         }
                     } else {
                         if (_item_key == "axe") {
+                            var _workbench_hit = instance_position(_target_x, _target_y, obj_workbench);
+                            if (_workbench_hit != noone) {
+                                if (self.add_item("workbench", 1)) {
+                                    scr_notify("Mesa de trabajo recogida");
+                                    instance_destroy(_workbench_hit);
+                                    if (!_skip_energy) self.energy -= 2;
+                                } else {
+                                    scr_notify("Inventario lleno");
+                                }
+                            }
+                            var _machine_hit = instance_position(_target_x, _target_y, obj_machine);
+                            if (_workbench_hit == noone && _machine_hit != noone) {
+                                if (_machine_hit.state == 1) {
+                                    scr_notify("La maquina esta en uso");
+                                } else if (_machine_hit.state == 2) {
+                                    scr_notify("La maquina tiene un articulo listo");
+                                } else {
+                                    var _machine_item_key = "machine_" + _machine_hit.machine_type;
+                                    if (self.add_item(_machine_item_key, 1)) {
+                                        scr_notify("Maquina recogida");
+                                        instance_destroy(_machine_hit);
+                                        if (!_skip_energy) self.energy -= 2;
+                                    } else {
+                                        scr_notify("Inventario lleno");
+                                    }
+                                }
+                            } else {
                             show_debug_message("=== AXE DEBUG === click tile: (" + string(_gx) + ", " + string(_gy) + ")  target: (" + string(_target_x) + ", " + string(_target_y) + ")");
                             var _nearest_dist = 999999;
                             var _nearest_id   = noone;
@@ -268,6 +295,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                                 }
                                 if (!_skip_energy) self.energy -= 2;
                             }
+                            } // end else (no machine hit)
                         } else if (_item_key == "pickaxe") {
                             var _rock_to_remove = instance_position(_target_x, _target_y, obj_rock);
                             if (_rock_to_remove != noone) {
@@ -462,8 +490,8 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
 
         var _data = global.placeable_data[$ _item_key];
         var _spr = _data.sprite;
-        var _tw = ceil(sprite_get_width(_spr) / 16);
-        var _th = ceil(sprite_get_height(_spr) / 16);
+        var _tw = variable_struct_exists(_data, "tile_w") ? _data.tile_w : ceil(sprite_get_width(_spr) / 16);
+        var _th = variable_struct_exists(_data, "tile_h") ? _data.tile_h : ceil(sprite_get_height(_spr) / 16);
         var _px_end = _gx + _tw * 16;
         var _py_end = _gy + _th * 16;
 
@@ -495,6 +523,8 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
 
             if (variable_struct_exists(_data, "machine_type")) {
                 var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_machine, { machine_type: _data.machine_type });
+            } else if (variable_struct_exists(_data, "is_workbench")) {
+                var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_workbench);
             } else {
                 var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
             }
