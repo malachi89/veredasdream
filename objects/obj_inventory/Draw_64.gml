@@ -61,11 +61,16 @@ for (var i = 0; i < total_slots; i++) {
             }
             if (_is_t && i == _p.selected_slot && _data.sprite == sprite_tools) _f += 9;
             var _cc = slot_size / 2;
-            var _sz    = 16 / sprite_get_width(_data.sprite);
+            var _sz    = 16 / max(sprite_get_width(_data.sprite), sprite_get_height(_data.sprite));
             var _cox   = (sprite_get_width(_data.sprite)  / 2 - sprite_get_xoffset(_data.sprite)) * _sz * _icon_scale;
             var _coy   = (sprite_get_height(_data.sprite) / 2 - sprite_get_yoffset(_data.sprite)) * _sz * _icon_scale;
             draw_sprite_ext(_data.sprite, _f, _cx + _cc - _cox, _cy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
-            if (_qty > 1) {
+            if (variable_struct_exists(_slot_data, "weight") && _slot_data.weight > 0) {
+                draw_set_halign(fa_right);
+                draw_set_valign(fa_bottom);
+                draw_set_color(c_white);
+                draw_text_transformed(_cx + slot_size - 4, _cy + slot_size - 2, scr_format_weight(_slot_data.weight), 1.0, 1.0, 0);
+            } else if (_qty > 1) {
                 draw_set_halign(fa_right);
                 draw_set_valign(fa_bottom);
                 draw_set_color(c_white);
@@ -129,11 +134,16 @@ if (_p.show_backpack) {
                     _f += _b_slot.quality;
                 }
                 var _cc = _grid_slot_size / 2;
-                var _sz  = 16 / sprite_get_width(_b_data.sprite);
+                var _sz  = 16 / max(sprite_get_width(_b_data.sprite), sprite_get_height(_b_data.sprite));
                 var _cox = (sprite_get_width(_b_data.sprite)  / 2 - sprite_get_xoffset(_b_data.sprite)) * _sz * _icon_scale;
                 var _coy = (sprite_get_height(_b_data.sprite) / 2 - sprite_get_yoffset(_b_data.sprite)) * _sz * _icon_scale;
                 draw_sprite_ext(_b_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
-                if (_b_qty > 1) {
+                if (variable_struct_exists(_b_slot, "weight") && _b_slot.weight > 0) {
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_bottom);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, scr_format_weight(_b_slot.weight), 1.0, 1.0, 0);
+                } else if (_b_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
                     draw_set_color(c_white);
@@ -188,11 +198,16 @@ if (_p.show_shipping) {
                     _f += _s_slot.quality;
                 }
                 var _cc = _grid_slot_size / 2;
-                var _sz  = 16 / sprite_get_width(_s_data.sprite);
+                var _sz  = 16 / max(sprite_get_width(_s_data.sprite), sprite_get_height(_s_data.sprite));
                 var _cox = (sprite_get_width(_s_data.sprite)  / 2 - sprite_get_xoffset(_s_data.sprite)) * _sz * _icon_scale;
                 var _coy = (sprite_get_height(_s_data.sprite) / 2 - sprite_get_yoffset(_s_data.sprite)) * _sz * _icon_scale;
                 draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
-                if (_s_qty > 1) {
+                if (variable_struct_exists(_s_slot, "weight") && _s_slot.weight > 0) {
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_bottom);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, scr_format_weight(_s_slot.weight), 1.0, 1.0, 0);
+                } else if (_s_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
                     draw_set_color(c_white);
@@ -246,11 +261,16 @@ if (_p.show_chest && instance_exists(_p.current_chest_id)) {
                     _f += _s_slot.quality;
                 }
                 var _cc = _grid_slot_size / 2;
-                var _sz  = 16 / sprite_get_width(_s_data.sprite);
+                var _sz  = 16 / max(sprite_get_width(_s_data.sprite), sprite_get_height(_s_data.sprite));
                 var _cox = (sprite_get_width(_s_data.sprite)  / 2 - sprite_get_xoffset(_s_data.sprite)) * _sz * _icon_scale;
                 var _coy = (sprite_get_height(_s_data.sprite) / 2 - sprite_get_yoffset(_s_data.sprite)) * _sz * _icon_scale;
                 draw_sprite_ext(_s_data.sprite, _f, _sx + _cc - _cox, _sy + _cc - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
-                if (_s_qty > 1) {
+                if (variable_struct_exists(_s_slot, "weight") && _s_slot.weight > 0) {
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_bottom);
+                    draw_set_color(c_white);
+                    draw_text_transformed(_sx + _grid_slot_size - 4, _sy + _grid_slot_size - 2, scr_format_weight(_s_slot.weight), 1.0, 1.0, 0);
+                } else if (_s_qty > 1) {
                     draw_set_halign(fa_right);
                     draw_set_valign(fa_bottom);
                     draw_set_color(c_white);
@@ -274,7 +294,7 @@ if (is_struct(_p.held_item)) {
         if (_is_tool_h && _h_key != "sword" && _h_key != "bow" && variable_struct_exists(_p.held_item, "quality")) {
             _f += _p.held_item.quality;
         }
-        var _sz  = 16 / sprite_get_width(_h_data.sprite);
+        var _sz  = 16 / max(sprite_get_width(_h_data.sprite), sprite_get_height(_h_data.sprite));
         var _cox = (sprite_get_width(_h_data.sprite)  / 2 - sprite_get_xoffset(_h_data.sprite)) * _sz * _h_scl;
         var _coy = (sprite_get_height(_h_data.sprite) / 2 - sprite_get_yoffset(_h_data.sprite)) * _sz * _h_scl;
         draw_sprite_ext(_h_data.sprite, _f, _mx - _cox, _my - _coy, _h_scl * _sz, _h_scl * _sz, 0, c_white, 0.8);
@@ -313,6 +333,13 @@ if (is_struct(_p.hovered_item_data) && !is_struct(_p.held_item)) {
     var _type = (variable_struct_exists(_p.hovered_item_data, "type")) ? _p.hovered_item_data.type : -1;
     var _tooltip_text = _name;
     if (_qty > 1) _tooltip_text += "\nCantidad: " + string(_qty);
+    if (variable_struct_exists(_p.hovered_item_slot_data, "weight") && _p.hovered_item_slot_data.weight > 0) {
+        var _wgt = _p.hovered_item_slot_data.weight;
+        _tooltip_text += "\nPeso: " + scr_format_weight(_wgt);
+        if (variable_struct_exists(_p.hovered_item_data, "base_sell_price")) {
+            _tooltip_text += "\nVenta: $" + string(floor(_p.hovered_item_data.base_sell_price * _wgt));
+        }
+    }
     if (_type == ITEM_TYPE.TOOL || _type == ITEM_TYPE.WEAPON) {
         if (variable_struct_exists(_p.hovered_item_slot_data, "quality")) {
             var _qual_idx = _p.hovered_item_slot_data.quality;

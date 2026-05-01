@@ -885,110 +885,110 @@ global.shop_data[$ "Jorge"]  = { available: false, items: [] };
 global.fish_data = {};
 var _fish = global.fish_data;
 
-// Peces (frames 0-44)
-_fish[$ "fish_00"] = { name: "Salmón",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 0,  rarity: 20, base_sell_price: 75   };
-_fish[$ "fish_01"] = { name: "Trucha Arcoíris",   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 1,  rarity: 20, base_sell_price: 65   };
-_fish[$ "fish_02"] = { name: "Pez Sol",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 2,  rarity: 50, base_sell_price: 25   };
-_fish[$ "fish_03"] = { name: "Pez Gato",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 3,  rarity: 50, base_sell_price: 20   };
-_fish[$ "fish_04"] = { name: "Carpa Dorada",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 4,  rarity: 50, base_sell_price: 30   };
-_fish[$ "fish_05"] = { name: "Lubina",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 5,  rarity: 20, base_sell_price: 60   };
-_fish[$ "fish_06"] = { name: "Perca",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 6,  rarity: 50, base_sell_price: 20   };
-_fish[$ "fish_07"] = { name: "Esturión",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 7,  rarity: 7,  base_sell_price: 200  };
-_fish[$ "fish_08"] = { name: "Anguila",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 8,  rarity: 7,  base_sell_price: 150  };
-_fish[$ "fish_09"] = { name: "Pez Espada",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 9,  rarity: 7,  base_sell_price: 250  };
-_fish[$ "fish_10"] = { name: "Atún",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 10, rarity: 20, base_sell_price: 90   };
-_fish[$ "fish_11"] = { name: "Bacalao",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 11, rarity: 50, base_sell_price: 35   };
-_fish[$ "fish_12"] = { name: "Sardina",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 12, rarity: 50, base_sell_price: 15   };
-_fish[$ "fish_13"] = { name: "Boquerón",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 13, rarity: 50, base_sell_price: 12   };
-_fish[$ "fish_14"] = { name: "Merluza",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 14, rarity: 50, base_sell_price: 28   };
-_fish[$ "fish_15"] = { name: "Rodaballo",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 15, rarity: 20, base_sell_price: 80   };
-_fish[$ "fish_16"] = { name: "Lenguado",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 16, rarity: 20, base_sell_price: 70   };
-_fish[$ "fish_17"] = { name: "Besugo",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 17, rarity: 20, base_sell_price: 55   };
-_fish[$ "fish_18"] = { name: "Mero",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 18, rarity: 20, base_sell_price: 85   };
-_fish[$ "fish_19"] = { name: "Dorada",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 19, rarity: 20, base_sell_price: 75   };
-_fish[$ "fish_20"] = { name: "Lubina de Roca",     type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 20, rarity: 20, base_sell_price: 60   };
-_fish[$ "fish_21"] = { name: "Salmonete",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 21, rarity: 50, base_sell_price: 40   };
-_fish[$ "fish_22"] = { name: "Caballa",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 22, rarity: 50, base_sell_price: 22   };
-_fish[$ "fish_23"] = { name: "Jurel",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 23, rarity: 50, base_sell_price: 18   };
-_fish[$ "fish_24"] = { name: "Bonito",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 24, rarity: 20, base_sell_price: 55   };
-_fish[$ "fish_25"] = { name: "Pez Vela",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 25, rarity: 7,  base_sell_price: 300  };
-_fish[$ "fish_26"] = { name: "Pez Martillo",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 26, rarity: 7,  base_sell_price: 350  };
-_fish[$ "fish_27"] = { name: "Tiburón Blanco",     type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 27, rarity: 2,  base_sell_price: 600  };
-_fish[$ "fish_28"] = { name: "Tiburón Ballena",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 28, rarity: 2,  base_sell_price: 800  };
-_fish[$ "fish_29"] = { name: "Raya Látigo",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 29, rarity: 7,  base_sell_price: 220  };
-_fish[$ "fish_30"] = { name: "Pez Globo",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 30, rarity: 7,  base_sell_price: 180  };
-_fish[$ "fish_31"] = { name: "Pez León",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 31, rarity: 7,  base_sell_price: 190  };
-_fish[$ "fish_32"] = { name: "Pez Cirujano",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 32, rarity: 20, base_sell_price: 95   };
-_fish[$ "fish_33"] = { name: "Pez Ángel",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 33, rarity: 20, base_sell_price: 110  };
-_fish[$ "fish_34"] = { name: "Pez Mariposa",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 34, rarity: 20, base_sell_price: 100  };
-_fish[$ "fish_35"] = { name: "Pez Loro",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 35, rarity: 20, base_sell_price: 85   };
-_fish[$ "fish_36"] = { name: "Pez Ballesta",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 36, rarity: 20, base_sell_price: 90   };
-_fish[$ "fish_37"] = { name: "Pez Cofre",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 37, rarity: 20, base_sell_price: 80   };
-_fish[$ "fish_38"] = { name: "Pez Trompeta",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 38, rarity: 7,  base_sell_price: 160  };
-_fish[$ "fish_39"] = { name: "Pez Flauta",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 39, rarity: 7,  base_sell_price: 150  };
-_fish[$ "fish_40"] = { name: "Pez Pipa",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 40, rarity: 7,  base_sell_price: 140  };
-_fish[$ "fish_41"] = { name: "Pez Piedra",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 41, rarity: 20, base_sell_price: 70   };
-_fish[$ "fish_42"] = { name: "Pez Escorpión",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 42, rarity: 7,  base_sell_price: 175  };
-_fish[$ "fish_43"] = { name: "Pez Sapo",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 43, rarity: 20, base_sell_price: 65   };
-_fish[$ "fish_44"] = { name: "Pez Diablo",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 44, rarity: 2,  base_sell_price: 500  };
+// Peces (frames 0-44) — base_sell_price es precio POR KG; weight_min/max en kg
+_fish[$ "fish_00"] = { name: "Salmón",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 0,  rarity: 20, base_sell_price: 27,   weight_min: 1.5,   weight_max: 4.0    };
+_fish[$ "fish_01"] = { name: "Trucha Arcoíris",   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 1,  rarity: 20, base_sell_price: 34,   weight_min: 0.8,   weight_max: 3.0    };
+_fish[$ "fish_02"] = { name: "Pez Sol",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 2,  rarity: 50, base_sell_price: 50,   weight_min: 0.2,   weight_max: 0.8    };
+_fish[$ "fish_03"] = { name: "Pez Gato",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 3,  rarity: 50, base_sell_price: 27,   weight_min: 0.3,   weight_max: 1.2    };
+_fish[$ "fish_04"] = { name: "Carpa Dorada",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 4,  rarity: 50, base_sell_price: 16,   weight_min: 0.8,   weight_max: 3.0    };
+_fish[$ "fish_05"] = { name: "Lubina",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 5,  rarity: 20, base_sell_price: 24,   weight_min: 1.0,   weight_max: 4.0    };
+_fish[$ "fish_06"] = { name: "Perca",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 6,  rarity: 50, base_sell_price: 33,   weight_min: 0.2,   weight_max: 1.0    };
+_fish[$ "fish_07"] = { name: "Esturión",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 7,  rarity: 7,  base_sell_price: 7,    weight_min: 10.0,  weight_max: 50.0   };
+_fish[$ "fish_08"] = { name: "Anguila",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 8,  rarity: 7,  base_sell_price: 86,   weight_min: 0.5,   weight_max: 3.0    };
+_fish[$ "fish_09"] = { name: "Pez Espada",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 9,  rarity: 7,  base_sell_price: 4,    weight_min: 30.0,  weight_max: 100.0  };
+_fish[$ "fish_10"] = { name: "Atún",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 10, rarity: 20, base_sell_price: 2,    weight_min: 20.0,  weight_max: 80.0   };
+_fish[$ "fish_11"] = { name: "Bacalao",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 11, rarity: 50, base_sell_price: 21,   weight_min: 0.8,   weight_max: 2.5    };
+_fish[$ "fish_12"] = { name: "Sardina",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 12, rarity: 50, base_sell_price: 150,  weight_min: 0.05,  weight_max: 0.15   };
+_fish[$ "fish_13"] = { name: "Boquerón",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 13, rarity: 50, base_sell_price: 150,  weight_min: 0.04,  weight_max: 0.12   };
+_fish[$ "fish_14"] = { name: "Merluza",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 14, rarity: 50, base_sell_price: 19,   weight_min: 0.5,   weight_max: 2.5    };
+_fish[$ "fish_15"] = { name: "Rodaballo",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 15, rarity: 20, base_sell_price: 27,   weight_min: 1.0,   weight_max: 5.0    };
+_fish[$ "fish_16"] = { name: "Lenguado",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 16, rarity: 20, base_sell_price: 78,   weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_17"] = { name: "Besugo",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 17, rarity: 20, base_sell_price: 44,   weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_18"] = { name: "Mero",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 18, rarity: 20, base_sell_price: 17,   weight_min: 2.0,   weight_max: 8.0    };
+_fish[$ "fish_19"] = { name: "Dorada",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 19, rarity: 20, base_sell_price: 43,   weight_min: 0.5,   weight_max: 3.0    };
+_fish[$ "fish_20"] = { name: "Lubina de Roca",     type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 20, rarity: 20, base_sell_price: 32,   weight_min: 0.8,   weight_max: 3.0    };
+_fish[$ "fish_21"] = { name: "Salmonete",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 21, rarity: 50, base_sell_price: 80,   weight_min: 0.2,   weight_max: 0.8    };
+_fish[$ "fish_22"] = { name: "Caballa",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 22, rarity: 50, base_sell_price: 44,   weight_min: 0.2,   weight_max: 0.8    };
+_fish[$ "fish_23"] = { name: "Jurel",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 23, rarity: 50, base_sell_price: 45,   weight_min: 0.2,   weight_max: 0.6    };
+_fish[$ "fish_24"] = { name: "Bonito",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 24, rarity: 20, base_sell_price: 11,   weight_min: 2.0,   weight_max: 8.0    };
+_fish[$ "fish_25"] = { name: "Pez Vela",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 25, rarity: 7,  base_sell_price: 5,    weight_min: 30.0,  weight_max: 80.0   };
+_fish[$ "fish_26"] = { name: "Pez Martillo",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 26, rarity: 7,  base_sell_price: 2,    weight_min: 80.0,  weight_max: 250.0  };
+_fish[$ "fish_27"] = { name: "Tiburón Blanco",     type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 27, rarity: 2,  base_sell_price: 2,    weight_min: 100.0, weight_max: 400.0  };
+_fish[$ "fish_28"] = { name: "Tiburón Ballena",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 28, rarity: 2,  base_sell_price: 2,    weight_min: 200.0, weight_max: 600.0  };
+_fish[$ "fish_29"] = { name: "Raya Látigo",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 29, rarity: 7,  base_sell_price: 18,   weight_min: 5.0,   weight_max: 20.0   };
+_fish[$ "fish_30"] = { name: "Pez Globo",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 30, rarity: 7,  base_sell_price: 200,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_31"] = { name: "Pez León",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 31, rarity: 7,  base_sell_price: 210,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_32"] = { name: "Pez Cirujano",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 32, rarity: 20, base_sell_price: 160,  weight_min: 0.2,   weight_max: 1.0    };
+_fish[$ "fish_33"] = { name: "Pez Ángel",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 33, rarity: 20, base_sell_price: 120,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_34"] = { name: "Pez Mariposa",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 34, rarity: 20, base_sell_price: 330,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_35"] = { name: "Pez Loro",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 35, rarity: 20, base_sell_price: 68,   weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_36"] = { name: "Pez Ballesta",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 36, rarity: 20, base_sell_price: 100,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_37"] = { name: "Pez Cofre",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 37, rarity: 20, base_sell_price: 265,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_38"] = { name: "Pez Trompeta",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 38, rarity: 7,  base_sell_price: 130,  weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_39"] = { name: "Pez Flauta",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 39, rarity: 7,  base_sell_price: 165,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_40"] = { name: "Pez Pipa",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 40, rarity: 7,  base_sell_price: 465,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_41"] = { name: "Pez Piedra",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 41, rarity: 20, base_sell_price: 56,   weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_42"] = { name: "Pez Escorpión",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 42, rarity: 7,  base_sell_price: 195,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_43"] = { name: "Pez Sapo",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 43, rarity: 20, base_sell_price: 43,   weight_min: 0.5,   weight_max: 2.5    };
+_fish[$ "fish_44"] = { name: "Pez Diablo",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 44, rarity: 2,  base_sell_price: 8,    weight_min: 30.0,  weight_max: 100.0  };
 
 // Delfines (frames 45-48)
-_fish[$ "fish_45"] = { name: "Delfín Mular",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 45, rarity: 2,  base_sell_price: 1000 };
-_fish[$ "fish_46"] = { name: "Delfín Oceánico",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 46, rarity: 2,  base_sell_price: 1200 };
-_fish[$ "fish_47"] = { name: "Delfín Rosado",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 47, rarity: 1,  base_sell_price: 2000 };
-_fish[$ "fish_48"] = { name: "Delfín de Rápida",   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 48, rarity: 2,  base_sell_price: 1000 };
+_fish[$ "fish_45"] = { name: "Delfín Mular",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 45, rarity: 2,  base_sell_price: 7,    weight_min: 80.0,  weight_max: 200.0  };
+_fish[$ "fish_46"] = { name: "Delfín Oceánico",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 46, rarity: 2,  base_sell_price: 11,   weight_min: 60.0,  weight_max: 150.0  };
+_fish[$ "fish_47"] = { name: "Delfín Rosado",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 47, rarity: 1,  base_sell_price: 27,   weight_min: 50.0,  weight_max: 100.0  };
+_fish[$ "fish_48"] = { name: "Delfín de Rápida",   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 48, rarity: 2,  base_sell_price: 13,   weight_min: 50.0,  weight_max: 100.0  };
 
 // Criaturas Marinas (frames 49-98)
-_fish[$ "fish_49"] = { name: "Pulpo Gigante",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 49, rarity: 7,  base_sell_price: 250  };
-_fish[$ "fish_50"] = { name: "Calamar Común",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 50, rarity: 50, base_sell_price: 30   };
-_fish[$ "fish_51"] = { name: "Sepia",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 51, rarity: 50, base_sell_price: 35   };
-_fish[$ "fish_52"] = { name: "Nautilo",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 52, rarity: 2,  base_sell_price: 600  };
-_fish[$ "fish_53"] = { name: "Cangrejo Real",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 53, rarity: 20, base_sell_price: 120  };
-_fish[$ "fish_54"] = { name: "Langosta Espinosa",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 54, rarity: 7,  base_sell_price: 300  };
-_fish[$ "fish_55"] = { name: "Bogavante",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 55, rarity: 7,  base_sell_price: 350  };
-_fish[$ "fish_56"] = { name: "Cigala",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 56, rarity: 20, base_sell_price: 90   };
-_fish[$ "fish_57"] = { name: "Gamba Roja",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 57, rarity: 20, base_sell_price: 80   };
-_fish[$ "fish_58"] = { name: "Langostino",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 58, rarity: 50, base_sell_price: 40   };
-_fish[$ "fish_59"] = { name: "Camarón",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 59, rarity: 50, base_sell_price: 20   };
-_fish[$ "fish_60"] = { name: "Centollo",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 60, rarity: 20, base_sell_price: 100  };
-_fish[$ "fish_61"] = { name: "Nécora",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 61, rarity: 20, base_sell_price: 85   };
-_fish[$ "fish_62"] = { name: "Buey de Mar",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 62, rarity: 20, base_sell_price: 110  };
-_fish[$ "fish_63"] = { name: "Percebe",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 63, rarity: 7,  base_sell_price: 180  };
-_fish[$ "fish_64"] = { name: "Mejillón",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 64, rarity: 50, base_sell_price: 15   };
-_fish[$ "fish_65"] = { name: "Almeja",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 65, rarity: 50, base_sell_price: 20   };
-_fish[$ "fish_66"] = { name: "Berberecho",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 66, rarity: 50, base_sell_price: 12   };
-_fish[$ "fish_67"] = { name: "Ostra",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 67, rarity: 20, base_sell_price: 60   };
-_fish[$ "fish_68"] = { name: "Vieira",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 68, rarity: 20, base_sell_price: 75   };
-_fish[$ "fish_69"] = { name: "Caracol Marino",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 69, rarity: 50, base_sell_price: 25   };
-_fish[$ "fish_70"] = { name: "Estrella de Mar",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 70, rarity: 50, base_sell_price: 30   };
-_fish[$ "fish_71"] = { name: "Erizo de Mar",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 71, rarity: 20, base_sell_price: 55   };
-_fish[$ "fish_72"] = { name: "Holoturia",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 72, rarity: 50, base_sell_price: 20   };
-_fish[$ "fish_73"] = { name: "Medusa Melena de León",  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 73, rarity: 7,  base_sell_price: 200  };
-_fish[$ "fish_74"] = { name: "Carabela Portuguesa",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 74, rarity: 7,  base_sell_price: 250  };
-_fish[$ "fish_75"] = { name: "Coral Rojo",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 75, rarity: 2,  base_sell_price: 500  };
-_fish[$ "fish_76"] = { name: "Anémona de Mar",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 76, rarity: 20, base_sell_price: 70   };
-_fish[$ "fish_77"] = { name: "Esponja",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 77, rarity: 50, base_sell_price: 15   };
-_fish[$ "fish_78"] = { name: "Caballito de Mar",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 78, rarity: 7,  base_sell_price: 150  };
-_fish[$ "fish_79"] = { name: "Dragón de Mar",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 79, rarity: 2,  base_sell_price: 700  };
-_fish[$ "fish_80"] = { name: "Tortuga Verde",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 80, rarity: 2,  base_sell_price: 600  };
-_fish[$ "fish_81"] = { name: "Tortuga Carey",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 81, rarity: 2,  base_sell_price: 700  };
-_fish[$ "fish_82"] = { name: "Serpiente Marina",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 82, rarity: 7,  base_sell_price: 220  };
-_fish[$ "fish_83"] = { name: "Manatí",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 83, rarity: 1,  base_sell_price: 2000 };
-_fish[$ "fish_84"] = { name: "Dugongo",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 84, rarity: 1,  base_sell_price: 2000 };
-_fish[$ "fish_85"] = { name: "Foca Monje",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 85, rarity: 1,  base_sell_price: 1500 };
-_fish[$ "fish_86"] = { name: "León Marino",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 86, rarity: 2,  base_sell_price: 800  };
-_fish[$ "fish_87"] = { name: "Morsa",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 87, rarity: 2,  base_sell_price: 900  };
-_fish[$ "fish_88"] = { name: "Narval",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 88, rarity: 1,  base_sell_price: 2500 };
-_fish[$ "fish_89"] = { name: "Beluga",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 89, rarity: 1,  base_sell_price: 2000 };
-_fish[$ "fish_90"] = { name: "Orca",                   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 90, rarity: 1,  base_sell_price: 3000 };
-_fish[$ "fish_91"] = { name: "Cachalote",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 91, rarity: 1,  base_sell_price: 3500 };
-_fish[$ "fish_92"] = { name: "Ballena Azul",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 92, rarity: 1,  base_sell_price: 5000 };
-_fish[$ "fish_93"] = { name: "Ballena Jorobada",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 93, rarity: 1,  base_sell_price: 4000 };
-_fish[$ "fish_94"] = { name: "Ballena Franca",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 94, rarity: 1,  base_sell_price: 3500 };
-_fish[$ "fish_95"] = { name: "Rorcual",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 95, rarity: 1,  base_sell_price: 3000 };
-_fish[$ "fish_96"] = { name: "Cachalote Pigmeo",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 96, rarity: 2,  base_sell_price: 1000 };
-_fish[$ "fish_97"] = { name: "Vaquita Marina",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 97, rarity: 1,  base_sell_price: 5000 };
-_fish[$ "fish_98"] = { name: "Pez Desconocido",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 98, rarity: 50, base_sell_price: 10   };
+_fish[$ "fish_49"] = { name: "Pulpo Gigante",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 49, rarity: 7,  base_sell_price: 17,   weight_min: 5.0,   weight_max: 25.0   };
+_fish[$ "fish_50"] = { name: "Calamar Común",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 50, rarity: 50, base_sell_price: 100,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_51"] = { name: "Sepia",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 51, rarity: 50, base_sell_price: 70,   weight_min: 0.2,   weight_max: 0.8    };
+_fish[$ "fish_52"] = { name: "Nautilo",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 52, rarity: 2,  base_sell_price: 920,  weight_min: 0.3,   weight_max: 1.0    };
+_fish[$ "fish_53"] = { name: "Cangrejo Real",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 53, rarity: 20, base_sell_price: 37,   weight_min: 1.5,   weight_max: 5.0    };
+_fish[$ "fish_54"] = { name: "Langosta Espinosa",      type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 54, rarity: 7,  base_sell_price: 240,  weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_55"] = { name: "Bogavante",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 55, rarity: 7,  base_sell_price: 200,  weight_min: 0.5,   weight_max: 3.0    };
+_fish[$ "fish_56"] = { name: "Cigala",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 56, rarity: 20, base_sell_price: 360,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_57"] = { name: "Gamba Roja",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 57, rarity: 20, base_sell_price: 640,  weight_min: 0.05,  weight_max: 0.2    };
+_fish[$ "fish_58"] = { name: "Langostino",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 58, rarity: 50, base_sell_price: 160,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_59"] = { name: "Camarón",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 59, rarity: 50, base_sell_price: 665,  weight_min: 0.01,  weight_max: 0.05   };
+_fish[$ "fish_60"] = { name: "Centollo",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 60, rarity: 20, base_sell_price: 80,   weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_61"] = { name: "Nécora",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 61, rarity: 20, base_sell_price: 340,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_62"] = { name: "Buey de Mar",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 62, rarity: 20, base_sell_price: 58,   weight_min: 0.8,   weight_max: 3.0    };
+_fish[$ "fish_63"] = { name: "Percebe",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 63, rarity: 7,  base_sell_price: 2250, weight_min: 0.04,  weight_max: 0.12   };
+_fish[$ "fish_64"] = { name: "Mejillón",               type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 64, rarity: 50, base_sell_price: 150,  weight_min: 0.05,  weight_max: 0.15   };
+_fish[$ "fish_65"] = { name: "Almeja",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 65, rarity: 50, base_sell_price: 200,  weight_min: 0.05,  weight_max: 0.15   };
+_fish[$ "fish_66"] = { name: "Berberecho",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 66, rarity: 50, base_sell_price: 240,  weight_min: 0.02,  weight_max: 0.08   };
+_fish[$ "fish_67"] = { name: "Ostra",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 67, rarity: 20, base_sell_price: 300,  weight_min: 0.1,   weight_max: 0.3    };
+_fish[$ "fish_68"] = { name: "Vieira",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 68, rarity: 20, base_sell_price: 300,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_69"] = { name: "Caracol Marino",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 69, rarity: 50, base_sell_price: 165,  weight_min: 0.05,  weight_max: 0.25   };
+_fish[$ "fish_70"] = { name: "Estrella de Mar",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 70, rarity: 50, base_sell_price: 170,  weight_min: 0.05,  weight_max: 0.3    };
+_fish[$ "fish_71"] = { name: "Erizo de Mar",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 71, rarity: 20, base_sell_price: 185,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_72"] = { name: "Holoturia",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 72, rarity: 50, base_sell_price: 115,  weight_min: 0.05,  weight_max: 0.3    };
+_fish[$ "fish_73"] = { name: "Medusa Melena de León",  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 73, rarity: 7,  base_sell_price: 22,   weight_min: 3.0,   weight_max: 15.0   };
+_fish[$ "fish_74"] = { name: "Carabela Portuguesa",    type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 74, rarity: 7,  base_sell_price: 145,  weight_min: 0.5,   weight_max: 3.0    };
+_fish[$ "fish_75"] = { name: "Coral Rojo",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 75, rarity: 2,  base_sell_price: 435,  weight_min: 0.3,   weight_max: 2.0    };
+_fish[$ "fish_76"] = { name: "Anémona de Mar",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 76, rarity: 20, base_sell_price: 235,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_77"] = { name: "Esponja",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 77, rarity: 50, base_sell_price: 85,   weight_min: 0.05,  weight_max: 0.3    };
+_fish[$ "fish_78"] = { name: "Caballito de Mar",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 78, rarity: 7,  base_sell_price: 3750, weight_min: 0.02,  weight_max: 0.06   };
+_fish[$ "fish_79"] = { name: "Dragón de Mar",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 79, rarity: 2,  base_sell_price: 5600, weight_min: 0.05,  weight_max: 0.2    };
+_fish[$ "fish_80"] = { name: "Tortuga Verde",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 80, rarity: 2,  base_sell_price: 9,    weight_min: 40.0,  weight_max: 100.0  };
+_fish[$ "fish_81"] = { name: "Tortuga Carey",          type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 81, rarity: 2,  base_sell_price: 18,   weight_min: 20.0,  weight_max: 60.0   };
+_fish[$ "fish_82"] = { name: "Serpiente Marina",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 82, rarity: 7,  base_sell_price: 44,   weight_min: 2.0,   weight_max: 8.0    };
+_fish[$ "fish_83"] = { name: "Manatí",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 83, rarity: 1,  base_sell_price: 10,   weight_min: 100.0, weight_max: 300.0  };
+_fish[$ "fish_84"] = { name: "Dugongo",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 84, rarity: 1,  base_sell_price: 11,   weight_min: 100.0, weight_max: 250.0  };
+_fish[$ "fish_85"] = { name: "Foca Monje",             type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 85, rarity: 1,  base_sell_price: 9,    weight_min: 100.0, weight_max: 250.0  };
+_fish[$ "fish_86"] = { name: "León Marino",            type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 86, rarity: 2,  base_sell_price: 8,    weight_min: 50.0,  weight_max: 150.0  };
+_fish[$ "fish_87"] = { name: "Morsa",                  type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 87, rarity: 2,  base_sell_price: 3,    weight_min: 150.0, weight_max: 400.0  };
+_fish[$ "fish_88"] = { name: "Narval",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 88, rarity: 1,  base_sell_price: 7,    weight_min: 200.0, weight_max: 500.0  };
+_fish[$ "fish_89"] = { name: "Beluga",                 type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 89, rarity: 1,  base_sell_price: 7,    weight_min: 150.0, weight_max: 400.0  };
+_fish[$ "fish_90"] = { name: "Orca",                   type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 90, rarity: 1,  base_sell_price: 3,    weight_min: 500.0, weight_max: 1500.0 };
+_fish[$ "fish_91"] = { name: "Cachalote",              type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 91, rarity: 1,  base_sell_price: 2,    weight_min: 1000.0,weight_max: 3000.0 };
+_fish[$ "fish_92"] = { name: "Ballena Azul",           type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 92, rarity: 1,  base_sell_price: 1,    weight_min: 2000.0,weight_max: 6000.0 };
+_fish[$ "fish_93"] = { name: "Ballena Jorobada",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 93, rarity: 1,  base_sell_price: 2,    weight_min: 1000.0,weight_max: 3000.0 };
+_fish[$ "fish_94"] = { name: "Ballena Franca",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 94, rarity: 1,  base_sell_price: 2,    weight_min: 1000.0,weight_max: 3000.0 };
+_fish[$ "fish_95"] = { name: "Rorcual",                type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 95, rarity: 1,  base_sell_price: 2,    weight_min: 500.0, weight_max: 2000.0 };
+_fish[$ "fish_96"] = { name: "Cachalote Pigmeo",       type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 96, rarity: 2,  base_sell_price: 5,    weight_min: 100.0, weight_max: 300.0  };
+_fish[$ "fish_97"] = { name: "Vaquita Marina",         type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 97, rarity: 1,  base_sell_price: 170,  weight_min: 20.0,  weight_max: 40.0   };
+_fish[$ "fish_98"] = { name: "Pez Desconocido",        type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 98, rarity: 50, base_sell_price: 100,  weight_min: 0.05,  weight_max: 0.15   };
 
 global.fish_pool = [];
 var _fkeys = variable_struct_get_names(global.fish_data);
@@ -1193,10 +1193,10 @@ global.machine_data = {
         process_time: 720,
         preserve_color: false,
         recipes: [
-            { input: "milk_reg", output: "cheese", qty: 1 },
-            { input: "milk_large", output: "cheese", qty: 2 },
-            { input: "goat_milk_reg", output: "goat_cheese", qty: 1 },
-            { input: "goat_milk_large", output: "goat_cheese", qty: 2 }
+            { input: "milk_reg",        output: "cheese",      qty: 1, weight_min: 0.3, weight_max: 0.5 },
+            { input: "milk_large",      output: "cheese",      qty: 1, weight_min: 0.5, weight_max: 1.0 },
+            { input: "goat_milk_reg",   output: "goat_cheese", qty: 1, weight_min: 0.3, weight_max: 0.5 },
+            { input: "goat_milk_large", output: "goat_cheese", qty: 1, weight_min: 0.5, weight_max: 1.0 }
         ]
     },
     horno: {

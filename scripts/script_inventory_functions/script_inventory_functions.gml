@@ -973,7 +973,8 @@ function scr_process_shipping(_player = global.local_player) {
         if (is_struct(_item)) {
             var _data = scr_get_item_data(_item.key);
             if (is_struct(_data) && variable_struct_exists(_data, "base_sell_price")) {
-                var _subtotal = _data.base_sell_price * _item.quantity;
+                var _item_weight = variable_struct_exists(_item, "weight") ? _item.weight : 1;
+                var _subtotal = _data.base_sell_price * _item.quantity * _item_weight;
                 _summary.total += _subtotal;
                 
                 // Buscar si ya lo agregamos al resumen para agruparlo
@@ -1009,6 +1010,13 @@ function scr_process_shipping(_player = global.local_player) {
     }
     
     return _summary;
+}
+
+// Formato legible para pesos: gramos, kg o toneladas
+function scr_format_weight(_w) {
+    if (_w < 1.0)    return string(round(_w * 1000)) + "g";
+    if (_w < 1000.0) return string(round(_w)) + "kg";
+    return string_format(_w / 1000, 1, 1) + "t";
 }
 
 function scr_notify(_text) {

@@ -16,6 +16,10 @@ if (state == 1) {
         image_speed = 0;
         image_index = anim_frames;
         done_signal = 60;
+        var _recipe = scr_match_machine_recipe(machine_type, input_key);
+        if (is_struct(_recipe) && variable_struct_exists(_recipe, "weight_min")) {
+            output_weight = round(random_range(_recipe.weight_min, _recipe.weight_max) * 100) / 100;
+        }
     } else {
         var _frame = 1 + (timer div 6) mod anim_frames;
         image_index = _frame;

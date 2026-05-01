@@ -28,14 +28,14 @@ All game-wide data lives in `global.*` structs defined in `script_init.gml`:
 - `global.crop_data` — Harvested crop items
 - `global.tool_data` — 10 tools: `watering_can`, `pickaxe`, `axe`, `sickle`, `hoe`, `shovel`, `fishing_rod`, `bugnet`, `sword`, `bow`
 - `global.tool_progression` — 9 quality tiers (OXIDADO → VITOLANIO) with per-tier stats
-- `global.placeable_data` — Placeables (chest)
+- `global.placeable_data` — Placeables: `chest` and 7 machines (`machine_curtidora`, `machine_telar`, `machine_mantequillera`, `machine_mermeladora`, `machine_prensa_queso`, `machine_horno`, `machine_colmena`). Entries with `machine_type` key spawn `obj_machine` on placement.
 - `global.material_data` — `wood`, `stone`
 - `global.forage_data` — 119 forage items (mushrooms `forage_m*`, herbs `forage_h*`, flowers `forage_f*`), rarity 1–5
-- `global.fish_data`, `global.fish_pool` — 99 fish with rarity weights; `fish_pool` is a flat array for O(1) random selection
+- `global.fish_data`, `global.fish_pool` — 99 fish with rarity weights; `fish_pool` is a flat array for O(1) random selection. Each entry has `weight_min`/`weight_max` (kg); `base_sell_price` is **price per kg**. A random weight is assigned on catch and stored in the inventory slot struct.
 - `global.insect_data`, `global.insect_pool` — 60 insects (ants, snails, butterflies, moths, crickets, etc.); weighted pool
 - `global.animal_data` — Per-animal stats for `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`: `move_speed`, `hp`, `max_hp`, `variants[]`, `product_drops[]` (food/product on death), `crafting_drops[]` (raw crafting material, 50% chance on death)
 - `global.wild_animal_data` — Forest animals: `capibara`, `deer`, `fox`, `frog`, `penguin`, `rabbit`, `turtle`. Each has `product_drops[]` (1 guaranteed raw crafting material on death)
-- `global.animal_product_data` — 20 products: eggs, milk, cheese, butter, honey, meat, wool (keyed e.g. `"egg_chicken_brown_reg"`, `"milk_reg"`, `"steak"`, `"wool"`)
+- `global.animal_product_data` — 20 products: eggs, milk, cheese, butter, honey, meat, wool (keyed e.g. `"egg_chicken_brown_reg"`, `"milk_reg"`, `"steak"`, `"wool"`). `cheese` and `goat_cheese` are weight-based: `base_sell_price` is per-kg; the prensa_queso assigns a random weight on output (small milk → 0.3–0.5 kg, large milk → 0.5–1.0 kg).
 - `global.crafting_material_data` — 126 crafting materials (9 types × 14 colors). Types: `thread`, `cloth`, `string`, `leather`, `pelt`, `feathers`, `rabbit_pelt`, `yarn`, `cow_hide`. Colors: `red orange yellow green blue lilac purple turquoise pink lime amber brown black white`. Keys follow `"<type>_<color>"` (e.g. `"pelt_red"`, `"yarn_white"`). Sprite: `sprite_crafting_material`. Raw drops (from animals): pelt, cow_hide, rabbit_pelt, yarn, feathers, string. Craft-only: leather, thread, cloth. See `CRAFTING.md` for full crafting chains and drop sources.
 - `global.npc_data`, `global.shop_data` — 21 NPCs; only "Miraculos" shop is active
 
@@ -53,9 +53,9 @@ All game-wide data lives in `global.*` structs defined in `script_init.gml`:
 
 ### Scripts (GML functions, not objects)
 - **`script_init.gml`** — Defines all enums (`NET_ROLE`, `NET_CMD`, `DIR`, `STATE`, `FISHING_STATE`, `HORSE_STATE`, `ANIMAL_STATE`, `ITEM_TYPE`, `TOOL_TYPE`, `SEASON`, `QUALITY`) and all global databases.
-- **`script_inventory_functions.gml`** — Room persistence (`scr_capture_current_room_state`, `scr_restore_room_state`), save/load (`scr_save_game`, `scr_apply_loaded_game`), drop system (`inventory_drop_item`, `scr_register_room_drop`), `scr_sleep_and_save`, `scr_process_shipping`, `scr_notify`, `scr_get_item_data`.
+- **`script_inventory_functions.gml`** — Room persistence (`scr_capture_current_room_state`, `scr_restore_room_state`), save/load (`scr_save_game`, `scr_apply_loaded_game`), drop system (`inventory_drop_item`, `scr_register_room_drop`), `scr_sleep_and_save`, `scr_process_shipping` (uses `weight` field when present: `price = base_sell_price * quantity * weight`), `scr_notify`, `scr_get_item_data`, `scr_format_weight(_w)` (converts kg float → display string: `< 1` → `"80g"`, `1–999` → `"45kg"`, `≥ 1000` → `"4.5t"`).
 - **`script_player_actions.gml`** — `scr_use_item()`: central dispatcher for tool use, planting, harvesting, and placeable logic. Also `scr_buy_building()` and `scr_upgrade_tool()`.
-- **`script_net.gml`** — LAN multiplayer over TCP/UDP. Packet format: `[u16 payload_size][u8 cmd][payload]`. 40+ `NET_CMD` messages for state sync (HANDSHAKE, FULL_SNAPSHOT, PLAYER_STATE, TIME_UPDATE, NEW_DAY, CMD_USE_ITEM, CMD_PICKUP, CMD_BUGNET, SLEEP_REQUEST, etc.).
+- **`script_net.gml`** — LAN multiplayer over TCP/UDP. Packet format: `[u32 payload_size][u8 cmd][payload]`. 40+ `NET_CMD` messages for state sync (HANDSHAKE, FULL_SNAPSHOT, PLAYER_STATE, TIME_UPDATE, NEW_DAY, CMD_USE_ITEM, CMD_PICKUP, CMD_BUGNET, SLEEP_REQUEST, etc.). Full snapshot includes `mine_state`.
 - **`scr_add_animal`** — Places a random-variant `obj_farm_animal` at mouse position.
 - **`scr_populate_farm`** / **`scr_advance_common_trees`** — Farm generation and tree state advancement.
 - **`scr_populate_forest`** — Spawns daily forage items, wild animals, and insects in the forest room.
@@ -78,7 +78,7 @@ Save data is JSON written to `saves/savegame.json` via `scr_save_game()`. Includ
 ### Item Key System
 Items are identified by string keys (e.g., `"tomato_seeds"`, `"watering_can"`, `"fish_00"`, `"egg_chicken_brown_reg"`, `"forage_m00"`, `"pelt_red"`). `scr_get_item_data(_key)` searches all databases in order: `seed_data`, `crop_data`, `tool_data`, `placeable_data`, `material_data`, `forage_data`, `fish_data`, `insect_data`, `animal_product_data`, `crafting_material_data`. Returns `undefined` if not found.
 
-`obj_item_parent` (world-drop pickup) also searches the same databases in its Step event to resolve the sprite and pickup name. **Both `scr_get_item_data` and `obj_item_parent` must be kept in sync when adding a new database.** Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] }`.
+`obj_item_parent` (world-drop pickup) also searches the same databases in its Step event to resolve the sprite and pickup name. **Both `scr_get_item_data` and `obj_item_parent` must be kept in sync when adding a new database.** Inventory slots are either `-1` (empty) or a struct `{ key, quantity [, quality] [, weight] }`. The `weight` field (kg float) is present on fish and cheese/goat_cheese; for those items `base_sell_price` is per-kg. `add_item(_key, _qty, _weight)` accepts an optional third parameter to attach weight to the new slot.
 
 ### Drop System
 `inventory_drop_item(_key, _qty, _px, _py, _delay=15)` — Creates an `obj_item_parent` on the `"Instances"` layer at the given position, registers it in `global.room_drops`, and (in multiplayer HOST mode) broadcasts the room state. All rooms that need drops must have an `"Instances"` layer.
@@ -103,7 +103,16 @@ The fishing rod triggers `STATE.FISHING` in `obj_player`. Sub-states via `FISHIN
 2. **WAITING** — random bite timer (180–480 frames).
 3. **BITE** — 120 frames to press LMB/Space; miss → "¡Se escapó!".
 4. **REELING** — 15 frames.
-5. **CATCHING** — picks from `global.fish_pool`, adds to inventory, deducts 10 energy.
+5. **CATCHING** — picks from `global.fish_pool`, rolls a random weight within the fish's `weight_min`/`weight_max` range, adds to inventory via `add_item(_key, 1, _weight)`, deducts 10 energy. Catch notification includes the weight (e.g. `"¡Atrapaste un Salmón (3kg)!"`).
+
+### Crafting Machine System
+`obj_machine` is a multi-state placeable (`machine_type` set on creation). States: `0` = idle, `1` = processing, `2` = ready. Player interacts with E key to insert input (state 0→1) or collect output (state 2→0). `global.machine_data` holds recipes per machine type. `scr_match_machine_recipe(_type, _input_key)` returns the matching recipe struct or `undefined`. Machines with `passive: true` (colmena) produce output automatically on a timer. Recipes may include `weight_min`/`weight_max` — when present the machine rolls a random weight on completion and stores it in `output_weight`. Right-clicking a machine picks it up into inventory.
+
+### Weight-Based Selling
+Items can carry a `weight` field (kg float) in their slot struct. `scr_process_shipping` applies it: `subtotal = base_sell_price × quantity × weight`. Items without `weight` default to multiplier 1 (unchanged behavior). The inventory UI displays weight in the slot corner and in the tooltip (with estimated sell value). Format via `scr_format_weight`: grams for `< 1 kg`, kg for `1–999`, tonnes for `≥ 1000`. Currently weight-bearing items: **fish** (99 types, assigned on catch) and **cheese/goat_cheese** (assigned by prensa_queso on completion).
+
+### Placement Selector
+When a placeable item is selected, `obj_controller` Step computes `selector_w/selector_h` from the sprite dimensions (`ceil(sprite_width / 16)`). Draw_0 renders the green/red box starting at `(gx, gy)` — no centering — so the box aligns with where the object actually places. Tools use a centered area-selector instead. Sprite preview also draws at `(gx + place_offset_x, gy + place_offset_y)`. Inventory icon scaling uses `16 / max(sprite_width, sprite_height)` so tall sprites (e.g. colmena 16×32) fit within the slot.
 
 ### Insect Catching System
 The `bugnet` tool is used in the forest to catch insects. The timing minigame (`obj_minigame_timing`) has 4 difficulty levels (0=Easy to 3=Extreme) controlling indicator speed and hitbox precision. Caught insects are added to inventory via `global.insect_data`.

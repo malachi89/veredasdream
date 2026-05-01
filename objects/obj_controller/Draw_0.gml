@@ -7,8 +7,16 @@ draw_set_alpha(1.0);
 
 // 2. Dibujo del Selector de Rango (Solo si es herramienta/semilla válida)
 if (show_selector) {
-    var _sx1 = gx - floor(selector_w / 2) * 16;
-    var _sy1 = gy - floor(selector_h / 2) * 16;
+    // Placeables se colocan en (gx, gy) — sin centrado. Herramientas usan área centrada.
+    var _lp_d = global.local_player;
+    var _is_placeable_sel = false;
+    if (instance_exists(_lp_d)) {
+        var _sel_slot = _lp_d.inventory_array[_lp_d.selected_slot];
+        var _sel_key = is_struct(_sel_slot) ? _sel_slot.key : "";
+        _is_placeable_sel = (_sel_key != "" && variable_struct_exists(global.placeable_data, _sel_key));
+    }
+    var _sx1 = _is_placeable_sel ? gx : (gx - floor(selector_w / 2) * 16);
+    var _sy1 = _is_placeable_sel ? gy : (gy - floor(selector_h / 2) * 16);
     var _sx2 = _sx1 + selector_w * 16 - 1;
     var _sy2 = _sy1 + selector_h * 16 - 1;
 
@@ -23,7 +31,6 @@ if (show_selector) {
     draw_set_alpha(1.0);
 
     // --- PREVIEW DE OBJETOS COLOCABLES (PLACEABLE) ---
-    var _lp_d = global.local_player;
     if (instance_exists(_lp_d)) {
         var _slot = _lp_d.inventory_array[_lp_d.selected_slot];
         var _key = is_struct(_slot) ? _slot.key : "";
@@ -33,7 +40,6 @@ if (show_selector) {
             var _off_y = variable_struct_exists(_data, "place_offset_y") ? _data.place_offset_y : 0;
 
             draw_set_alpha(0.5);
-
             draw_sprite(_data.sprite, _data.subimg, _sx1 + _off_x, _sy1 + _off_y);
             draw_set_alpha(1.0);
         }

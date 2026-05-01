@@ -758,6 +758,10 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                     // Existing logic for normal crops and placeable objects
                     var _tw = _is_placeable ? _placeable_tiles_w : 1;
                     var _th = _is_placeable ? _placeable_tiles_h : 1;
+                    if (_is_placeable) {
+                        selector_w = _placeable_tiles_w;
+                        selector_h = _placeable_tiles_h;
+                    }
                     var _px_end = gx + _tw * 16;
                     var _py_end = gy + _th * 16;
 

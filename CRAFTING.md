@@ -54,10 +54,10 @@ wood ── (horno) ──→ coal
 ### Lácteos & Huevos
 
 ```
-milk_reg        ── (prensa_queso) ──→  cheese
-milk_large      ── (prensa_queso) ──→  cheese ×2
-goat_milk_reg   ── (prensa_queso) ──→  goat_cheese
-goat_milk_large ── (prensa_queso) ──→  goat_cheese ×2
+milk_reg        ── (prensa_queso) ──→  cheese     [peso 0.30–0.50 kg]
+milk_large      ── (prensa_queso) ──→  cheese     [peso 0.50–1.00 kg]
+goat_milk_reg   ── (prensa_queso) ──→  goat_cheese [peso 0.30–0.50 kg]
+goat_milk_large ── (prensa_queso) ──→  goat_cheese [peso 0.50–1.00 kg]
 
 milk_reg        ── (mantequillera) ──→  butter
 milk_large      ── (mantequillera) ──→  butter ×2
@@ -65,6 +65,8 @@ milk_large      ── (mantequillera) ──→  butter ×2
 egg_*_reg       ── (mantequillera) ──→  mayonaise
 egg_*_large     ── (mantequillera) ──→  mayonaise ×2
 ```
+
+**Notas de queso:** cada pieza lleva un campo `weight` (kg) aleatorio dentro del rango indicado. El `base_sell_price` de cheese/goat_cheese es **precio por kg** — la venta final = `base_sell_price × weight`.
 
 **Raw drops** (from animals): milk_reg, milk_large (cow); goat_milk_reg, goat_milk_large (goat); eggs (chicken, duck, ostrich)
 **Craft only** (never drop): cheese, goat_cheese, butter, mayonaise

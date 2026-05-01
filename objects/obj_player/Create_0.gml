@@ -102,7 +102,7 @@ dialog_text     = "";
 prev_on_door = false;
 
 // --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---
-function add_item(_item_key, _qty = 1) {
+function add_item(_item_key, _qty = 1, _weight = undefined) {
     var _is_stackable = false;
     if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
@@ -133,6 +133,7 @@ function add_item(_item_key, _qty = 1) {
     }
 
     var _new_struct = { key: _item_key, quantity: _qty };
+    if (_weight != undefined) _new_struct.weight = _weight;
     if (variable_struct_exists(global.tool_data, _item_key)) {
         _new_struct.quality = global.tool_data[$ _item_key].quality;
     }

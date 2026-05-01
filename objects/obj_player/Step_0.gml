@@ -129,7 +129,8 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                 var _machine = instance_nearest(x, y, obj_machine);
                 if (_machine != noone && point_distance(x, y, _machine.x, _machine.y) < 48) {
                     if (_machine.state == 2) {
-                        if (add_item(_machine.output_key, _machine.output_qty)) {
+                        var _mw = (variable_struct_exists(_machine, "output_weight") && _machine.output_weight > 0) ? _machine.output_weight : undefined;
+                        if (add_item(_machine.output_key, _machine.output_qty, _mw)) {
                             _machine.state = 0;
                             _machine.image_index = 0;
                             _machine.input_key = "";
@@ -502,9 +503,14 @@ if (state == STATE.ACTING) {
                     } else {
                         var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
                         var _fish_data = global.fish_data[$ _fish_key];
-                        add_item(_fish_key, 1);
+                        var _fw = undefined;
+                        if (variable_struct_exists(_fish_data, "weight_min")) {
+                            _fw = round(random_range(_fish_data.weight_min, _fish_data.weight_max) * 100) / 100;
+                        }
+                        add_item(_fish_key, 1, _fw);
                         energy -= 10;
-                        scr_notify("¡Atrapaste un " + _fish_data.name + "!");
+                        var _fw_str = (_fw != undefined) ? " (" + scr_format_weight(_fw) + ")" : "";
+                        scr_notify("¡Atrapaste un " + _fish_data.name + _fw_str + "!");
                     }
                     state      = STATE.IDLE;
                     frame_anim = 0;

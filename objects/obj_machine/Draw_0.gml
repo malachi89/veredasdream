@@ -14,6 +14,6 @@ if (state == 2 && output_key != "") {
         var _by = y - 14;
 
         draw_sprite(sprite_ballon, 0, _bx - 8, _by - 8);
-        draw_sprite_ext(_spr, _sub, _bx - _sw * _scale / 2, _by - _sh * _scale / 2, _scale, _scale, 0, c_white, 1);
+        draw_sprite_ext(_spr, _sub, _bx - _sw * _scale / 2, _by - _sh * _scale / 2 - 2, _scale, _scale, 0, c_white, 1);
     }
 }

@@ -20,6 +20,7 @@ passive_timer = passive ? 300 : 0;
 input_key = "";
 output_key = "";
 output_qty = 0;
+output_weight = 0;
 done_signal = 0;
 image_speed = 0;
 image_index = 0;
