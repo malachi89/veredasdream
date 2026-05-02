@@ -223,4 +223,8 @@ if (global.net_role == NET_ROLE.CLIENT) {
     if ((state == STATE.ACTING || state == STATE.FISHING) && !is_riding) {
         draw_sprite_ext(action_sprite_tool, image_index, x, y, 1, 1, 0, _blend, 1);
     }
+
+    if (show_fishing_alert) {
+        draw_sprite_ext(sprite_player_alert, 0, x + 8, y - 20, 1, 1, 0, c_white, 1);
+    }
 }

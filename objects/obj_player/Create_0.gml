@@ -40,6 +40,7 @@ frame_anim = 0;
 fishing_substate = FISHING_STATE.CASTING;
 fishing_bite_timer = 0;
 fishing_wait_timer = 0;
+show_fishing_alert = false;
 
 move_speed = 1.3;
 move_speed_run = move_speed * 1.5;
@@ -221,8 +222,8 @@ if (is_host) {
     add_item("shovel", 1);
     add_item("fishing_rod", 1);
     add_item("bugnet", 1);
-    add_item("sword", 1);
-    add_item("bow", 1);
+    add_item("sword_1", 1);
+    add_item("bow_1", 1);
     add_item("parsnip_seeds", 10);
 
     add_item("workbench", 1);

@@ -52,6 +52,8 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
     var _map_id = (_layer_tilled != -1) ? layer_tilemap_get_id(_layer_tilled) : -1;
     var _layer_details = layer_get_id("Tiles_details");
     var _map_id_details = (_layer_details != -1) ? layer_tilemap_get_id(_layer_details) : -1;
+    var _layer_water = layer_get_id("Tiles_water");
+    var _map_water = (_layer_water != -1) ? layer_tilemap_get_id(_layer_water) : -1;
 
     // --- LÓGICA DE COSECHA (Hoz o Mano) ---
     var _is_harvesting = false;
@@ -144,8 +146,8 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
         self.state = STATE.ACTING;
         self.frame_anim = 0;
 
-        // Guardar calidad para la animación (excepto espada/arco)
-        if (_item_key != "sword" && _item_key != "bow" && is_struct(_item_data) && variable_struct_exists(_item_data, "quality")) {
+        // Guardar calidad para la animación
+        if (is_struct(_item_data) && variable_struct_exists(_item_data, "quality")) {
             self.action_quality = _item_data.quality;
         } else {
             self.action_quality = 0;
@@ -372,18 +374,6 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                 scr_set_player_action_sprites(sprite_player_skin_axe_sickle, sprite_player_hair_axe_sickle, sprite_player_clothes_axe_sickle, sprite_player_eyes_axe_sickle);
             break;
 
-            case "sword":
-                self.frames_action = 10;
-                self.action_sprite_tool = sprite_player_sword_sword;
-                scr_set_player_action_sprites(sprite_player_skin_sword, sprite_player_hair_sword, sprite_player_clothes_sword, sprite_player_eyes_sword);
-            break;
-
-            case "bow":
-                self.frames_action = 7;
-                self.action_sprite_tool = sprite_player_bow_archer;
-                scr_set_player_action_sprites(sprite_player_skin_archer, sprite_player_hair_archer, sprite_player_clothes_archer, sprite_player_eyes_archer);
-            break;
-
             case "bugnet":
                 if (!_anim_only) self.energy -= 2;
                 self.frames_action = 6;
@@ -400,6 +390,16 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
             break;
 
             case "fishing_rod":
+                if (_map_water == -1) { self.state = STATE.IDLE; exit; }
+                var _fw_x = self.x;
+                var _fw_y = self.y;
+                switch (self.dir) {
+                    case DIR.UP:    _fw_y -= 16; break;
+                    case DIR.DOWN:  _fw_y += 16; break;
+                    case DIR.LEFT:  _fw_x -= 16; break;
+                    case DIR.RIGHT: _fw_x += 16; break;
+                }
+                if (tilemap_get_at_pixel(_map_water, _fw_x, _fw_y) == 0) { self.state = STATE.IDLE; exit; }
                 self.state = STATE.FISHING;
                 self.fishing_substate = FISHING_STATE.CASTING;
                 self.fishing_wait_timer = 0;
@@ -412,6 +412,78 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                     sprite_player_fishing_cast_eyes_female_brown
                 );
             break;
+        }
+    }
+
+    // --- D. LÓGICA DE ARMAS ---
+    else if (_item_key != "" && variable_struct_exists(global.weapon_data, _item_key)) {
+        var _wdata = global.weapon_data[$ _item_key];
+        self.state        = STATE.ACTING;
+        self.frame_anim   = 0;
+        self.action_quality = 0;
+
+        if (_wdata.tool_type == TOOL_TYPE.SWORD) {
+            if (!_anim_only) {
+                var _sword_damage = _wdata.damage;
+                var _hit_range    = 48;
+                var _hit_side     = 20;
+                var _hx1 = self.x; var _hy1 = self.y; var _hx2 = self.x; var _hy2 = self.y;
+                switch (self.dir) {
+                    case DIR.RIGHT: _hx1 = self.x;              _hy1 = self.y - _hit_side;  _hx2 = self.x + _hit_range; _hy2 = self.y + _hit_side;  break;
+                    case DIR.LEFT:  _hx1 = self.x - _hit_range; _hy1 = self.y - _hit_side;  _hx2 = self.x;              _hy2 = self.y + _hit_side;  break;
+                    case DIR.DOWN:  _hx1 = self.x - _hit_side;  _hy1 = self.y;              _hx2 = self.x + _hit_side;  _hy2 = self.y + _hit_range; break;
+                    case DIR.UP:    _hx1 = self.x - _hit_side;  _hy1 = self.y - _hit_range; _hx2 = self.x + _hit_side;  _hy2 = self.y;              break;
+                }
+                var _targets = ds_list_create();
+                collision_rectangle_list(_hx1, _hy1, _hx2, _hy2, obj_enemy,       false, true, _targets, false);
+                collision_rectangle_list(_hx1, _hy1, _hx2, _hy2, obj_wild_animal,  false, true, _targets, false);
+                collision_rectangle_list(_hx1, _hy1, _hx2, _hy2, obj_farm_animal,  false, true, _targets, false);
+                for (var _si = 0; _si < ds_list_size(_targets); _si++) {
+                    var _hit = _targets[| _si];
+                    _hit.hp -= _sword_damage;
+                    _hit.hurt_flash_timer = 15;
+                    if (variable_instance_exists(_hit, "snd_hurt") && _hit.snd_hurt != undefined) audio_play_sound(_hit.snd_hurt, 1, false);
+                    if (object_get_name(_hit.object_index) == "obj_wild_animal" || object_get_name(_hit.object_index) == "obj_farm_animal") scr_animal_hurt_sound();
+                    var _fdir = point_direction(self.x, self.y, _hit.x, _hit.y);
+                    if (_fdir >= 45 && _fdir < 135)       _hit.dir = DIR.UP;
+                    else if (_fdir >= 135 && _fdir < 225) _hit.dir = DIR.LEFT;
+                    else if (_fdir >= 225 && _fdir < 315) _hit.dir = DIR.DOWN;
+                    else                                   _hit.dir = DIR.RIGHT;
+                    if (object_is_ancestor(_hit.object_index, obj_enemy)) {
+                        if (variable_instance_exists(_hit, "hurt_anim_timer")) _hit.hurt_anim_timer = 15;
+                        if (_hit.hp > 0) {
+                            _hit.state = ANIMAL_STATE.CHASING;
+                            _hit.chase_timer = _hit.chase_timer_max;
+                        }
+                    } else if (object_get_name(_hit.object_index) == "obj_wild_animal") {
+                        if (_hit.animal_key == "bear") {
+                            var _segs = [[0.00, 1.00], [4.50, 5.70], [5.70, 7.50]];
+                            var _seg  = _segs[irandom(2)];
+                            scr_play_sound_clip(sound_bear, _seg[0], _seg[1]);
+                            _hit.state       = ANIMAL_STATE.CHASING;
+                            _hit.chase_timer = 360;
+                            _hit.is_panicked = true;
+                        } else {
+                            _hit.is_panicked = true;
+                            _hit.flee_timer  = 180;
+                            _hit.state       = ANIMAL_STATE.FLEEING;
+                        }
+                    } else {
+                        _hit.flee_timer = 90;
+                        _hit.state      = ANIMAL_STATE.FLEEING;
+                    }
+                }
+                ds_list_destroy(_targets);
+                self.energy -= 2;
+            }
+            self.frames_action      = 10;
+            self.action_sprite_tool = sprite_player_sword_sword;
+            scr_set_player_action_sprites(sprite_player_skin_sword, sprite_player_hair_sword, sprite_player_clothes_sword, sprite_player_eyes_sword);
+
+        } else if (_wdata.tool_type == TOOL_TYPE.BOW) {
+            self.frames_action      = 7;
+            self.action_sprite_tool = sprite_player_bow_archer;
+            scr_set_player_action_sprites(sprite_player_skin_archer, sprite_player_hair_archer, sprite_player_clothes_archer, sprite_player_eyes_archer);
         }
     }
 

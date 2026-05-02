@@ -5,7 +5,7 @@ function scr_current_room_key() {
     return room_get_name(room);
 }
 
-function inventory_drop_item(_key, _qty, _px, _py, _delay = 15) {
+function inventory_drop_item(_key, _qty, _px, _py, _delay = 8) {
     var _room_name = scr_current_room_key();
     if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
         // Route through host so the drop UID is host-authoritative.
@@ -141,6 +141,18 @@ function scr_restore_forest_wild_animals() {
         _inst.move_speed    = _d.move_speed;
         _inst.hp            = _d.hp;
         _inst.max_hp        = _d.max_hp;
+    }
+}
+
+function scr_restore_forest_enemies() {
+    with (obj_enemy) instance_destroy();
+    for (var i = 0; i < array_length(global.forest_enemies); i++) {
+        var _d     = global.forest_enemies[i];
+        var _edata = global.enemy_data[$ _d.key];
+        if (_edata == undefined) continue;
+        var _inst  = instance_create_layer(_d.x, _d.y, "Instances", _edata.object);
+        _inst.hp     = _d.hp;
+        _inst.max_hp = _d.max_hp;
     }
 }
 
@@ -1093,9 +1105,10 @@ function scr_inventory_cycle_hotbars(_player = global.local_player) {
 }
 
 function scr_get_item_data(_key) {
-    if (variable_struct_exists(global.seed_data, _key)) return global.seed_data[$ _key];
-    if (variable_struct_exists(global.crop_data, _key)) return global.crop_data[$ _key];
-    if (variable_struct_exists(global.tool_data, _key)) return global.tool_data[$ _key];
+    if (variable_struct_exists(global.seed_data,   _key)) return global.seed_data[$   _key];
+    if (variable_struct_exists(global.crop_data,   _key)) return global.crop_data[$   _key];
+    if (variable_struct_exists(global.tool_data,   _key)) return global.tool_data[$   _key];
+    if (variable_struct_exists(global.weapon_data, _key)) return global.weapon_data[$ _key];
     if (variable_struct_exists(global.placeable_data, _key)) return global.placeable_data[$ _key];
     if (variable_struct_exists(global.material_data, _key)) return global.material_data[$ _key];
     if (variable_struct_exists(global.forage_data,   _key)) return global.forage_data[$   _key];

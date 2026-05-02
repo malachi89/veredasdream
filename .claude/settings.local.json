@@ -39,7 +39,12 @@
       "Bash(xargs ls *)",
       "Bash(git -C \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" status)",
       "Bash(git -C \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" diff --stat)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(xargs -0 grep -l \"function scr_restore\")",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\sounds\" -Recurse -Filter \"*goblin*\")",
+      "Bash(Select-Object Name)",
+      "Bash(cat sprites/sprite_player_alert/sprite_player_alert.yy)",
+      "Bash(dir sprites\\\\sprite_player_alert /b)"
     ]
   }
 }

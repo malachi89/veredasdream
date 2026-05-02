@@ -19,3 +19,21 @@ idle_timer       = irandom_range(60, 240);
 wander_steps     = 0;
 max_wander_steps = irandom_range(30, 120);
 product_drops    = [];
+image_speed      = 0;
+
+snd_hurt   = undefined;
+snd_death  = undefined;
+snd_attack = undefined;
+snd_move   = undefined;
+snd_idle   = undefined;
+snd_timer  = 0;
+if (variable_instance_exists(self, "enemy_key") && is_string(enemy_key) && enemy_key != "") {
+    var _snd = global.enemy_data[$ enemy_key];
+    if (_snd != undefined) {
+        if (variable_struct_exists(_snd, "snd_hurt"))   snd_hurt   = _snd.snd_hurt;
+        if (variable_struct_exists(_snd, "snd_death"))  snd_death  = _snd.snd_death;
+        if (variable_struct_exists(_snd, "snd_attack")) snd_attack = _snd.snd_attack;
+        if (variable_struct_exists(_snd, "snd_move"))   snd_move   = _snd.snd_move;
+        if (variable_struct_exists(_snd, "snd_idle"))   snd_idle   = _snd.snd_idle;
+    }
+}

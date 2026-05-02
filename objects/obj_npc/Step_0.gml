@@ -14,10 +14,19 @@ if (wanders) {
 
     var _blocked = place_meeting(_nx, _ny, obj_collision);
     if (!_blocked) {
-        var _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
-        var _tm_trees     = layer_tilemap_get_id("Tiles_trees");
-        if (_tm_buildings != -1 && tilemap_get_at_pixel(_tm_buildings, _nx, _ny) != 0) _blocked = true;
-        if (_tm_trees     != -1 && tilemap_get_at_pixel(_tm_trees,     _nx, _ny) != 0) _blocked = true;
+        var _tm_roads  = layer_tilemap_get_id("Tiles_roads");
+        var _tm_fences = layer_tilemap_get_id("Tiles_fences_bridges");
+        if (_tm_roads != -1 || _tm_fences != -1) {
+            var _on_valid = false;
+            if (_tm_roads  != -1 && tilemap_get_at_pixel(_tm_roads,  x, y) != 0) _on_valid = true;
+            if (_tm_fences != -1 && tilemap_get_at_pixel(_tm_fences, x, y) != 0) _on_valid = true;
+            if (_on_valid) {
+                var _valid = false;
+                if (_tm_roads  != -1 && tilemap_get_at_pixel(_tm_roads,  _nx, _ny) != 0) _valid = true;
+                if (_tm_fences != -1 && tilemap_get_at_pixel(_tm_fences, _nx, _ny) != 0) _valid = true;
+                if (!_valid) _blocked = true;
+            }
+        }
     }
 
     if (!_blocked) {

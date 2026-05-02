@@ -18,6 +18,7 @@ if (is_dying > 0) {
 }
 
 if (hp <= 0) {
+    if (snd_death != undefined) audio_play_sound(snd_death, 1, false);
     is_dying = death_anim_frames;
     exit;
 }
@@ -30,6 +31,7 @@ switch (state) {
             dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
             wander_steps     = max_wander_steps;
         }
+        if (snd_idle != undefined && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
     break;
 
     case ANIMAL_STATE.WANDERING:
@@ -52,6 +54,7 @@ switch (state) {
             idle_timer       = irandom_range(60, 240);
             max_wander_steps = irandom_range(30, 120);
         }
+        if (snd_idle != undefined && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
     break;
 
     case ANIMAL_STATE.CHASING:
@@ -89,7 +92,14 @@ switch (state) {
             obj_player.hp -= attack_damage;
             obj_player.hurt_timer = 60;
             audio_play_sound(sound_hurt, 1, false);
+            if (snd_attack != undefined) audio_play_sound(snd_attack, 1, false);
             attack_cooldown = attack_cooldown_max;
+        }
+
+        if (snd_timer > 0) snd_timer--;
+        if (snd_move != undefined && snd_timer <= 0) {
+            audio_play_sound(snd_move, 1, false);
+            snd_timer = 90;
         }
 
         if (_dist > 500) chase_timer -= 3;

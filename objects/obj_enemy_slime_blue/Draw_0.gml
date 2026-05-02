@@ -33,16 +33,21 @@ if (is_dying > 0) {
     }
 }
 
-var _frame = floor(frame_anim) mod 4;
-var _si = _strip + _frame;
+var _frame  = floor(frame_anim) mod 4;
+var _si     = _strip + _frame;
+image_index = _si;
 
-draw_sprite_ext(sprite_index, _si, x + 1.2, y + 1, _xscale, 1, 0, c_black, 0.4);
-draw_sprite_ext(sprite_index, _si, x, y, _xscale, 1, 0, _blend, 1);
+var _spr_w  = sprite_get_width(sprite_index);
+var _spr_ox = sprite_get_xoffset(sprite_index);
+var _draw_x = (_xscale < 0) ? x + _spr_w - 2 * _spr_ox : x;
+
+draw_sprite_ext(sprite_index, _si, _draw_x + 1.2, y + 1, _xscale, 1, 0, c_black, 0.4);
+draw_sprite_ext(sprite_index, _si, _draw_x,       y,     _xscale, 1, 0, _blend,  1);
 
 if (hp < max_hp) {
     var _bar_w = 20;
     var _bar_h = 2;
-    var _px = x + (sprite_width / 2) - (_bar_w / 2);
+    var _px = x + _spr_w / 2 - _spr_ox - _bar_w / 2;
     var _py = bbox_top - 8;
 
     draw_set_color(c_black);

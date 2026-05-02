@@ -256,10 +256,13 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
     var _p_cy = (bbox_top + bbox_bottom) / 2;
     var _actual_dist = point_distance(_p_cx, _p_cy, _gx + 8, _gy + 8);
 
-    var _is_placeable = variable_struct_exists(global.placeable_data, _item_key);
+    var _is_placeable   = variable_struct_exists(global.placeable_data, _item_key);
+    var _wdata          = variable_struct_exists(global.weapon_data, _item_key) ? global.weapon_data[$ _item_key] : undefined;
+    var _is_bow_weapon  = (_wdata != undefined && _wdata.tool_type == TOOL_TYPE.BOW);
+    var _is_sword_weapon = (_wdata != undefined && _wdata.tool_type == TOOL_TYPE.SWORD);
 
-    if ((_actual_dist <= 32 || _item_key == "bow" || _item_key == "sickle" || _item_key == "bugnet" || _is_placeable) && !show_backpack) {
-        if (_item_key == "bow") {
+    if ((_actual_dist <= 32 || _is_bow_weapon || _item_key == "sickle" || _item_key == "bugnet" || _is_sword_weapon || _is_placeable) && !show_backpack) {
+        if (_is_bow_weapon) {
             // Stop any previous bow sound before starting a new draw
             if (bow_sound_id != -1 && audio_is_playing(bow_sound_id)) {
                 audio_stop_sound(bow_sound_id);
@@ -270,8 +273,7 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
             // Start bow draw — animation only; arrow fires on LMB release
             scr_use_item(_selected_item, _gx, _gy, true);
             bow_drawing = true;
-            bow_quality = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
-                          ? _selected_item.quality : 0;
+            bow_quality = 0;
         } else if (global.net_role == NET_ROLE.CLIENT) {
             // Animate locally; host runs the authoritative mutation
             var _quality  = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
@@ -296,16 +298,20 @@ if (bow_drawing && !mouse_check_button(mb_left)) {
     scr_play_sound_clip(sound_arrow_shoot, 1.85, 2.00);
     if (global.net_role != NET_ROLE.CLIENT) {
         energy -= 5;
-        var _arr = instance_create_layer(x + 16, y + 16, "Instances", obj_arrow);
-        _arr.damage = bow_quality + 1;
+        var _arr     = instance_create_layer(x + 16, y + 16, "Instances", obj_arrow);
+        var _bow_itm = inventory_array[selected_slot];
+        var _bow_key = is_struct(_bow_itm) ? _bow_itm.key : "";
+        _arr.damage  = variable_struct_exists(global.weapon_data, _bow_key)
+                       ? global.weapon_data[$ _bow_key].damage : 1;
         if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
             scr_capture_current_room_state();
             net_broadcast_room_state(scr_current_room_key());
         }
     } else {
         var _bow_item = inventory_array[selected_slot];
-        var _qty = is_struct(_bow_item) ? _bow_item.quantity : 1;
-        net_send_use_item("bow", bow_quality, _qty, selected_slot,
+        var _qty      = is_struct(_bow_item) ? _bow_item.quantity : 1;
+        var _bow_k    = is_struct(_bow_item) ? _bow_item.key : "";
+        net_send_use_item(_bow_k, 0, _qty, selected_slot,
                           floor(mouse_x / 16) * 16, floor(mouse_y / 16) * 16, dir);
     }
 }
@@ -432,6 +438,7 @@ if (state == STATE.ACTING) {
     image_index = _quality_offset + (dir * frames_action) + floor(frame_anim);
 } else if (state == STATE.FISHING) {
     if (mouse_check_button_pressed(mb_right)) {
+        show_fishing_alert = false;
         state = STATE.IDLE;
         frame_anim = 0;
     } else {
@@ -468,7 +475,8 @@ if (state == STATE.ACTING) {
                         sprite_player_fishing_bite_clothes_purple,
                         sprite_player_fishing_bite_eyes_female_brown
                     );
-                    scr_notify("¡Mordió! ¡Haz clic para pescar!");
+                    show_fishing_alert = true;
+                    audio_play_sound(sound_fish_hooked, 1, false);
                 }
             break;
 
@@ -476,6 +484,7 @@ if (state == STATE.ACTING) {
                 if (frame_anim >= 8) frame_anim = 7;
                 fishing_bite_timer--;
                 if (mouse_check_button_pressed(mb_left) || keyboard_check_pressed(vk_space)) {
+                    show_fishing_alert = false;
                     fishing_substate = FISHING_STATE.REELING;
                     frame_anim = 0;
                     action_sprite_tool = sprite_player_fishing_reel_weapon;
@@ -486,6 +495,7 @@ if (state == STATE.ACTING) {
                         -1
                     );
                 } else if (fishing_bite_timer <= 0) {
+                    show_fishing_alert = false;
                     fishing_substate = FISHING_STATE.WAITING;
                     frame_anim = 0;
                     fishing_wait_timer = irandom_range(180, 480);

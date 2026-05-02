@@ -125,7 +125,8 @@ global.enemy_data = {
         attack_cooldown: 60,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_black","pelt_white","string_black"]
+        product_drops: ["pelt_black","pelt_white","string_black"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_blue: {
         name: "Slime Azul",
@@ -140,7 +141,8 @@ global.enemy_data = {
         attack_cooldown: 45,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_blue","string_blue","feathers_blue"]
+        product_drops: ["pelt_blue","string_blue","feathers_blue"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_golden: {
         name: "Slime Dorado",
@@ -155,7 +157,8 @@ global.enemy_data = {
         attack_cooldown: 90,
         attack_range: 28,
         death_anim_frames: 48,
-        product_drops: ["pelt_amber","yarn_amber","string_amber"]
+        product_drops: ["pelt_amber","yarn_amber","string_amber"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_green: {
         name: "Slime Verde",
@@ -170,7 +173,8 @@ global.enemy_data = {
         attack_cooldown: 60,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_green","string_green","feathers_green"]
+        product_drops: ["pelt_green","string_green","feathers_green"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_pink: {
         name: "Slime Rosa",
@@ -185,7 +189,8 @@ global.enemy_data = {
         attack_cooldown: 40,
         attack_range: 30,
         death_anim_frames: 48,
-        product_drops: ["pelt_pink","yarn_pink","string_pink"]
+        product_drops: ["pelt_pink","yarn_pink","string_pink"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_purple: {
         name: "Slime Morado",
@@ -200,7 +205,8 @@ global.enemy_data = {
         attack_cooldown: 100,
         attack_range: 28,
         death_anim_frames: 48,
-        product_drops: ["pelt_purple","yarn_purple","string_purple"]
+        product_drops: ["pelt_purple","yarn_purple","string_purple"],
+        snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     myconid_blue: {
         name: "Micónido Azul",
@@ -219,7 +225,8 @@ global.enemy_data = {
         attack_cooldown: 60,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_blue","string_blue","thread_blue"]
+        product_drops: ["pelt_blue","string_blue","thread_blue"],
+        snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_green: {
         name: "Micónido Verde",
@@ -238,7 +245,8 @@ global.enemy_data = {
         attack_cooldown: 45,
         attack_range: 34,
         death_anim_frames: 48,
-        product_drops: ["pelt_green","string_green","thread_green"]
+        product_drops: ["pelt_green","string_green","thread_green"],
+        snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_pink: {
         name: "Micónido Rosa",
@@ -257,7 +265,8 @@ global.enemy_data = {
         attack_cooldown: 80,
         attack_range: 28,
         death_anim_frames: 48,
-        product_drops: ["pelt_pink","string_pink","thread_pink"]
+        product_drops: ["pelt_pink","string_pink","thread_pink"],
+        snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     goblin: {
         name: "Goblin",
@@ -277,7 +286,8 @@ global.enemy_data = {
         attack_cooldown: 45,
         attack_range: 30,
         death_anim_frames: 48,
-        product_drops: ["leather_brown","string_brown","pelt_brown"]
+        product_drops: ["leather_brown","string_brown","pelt_brown","sword_1","bow_1"],
+        snd_hurt: sound_goblin_damage, snd_death: sound_goblin_death, snd_attack: sound_goblin_attack, snd_idle: sound_goblin_idling
     },
 };
 
@@ -474,38 +484,12 @@ global.tool_data = {
         level: QUALITY.OXIDADO + 1
     },
     
-    sword: { 
-        name: "Espada",      
-        type: ITEM_TYPE.TOOL,
-        tool_type: TOOL_TYPE.SWORD,         
-        sprite: sprite_sword, 
-        subimg: 0,
-        sellable: false,
-        droppable: false,
-
-        quality: QUALITY.OXIDADO,
-        level: QUALITY.OXIDADO + 1
-    },
-    
     axe: { 
         name: "Hacha",       
         type: ITEM_TYPE.TOOL,   
         tool_type: TOOL_TYPE.AXE,          
         sprite: sprite_tools_v2, 
         subimg: 36,
-        sellable: false,
-        droppable: false,
-
-        quality: QUALITY.OXIDADO,
-        level: QUALITY.OXIDADO + 1
-    },
-    
-    bow: { 
-        name: "Arco",        
-        type: ITEM_TYPE.TOOL,
-        tool_type: TOOL_TYPE.BOW,         
-        sprite: sprite_tools, 
-        subimg: 4,
         sellable: false,
         droppable: false,
 
@@ -578,6 +562,30 @@ global.tool_data = {
         level: QUALITY.OXIDADO + 1
     }
 };
+
+// --- BASE DE DATOS DE ARMAS (encontradas en el mundo, 10 niveles) ---
+global.weapon_data = {};
+var _wd = global.weapon_data;
+_wd[$ "sword_1"]  = { name: "Espada Nv.1",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  1, damage:  2, sellable: false, droppable: false };
+_wd[$ "sword_2"]  = { name: "Espada Nv.2",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  2, damage:  5, sellable: false, droppable: false };
+_wd[$ "sword_3"]  = { name: "Espada Nv.3",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  3, damage:  9, sellable: false, droppable: false };
+_wd[$ "sword_4"]  = { name: "Espada Nv.4",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  4, damage: 14, sellable: false, droppable: false };
+_wd[$ "sword_5"]  = { name: "Espada Nv.5",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  5, damage: 20, sellable: false, droppable: false };
+_wd[$ "sword_6"]  = { name: "Espada Nv.6",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  6, damage: 27, sellable: false, droppable: false };
+_wd[$ "sword_7"]  = { name: "Espada Nv.7",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  7, damage: 35, sellable: false, droppable: false };
+_wd[$ "sword_8"]  = { name: "Espada Nv.8",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  8, damage: 40, sellable: false, droppable: false };
+_wd[$ "sword_9"]  = { name: "Espada Nv.9",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  9, damage: 45, sellable: false, droppable: false };
+_wd[$ "sword_10"] = { name: "Espada Nv.10", type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level: 10, damage: 50, sellable: false, droppable: false };
+_wd[$ "bow_1"]    = { name: "Arco Nv.1",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  1, damage:  1, sellable: false, droppable: false };
+_wd[$ "bow_2"]    = { name: "Arco Nv.2",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  2, damage:  3, sellable: false, droppable: false };
+_wd[$ "bow_3"]    = { name: "Arco Nv.3",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  3, damage:  6, sellable: false, droppable: false };
+_wd[$ "bow_4"]    = { name: "Arco Nv.4",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  4, damage: 10, sellable: false, droppable: false };
+_wd[$ "bow_5"]    = { name: "Arco Nv.5",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  5, damage: 15, sellable: false, droppable: false };
+_wd[$ "bow_6"]    = { name: "Arco Nv.6",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  6, damage: 21, sellable: false, droppable: false };
+_wd[$ "bow_7"]    = { name: "Arco Nv.7",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  7, damage: 28, sellable: false, droppable: false };
+_wd[$ "bow_8"]    = { name: "Arco Nv.8",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  8, damage: 34, sellable: false, droppable: false };
+_wd[$ "bow_9"]    = { name: "Arco Nv.9",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  9, damage: 40, sellable: false, droppable: false };
+_wd[$ "bow_10"]   = { name: "Arco Nv.10",   type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level: 10, damage: 45, sellable: false, droppable: false };
 
 global.placeable_data = {
     chest: {

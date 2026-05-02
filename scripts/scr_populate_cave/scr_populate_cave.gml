@@ -106,4 +106,58 @@ function scr_populate_cave(_ore_type = -1, _floor = 1) {
             }
         }
     }
+
+    // --- Enemies ---
+    var _enemy_slimes   = ["slime_black", "slime_blue", "slime_green", "slime_pink", "slime_purple", "slime_golden"];
+    var _cave_emin_dist = 48;
+    var _cave_eplaced   = [];
+
+    // Slimes: 4 a 7 (más en pisos profundos)
+    var _cave_slime_count = irandom_range(4, min(4 + _floor, 7));
+    for (var i = 0; i < _cave_slime_count; i++) {
+        var _ekey  = _enemy_slimes[irandom(array_length(_enemy_slimes) - 1)];
+        var _edata = global.enemy_data[$ _ekey];
+        repeat (50) {
+            var _gx = _margin + (irandom((room_width  - 2 * _margin) div 16 - 1)) * 16;
+            var _gy = _margin + (irandom((room_height - 2 * _margin) div 16 - 1)) * 16;
+            var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _gx, _gy) < _spawn_safe_radius);
+            if (_near_spawn) continue;
+            var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _gx + 8, _gy + 8) != 0);
+            if (_has_wall) continue;
+            if (instance_position(_gx + 8, _gy + 8, obj_collision)) continue;
+            var _overlap = false;
+            for (var j = 0; j < array_length(_cave_eplaced); j++) {
+                if (point_distance(_gx, _gy, _cave_eplaced[j].x, _cave_eplaced[j].y) < _cave_emin_dist) { _overlap = true; break; }
+            }
+            if (_overlap) continue;
+            instance_create_layer(_gx, _gy, "Instances", _edata.object);
+            array_push(_cave_eplaced, { x: _gx, y: _gy });
+            break;
+        }
+    }
+
+    // Goblins: 0 a min(2, floor-1) — solo desde piso 2
+    if (_floor >= 2) {
+        var _cave_goblin_count = irandom(min(2, _floor - 1));
+        var _egdata = global.enemy_data[$ "goblin"];
+        for (var i = 0; i < _cave_goblin_count; i++) {
+            repeat (50) {
+                var _gx = _margin + (irandom((room_width  - 2 * _margin) div 16 - 1)) * 16;
+                var _gy = _margin + (irandom((room_height - 2 * _margin) div 16 - 1)) * 16;
+                var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _gx, _gy) < _spawn_safe_radius);
+                if (_near_spawn) continue;
+                var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _gx + 8, _gy + 8) != 0);
+                if (_has_wall) continue;
+                if (instance_position(_gx + 8, _gy + 8, obj_collision)) continue;
+                var _overlap = false;
+                for (var j = 0; j < array_length(_cave_eplaced); j++) {
+                    if (point_distance(_gx, _gy, _cave_eplaced[j].x, _cave_eplaced[j].y) < _cave_emin_dist) { _overlap = true; break; }
+                }
+                if (_overlap) continue;
+                instance_create_layer(_gx, _gy, "Instances", _egdata.object);
+                array_push(_cave_eplaced, { x: _gx, y: _gy });
+                break;
+            }
+        }
+    }
 }

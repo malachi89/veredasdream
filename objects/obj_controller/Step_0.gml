@@ -67,6 +67,7 @@ if (current_room_name != _room_name) {
     if (_room_name == "forest" && !global.forest_needs_repopulate) {
         scr_restore_forest_insects();
         scr_restore_forest_wild_animals();
+        scr_restore_forest_enemies();
     }
     
     // Test animals repopulation
@@ -281,8 +282,8 @@ else if (chat_open) {
                     _p2.add_item("shovel", 1);
                     _p2.add_item("fishing_rod", 1);
                     _p2.add_item("bugnet", 1);
-                    _p2.add_item("sword", 1);
-                    _p2.add_item("bow", 1);
+                    _p2.add_item("sword_1", 1);
+                    _p2.add_item("bow_1", 1);
                     _p2.add_item("parsnip_seeds", 10);
                     scr_notify("Jugador 2 generado en (" + string(mouse_x) + ", " + string(mouse_y) + ")");
                 }

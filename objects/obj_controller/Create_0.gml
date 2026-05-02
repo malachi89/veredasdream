@@ -122,8 +122,10 @@ function update_tilesets() {
     if (_props_layer != -1) tilemap_tileset(layer_tilemap_get_id(_props_layer), _props_tilesets[global.season_index]);
     
     if (_trees_layer != -1) {
-        tilemap_tileset(layer_tilemap_get_id(_trees_layer), _trees_tilesets[global.season_index]);
-        if (_trees_top_layer != -1) tilemap_tileset(layer_tilemap_get_id(_trees_top_layer), _trees_tilesets[global.season_index]);
+        if (_room != "forest") {
+            tilemap_tileset(layer_tilemap_get_id(_trees_layer), _trees_tilesets[global.season_index]);
+            if (_trees_top_layer != -1) tilemap_tileset(layer_tilemap_get_id(_trees_top_layer), _trees_tilesets[global.season_index]);
+        }
     }
 }
 
@@ -159,6 +161,7 @@ global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
 global.forest_insects                = [];
 global.forest_wild_animals           = [];
+global.forest_enemies                = [];
 
 room_change_pending = false; // client: waiting for ROOM_SNAPSHOT, suppress duplicate sends
 

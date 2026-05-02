@@ -249,7 +249,7 @@ if (_l_press || _r_press || _r_held) {
         if (is_struct(_item_data) && variable_struct_exists(_item_data, "droppable") && _item_data.droppable == false) {
             scr_notify("Este objeto no se puede tirar");
         } else {
-            inventory_drop_item(_p.held_item.key, _p.held_item.quantity, _p.x, _p.y, 60);
+            inventory_drop_item(_p.held_item.key, _p.held_item.quantity, _p.x, _p.y, 30);
             _p.held_item = -1;
         }
     }
@@ -265,7 +265,7 @@ if (!_p.show_backpack && !_p.show_shipping && !_p.show_chest) {
             if (is_struct(_item_data) && variable_struct_exists(_item_data, "droppable") && _item_data.droppable == false) {
                 scr_notify("Este objeto no se puede tirar");
             } else {
-                inventory_drop_item(_slot_data.key, _slot_data.quantity, _p.x, _p.y, 60);
+                inventory_drop_item(_slot_data.key, _slot_data.quantity, _p.x, _p.y, 30);
                 _p.inventory_array[_p.selected_slot] = -1;
             }
         }

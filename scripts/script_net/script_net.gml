@@ -236,8 +236,8 @@ function net_handle_handshake(_payload, _client_socket) {
         _g.add_item("shovel", 1);
         _g.add_item("fishing_rod", 1);
         _g.add_item("bugnet", 1);
-        _g.add_item("sword", 1);
-        _g.add_item("bow", 1);
+        _g.add_item("sword_1", 1);
+        _g.add_item("bow_1", 1);
         _g.add_item("parsnip_seeds", 10);
         obj_net.remote_player_ghost = _g;
     }
@@ -333,8 +333,8 @@ function net_handle_full_snapshot(_payload) {
     _p.add_item("shovel", 1);
     _p.add_item("fishing_rod", 1);
     _p.add_item("bugnet", 1);
-    _p.add_item("sword", 1);
-    _p.add_item("bow", 1);
+    _p.add_item("sword_1", 1);
+    _p.add_item("bow_1", 1);
     _p.add_item("parsnip_seeds", 10);
     global.local_player = _p;
 
