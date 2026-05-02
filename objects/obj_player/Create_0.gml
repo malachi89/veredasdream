@@ -66,7 +66,7 @@ bow_quality           = 0;
 net_state_timer  = 0;
 
 // --- ECONOMIA PER-PLAYER ---
-money = 500;
+money = 200;
 
 // --- INVENTARIO PER-PLAYER ---
 total_slots        = 30;

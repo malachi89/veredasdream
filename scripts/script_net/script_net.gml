@@ -223,7 +223,7 @@ function net_handle_handshake(_payload, _client_socket) {
         _g.is_local   = false;
         _g.is_host    = false;
         _g.persistent = true;
-        _g.money      = 500;
+        _g.money      = 200;
         _g.energy     = 500;
         // Clear default inventory and give client starting items
         for (var _gi = 0; _gi < 30; _gi++) _g.inventory_array[_gi] = -1;
