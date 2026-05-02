@@ -4,10 +4,13 @@ var _cam_y = camera_get_view_y(_cam);
 var _scale = display_get_gui_width() / camera_get_view_width(_cam);
 
 if (hits_remaining < 10) {
+    var _spr = asset_get_index("sprite_tree_" + tree_type);
+    var _full_w = sprite_exists(_spr) ? sprite_get_width(_spr) : 32;
+
     var _bar_w = 20;
     var _bar_h = 2;
-    var _px = x + (sprite_width / 2) - (_bar_w / 2);
-    var _py = bbox_top - 8;
+    var _px = x + (_full_w / 2) - (_bar_w / 2);
+    var _py = y - 8;
 
     var _gx = (_px - _cam_x) * _scale;
     var _gy = (_py - _cam_y) * _scale;

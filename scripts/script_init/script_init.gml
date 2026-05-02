@@ -1029,6 +1029,19 @@ _tp[$ "watering_can"] = [
         { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.5, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1,   water_persists_next_day: false }, // VITOLANIO
     ];
 
+// --- PALA ---
+_tp[$ "shovel"] = [
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0.01, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false, dig_chance: 0.15 }, // OXIDADO
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0.02, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false, dig_chance: 0.20 }, // BRONCE
+    { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0.03, triple_drop_chance: 0, no_energy_chance: 0.05, water_persists_next_day: false, dig_chance: 0.25 }, // PLATA
+    { hits_required: 0, area_width: 2, area_height: 1, double_drop_chance: 0,   treasure_chance: 0.04, triple_drop_chance: 0, no_energy_chance: 0.10, water_persists_next_day: false, dig_chance: 0.30 }, // ORO
+    { hits_required: 0, area_width: 2, area_height: 2, double_drop_chance: 0,   treasure_chance: 0.05, triple_drop_chance: 0, no_energy_chance: 0.15, water_persists_next_day: false, dig_chance: 0.35 }, // BRONCASTANIO
+    { hits_required: 0, area_width: 3, area_height: 2, double_drop_chance: 0,   treasure_chance: 0.06, triple_drop_chance: 0, no_energy_chance: 0.20, water_persists_next_day: false, dig_chance: 0.40 }, // CHUBESTANIO
+    { hits_required: 0, area_width: 3, area_height: 3, double_drop_chance: 0,   treasure_chance: 0.07, triple_drop_chance: 0, no_energy_chance: 0.25, water_persists_next_day: false, dig_chance: 0.45 }, // PICASTANIO
+    { hits_required: 0, area_width: 4, area_height: 3, double_drop_chance: 0,   treasure_chance: 0.08, triple_drop_chance: 0, no_energy_chance: 0.30, water_persists_next_day: false, dig_chance: 0.50 }, // HITLERSTANIO
+    { hits_required: 0, area_width: 4, area_height: 4, double_drop_chance: 0,   treasure_chance: 0.10, triple_drop_chance: 0, no_energy_chance: 0.40, water_persists_next_day: false, dig_chance: 0.55 }  // VITOLANIO
+];
+
 // --- NPC DATA ---
 global.npc_data = {
     workbench:  { name: "Mesa de Trabajo" },
@@ -1433,6 +1446,11 @@ _fish[$ "fish_96"] = { name: "Cachalote Pigmeo",       seasons: [SEASON.WINTER],
 _fish[$ "fish_97"] = { name: "Vaquita Marina",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 97, rarity: 1,  base_sell_price: 150,  weight_min: 3.0,   weight_max: 10.0   };
 _fish[$ "fish_98"] = { name: "Pez Desconocido",        seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 98, rarity: 50, base_sell_price: 34,  weight_min: 0.05,  weight_max: 0.15   };
 
+var _fk = variable_struct_get_names(global.fish_data);
+for (var _fi2 = 0; _fi2 < array_length(_fk); _fi2++) {
+    global.fish_data[$ _fk[_fi2]].base_sell_price = round(global.fish_data[$ _fk[_fi2]].base_sell_price * 0.9);
+}
+
 global.fish_pool = [];
 global.fish_pool[SEASON.SPRING] = [];
 global.fish_pool[SEASON.SUMMER] = [];
@@ -1499,6 +1517,11 @@ _ins[$ "insect_butterfly_emperor"]         = { name: "Mariposa Emperador",      
 _ins[$ "insect_butterfly_periander_metalmark"] = { name: "Metalmark Periander",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_periander_metalmark, subimg: 0, rarity: 2, base_sell_price: 35 };
 _ins[$ "insect_butterfly_birdwing"]        = { name: "Alas de Pájaro",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_birdwing,        subimg: 0, rarity: 1,  base_sell_price: 65 };
 _ins[$ "insect_butterfly_goliath_birdwing"] = { name: "Goliat Alas de Pájaro",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_goliath_birdwing, subimg: 0, rarity: 1, base_sell_price: 80 };
+
+var _ik = variable_struct_get_names(global.insect_data);
+for (var _ii2 = 0; _ii2 < array_length(_ik); _ii2++) {
+    global.insect_data[$ _ik[_ii2]].base_sell_price = round(global.insect_data[$ _ik[_ii2]].base_sell_price * 0.9);
+}
 
 global.insect_pool = [];
 var _ikeys = variable_struct_get_names(global.insect_data);

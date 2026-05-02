@@ -328,10 +328,17 @@ function scr_capture_current_room_state() {
             is_gemstone_rock: _inst.is_gemstone_rock,
             ore_type_index: _inst.ore_type_index,
             ore_item_key: _inst.ore_item_key,
-            hit_counter: _inst.hit_counter
+            hit_counter: variable_instance_exists(_inst, "hit_counter") ? _inst.hit_counter : 0
         });
     }
     _state.rocks = _rock_state;
+
+    // Capture Shoveled Holes
+    _state.shoveled_tiles = [];
+    for (var i = 0; i < instance_number(obj_shoveled); i++) {
+        var _inst = instance_find(obj_shoveled, i);
+        array_push(_state.shoveled_tiles, { x: _inst.x, y: _inst.y });
+    }
 
     global.room_states[$ _room_name] = _state;
 
@@ -643,6 +650,17 @@ function scr_restore_room_state(_room_name) {
             _inst.ore_type_index = variable_struct_exists(_r, "ore_type_index") ? _r.ore_type_index : -1;
             _inst.ore_item_key = variable_struct_exists(_r, "ore_item_key") ? _r.ore_item_key : "";
             _inst.hit_counter = variable_struct_exists(_r, "hit_counter") ? _r.hit_counter : 0;
+        }
+    }
+
+    // ---- SHOVELED HOLES ----
+    if (variable_struct_exists(_state, "shoveled_tiles")) {
+        with (obj_shoveled) instance_destroy();
+        for (var i = 0; i < array_length(_state.shoveled_tiles); i++) {
+            var _t = _state.shoveled_tiles[i];
+            if (_t.x >= 0 && _t.y >= 0 && _t.x < room_width - 16 && _t.y < room_height - 16) {
+                instance_create_layer(_t.x, _t.y, "Instances", obj_shoveled);
+            }
         }
     }
 }
@@ -1015,7 +1033,16 @@ function scr_process_shipping(_player = global.local_player) {
             var _data = scr_get_item_data(_item.key);
             if (is_struct(_data) && variable_struct_exists(_data, "base_sell_price")) {
                 var _item_weight = variable_struct_exists(_item, "weight") ? _item.weight : 1;
-                var _subtotal = _data.base_sell_price * _item.quantity * _item_weight;
+                var _mult = 1;
+                if (variable_struct_exists(global.insect_data, _item.key)) {
+                    var _bq = scr_get_tool_quality("bugnet", _player);
+                    if (_bq >= 0) _mult = 1 + ((_bq + 1) * 0.05);
+                }
+                if (variable_struct_exists(global.fish_data, _item.key)) {
+                    var _fq = scr_get_tool_quality("fishing_rod", _player);
+                    if (_fq >= 0) _mult = 1 + ((_fq + 1) * 0.05);
+                }
+                var _subtotal = _data.base_sell_price * _item.quantity * _item_weight * _mult;
                 _summary.total += _subtotal;
                 
                 // Buscar si ya lo agregamos al resumen para agruparlo
@@ -1029,12 +1056,12 @@ function scr_process_shipping(_player = global.local_player) {
                     }
                 }
                 
-                if (!_found) {
+                    if (!_found) {
                     array_push(_summary.items, {
                         key: _item.key,
                         name: _data.name,
                         quantity: _item.quantity,
-                        unit_price: _data.base_sell_price,
+                        unit_price: _data.base_sell_price * _mult,
                         subtotal: _subtotal,
                         sprite: _data.sprite,
                         subimg: _data.subimg

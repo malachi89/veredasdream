@@ -42,7 +42,9 @@ function start_new_day() {
     global.game_hour = 6;
     global.day += 1;
 
+    var _is_season_change = false;
     if (global.day > global.days_per_season) {
+        _is_season_change = true;
         global.day = 1;
         global.season_index = (global.season_index + 1) mod 4;
         global.season = global.season_list[global.season_index];
@@ -64,6 +66,7 @@ function start_new_day() {
     }
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();
+    if (_is_season_change) scr_remove_out_of_season_crops();
 
     var _lay_id = layer_get_id("Tiles_tilled_watered");
     if (_lay_id != -1) {
@@ -86,6 +89,8 @@ function start_new_day() {
             grow();
         }
     }
+
+    scr_daily_farm_spawn(_is_season_change);
 
     if (instance_exists(global.local_player)) {
         global.local_player.hp = global.local_player.max_hp;

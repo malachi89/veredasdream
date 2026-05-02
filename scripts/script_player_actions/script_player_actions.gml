@@ -14,7 +14,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
     }
     if (_tier_stats == undefined) {
         _tier_stats = { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,
-                        treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0, water_persists_next_day: false };
+                        treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0, water_persists_next_day: false, dig_chance: 0 };
     }
     var _skip_energy = (_item_key != "" && random(1) < _tier_stats.no_energy_chance);
 
@@ -167,7 +167,11 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                         var _cur_tile = tilemap_get_at_pixel(_map_id, _htx_px, _hty_px);
                         if ((_cur_tile != 72 && _cur_tile != 168) &&
                             (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _htx_px, _hty_px) == 0)) {
-                            if (!_anim_only) tilemap_set_at_pixel(_map_id, 72, _htx_px, _hty_px);
+                            if (!_anim_only) {
+                                tilemap_set_at_pixel(_map_id, 72, _htx_px, _hty_px);
+                                var _shoveled = instance_position(_htx_px + 8, _hty_px + 8, obj_shoveled);
+                                if (_shoveled != noone) instance_destroy(_shoveled);
+                            }
                             _tilled_any = true;
                         }
                     }
@@ -387,6 +391,65 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                 self.frames_action = 6;
                 self.action_sprite_tool = sprite_player_shovel_shovel;
                 scr_set_player_action_sprites(sprite_player_skin_shovel, sprite_player_hair_shovel, sprite_player_clothes_shovel, sprite_player_eyes_shovel);
+
+                if (!_anim_only) {
+                    var _room_name = room_get_name(room);
+                    if (_room_name == "farm" || _room_name == "forest" || string_starts_with(_room_name, "cave_")) {
+                        var _sw = _eff_w;
+                        var _sh = _eff_h;
+                        var _sox = floor(_sw / 2) * 16;
+                        var _soy = floor(_sh / 2) * 16;
+
+                        for (var _sty = 0; _sty < _sh; _sty++) {
+                            for (var _stx = 0; _stx < _sw; _stx++) {
+                                var _px = _gx - _sox + _stx * 16;
+                                var _py = _gy - _soy + _sty * 16;
+
+                                if (_map_id_details != -1 && tilemap_get_at_pixel(_map_id_details, _px, _py) != 0) continue;
+                                if (_map_water != -1 && tilemap_get_at_pixel(_map_water, _px, _py) != 0) continue;
+
+                                var _existing = instance_position(_px + 8, _py + 8, obj_shoveled);
+                                if (_existing == noone) {
+                                    instance_create_layer(_px, _py, "Instances", obj_shoveled);
+                                }
+
+                                if (random(1) < _tier_stats.dig_chance) {
+                                    var _drop_x = _px + 8;
+                                    var _drop_y = _py + 8;
+
+                                    if (random(1) < _tier_stats.treasure_chance) {
+                                        var _gkey = global.gemstone_pool[irandom(array_length(global.gemstone_pool) - 1)];
+                                        inventory_drop_item(_gkey, 1, _drop_x, _drop_y, 15);
+                                    } else {
+                                        var _loot_roll = random(1);
+                                        if (_loot_roll < 0.30) {
+                                            var _stone_qty = irandom_range(1, 2 + floor(_tier_stats.dig_chance * 5));
+                                            inventory_drop_item("stone", _stone_qty, _drop_x, _drop_y, 15);
+                                        } else if (_loot_roll < 0.55) {
+                                            var _coal_qty = irandom_range(1, 1 + floor(_tier_stats.dig_chance * 3));
+                                            inventory_drop_item("coal", _coal_qty, _drop_x, _drop_y, 15);
+                                        } else if (_loot_roll < 0.70) {
+                                            var _ore_key = "ore_" + global.ore_names[irandom(array_length(global.ore_names) - 1)];
+                                            inventory_drop_item(_ore_key, 1, _drop_x, _drop_y, 15);
+                                        } else if (_loot_roll < 0.85) {
+                                            var _seed_keys = variable_struct_get_names(global.seed_data);
+                                            if (array_length(_seed_keys) > 0) {
+                                                var _rand_seed = _seed_keys[irandom(array_length(_seed_keys) - 1)];
+                                                var _seed_qty = irandom_range(1, min(3, 1 + floor(_tier_stats.dig_chance * 3)));
+                                                inventory_drop_item(_rand_seed, _seed_qty, _drop_x, _drop_y, 15);
+                                            }
+                                        } else {
+                                            if (array_length(global.insect_pool) > 0) {
+                                                var _insect_key = global.insect_pool[irandom(array_length(global.insect_pool) - 1)];
+                                                inventory_drop_item(_insect_key, 1, _drop_x, _drop_y, 15);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             break;
 
             case "fishing_rod":

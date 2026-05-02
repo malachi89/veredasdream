@@ -538,8 +538,8 @@ if (_p.shop_open) {
             if (_idata != undefined) {
                 var _f  = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
                 var _sz = 16 / max(sprite_get_width(_idata.sprite), sprite_get_height(_idata.sprite));
-                var _sox = (_p.shop_npc_key == "Miraculos") ? -16 : 0;
-                var _soy = (_p.shop_npc_key == "Miraculos") ? -8  : 0;
+                var _sox = (_p.shop_npc_key == "Miraculos") ? -16 : (_is_bs ? -20 : 0);
+                var _soy = (_p.shop_npc_key == "Miraculos") ? -16 : (_is_bs ? -12 : 0);
                 if (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) {
                     var _tq = scr_get_tool_quality(_entry.item_key, _p);
                     if (_tq >= 0 && _tq < QUALITY.VITOLANIO) _f += _tq + 1;
@@ -552,7 +552,8 @@ if (_p.shop_open) {
                     var _oy_off = (sprite_get_yoffset(_idata.sprite) - _sph / 2) * _scl;
                     draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _ox_off, _ry + _row / 2 - 6 + _oy_off, _scl, _scl, 0, c_white, 1.0);
                 } else {
-                    draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _sox, _ry + _row / 2 + _soy, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
+                    var _scl_mult = (_p.shop_npc_key == "Miraculos") ? 2.2 : (_is_bs ? 2.4 : 1.8);
+                    draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _sox, _ry + _row / 2 + _soy, _scl_mult * _sz, _scl_mult * _sz, 0, c_white, 1.0);
                 }
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
