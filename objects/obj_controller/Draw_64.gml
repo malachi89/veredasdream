@@ -103,21 +103,28 @@ if (global.mine_state.active) {
 if (sleep_menu_open) {
     var _cx = display_get_gui_width() * 0.5;
     var _cy = display_get_gui_height() * 0.5;
+    var _can_nap = (24 - global.game_hour > 5);
+
     draw_set_alpha(0.65);
     draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
     draw_set_alpha(1.0);
     draw_set_alpha(0.92);
-    draw_roundrect_color_ext(_cx - 210, _cy - 85, _cx + 210, _cy + 85, 12, 12, c_dkgray, c_dkgray, false);
+    draw_roundrect_color_ext(_cx - 210, _cy - 90, _cx + 210, _cy + 90, 12, 12, c_dkgray, c_dkgray, false);
     draw_set_alpha(1.0);
-    draw_roundrect_color_ext(_cx - 210, _cy - 85, _cx + 210, _cy + 85, 12, 12, c_white, c_white, true);
+    draw_roundrect_color_ext(_cx - 210, _cy - 90, _cx + 210, _cy + 90, 12, 12, c_white, c_white, true);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
-    draw_text_transformed(_cx, _cy - 35, "Quieres irte a dormir?", 2, 2, 0);
-    draw_text_transformed(_cx, _cy - 2, "Esto guardara el juego y avanzara un dia.", 1.2, 1.2, 0);
-    var _yes_col = (sleep_menu_selection == 0) ? c_lime : c_white;
-    var _no_col = (sleep_menu_selection == 1) ? c_red : c_white;
-    draw_text_transformed_color(_cx - 70, _cy + 48, "SI", 2, 2, 0, _yes_col, _yes_col, _yes_col, _yes_col, 1);
-    draw_text_transformed_color(_cx + 70, _cy + 48, "NO", 2, 2, 0, _no_col, _no_col, _no_col, _no_col, 1);
+    draw_text_transformed(_cx, _cy - 45, "Elige una opcion:", 2, 2, 0);
+    draw_text_transformed(_cx, _cy - 18, "Dormir: termina el dia y guarda.", 1.2, 1.2, 0);
+    if (_can_nap) {
+        draw_text_transformed(_cx, _cy + 2, "Siesta: recupera energia (+5h).", 1.2, 1.2, 0);
+    }
+    var _sleep_col = (sleep_menu_selection == 0) ? c_lime : c_white;
+    var _nap_col = (_can_nap && sleep_menu_selection == 1) ? c_yellow : c_white;
+    var _no_col = (sleep_menu_selection == (_can_nap ? 2 : 1)) ? c_red : c_white;
+    draw_text_transformed_color(_cx - 130, _cy + 52, "DORMIR", 2, 2, 0, _sleep_col, _sleep_col, _sleep_col, _sleep_col, 1);
+    if (_can_nap) draw_text_transformed_color(_cx, _cy + 52, "SIESTA", 2, 2, 0, _nap_col, _nap_col, _nap_col, _nap_col, 1);
+    draw_text_transformed_color(_cx + 130, _cy + 52, "NO", 2, 2, 0, _no_col, _no_col, _no_col, _no_col, 1);
 }
 
 // --- HOST-INITIATED SLEEP PROMPT (client side) ---

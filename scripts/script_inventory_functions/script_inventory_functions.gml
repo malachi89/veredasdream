@@ -980,6 +980,18 @@ function scr_on_sleep_yes() {
     }
 }
 
+// Called when the player chooses "Siesta" from the sleep menu.
+// Advances time by 5 hours and restores energy without ending the day.
+function scr_take_nap() {
+    var _lp = global.local_player;
+    if (!instance_exists(_lp)) exit;
+
+    global.game_hour += 5;
+    _lp.energy = _lp.max_energy;
+
+    scr_notify("Siesta completada. Energia restaurada.");
+}
+
 // Multiplayer sleep: process both players' shipping, send client summary, start new day.
 // Called on HOST when both players have agreed to sleep.
 function scr_sleep_and_save_mp() {

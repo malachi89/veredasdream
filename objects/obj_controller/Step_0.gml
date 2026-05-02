@@ -628,31 +628,47 @@ if (instance_exists(_lp)) {
 }
 
 if (sleep_menu_open) {
-    if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A")) || keyboard_check_pressed(ord("S"))) sleep_menu_selection = 0;
-    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D")) || keyboard_check_pressed(ord("N"))) sleep_menu_selection = 1;
+    var _can_nap = (24 - global.game_hour > 5);
+    if (!_can_nap && sleep_menu_selection >= 1) sleep_menu_selection = 0;
+
+    if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
+        sleep_menu_selection--;
+        if (sleep_menu_selection < 0) sleep_menu_selection = _can_nap ? 2 : 1;
+        if (!_can_nap && sleep_menu_selection == 1) sleep_menu_selection = 0;
+    }
+    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
+        sleep_menu_selection++;
+        if (sleep_menu_selection > (_can_nap ? 2 : 1)) sleep_menu_selection = 0;
+        if (!_can_nap && sleep_menu_selection == 1) sleep_menu_selection = 0;
+    }
 
     var _mx = device_mouse_x_to_gui(0);
     var _my = device_mouse_y_to_gui(0);
     var _cx = display_get_gui_width() * 0.5;
     var _cy = display_get_gui_height() * 0.5;
-    var _yes_x1 = _cx - 120;
-    var _yes_y1 = _cy + 20;
-    var _yes_x2 = _cx - 20;
-    var _yes_y2 = _cy + 78;
-    var _no_x1 = _cx + 20;
-    var _no_y1 = _cy + 20;
-    var _no_x2 = _cx + 120;
-    var _no_y2 = _cy + 78;
+    var _btn_y1 = _cy + 20;
+    var _btn_y2 = _cy + 78;
+    var _sleep_x1 = _cx - 180;
+    var _sleep_x2 = _cx - 80;
+    var _nap_x1   = _cx - 50;
+    var _nap_x2   = _cx + 50;
+    var _no_x1    = _cx + 80;
+    var _no_x2    = _cx + 180;
 
-    if (point_in_rectangle(_mx, _my, _yes_x1, _yes_y1, _yes_x2, _yes_y2)) sleep_menu_selection = 0;
-    if (point_in_rectangle(_mx, _my, _no_x1, _no_y1, _no_x2, _no_y2)) sleep_menu_selection = 1;
+    if (point_in_rectangle(_mx, _my, _sleep_x1, _btn_y1, _sleep_x2, _btn_y2)) sleep_menu_selection = 0;
+    if (_can_nap && point_in_rectangle(_mx, _my, _nap_x1, _btn_y1, _nap_x2, _btn_y2)) sleep_menu_selection = 1;
+    if (point_in_rectangle(_mx, _my, _no_x1, _btn_y1, _no_x2, _btn_y2)) sleep_menu_selection = _can_nap ? 2 : 1;
 
     if (mouse_check_button_pressed(mb_left)) {
-        if (point_in_rectangle(_mx, _my, _yes_x1, _yes_y1, _yes_x2, _yes_y2)) {
+        if (point_in_rectangle(_mx, _my, _sleep_x1, _btn_y1, _sleep_x2, _btn_y2)) {
             sleep_menu_open = false;
             if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
             scr_on_sleep_yes();
-        } else if (point_in_rectangle(_mx, _my, _no_x1, _no_y1, _no_x2, _no_y2)) {
+        } else if (_can_nap && point_in_rectangle(_mx, _my, _nap_x1, _btn_y1, _nap_x2, _btn_y2)) {
+            sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            scr_take_nap();
+        } else if (point_in_rectangle(_mx, _my, _no_x1, _btn_y1, _no_x2, _btn_y2)) {
             sleep_menu_open = false;
             if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
         }
@@ -661,9 +677,15 @@ if (sleep_menu_open) {
     if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
         if (sleep_menu_selection == 0) {
             sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
             scr_on_sleep_yes();
+        } else if (_can_nap && sleep_menu_selection == 1) {
+            sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            scr_take_nap();
         } else {
             sleep_menu_open = false;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
         }
     }
 
