@@ -667,7 +667,6 @@
     {"id":{"name":"obj_enemy_slime","path":"objects/obj_enemy_slime/obj_enemy_slime.yy",},},
     {"id":{"name":"obj_enemy","path":"objects/obj_enemy/obj_enemy.yy",},},
     {"id":{"name":"obj_farm_animal","path":"objects/obj_farm_animal/obj_farm_animal.yy",},},
-    {"id":{"name":"obj_forest_particles","path":"objects/obj_forest_particles/obj_forest_particles.yy",},},
     {"id":{"name":"obj_forest_sign","path":"objects/obj_forest_sign/obj_forest_sign.yy",},},
     {"id":{"name":"obj_greenhouse_placeholder","path":"objects/obj_greenhouse_placeholder/obj_greenhouse_placeholder.yy",},},
     {"id":{"name":"obj_greenhouse","path":"objects/obj_greenhouse/obj_greenhouse.yy",},},
