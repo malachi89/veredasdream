@@ -72,6 +72,7 @@ if (current_room_name != _room_name) {
     
     update_tilesets();
     scr_setup_forest_trees();
+    if (_room_name == "farm") scr_check_collection_unlocks();
 }
 
 if (global.forest_needs_repopulate && _room_name == "forest"
@@ -122,7 +123,7 @@ if (global.net_role != NET_ROLE.CLIENT && !pause_menu_open) {
         if (global.game_minute >= 60) {
             global.game_minute = 0;
             global.game_hour += 1;
-            if (global.game_hour >= 24) start_new_day();
+            if (global.game_hour >= 24) midnight_collapse();
         }
         if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
             net_send_time_update();
@@ -380,9 +381,10 @@ if (keyboard_check_pressed(vk_escape)) {
     } else {
         var _lp_chk = global.local_player;
         var _any_ui_open =
-            sleep_menu_open        ||
-            sleep_prompt_open      ||
-            shipping_summary_open  ||
+            sleep_menu_open             ||
+            sleep_prompt_open           ||
+            shipping_summary_open       ||
+            collection_menu_open        ||
             (instance_exists(_lp_chk) && (
                 _lp_chk.show_backpack ||
                 _lp_chk.show_shipping ||
@@ -462,6 +464,14 @@ if (keyboard_check_pressed(ord("P"))) {
 
 if (keyboard_check_pressed(ord("O"))) start_new_day();
 
+if (keyboard_check_pressed(ord("L"))) {
+    global.game_hour += 1;
+    global.game_minute = 0;
+    show_debug_message("Hora: " + string(global.game_hour) + ":00");
+    if (global.game_hour >= 24) midnight_collapse();
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+}
+
 if (keyboard_check_pressed(ord("Y"))) {
     if (!instance_exists(obj_minigame_timing)) {
         var _inst = instance_create_depth(0, 0, 0, obj_minigame_timing);
@@ -480,6 +490,127 @@ if (keyboard_check_pressed(ord("U"))) {
         inventory_drop_item("tomato_seeds", 5, global.local_player.x, global.local_player.y);
         show_debug_message("Drop: 5 Tomato Seeds");
     }
+}
+
+// --- COLLECTION CATALOG ---
+if (keyboard_check_pressed(ord("M"))) {
+    if (collection_menu_open) {
+        collection_menu_open = false;
+    } else {
+        var _lp_m = global.local_player;
+        var _any_ui_m =
+            pause_menu_open         ||
+            sleep_menu_open         ||
+            sleep_prompt_open       ||
+            shipping_summary_open   ||
+            chat_open               ||
+            (instance_exists(_lp_m) && (
+                _lp_m.show_backpack ||
+                _lp_m.show_shipping ||
+                _lp_m.show_chest    ||
+                _lp_m.shop_open     ||
+                _lp_m.dialog_open
+            ));
+        if (!_any_ui_m) {
+            collection_menu_open = true;
+            collection_category = 0;
+            collection_page = 0;
+        }
+    }
+}
+
+if (collection_menu_open) {
+    var _cats = scr_get_collection_categories();
+    var _num_cats = array_length(_cats);
+
+    // Category switching: Left/Right or A/D
+    if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
+        collection_category = (collection_category - 1 + _num_cats) mod _num_cats;
+        collection_page = 0;
+    }
+    if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
+        collection_category = (collection_category + 1) mod _num_cats;
+        collection_page = 0;
+    }
+
+    // Page navigation: Up/Down or W/S
+    var _cat_db = _cats[collection_category].db;
+    var _keys = scr_get_collection_keys(_cat_db);
+    var _total_items = array_length(_keys);
+    var _cols = 9;
+    var _rows = 5;
+    var _per_page = _cols * _rows;
+    var _max_page = ceil(_total_items / _per_page) - 1;
+    if (_max_page < 0) _max_page = 0;
+
+    if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W"))) {
+        collection_page = max(0, collection_page - 1);
+    }
+    if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"))) {
+        collection_page = min(_max_page, collection_page + 1);
+    }
+
+    // Mouse category click
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _gw = display_get_gui_width();
+    var _gh = display_get_gui_height();
+    var _panel_w = 920;
+    var _panel_h = 640;
+    var _panel_x = (_gw - _panel_w) / 2;
+    var _panel_y = (_gh - _panel_h) / 2;
+    var _sidebar_w = 240;
+    var _cat_h = 34;
+    var _cat_x1 = _panel_x + 12;
+    var _cat_x2 = _panel_x + _sidebar_w;
+    var _cat_start_y = _panel_y + 74;
+
+    if (mouse_check_button_pressed(mb_left)) {
+        for (var _ci = 0; _ci < _num_cats; _ci++) {
+            var _cat_y1 = _cat_start_y + _ci * _cat_h;
+            var _cat_y2 = _cat_y1 + _cat_h - 2;
+            if (point_in_rectangle(_mx, _my, _cat_x1, _cat_y1, _cat_x2, _cat_y2)) {
+                collection_category = _ci;
+                collection_page = 0;
+                break;
+            }
+        }
+    }
+
+    // Mouse wheel for page
+    var _wheel = mouse_wheel_down() - mouse_wheel_up();
+    if (_wheel != 0) {
+        collection_page = clamp(collection_page + _wheel, 0, _max_page);
+    }
+
+    // Page button clicks
+    if (mouse_check_button_pressed(mb_left)) {
+        var _px2_m = _panel_x + _panel_w;
+        var _right_cx_m = _cat_x2 + 10 + (_px2_m - _cat_x2 - 10) / 2;
+        var _btn_w = 150;
+        var _btn_h = 34;
+        var _btn_y1 = (_panel_y + _panel_h) - 44;
+        var _btn_y2 = _btn_y1 + _btn_h;
+        var _prev_x1 = _right_cx_m - _btn_w - 10;
+        var _prev_x2 = _right_cx_m - 10;
+        var _next_x1 = _right_cx_m + 10;
+        var _next_x2 = _right_cx_m + _btn_w + 10;
+
+        if (_max_page > 0) {
+            if (point_in_rectangle(_mx, _my, _prev_x1, _btn_y1, _prev_x2, _btn_y2)) {
+                collection_page = max(0, collection_page - 1);
+            } else if (point_in_rectangle(_mx, _my, _next_x1, _btn_y1, _next_x2, _btn_y2)) {
+                collection_page = min(_max_page, collection_page + 1);
+            }
+        }
+    }
+
+    // Close on Escape
+    if (keyboard_check_pressed(vk_escape)) {
+        collection_menu_open = false;
+    }
+
+    exit;
 }
 
 var _lp = global.local_player;

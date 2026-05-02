@@ -476,6 +476,7 @@ if (_p.shop_open) {
 
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
+    if (_p.shop_npc_key == "Miraculos") _sitems = scr_get_miraculos_shop_items();
     var _sn      = array_length(_sitems);
     var _visible = _wb_or_bs ? 7 : 8;
     var _row     = _wb_or_bs ? 64 : 44;
@@ -543,15 +544,40 @@ if (_p.shop_open) {
                     var _tq = scr_get_tool_quality(_entry.item_key, _p);
                     if (_tq >= 0 && _tq < QUALITY.VITOLANIO) _f += _tq + 1;
                 }
-                draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _sox, _ry + _row / 2 + _soy, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
+                if (_is_workbench) {
+                    var _spw = sprite_get_width(_idata.sprite);
+                    var _sph = sprite_get_height(_idata.sprite);
+                    var _scl = 2.4 * _sz;
+                    var _ox_off = (sprite_get_xoffset(_idata.sprite) - _spw / 2) * _scl;
+                    var _oy_off = (sprite_get_yoffset(_idata.sprite) - _sph / 2) * _scl;
+                    draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _ox_off, _ry + _row / 2 - 6 + _oy_off, _scl, _scl, 0, c_white, 1.0);
+                } else {
+                    draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _sox, _ry + _row / 2 + _soy, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
+                }
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
                     var _name_scale = _wb_or_bs ? 1.7 : 1.4;
-                var _ny = (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) ? _ry + _row / 2 - 12 : _ry + _row / 2;
+                var _ny = _ry + _row / 2;
+                if (_is_workbench || (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade)) _ny -= 12;
                 draw_text_transformed_color(_px1 + 52, _ny, _idata.name, _name_scale, _name_scale, 0, c_white, c_white, c_white, c_white, 1.0);
             }
 
             if (_is_workbench) {
+                // --- Requisito de coleccion ---
+                if (variable_struct_exists(_entry, "collection_req")) {
+                    var _cr = _entry.collection_req;
+                    var _cats = scr_get_collection_categories();
+                    var _cat = _cats[_cr.cat];
+                    var _collected = scr_count_collected_in_category(_cat.db);
+                    var _coll_ok = (_collected >= _cr.min);
+                    draw_set_halign(fa_left);
+                    draw_set_valign(fa_middle);
+                    draw_text_transformed_color(_px1 + 52, _ry + _row / 2 + 16,
+                        "Requiere " + string(_collected) + "/" + string(_cr.min) + " " + _cat.name,
+                        1.1, 1.1, 0,
+                        _coll_ok ? c_lime : c_red, _coll_ok ? c_lime : c_red,
+                        c_white, c_white, 1.0);
+                }
                 // --- Ingredientes como cajas de sprite ---
                 var _bw   = 96;
                 var _bh   = 48;

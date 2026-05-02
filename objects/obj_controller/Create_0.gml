@@ -31,7 +31,10 @@ global.net_role = NET_ROLE.NONE;
 time_tick_counter = 0;
 time_frames_per_minute = (360 / global.time_multiplier);
 
+midnight_collapse_done = false;
+
 function start_new_day() {
+    midnight_collapse_done = false;
     fade_alpha = 1.0;
     is_fading_in = true;
 
@@ -86,6 +89,7 @@ function start_new_day() {
 
     if (instance_exists(global.local_player)) {
         global.local_player.hp = global.local_player.max_hp;
+        global.local_player.energy = global.local_player.max_energy;
     }
 
     scr_capture_current_room_state();
@@ -94,6 +98,49 @@ function start_new_day() {
     // Broadcast new day state to client so their world advances in sync.
     if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
         net_send_new_day();
+    }
+}
+
+function midnight_collapse() {
+    if (midnight_collapse_done) exit;
+    midnight_collapse_done = true;
+
+    var _lp = global.local_player;
+    if (!instance_exists(_lp)) {
+        start_new_day();
+        exit;
+    }
+
+    scr_notify("Te has desmayado por el cansancio...");
+    _lp.tool_locked_frames = 60;
+    _lp.is_riding = false;
+    _lp.mount_is_bear = false;
+    _lp.state = STATE.IDLE;
+
+    // Transition to farm_house if not already there
+    if (room_get_name(room) != "farm_house") {
+        scr_capture_current_room_state();
+        room_goto(farm_house);
+    }
+
+    // Position player by bed
+    var _bed = instance_find(obj_bed, 0);
+    if (_bed != noone && instance_exists(global.local_player)) {
+        global.local_player.x = _bed.x + 40;
+        global.local_player.y = _bed.y + 18;
+        global.local_player.dir = DIR.RIGHT;
+    }
+
+    // Process shipping
+    var _summary = scr_process_shipping(_lp);
+
+    if (array_length(_summary.items) > 0) {
+        shipping_summary_data = _summary;
+        shipping_summary_open = true;
+    } else {
+        start_new_day();
+        scr_save_game();
+        scr_notify("Dia terminado");
     }
 }
 
@@ -207,3 +254,8 @@ global.sound_clips = [];
 mine_prompt_open = false;
 mine_prompt_type = "";
 mine_prompt_selection = 0;
+
+// Collection Catalog
+collection_menu_open = false;
+collection_category = 0;
+collection_page = 0;

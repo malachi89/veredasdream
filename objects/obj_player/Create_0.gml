@@ -110,6 +110,10 @@ prev_on_door = false;
 
 // --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---
 function add_item(_item_key, _qty = 1, _weight = undefined) {
+    if (!variable_struct_exists(global.collected_items, _item_key)) {
+        global.collected_items[$ _item_key] = true;
+        scr_check_collection_unlocks();
+    }
     var _is_stackable = false;
     if (variable_struct_exists(global.seed_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.crop_data, _item_key)) _is_stackable = true;
@@ -118,6 +122,7 @@ function add_item(_item_key, _qty = 1, _weight = undefined) {
     if (variable_struct_exists(global.bar_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.jam_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.gemstone_data, _item_key)) _is_stackable = true;
+    if (variable_struct_exists(global.dye_data, _item_key)) _is_stackable = true;
     if (variable_struct_exists(global.placeable_data, _item_key)) _is_stackable = true;
 
     if (_is_stackable) {
@@ -228,61 +233,10 @@ if (is_host) {
     add_item("bugnet", 1);
     add_item("sword_1", 1);
     add_item("bow_1", 1);
+    add_item("workbench", 1);
     add_item("parsnip_seeds", 10);
 
-    add_item("workbench", 1);
-
-    // Máquinas (1 each)
-    add_item("machine_curtidora", 1);
-    add_item("machine_telar", 1);
-    add_item("machine_mantequillera", 1);
-    add_item("machine_mermeladora", 1);
-    add_item("machine_prensa_queso", 1);
-    add_item("machine_horno", 1);
-    add_item("machine_colmena", 1);
-
-    // Curtidora — pieles (10 each)
-    add_item("pelt_red", 10);
-    add_item("cow_hide_red", 10);
-    add_item("rabbit_pelt_red", 10);
-
-    // Telar — hilado/tejido (10 each)
-    add_item("yarn_red", 10);
-    add_item("thread_red", 10);
-
-    // Prensa de queso — leches (10 each)
-    add_item("milk_reg", 10);
-    add_item("milk_large", 10);
-    add_item("goat_milk_reg", 10);
-    add_item("goat_milk_large", 10);
-
-    // Mantequillera — huevos (10 each)
-    add_item("egg_chicken_brown_reg", 10);
-    add_item("egg_duck_reg", 10);
-
-    // Horno — minerales y madera (10 each)
-    add_item("ore_bronce", 10);
-    add_item("ore_plata", 10);
-    add_item("ore_oro", 10);
-    add_item("ore_broncastanio", 10);
-    add_item("ore_chubestanio", 10);
-    add_item("ore_picastanio", 10);
-    add_item("ore_hitlerstanio", 10);
-    add_item("ore_vitolanio", 10);
-    add_item("wood", 10);
-
-    // Mermeladora — frutas (10 each)
-    add_item("strawberry", 10);
-    add_item("tomato", 10);
-    add_item("blueberry", 10);
-
-    // Materiales para craftear todo el banco de trabajo
-    add_item("wood",            310);
-    add_item("stone",           200);
-    add_item("coal",             20);
-    add_item("bar_bronce",       10);
-    add_item("bar_plata",        10);
-    add_item("bar_oro",           5);
-    add_item("bar_broncastanio",  5);
-    add_item("honey",             5);
+    // Materiales básicos para craftear
+    add_item("wood",  10);
+    add_item("stone", 10);
 }

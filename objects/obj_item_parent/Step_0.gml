@@ -14,6 +14,7 @@ if (!is_initialized && item_key != "") {
     else if (variable_struct_exists(global.bar_data, item_key)) _data = global.bar_data[$ item_key];
     else if (variable_struct_exists(global.jam_data, item_key)) _data = global.jam_data[$ item_key];
     else if (variable_struct_exists(global.gemstone_data, item_key)) _data = global.gemstone_data[$ item_key];
+    else if (variable_struct_exists(global.dye_data, item_key)) _data = global.dye_data[$ item_key];
 
     if (_data != undefined) {
 
@@ -82,6 +83,7 @@ if (collect_delay > 0) {
                 else if (variable_struct_exists(global.bar_data, item_key)) _name = global.bar_data[$ item_key].name;
                 else if (variable_struct_exists(global.jam_data, item_key)) _name = global.jam_data[$ item_key].name;
                 else if (variable_struct_exists(global.gemstone_data, item_key)) _name = global.gemstone_data[$ item_key].name;
+                else if (variable_struct_exists(global.dye_data, item_key)) _name = global.dye_data[$ item_key].name;
 
                 scr_notify_item(quantity, _name);
                 scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);

@@ -125,7 +125,8 @@ global.enemy_data = {
         attack_cooldown: 60,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_black","pelt_white","string_black"],
+        product_drops: ["string_black"],
+        dye_drops: ["dye_black","dye_white"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_blue: {
@@ -141,7 +142,8 @@ global.enemy_data = {
         attack_cooldown: 45,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_blue","string_blue","feathers_blue"],
+        product_drops: ["string_blue","feathers_blue"],
+        dye_drops: ["dye_blue","dye_turquoise"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_golden: {
@@ -157,7 +159,8 @@ global.enemy_data = {
         attack_cooldown: 90,
         attack_range: 28,
         death_anim_frames: 48,
-        product_drops: ["pelt_amber","yarn_amber","string_amber"],
+        product_drops: ["yarn_amber","string_amber"],
+        dye_drops: ["dye_amber","dye_yellow"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_green: {
@@ -173,7 +176,8 @@ global.enemy_data = {
         attack_cooldown: 60,
         attack_range: 32,
         death_anim_frames: 48,
-        product_drops: ["pelt_green","string_green","feathers_green"],
+        product_drops: ["string_green","feathers_green"],
+        dye_drops: ["dye_green","dye_lime"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_pink: {
@@ -189,7 +193,8 @@ global.enemy_data = {
         attack_cooldown: 40,
         attack_range: 30,
         death_anim_frames: 48,
-        product_drops: ["pelt_pink","yarn_pink","string_pink"],
+        product_drops: ["yarn_pink","string_pink"],
+        dye_drops: ["dye_pink","dye_red"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_purple: {
@@ -205,7 +210,8 @@ global.enemy_data = {
         attack_cooldown: 100,
         attack_range: 28,
         death_anim_frames: 48,
-        product_drops: ["pelt_purple","yarn_purple","string_purple"],
+        product_drops: ["yarn_purple","string_purple"],
+        dye_drops: ["dye_purple","dye_lilac"],
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     myconid_blue: {
@@ -226,6 +232,7 @@ global.enemy_data = {
         attack_range: 32,
         death_anim_frames: 48,
         product_drops: ["pelt_blue","string_blue","thread_blue"],
+        dye_drops: ["dye_blue"],
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_green: {
@@ -246,6 +253,7 @@ global.enemy_data = {
         attack_range: 34,
         death_anim_frames: 48,
         product_drops: ["pelt_green","string_green","thread_green"],
+        dye_drops: ["dye_green"],
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_pink: {
@@ -266,6 +274,7 @@ global.enemy_data = {
         attack_range: 28,
         death_anim_frames: 48,
         product_drops: ["pelt_pink","string_pink","thread_pink"],
+        dye_drops: ["dye_pink"],
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     goblin: {
@@ -287,6 +296,7 @@ global.enemy_data = {
         attack_range: 30,
         death_anim_frames: 48,
         product_drops: ["leather_brown","string_brown","pelt_brown","sword_1","bow_1"],
+        dye_drops: ["dye_brown","dye_orange"],
         snd_hurt: sound_goblin_damage, snd_death: sound_goblin_death, snd_attack: sound_goblin_attack, snd_idle: sound_goblin_idling
     },
 };
@@ -303,7 +313,8 @@ enum ITEM_TYPE {
     INSECT,      // Insectos capturados con la red
     ORE,        // Minerales de la mina
     BAR,        // Lingotes de metal
-    JAM         // Mermelada
+    JAM,        // Mermelada
+    DYE         // Tinte
 }
 
 enum TOOL_TYPE {
@@ -347,18 +358,18 @@ global.seed_data = {
     // --- PRIMAVERA ---
     cherry_seeds:       { name: "Semilla de Cereza",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 0,   growth_time: 6, crop_base_name: "cherry",       base_buy_price: 30, base_sell_price: 5, is_fruit_tree: true },
     apricot_seeds:      { name: "Semilla de Chabacano",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 8,   growth_time: 6, crop_base_name: "apricot",      base_buy_price: 25, base_sell_price: 4, is_fruit_tree: true },
-    strawberry_seeds:   { name: "Semilla de Fresa",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 16,  growth_time: 6, crop_base_name: "strawberry",   base_buy_price: 40, base_sell_price: 7 },
+    strawberry_seeds:   { name: "Semilla de Fresa",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 16,  growth_time: 6, crop_base_name: "strawberry",   base_buy_price: 35, base_sell_price: 7 },
     spring_onion_seeds: { name: "Semilla de Cebolleta",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 24,  growth_time: 6, crop_base_name: "spring_onion", base_buy_price: 10, base_sell_price: 2 },
-    potato_seeds:       { name: "Semilla de Papa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 32,  growth_time: 6, crop_base_name: "potato",       base_buy_price: 20, base_sell_price: 3 },
-    onion_seeds:        { name: "Semilla de Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 40,  growth_time: 6, crop_base_name: "onion",        base_buy_price: 15, base_sell_price: 2 },
-    carrot_seeds:       { name: "Semilla de Zanahoria",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 48,  growth_time: 6, crop_base_name: "carrot",       base_buy_price: 15, base_sell_price: 2 },
-    blueberry_seeds:    { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 56,  growth_time: 6, crop_base_name: "blueberry",    base_buy_price: 50, base_sell_price: 8 },
-    parsnip_seeds:      { name: "Semilla de Chirivia",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 64,  growth_time: 5, crop_base_name: "parsnip",      base_buy_price: 15, base_sell_price: 2 },
-    cabbage_seeds:      { name: "Semilla de Repollo",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 72,  growth_time: 7, crop_base_name: "cabbage",      base_buy_price: 20, base_sell_price: 3 },
-    cauliflower_seeds:  { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 80,  growth_time: 6, crop_base_name: "cauliflower",  base_buy_price: 30, base_sell_price: 5 },
-    rice_seeds:         { name: "Semilla de Arroz",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 88,  growth_time: 6, crop_base_name: "rice",         base_buy_price: 25, base_sell_price: 4 },
-    broccoli_seeds:     { name: "Semilla de Brocoli",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 96,  growth_time: 5, crop_base_name: "broccoli",     base_buy_price: 25, base_sell_price: 4 },
-    asparagus_seeds:    { name: "Semilla de Esparrago",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 104, growth_time: 5, crop_base_name: "asparagus",    base_buy_price: 35, base_sell_price: 6 },
+    potato_seeds:       { name: "Semilla de Papa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 32,  growth_time: 6, crop_base_name: "potato",       base_buy_price: 18, base_sell_price: 3 },
+    onion_seeds:        { name: "Semilla de Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 40,  growth_time: 6, crop_base_name: "onion",        base_buy_price: 14, base_sell_price: 2 },
+    carrot_seeds:       { name: "Semilla de Zanahoria",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 48,  growth_time: 6, crop_base_name: "carrot",       base_buy_price: 14, base_sell_price: 2 },
+    blueberry_seeds:    { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 56,  growth_time: 6, crop_base_name: "blueberry",    base_buy_price: 40, base_sell_price: 8 },
+    parsnip_seeds:      { name: "Semilla de Chirivia",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 64,  growth_time: 5, crop_base_name: "parsnip",      base_buy_price: 12, base_sell_price: 2 },
+    cabbage_seeds:      { name: "Semilla de Repollo",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 72,  growth_time: 7, crop_base_name: "cabbage",      base_buy_price: 18, base_sell_price: 3 },
+    cauliflower_seeds:  { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 80,  growth_time: 6, crop_base_name: "cauliflower",  base_buy_price: 28, base_sell_price: 5 },
+    rice_seeds:         { name: "Semilla de Arroz",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 88,  growth_time: 6, crop_base_name: "rice",         base_buy_price: 22, base_sell_price: 4 },
+    broccoli_seeds:     { name: "Semilla de Brocoli",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 96,  growth_time: 5, crop_base_name: "broccoli",     base_buy_price: 22, base_sell_price: 4 },
+    asparagus_seeds:    { name: "Semilla de Esparrago",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 104, growth_time: 5, crop_base_name: "asparagus",    base_buy_price: 28, base_sell_price: 6 },
 
     // --- VERANO ---
     tomato_seeds:        { name: "Semilla de Tomate",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 144, growth_time: 5, crop_base_name: "tomato",       base_buy_price: 20, base_sell_price: 3 },
@@ -397,17 +408,17 @@ global.crop_data = {
     cherry:       { name: "Cereza",       seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 2,   base_buy_price: 120, base_sell_price: 42, is_fruit_tree: true, sprite_width: 32, sprite_height: 48 },
     apricot:      { name: "Chabacano",     seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 10,  base_buy_price: 100, base_sell_price: 35, is_fruit_tree: true, sprite_width: 32, sprite_height: 48 },
     strawberry:   { name: "Fresa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 18,  base_buy_price: 150, base_sell_price: 56 },
-    spring_onion: { name: "Cebolleta",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 26,  base_buy_price: 40,  base_sell_price: 14 },
-    potato:       { name: "Papa",         seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 34,  base_buy_price: 80,  base_sell_price: 28 },
-    onion:        { name: "Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 42,  base_buy_price: 60,  base_sell_price: 21 },
-    carrot:       { name: "Zanahoria",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 50,  base_buy_price: 60,  base_sell_price: 21 },
-    blueberry:    { name: "Mora Azul",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 58,  base_buy_price: 180, base_sell_price: 70 },
-    parsnip:      { name: "Chirivia",     seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 66,  base_buy_price: 60,  base_sell_price: 21 },
-    cabbage:      { name: "Repollo",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 74,  base_buy_price: 90,  base_sell_price: 28 },
-    cauliflower:  { name: "Coliflor",     seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 82,  base_buy_price: 120, base_sell_price: 42 },
-    rice:         { name: "Arroz",        seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 90,  base_buy_price: 100, base_sell_price: 35 },
-    broccoli:     { name: "Brocoli",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 98,  base_buy_price: 100, base_sell_price: 35 },
-    asparagus:    { name: "Esparragos",   seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 106, base_buy_price: 140, base_sell_price: 49 },
+    spring_onion: { name: "Cebolleta",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 26,  base_buy_price: 40,  base_sell_price: 16 },
+    potato:       { name: "Papa",         seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 34,  base_buy_price: 80,  base_sell_price: 32 },
+    onion:        { name: "Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 42,  base_buy_price: 60,  base_sell_price: 24 },
+    carrot:       { name: "Zanahoria",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 50,  base_buy_price: 60,  base_sell_price: 24 },
+    blueberry:    { name: "Mora Azul",    seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 58,  base_buy_price: 180, base_sell_price: 72 },
+    parsnip:      { name: "Chirivia",     seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 66,  base_buy_price: 60,  base_sell_price: 22 },
+    cabbage:      { name: "Repollo",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 74,  base_buy_price: 90,  base_sell_price: 32 },
+    cauliflower:  { name: "Coliflor",     seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 82,  base_buy_price: 120, base_sell_price: 46 },
+    rice:         { name: "Arroz",        seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 90,  base_buy_price: 100, base_sell_price: 40 },
+    broccoli:     { name: "Brocoli",      seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 98,  base_buy_price: 100, base_sell_price: 40 },
+    asparagus:    { name: "Esparragos",   seasons: [SEASON.SPRING], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 106, base_buy_price: 140, base_sell_price: 50 },
 
     // --- VERANO ---
     tomato:        { name: "Tomate",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.CROP, sprite: sprite_crops_icons, subimg: 146, base_buy_price: 80,  base_sell_price: 28 },
@@ -994,6 +1005,30 @@ _tp[$ "watering_can"] = [
     { hits_required: 0, area_width: 9, area_height: 9, double_drop_chance: 0, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1.0, water_persists_next_day: true  }  // VITOLANIO
 ];
 
+    _tp[$ "bugnet"] = [
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.1, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.1, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.3, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.3, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.5, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1,   water_persists_next_day: false }, // VITOLANIO
+    ];
+
+    _tp[$ "fishing_rod"] = [
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // OXIDADO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCE
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0,   treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PLATA
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.1, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // ORO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.1, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // BRONCASTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // CHUBESTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.2, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // PICASTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.3, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 0,   water_persists_next_day: false }, // HITLERSTANIO
+        { hits_required: 0, area_width: 1, area_height: 1, double_drop_chance: 0.5, treasure_chance: 0, triple_drop_chance: 0, no_energy_chance: 1,   water_persists_next_day: false }, // VITOLANIO
+    ];
+
 // --- NPC DATA ---
 global.npc_data = {
     workbench:  { name: "Mesa de Trabajo" },
@@ -1025,8 +1060,8 @@ global.npc_dialogues = [
     "Se me antoja una buldak 3x para que se me voltee el fundillo al reves como higo partido a la mitad.",
     "Quisiera ir a las Barrancas del Cobre, dicen que esta bien chido el paseo.",
     "Con estos precios del queso mejor me voy a poner a ordeñar yo mismo.",
-    "Unos Cheetos Flaming Hot bien frios y ver el atardecer en el Cerro de la Cruz.",
-    "Cuando voy a Creel siempre traigo un cochito de recuerdo, pero hoy no traigo ni pa' los Cheetos.",
+    "Unos chetos y una coca eso es vida",
+    "Cuando voy a Creel siempre traigo un ware de los tarahumaras de recuerdo, pero hoy no traigo ni pa' los Cheetos.",
     "¡Ah how! Ya mero voy pa'l Divisadero, a ver la puesta de sol y olvidarme de la carestia.",
     "El queso Chihuahua ya cuesta casi lo mismo que un kilo de tortillas, ¡no mames!",
     "Unos Cheetos Flaming Hot con salsa valentina, eso si es comida de dioses.",
@@ -1113,6 +1148,12 @@ global.npc_dialogues = [
     "Esa neni vende cremas, pero yo quiero que me embarre la que ella usa.",
     "A mi me gusta elote con mantequilla, de esos bien larguitos y que chorrean.",
     "Necesito una buena leche, de esas que te dejan espuma en los labios.",
+    "¿Te acuerdas del Cochabebes? Ese wey tenia a todo Chihuahua con miedo en los 2020s.",
+    "Dicen que el Cochabebes nunca lo agarraron, que todavia anda suelto por ahi.",
+    "El Cochabebes azotaba bien feo en Chihuahua, mejor no salir de noche ni de dia.",
+    "Mi primo jura que vio al Cochabebes una vez en la colonia Villa Juarez, salio corriendo.",
+    "Cuando yo vivia en Chihuahua, mi mama no me dejaba ir solo por miedo al Cochabebes.",
+    "Ojala hubieran agarrado al Cochabebes antes de que hiciera tanto dano en Chihuahua.",
 ];
 
 // price_items: array de { key, qty } requeridos ademas del dinero
@@ -1163,6 +1204,31 @@ global.shop_data[$ "Miraculos"] = {
         { item_key: "apple_seeds",        price_money: 30, price_items: [] },
     ]
 };
+
+// --- SISTEMA DE DESBLOQUEO GRADUAL DE SEMILLAS ---
+global.shipped_quantities = {};
+
+global.seed_unlock_tiers = array_create(5, undefined);
+global.seed_unlock_tiers[SEASON.SPRING] = [
+    ["potato_seeds", "onion_seeds", "parsnip_seeds"],
+    ["spring_onion_seeds", "carrot_seeds", "cabbage_seeds"],
+    ["cauliflower_seeds", "rice_seeds", "broccoli_seeds"],
+    ["asparagus_seeds", "strawberry_seeds", "blueberry_seeds"],
+    ["cherry_seeds", "apricot_seeds"]
+];
+global.seed_unlock_tiers[SEASON.SUMMER] = [
+    ["tomato_seeds", "sunflower_seeds", "wheat_seeds"],
+    ["green_pepper_seeds", "cucumber_seeds", "wild_berry_seeds"],
+    ["corn_seeds", "eggplant_seeds", "green_beans_seeds"],
+    ["hot_pepper_seeds", "adzuki_bean_seeds", "aloe_seeds"],
+    ["melon_seeds", "watermelon_seeds", "pineapple_seeds"],
+    ["banana_seeds", "orange_seeds", "mango_seeds", "peach_seeds"]
+];
+global.seed_unlock_tiers[SEASON.FALL] = [
+    ["beetroot_seeds", "pumpkin_seeds"],
+    ["grapes_seeds"],
+    ["apple_seeds"]
+];
 
 // --- GRUPOS DE ITEMS PARA RECETAS ---
 var _colors = ["red","orange","yellow","green","blue","lilac","purple","turquoise","pink","lime","amber","brown","black","white"];
@@ -1216,34 +1282,34 @@ global.shop_data[$ "workbench"] = {
             { key: "stone",     qty: 10 },
             { key: "bar_plata", qty: 3  },
             { key: "leather_any", qty: 10, name: "Cuero/Piel", group_keys: global.item_groups.leather_any }
-          ]},
+          ], collection_req: { cat: 6, min: 20 }},
         { item_key: "machine_telar",
           price_money: 0, price_items: [
             { key: "wood",       qty: 15 },
             { key: "coal",       qty: 5  },
             { key: "bar_bronce", qty: 3  },
             { key: "yarn_any",   qty: 10, name: "Estambre", group_keys: global.item_groups.yarn_any }
-          ]},
+          ], collection_req: { cat: 6, min: 15 }},
         { item_key: "machine_mantequillera",
           price_money: 0, price_items: [
             { key: "wood",       qty: 50 },
             { key: "stone",      qty: 50 },
             { key: "bar_bronce", qty: 3  },
             { key: "milk_any",   qty: 10, name: "Leche", group_keys: global.item_groups.milk_any }
-          ]},
+          ], collection_req: { cat: 5, min: 8 }},
         { item_key: "machine_mermeladora",
           price_money: 0, price_items: [
             { key: "wood",      qty: 30 },
             { key: "bar_plata", qty: 3  },
             { key: "crop_any",  qty: 10, name: "Fruta/Verdura", group_keys: global.item_groups.crop_any }
-          ]},
+          ], collection_req: { cat: 1, min: 25 }},
         { item_key: "machine_prensa_queso",
           price_money: 0, price_items: [
             { key: "wood",    qty: 60 },
             { key: "stone",   qty: 30 },
             { key: "bar_oro", qty: 3  },
             { key: "milk_any", qty: 10, name: "Leche", group_keys: global.item_groups.milk_any }
-          ]},
+          ], collection_req: { cat: 5, min: 12 }},
         { item_key: "machine_horno",
           price_money: 0, price_items: [
             { key: "stone", qty: 80 },
@@ -1254,7 +1320,7 @@ global.shop_data[$ "workbench"] = {
             { key: "wood",             qty: 20 },
             { key: "honey",            qty: 3  },
             { key: "bar_broncastanio", qty: 5  }
-          ]},
+          ], collection_req: { cat: 4, min: 50 }},
     ]
 };
 
@@ -1270,13 +1336,13 @@ _fish[$ "fish_03"] = { name: "Pez Gato",           seasons: [SEASON.SPRING], typ
 _fish[$ "fish_04"] = { name: "Carpa Dorada",       seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 4,  rarity: 50, base_sell_price: 5,   weight_min: 0.8,   weight_max: 3.0    };
 _fish[$ "fish_05"] = { name: "Lubina",             seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 5,  rarity: 20, base_sell_price: 8,   weight_min: 1.0,   weight_max: 4.0    };
 _fish[$ "fish_06"] = { name: "Perca",              seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 6,  rarity: 50, base_sell_price: 11,   weight_min: 0.2,   weight_max: 1.0    };
-_fish[$ "fish_07"] = { name: "Esturión",           seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 7,  rarity: 7,  base_sell_price: 2,    weight_min: 10.0,  weight_max: 50.0   };
+_fish[$ "fish_07"] = { name: "Esturión",           seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 7,  rarity: 7,  base_sell_price: 7,    weight_min: 3.0,   weight_max: 12.0  };
 _fish[$ "fish_08"] = { name: "Anguila",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 8,  rarity: 7,  base_sell_price: 29,   weight_min: 0.5,   weight_max: 3.0    };
-_fish[$ "fish_09"] = { name: "Pez Espada",         seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 9,  rarity: 7,  base_sell_price: 1,    weight_min: 30.0,  weight_max: 100.0  };
-_fish[$ "fish_10"] = { name: "Atún",               seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 10, rarity: 20, base_sell_price: 1,    weight_min: 20.0,  weight_max: 80.0   };
+_fish[$ "fish_09"] = { name: "Pez Espada",         seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 9,  rarity: 7,  base_sell_price: 5,    weight_min: 5.0,   weight_max: 20.0   };
+_fish[$ "fish_10"] = { name: "Atún",               seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 10, rarity: 20, base_sell_price: 7,    weight_min: 3.0,   weight_max: 12.0   };
 _fish[$ "fish_11"] = { name: "Bacalao",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 11, rarity: 50, base_sell_price: 7,   weight_min: 0.8,   weight_max: 2.5    };
-_fish[$ "fish_12"] = { name: "Sardina",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 12, rarity: 50, base_sell_price: 51,  weight_min: 0.05,  weight_max: 0.15   };
-_fish[$ "fish_13"] = { name: "Boquerón",           seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 13, rarity: 50, base_sell_price: 51,  weight_min: 0.04,  weight_max: 0.12   };
+_fish[$ "fish_12"] = { name: "Sardina",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 12, rarity: 50, base_sell_price: 25,  weight_min: 0.05,  weight_max: 0.15   };
+_fish[$ "fish_13"] = { name: "Boquerón",           seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 13, rarity: 50, base_sell_price: 20,  weight_min: 0.04,  weight_max: 0.12   };
 _fish[$ "fish_14"] = { name: "Merluza",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 14, rarity: 50, base_sell_price: 6,   weight_min: 0.5,   weight_max: 2.5    };
 _fish[$ "fish_15"] = { name: "Rodaballo",          seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 15, rarity: 20, base_sell_price: 9,   weight_min: 1.0,   weight_max: 5.0    };
 _fish[$ "fish_16"] = { name: "Lenguado",           seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 16, rarity: 20, base_sell_price: 27,   weight_min: 0.3,   weight_max: 1.5    };
@@ -1288,10 +1354,10 @@ _fish[$ "fish_21"] = { name: "Salmonete",          seasons: [SEASON.SPRING], typ
 _fish[$ "fish_22"] = { name: "Caballa",            seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 22, rarity: 50, base_sell_price: 15,   weight_min: 0.2,   weight_max: 0.8    };
 _fish[$ "fish_23"] = { name: "Jurel",              seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 23, rarity: 50, base_sell_price: 15,   weight_min: 0.2,   weight_max: 0.6    };
 _fish[$ "fish_24"] = { name: "Bonito",             seasons: [SEASON.SPRING], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 24, rarity: 20, base_sell_price: 4,   weight_min: 2.0,   weight_max: 8.0    };
-_fish[$ "fish_25"] = { name: "Pez Vela",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 25, rarity: 7,  base_sell_price: 2,    weight_min: 30.0,  weight_max: 80.0   };
-_fish[$ "fish_26"] = { name: "Pez Martillo",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 26, rarity: 7,  base_sell_price: 1,    weight_min: 80.0,  weight_max: 250.0  };
-_fish[$ "fish_27"] = { name: "Tiburón Blanco",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 27, rarity: 2,  base_sell_price: 1,    weight_min: 100.0, weight_max: 400.0  };
-_fish[$ "fish_28"] = { name: "Tiburón Ballena",    seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 28, rarity: 2,  base_sell_price: 1,    weight_min: 200.0, weight_max: 600.0  };
+_fish[$ "fish_25"] = { name: "Pez Vela",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 25, rarity: 7,  base_sell_price: 8,    weight_min: 4.0,   weight_max: 15.0   };
+_fish[$ "fish_26"] = { name: "Pez Martillo",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 26, rarity: 7,  base_sell_price: 6,    weight_min: 6.0,   weight_max: 25.0   };
+_fish[$ "fish_27"] = { name: "Tiburón Blanco",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 27, rarity: 2,  base_sell_price: 7,    weight_min: 8.0,   weight_max: 30.0   };
+_fish[$ "fish_28"] = { name: "Tiburón Ballena",    seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 28, rarity: 2,  base_sell_price: 10,   weight_min: 10.0,  weight_max: 40.0   };
 _fish[$ "fish_29"] = { name: "Raya Látigo",        seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 29, rarity: 7,  base_sell_price: 6,   weight_min: 5.0,   weight_max: 20.0   };
 _fish[$ "fish_30"] = { name: "Pez Globo",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 30, rarity: 7,  base_sell_price: 68,  weight_min: 0.3,   weight_max: 1.5    };
 _fish[$ "fish_31"] = { name: "Pez León",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 31, rarity: 7,  base_sell_price: 71,  weight_min: 0.3,   weight_max: 1.5    };
@@ -1307,16 +1373,16 @@ _fish[$ "fish_40"] = { name: "Pez Pipa",           seasons: [SEASON.SUMMER], typ
 _fish[$ "fish_41"] = { name: "Pez Piedra",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 41, rarity: 20, base_sell_price: 19,   weight_min: 0.5,   weight_max: 2.0    };
 _fish[$ "fish_42"] = { name: "Pez Escorpión",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 42, rarity: 7,  base_sell_price: 66,  weight_min: 0.3,   weight_max: 1.5    };
 _fish[$ "fish_43"] = { name: "Pez Sapo",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 43, rarity: 20, base_sell_price: 15,   weight_min: 0.5,   weight_max: 2.5    };
-_fish[$ "fish_44"] = { name: "Pez Diablo",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 44, rarity: 2,  base_sell_price: 3,    weight_min: 30.0,  weight_max: 100.0  };
+_fish[$ "fish_44"] = { name: "Pez Diablo",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 44, rarity: 2,  base_sell_price: 12,   weight_min: 5.0,   weight_max: 20.0   };
 
 // Delfines (frames 45-48)
-_fish[$ "fish_45"] = { name: "Delfín Mular",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 45, rarity: 2,  base_sell_price: 2,    weight_min: 80.0,  weight_max: 200.0  };
-_fish[$ "fish_46"] = { name: "Delfín Oceánico",    seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 46, rarity: 2,  base_sell_price: 4,   weight_min: 60.0,  weight_max: 150.0  };
-_fish[$ "fish_47"] = { name: "Delfín Rosado",      seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 47, rarity: 1,  base_sell_price: 9,   weight_min: 50.0,  weight_max: 100.0  };
-_fish[$ "fish_48"] = { name: "Delfín de Rápida",   seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 48, rarity: 2,  base_sell_price: 4,   weight_min: 50.0,  weight_max: 100.0  };
+_fish[$ "fish_45"] = { name: "Delfín Mular",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 45, rarity: 2,  base_sell_price: 9,    weight_min: 6.0,   weight_max: 25.0   };
+_fish[$ "fish_46"] = { name: "Delfín Oceánico",    seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 46, rarity: 2,  base_sell_price: 16,   weight_min: 6.0,   weight_max: 25.0   };
+_fish[$ "fish_47"] = { name: "Delfín Rosado",      seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 47, rarity: 1,  base_sell_price: 30,   weight_min: 5.0,   weight_max: 20.0   };
+_fish[$ "fish_48"] = { name: "Delfín de Rápida",   seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 48, rarity: 2,  base_sell_price: 15,   weight_min: 5.0,   weight_max: 20.0   };
 
 // Criaturas Marinas (frames 49-98)
-_fish[$ "fish_49"] = { name: "Pulpo Gigante",          seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 49, rarity: 7,  base_sell_price: 6,   weight_min: 5.0,   weight_max: 25.0   };
+_fish[$ "fish_49"] = { name: "Pulpo Gigante",          seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 49, rarity: 7,  base_sell_price: 15,  weight_min: 2.0,   weight_max: 10.0   };
 _fish[$ "fish_50"] = { name: "Calamar Común",          seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 50, rarity: 50, base_sell_price: 34,  weight_min: 0.1,   weight_max: 0.5    };
 _fish[$ "fish_51"] = { name: "Sepia",                  seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 51, rarity: 50, base_sell_price: 24,   weight_min: 0.2,   weight_max: 0.8    };
 _fish[$ "fish_52"] = { name: "Nautilo",                seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 52, rarity: 2,  base_sell_price: 313,  weight_min: 0.3,   weight_max: 1.0    };
@@ -1345,26 +1411,26 @@ _fish[$ "fish_74"] = { name: "Carabela Portuguesa",    seasons: [SEASON.WINTER],
 _fish[$ "fish_75"] = { name: "Coral Rojo",             seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 75, rarity: 2,  base_sell_price: 148,  weight_min: 0.3,   weight_max: 2.0    };
 _fish[$ "fish_76"] = { name: "Anémona de Mar",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 76, rarity: 20, base_sell_price: 80,  weight_min: 0.1,   weight_max: 0.5    };
 _fish[$ "fish_77"] = { name: "Esponja",                seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 77, rarity: 50, base_sell_price: 29,   weight_min: 0.05,  weight_max: 0.3    };
-_fish[$ "fish_78"] = { name: "Caballito de Mar",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 78, rarity: 7,  base_sell_price: 1275, weight_min: 0.02,  weight_max: 0.06   };
-_fish[$ "fish_79"] = { name: "Dragón de Mar",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 79, rarity: 2,  base_sell_price: 1904, weight_min: 0.05,  weight_max: 0.2    };
-_fish[$ "fish_80"] = { name: "Tortuga Verde",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 80, rarity: 2,  base_sell_price: 3,    weight_min: 40.0,  weight_max: 100.0  };
-_fish[$ "fish_81"] = { name: "Tortuga Carey",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 81, rarity: 2,  base_sell_price: 6,   weight_min: 20.0,  weight_max: 60.0   };
+_fish[$ "fish_78"] = { name: "Caballito de Mar",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 78, rarity: 7,  base_sell_price: 500, weight_min: 0.02,  weight_max: 0.06   };
+_fish[$ "fish_79"] = { name: "Dragón de Mar",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 79, rarity: 7,  base_sell_price: 600, weight_min: 0.05,  weight_max: 0.2    };
+_fish[$ "fish_80"] = { name: "Tortuga Verde",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 80, rarity: 2,  base_sell_price: 12,   weight_min: 5.0,   weight_max: 20.0   };
+_fish[$ "fish_81"] = { name: "Tortuga Carey",          seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 81, rarity: 2,  base_sell_price: 18,   weight_min: 3.0,   weight_max: 15.0   };
 _fish[$ "fish_82"] = { name: "Serpiente Marina",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 82, rarity: 7,  base_sell_price: 15,   weight_min: 2.0,   weight_max: 8.0    };
-_fish[$ "fish_83"] = { name: "Manatí",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 83, rarity: 1,  base_sell_price: 3,   weight_min: 100.0, weight_max: 300.0  };
-_fish[$ "fish_84"] = { name: "Dugongo",                seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 84, rarity: 1,  base_sell_price: 4,   weight_min: 100.0, weight_max: 250.0  };
-_fish[$ "fish_85"] = { name: "Foca Monje",             seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 85, rarity: 1,  base_sell_price: 3,    weight_min: 100.0, weight_max: 250.0  };
-_fish[$ "fish_86"] = { name: "León Marino",            seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 86, rarity: 2,  base_sell_price: 3,    weight_min: 50.0,  weight_max: 150.0  };
-_fish[$ "fish_87"] = { name: "Morsa",                  seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 87, rarity: 2,  base_sell_price: 1,    weight_min: 150.0, weight_max: 400.0  };
-_fish[$ "fish_88"] = { name: "Narval",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 88, rarity: 1,  base_sell_price: 2,    weight_min: 200.0, weight_max: 500.0  };
-_fish[$ "fish_89"] = { name: "Beluga",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 89, rarity: 1,  base_sell_price: 2,    weight_min: 150.0, weight_max: 400.0  };
-_fish[$ "fish_90"] = { name: "Orca",                   seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 90, rarity: 1,  base_sell_price: 1,    weight_min: 500.0, weight_max: 1500.0 };
-_fish[$ "fish_91"] = { name: "Cachalote",              seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 91, rarity: 1,  base_sell_price: 1,    weight_min: 1000.0,weight_max: 3000.0 };
-_fish[$ "fish_92"] = { name: "Ballena Azul",           seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 92, rarity: 1,  base_sell_price: 1,    weight_min: 2000.0,weight_max: 6000.0 };
-_fish[$ "fish_93"] = { name: "Ballena Jorobada",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 93, rarity: 1,  base_sell_price: 1,    weight_min: 1000.0,weight_max: 3000.0 };
-_fish[$ "fish_94"] = { name: "Ballena Franca",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 94, rarity: 1,  base_sell_price: 1,    weight_min: 1000.0,weight_max: 3000.0 };
-_fish[$ "fish_95"] = { name: "Rorcual",                seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 95, rarity: 1,  base_sell_price: 1,    weight_min: 500.0, weight_max: 2000.0 };
-_fish[$ "fish_96"] = { name: "Cachalote Pigmeo",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 96, rarity: 2,  base_sell_price: 2,    weight_min: 100.0, weight_max: 300.0  };
-_fish[$ "fish_97"] = { name: "Vaquita Marina",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 97, rarity: 1,  base_sell_price: 58,  weight_min: 20.0,  weight_max: 40.0   };
+_fish[$ "fish_83"] = { name: "Manatí",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 83, rarity: 1,  base_sell_price: 20,   weight_min: 8.0,   weight_max: 30.0   };
+_fish[$ "fish_84"] = { name: "Dugongo",                seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 84, rarity: 1,  base_sell_price: 25,   weight_min: 8.0,   weight_max: 25.0   };
+_fish[$ "fish_85"] = { name: "Foca Monje",             seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 85, rarity: 1,  base_sell_price: 20,   weight_min: 8.0,   weight_max: 25.0   };
+_fish[$ "fish_86"] = { name: "León Marino",            seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 86, rarity: 2,  base_sell_price: 15,   weight_min: 6.0,   weight_max: 20.0   };
+_fish[$ "fish_87"] = { name: "Morsa",                  seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 87, rarity: 2,  base_sell_price: 6,    weight_min: 10.0,  weight_max: 40.0   };
+_fish[$ "fish_88"] = { name: "Narval",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 88, rarity: 1,  base_sell_price: 20,   weight_min: 10.0,  weight_max: 40.0   };
+_fish[$ "fish_89"] = { name: "Beluga",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 89, rarity: 1,  base_sell_price: 15,   weight_min: 10.0,  weight_max: 35.0   };
+_fish[$ "fish_90"] = { name: "Orca",                   seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 90, rarity: 1,  base_sell_price: 12,   weight_min: 15.0,  weight_max: 60.0   };
+_fish[$ "fish_91"] = { name: "Cachalote",              seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 91, rarity: 1,  base_sell_price: 18,   weight_min: 20.0,  weight_max: 80.0   };
+_fish[$ "fish_92"] = { name: "Ballena Azul",           seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 92, rarity: 1,  base_sell_price: 25,   weight_min: 25.0,  weight_max: 100.0  };
+_fish[$ "fish_93"] = { name: "Ballena Jorobada",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 93, rarity: 1,  base_sell_price: 18,   weight_min: 20.0,  weight_max: 80.0   };
+_fish[$ "fish_94"] = { name: "Ballena Franca",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 94, rarity: 1,  base_sell_price: 18,   weight_min: 20.0,  weight_max: 80.0   };
+_fish[$ "fish_95"] = { name: "Rorcual",                seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 95, rarity: 1,  base_sell_price: 12,   weight_min: 15.0,  weight_max: 60.0   };
+_fish[$ "fish_96"] = { name: "Cachalote Pigmeo",       seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 96, rarity: 2,  base_sell_price: 12,   weight_min: 8.0,   weight_max: 30.0   };
+_fish[$ "fish_97"] = { name: "Vaquita Marina",         seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 97, rarity: 1,  base_sell_price: 150,  weight_min: 3.0,   weight_max: 10.0   };
 _fish[$ "fish_98"] = { name: "Pez Desconocido",        seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 98, rarity: 50, base_sell_price: 34,  weight_min: 0.05,  weight_max: 0.15   };
 
 global.fish_pool = [];
@@ -1388,51 +1454,51 @@ global.insect_data = {};
 var _ins = global.insect_data;
 
 // Insectos básicos
-_ins[$ "insect_ant"]           = { name: "Hormiga",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_ant,           subimg: 0, rarity: 50, base_sell_price: 3  };
-_ins[$ "insect_caterpillar"]   = { name: "Oruga",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_caterpillar,   subimg: 0, rarity: 50, base_sell_price: 5  };
-_ins[$ "insect_cricket"]       = { name: "Grillo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cricket,       subimg: 0, rarity: 50, base_sell_price: 4  };
-_ins[$ "insect_cicada"]        = { name: "Cigarra",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cicada,        subimg: 0, rarity: 20, base_sell_price: 12  };
-_ins[$ "insect_beach_hopper"]  = { name: "Pulga de Mar",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_beach_hopper,  subimg: 0, rarity: 20, base_sell_price: 10  };
-_ins[$ "insect_bee"]           = { name: "Abeja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_bees,          subimg: 0, rarity: 20, base_sell_price: 14  };
+_ins[$ "insect_ant"]           = { name: "Hormiga",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_ant,           subimg: 0, rarity: 50, base_sell_price: 2  };
+_ins[$ "insect_caterpillar"]   = { name: "Oruga",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_caterpillar,   subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_cricket"]       = { name: "Grillo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cricket,       subimg: 0, rarity: 50, base_sell_price: 2  };
+_ins[$ "insect_cicada"]        = { name: "Cigarra",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_cicada,        subimg: 0, rarity: 20, base_sell_price: 6  };
+_ins[$ "insect_beach_hopper"]  = { name: "Pulga de Mar",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_beach_hopper,  subimg: 0, rarity: 20, base_sell_price: 5  };
+_ins[$ "insect_bee"]           = { name: "Abeja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_bees,          subimg: 0, rarity: 20, base_sell_price: 7  };
 
 // Caracoles
-_ins[$ "insect_snail_black"]   = { name: "Caracol Negro",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_black,   subimg: 0, rarity: 50, base_sell_price: 7  };
-_ins[$ "insect_snail_green"]   = { name: "Caracol Verde",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_green,   subimg: 0, rarity: 50, base_sell_price: 7  };
-_ins[$ "insect_snail_red"]     = { name: "Caracol Rojo",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_red,     subimg: 0, rarity: 50, base_sell_price: 8  };
-_ins[$ "insect_snail_blue"]    = { name: "Caracol Azul",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_blue,    subimg: 0, rarity: 20, base_sell_price: 17  };
-_ins[$ "insect_snail_pink"]    = { name: "Caracol Rosa",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_pink,    subimg: 0, rarity: 20, base_sell_price: 19  };
-_ins[$ "insect_snail_dark"]    = { name: "Caracol Oscuro",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_dark,    subimg: 0, rarity: 20, base_sell_price: 20  };
-_ins[$ "insect_snail_purple"]  = { name: "Caracol Morado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_purple,  subimg: 0, rarity: 7,  base_sell_price: 41 };
-_ins[$ "insect_snail_golden"]  = { name: "Caracol Dorado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_golden,  subimg: 0, rarity: 2,  base_sell_price: 136 };
+_ins[$ "insect_snail_black"]   = { name: "Caracol Negro",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_black,   subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_snail_green"]   = { name: "Caracol Verde",    type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_green,   subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_snail_red"]     = { name: "Caracol Rojo",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_red,     subimg: 0, rarity: 50, base_sell_price: 4  };
+_ins[$ "insect_snail_blue"]    = { name: "Caracol Azul",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_blue,    subimg: 0, rarity: 20, base_sell_price: 8  };
+_ins[$ "insect_snail_pink"]    = { name: "Caracol Rosa",     type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_pink,    subimg: 0, rarity: 20, base_sell_price: 9  };
+_ins[$ "insect_snail_dark"]    = { name: "Caracol Oscuro",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_dark,    subimg: 0, rarity: 20, base_sell_price: 10 };
+_ins[$ "insect_snail_purple"]  = { name: "Caracol Morado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_purple,  subimg: 0, rarity: 7,  base_sell_price: 15 };
+_ins[$ "insect_snail_golden"]  = { name: "Caracol Dorado",   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_snail_golden,  subimg: 0, rarity: 2,  base_sell_price: 40 };
 
 // Mariposas y polillas
-_ins[$ "insect_butterfly_common"]          = { name: "Mariposa Común",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_common,          subimg: 0, rarity: 50, base_sell_price: 5  };
-_ins[$ "insect_butterfly_wood_white"]      = { name: "Mariposa Blanca",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_wood_white,      subimg: 0, rarity: 50, base_sell_price: 6  };
-_ins[$ "insect_butterfly_cabbage_white"]   = { name: "Mariposa de la Col",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cabbage_white,   subimg: 0, rarity: 50, base_sell_price: 5  };
-_ins[$ "insect_butterfly_orange_tip"]      = { name: "Aurora",                   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_orange_tip,      subimg: 0, rarity: 50, base_sell_price: 7  };
-_ins[$ "insect_butterfly_cloudless_sulphur"] = { name: "Mariposa Azufre",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cloudless_sulphur, subimg: 0, rarity: 20, base_sell_price: 15 };
-_ins[$ "insect_butterfly_migrant"]         = { name: "Mariposa Migrante",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_migrant,         subimg: 0, rarity: 20, base_sell_price: 17  };
-_ins[$ "insect_butterfly_glider"]          = { name: "Mariposa Planeadora",      type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glider,          subimg: 0, rarity: 20, base_sell_price: 19  };
-_ins[$ "insect_butterfly_hairstreak"]      = { name: "Mariposa Listada",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_hairstreak,      subimg: 0, rarity: 20, base_sell_price: 20  };
-_ins[$ "insect_butterfly_peacock_pansy"]   = { name: "Mariposa Pavo Real",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_peacock_pansy,   subimg: 0, rarity: 20, base_sell_price: 22  };
-_ins[$ "insect_butterfly_red_admiral"]     = { name: "Almirante Rojo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_red_admiral,     subimg: 0, rarity: 20, base_sell_price: 24  };
-_ins[$ "insect_butterfly_eggfly"]          = { name: "Mariposa Huevo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_eggfly,          subimg: 0, rarity: 20, base_sell_price: 20  };
-_ins[$ "insect_butterfly_diadem"]          = { name: "Mariposa Diadema",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_diadem,          subimg: 0, rarity: 7,  base_sell_price: 41 };
-_ins[$ "insect_butterfly_azure"]           = { name: "Mariposa Azur",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_azure,           subimg: 0, rarity: 7,  base_sell_price: 44 };
-_ins[$ "insect_butterfly_european_peacock"] = { name: "Pavo Real Europeo",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_european_peacock, subimg: 0, rarity: 7, base_sell_price: 48 };
-_ins[$ "insect_butterfly_cinnabar_moth"]   = { name: "Polilla Cinabrio",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cinnabar_moth,   subimg: 0, rarity: 7,  base_sell_price: 51 };
-_ins[$ "insect_butterfly_io_moth"]         = { name: "Polilla Io",               type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_io_moth,         subimg: 0, rarity: 7,  base_sell_price: 54 };
-_ins[$ "insect_butterfly_sheep_moth"]      = { name: "Polilla Oveja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_sheep_moth,      subimg: 0, rarity: 7,  base_sell_price: 53 };
-_ins[$ "insect_butterfly_luna_moth"]       = { name: "Polilla Luna",             type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_luna_moth,       subimg: 0, rarity: 7,  base_sell_price: 68 };
-_ins[$ "insect_butterfly_silkmoth"]        = { name: "Polilla de Seda",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_silkmoth,        subimg: 0, rarity: 7,  base_sell_price: 61 };
-_ins[$ "insect_butterfly_monarch"]         = { name: "Mariposa Monarca",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_monarch,         subimg: 0, rarity: 7,  base_sell_price: 60 };
-_ins[$ "insect_butterfly_morpho"]          = { name: "Morpho Azul",              type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_morpho,          subimg: 0, rarity: 2,  base_sell_price: 119 };
-_ins[$ "insect_butterfly_glasswing"]       = { name: "Mariposa Alas de Cristal", type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glasswing,       subimg: 0, rarity: 2,  base_sell_price: 136 };
-_ins[$ "insect_butterfly_ulysses"]         = { name: "Mariposa Ulises",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_ulysses,         subimg: 0, rarity: 2,  base_sell_price: 153 };
-_ins[$ "insect_butterfly_emperor"]         = { name: "Mariposa Emperador",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_emperor,         subimg: 0, rarity: 2,  base_sell_price: 143 };
-_ins[$ "insect_butterfly_periander_metalmark"] = { name: "Metalmark Periander",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_periander_metalmark, subimg: 0, rarity: 2, base_sell_price: 129 };
-_ins[$ "insect_butterfly_birdwing"]        = { name: "Alas de Pájaro",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_birdwing,        subimg: 0, rarity: 1,  base_sell_price: 272 };
-_ins[$ "insect_butterfly_goliath_birdwing"] = { name: "Goliat Alas de Pájaro",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_goliath_birdwing, subimg: 0, rarity: 1, base_sell_price: 340 };
+_ins[$ "insect_butterfly_common"]          = { name: "Mariposa Común",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_common,          subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_butterfly_wood_white"]      = { name: "Mariposa Blanca",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_wood_white,      subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_butterfly_cabbage_white"]   = { name: "Mariposa de la Col",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cabbage_white,   subimg: 0, rarity: 50, base_sell_price: 3  };
+_ins[$ "insect_butterfly_orange_tip"]      = { name: "Aurora",                   type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_orange_tip,      subimg: 0, rarity: 50, base_sell_price: 4  };
+_ins[$ "insect_butterfly_cloudless_sulphur"] = { name: "Mariposa Azufre",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cloudless_sulphur, subimg: 0, rarity: 20, base_sell_price: 8 };
+_ins[$ "insect_butterfly_migrant"]         = { name: "Mariposa Migrante",        type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_migrant,         subimg: 0, rarity: 20, base_sell_price: 9  };
+_ins[$ "insect_butterfly_glider"]          = { name: "Mariposa Planeadora",      type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glider,          subimg: 0, rarity: 20, base_sell_price: 10  };
+_ins[$ "insect_butterfly_hairstreak"]      = { name: "Mariposa Listada",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_hairstreak,      subimg: 0, rarity: 20, base_sell_price: 10  };
+_ins[$ "insect_butterfly_peacock_pansy"]   = { name: "Mariposa Pavo Real",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_peacock_pansy,   subimg: 0, rarity: 20, base_sell_price: 11  };
+_ins[$ "insect_butterfly_red_admiral"]     = { name: "Almirante Rojo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_red_admiral,     subimg: 0, rarity: 20, base_sell_price: 12  };
+_ins[$ "insect_butterfly_eggfly"]          = { name: "Mariposa Huevo",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_eggfly,          subimg: 0, rarity: 20, base_sell_price: 10  };
+_ins[$ "insect_butterfly_diadem"]          = { name: "Mariposa Diadema",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_diadem,          subimg: 0, rarity: 7,  base_sell_price: 18 };
+_ins[$ "insect_butterfly_azure"]           = { name: "Mariposa Azur",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_azure,           subimg: 0, rarity: 7,  base_sell_price: 20 };
+_ins[$ "insect_butterfly_european_peacock"] = { name: "Pavo Real Europeo",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_european_peacock, subimg: 0, rarity: 7, base_sell_price: 20 };
+_ins[$ "insect_butterfly_cinnabar_moth"]   = { name: "Polilla Cinabrio",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_cinnabar_moth,   subimg: 0, rarity: 7,  base_sell_price: 20 };
+_ins[$ "insect_butterfly_io_moth"]         = { name: "Polilla Io",               type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_io_moth,         subimg: 0, rarity: 7,  base_sell_price: 22 };
+_ins[$ "insect_butterfly_sheep_moth"]      = { name: "Polilla Oveja",            type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_sheep_moth,      subimg: 0, rarity: 7,  base_sell_price: 20 };
+_ins[$ "insect_butterfly_luna_moth"]       = { name: "Polilla Luna",             type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_luna_moth,       subimg: 0, rarity: 7,  base_sell_price: 25 };
+_ins[$ "insect_butterfly_silkmoth"]        = { name: "Polilla de Seda",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_silkmoth,        subimg: 0, rarity: 7,  base_sell_price: 22 };
+_ins[$ "insect_butterfly_monarch"]         = { name: "Mariposa Monarca",         type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_monarch,         subimg: 0, rarity: 7,  base_sell_price: 22 };
+_ins[$ "insect_butterfly_morpho"]          = { name: "Morpho Azul",              type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_morpho,          subimg: 0, rarity: 2,  base_sell_price: 35 };
+_ins[$ "insect_butterfly_glasswing"]       = { name: "Mariposa Alas de Cristal", type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_glasswing,       subimg: 0, rarity: 2,  base_sell_price: 40 };
+_ins[$ "insect_butterfly_ulysses"]         = { name: "Mariposa Ulises",          type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_ulysses,         subimg: 0, rarity: 2,  base_sell_price: 45 };
+_ins[$ "insect_butterfly_emperor"]         = { name: "Mariposa Emperador",       type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_emperor,         subimg: 0, rarity: 2,  base_sell_price: 40 };
+_ins[$ "insect_butterfly_periander_metalmark"] = { name: "Metalmark Periander",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_periander_metalmark, subimg: 0, rarity: 2, base_sell_price: 35 };
+_ins[$ "insect_butterfly_birdwing"]        = { name: "Alas de Pájaro",           type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_birdwing,        subimg: 0, rarity: 1,  base_sell_price: 65 };
+_ins[$ "insect_butterfly_goliath_birdwing"] = { name: "Goliat Alas de Pájaro",  type: ITEM_TYPE.INSECT, sprite: sprite_forest_animals_butterfly_goliath_birdwing, subimg: 0, rarity: 1, base_sell_price: 80 };
 
 global.insect_pool = [];
 var _ikeys = variable_struct_get_names(global.insect_data);
@@ -1517,6 +1583,77 @@ for (var _mi = 0; _mi < array_length(_cm_types); _mi++) {
     }
 }
 
+// --- TINTES ---
+global.dye_data = {};
+var _dd = global.dye_data;
+for (var _di = 0; _di < _num_colors; _di++) {
+    var _dc = _cm_colors[_di];
+    _dd[$ "dye_" + _dc[0]] = {
+        name: "Tinte " + _dc[1],
+        type: ITEM_TYPE.DYE,
+        sprite: sprite_dyes,
+        subimg: _di,
+        base_sell_price: 25
+    };
+}
+
+// --- DATOS DE COLECCION DE ENEMIGOS ---
+global.enemy_collection_data = {};
+var __ecd = global.enemy_collection_data;
+var __enemy_keys = variable_struct_get_names(global.enemy_data);
+for (var __eki = 0; __eki < array_length(__enemy_keys); __eki++) {
+    var __ek = __enemy_keys[__eki];
+    var __ed = global.enemy_data[$ __ek];
+    var __espr = variable_struct_exists(__ed, "sprite") ? __ed.sprite : __ed.sprite_idle;
+    __ecd[$ __ek] = {
+        name: __ed.name,
+        sprite: __espr,
+        subimg: 0,
+        base_sell_price: 0
+    };
+}
+
+// --- DATOS DE COLECCION DE ANIMALES SALVAJES ---
+global.wild_animal_collection_data = {};
+var __wacd = global.wild_animal_collection_data;
+var __wa_keys = variable_struct_get_names(global.wild_animal_data);
+for (var __wki = 0; __wki < array_length(__wa_keys); __wki++) {
+    var __wk = __wa_keys[__wki];
+    var __wd = global.wild_animal_data[$ __wk];
+    __wacd[$ __wk] = {
+        name: __wd.name,
+        sprite: __wd.sprite,
+        subimg: 0,
+        base_sell_price: 0
+    };
+}
+
+// --- DATOS DE COLECCION DE ANIMALES DE GRANJA ---
+global.farm_animal_collection_data = {};
+var __facd = global.farm_animal_collection_data;
+var __fa_keys = variable_struct_get_names(global.animal_data);
+var __fa_names = {
+    chicken: "Gallina",
+    cow: "Vaca",
+    duck: "Pato",
+    goat: "Cabra",
+    ostrich: "Avestruz",
+    pig: "Cerdo",
+    sheep: "Oveja"
+};
+for (var __fki = 0; __fki < array_length(__fa_keys); __fki++) {
+    var __fk = __fa_keys[__fki];
+    var __fad = global.animal_data[$ __fk];
+    var __fspr = asset_get_index("sprite_" + __fk + "_" + __fad.variants[0]);
+    if (__fspr == -1) __fspr = sprite_chicken_white;
+    __facd[$ "farm_" + __fk] = {
+        name: __fa_names[$ __fk],
+        sprite: __fspr,
+        subimg: 0,
+        base_sell_price: 0
+    };
+}
+
 global.cave_repopulate = {
     cave_1: true,
     cave_2: true,
@@ -1525,6 +1662,8 @@ global.cave_repopulate = {
     cave_5: true,
     cave_6: true,
 };
+
+global.collected_items = {};
 
 // --- DATOS DE MÁQUINAS ---
 global.machine_data = {

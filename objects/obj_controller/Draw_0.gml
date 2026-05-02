@@ -50,5 +50,17 @@ if (show_selector) {
 if (fade_alpha > 0) {
     draw_set_alpha(fade_alpha);
     draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
-    draw_set_alpha(1.0); // Reset alpha
+    draw_set_alpha(1.0);
+}
+
+// Night darkness overlay (after 6 PM)
+var night_start = 18;
+var night_progress = (global.game_hour - night_start + global.game_minute / 60) / (24 - night_start);
+if (night_progress > 0) {
+    var night_alpha = min(night_progress, 1) * 0.45;
+    if (night_alpha > 0.01) {
+        draw_set_alpha(night_alpha);
+        draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
+        draw_set_alpha(1.0);
+    }
 }

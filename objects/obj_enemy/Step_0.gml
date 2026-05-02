@@ -12,6 +12,12 @@ if (is_dying > 0) {
         if (array_length(product_drops) > 0) {
             inventory_drop_item(product_drops[irandom(array_length(product_drops) - 1)], 1, x, y);
         }
+        var _d_data = global.enemy_data[$ enemy_key];
+        if (_d_data != undefined && variable_struct_exists(_d_data, "dye_drops") && array_length(_d_data.dye_drops) > 0 && irandom(2) == 0) {
+            var _dd = _d_data.dye_drops;
+            inventory_drop_item(_dd[irandom(array_length(_dd) - 1)], 1, x, y, 30);
+        }
+        global.collected_items[$ enemy_key] = true;
         instance_destroy();
     }
     exit;
@@ -31,7 +37,7 @@ switch (state) {
             dir              = choose(DIR.LEFT, DIR.RIGHT, DIR.UP, DIR.DOWN);
             wander_steps     = max_wander_steps;
         }
-        if (snd_idle != undefined && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
+        if (snd_idle != undefined && instance_exists(obj_player) && point_distance(x, y, obj_player.x, obj_player.y) < 400 && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
     break;
 
     case ANIMAL_STATE.WANDERING:
@@ -54,7 +60,7 @@ switch (state) {
             idle_timer       = irandom_range(60, 240);
             max_wander_steps = irandom_range(30, 120);
         }
-        if (snd_idle != undefined && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
+        if (snd_idle != undefined && instance_exists(obj_player) && point_distance(x, y, obj_player.x, obj_player.y) < 400 && irandom(299) == 0) audio_play_sound(snd_idle, 1, false);
     break;
 
     case ANIMAL_STATE.CHASING:

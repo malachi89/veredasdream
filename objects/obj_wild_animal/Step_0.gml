@@ -24,6 +24,12 @@ if (hp <= 0) {
             inventory_drop_item(_wdrops[irandom(array_length(_wdrops) - 1)], 1, x, y);
         }
     }
+    if (is_farm_animal) {
+        global.collected_items[$ "farm_" + animal_key] = true;
+    } else {
+        global.collected_items[$ animal_key] = true;
+    }
+    scr_check_collection_unlocks();
     instance_destroy();
     exit;
 }

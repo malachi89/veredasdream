@@ -375,7 +375,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
             break;
 
             case "bugnet":
-                if (!_anim_only) self.energy -= 2;
+                if (!_skip_energy && !_anim_only) self.energy -= 6;
                 self.frames_action = 6;
                 self.bugnet_caught = false;
                 self.action_sprite_tool = sprite_player_bugnet_pickaxe_hoe_insects;

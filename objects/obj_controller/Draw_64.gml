@@ -260,6 +260,335 @@ if (shipping_summary_open) {
     draw_text_transformed_color(_cx, _btn_y1 + (_btn_h / 2), "CONTINUAR", 1.8, 1.8, 0, _txt_col, _txt_col, _txt_col, _txt_col, 1);
 }
 
+// --- COLLECTION CATALOG ---
+if (collection_menu_open) {
+    var _gw = display_get_gui_width();
+    var _gh = display_get_gui_height();
+    var _cx = _gw * 0.5;
+    var _cy = _gh * 0.5;
+    var _pw = 920;
+    var _ph = 640;
+    var _px1 = _cx - _pw/2;
+    var _py1 = _cy - _ph/2;
+    var _px2 = _cx + _pw/2;
+    var _py2 = _cy + _ph/2;
+
+    draw_set_alpha(0.75);
+    draw_rectangle_color(0, 0, _gw, _gh, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+
+    draw_set_alpha(0.94);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_silver, c_silver, true);
+
+    draw_set_font(fnt_pixel_operator);
+
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_cx, _py1 + 16, "CATALOGO DE COLECCION", 2.5, 2.5, 0, c_white, c_white, c_yellow, c_yellow, 1.0);
+
+    draw_set_halign(fa_right);
+    draw_text_transformed_color(_px2 - 12, _py1 + 20, "[M] Cerrar", 1.2, 1.2, 0, c_ltgray, c_ltgray, c_ltgray, c_ltgray, 0.6);
+
+    var _cats = scr_get_collection_categories();
+    var _num_cats = array_length(_cats);
+
+    // ---- SIDEBAR ----
+    var _sidebar_w = 240;
+    var _cat_h = 34;
+    var _cat_x1 = _px1 + 12;
+    var _cat_x2 = _px1 + _sidebar_w;
+    var _cat_start_y = _py1 + 74;
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+
+    for (var _ci = 0; _ci < _num_cats; _ci++) {
+        var _cat_y1 = _cat_start_y + _ci * _cat_h;
+        var _is_active = (_ci == collection_category);
+        var _total = array_length(variable_struct_get_names(_cats[_ci].db));
+        var _collected = scr_count_collected_in_category(_cats[_ci].db);
+
+        if (_is_active) {
+            draw_set_alpha(0.3);
+            draw_roundrect_color_ext(_cat_x1, _cat_y1, _cat_x2, _cat_y1 + _cat_h - 2, 4, 4, c_navy, c_navy, false);
+            draw_set_alpha(1.0);
+        }
+
+        var _name_col = _is_active ? c_white : c_ltgray;
+        draw_text_transformed_color(_cat_x1 + 8, _cat_y1 + 3, _cats[_ci].name, 1.3, 1.3, 0, _name_col, _name_col, _name_col, _name_col, 1.0);
+
+        draw_set_halign(fa_right);
+        var _count_col = (_collected == _total) ? c_lime : c_yellow;
+        draw_text_transformed_color(_cat_x2 - 8, _cat_y1 + 5, string(_collected) + "/" + string(_total), 1.0, 1.0, 0, _count_col, _count_col, _count_col, _count_col, 0.9);
+        draw_set_halign(fa_left);
+    }
+
+    // Separator
+    draw_set_alpha(0.4);
+    draw_set_color(c_silver);
+    draw_line(_cat_x2 + 10, _py1 + 50, _cat_x2 + 10, _py2 - 14);
+    draw_set_alpha(1.0);
+
+    // ---- RIGHT AREA ----
+    var _cat_db = _cats[collection_category].db;
+    var _keys = scr_get_collection_keys(_cat_db);
+    var _total_items = array_length(_keys);
+    var _right_cx = _cat_x2 + 10 + (_px2 - _cat_x2 - 10) / 2;
+
+    // Category title
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_right_cx, _cat_start_y, _cats[collection_category].name, 1.8, 1.8, 0, c_aqua, c_aqua, c_aqua, c_aqua, 1.0);
+
+    var _cat_collected = scr_count_collected_in_category(_cat_db);
+    draw_text_transformed_color(_right_cx, _cat_start_y + 40, "Progreso: " + string(_cat_collected) + " / " + string(_total_items), 1.2, 1.2, 0, c_ltgray, c_ltgray, c_ltgray, c_ltgray, 0.7);
+
+    // ---- ITEM GRID ----
+    var _grid_x1 = _cat_x2 + 20;
+    var _grid_y1 = _cat_start_y + 80;
+
+    var _cols = 9;
+    var _rows = 5;
+    var _per_page = _cols * _rows;
+    var _max_page = max(0, ceil(_total_items / _per_page) - 1);
+    if (collection_page > _max_page) collection_page = _max_page;
+    var _start_idx = collection_page * _per_page;
+
+    var _slot_size = 54;
+    var _slot_gap = 5;
+    var _name_height = 14;
+    var _cell_w = _slot_size + _slot_gap;
+    var _cell_h = _slot_size + _slot_gap + _name_height;
+
+    var _grid_total_w = _cols * _cell_w - _slot_gap;
+    var _grid_avail_w = _px2 - _grid_x1 - 14;
+    var _grid_offset_x = _grid_x1 + (_grid_avail_w - _grid_total_w) / 2;
+
+    // Track hover for tooltip
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _hovered_key = "";
+    var _hovered_idx = -1;
+
+    for (var _gi = 0; _gi < _per_page; _gi++) {
+        var _idx = _start_idx + _gi;
+        if (_idx >= _total_items) break;
+        var _key = _keys[_idx];
+        var _data = scr_get_item_data(_key);
+        if (_data == undefined) continue;
+
+        var _col = _gi mod _cols;
+        var _row = floor(_gi / _cols);
+
+        var _sx = _grid_offset_x + _col * _cell_w;
+        var _sy = _grid_y1 + _row * _cell_h;
+
+        var _is_collected = variable_struct_exists(global.collected_items, _key);
+
+        // Check hover
+        if (point_in_rectangle(_mx, _my, _sx, _sy, _sx + _slot_size, _sy + _slot_size)) {
+            _hovered_key = _key;
+            _hovered_idx = _idx;
+        }
+
+        // Slot background
+        if (_hovered_key == _key) {
+            draw_set_alpha(0.35);
+            draw_roundrect_color_ext(_sx - 1, _sy - 1, _sx + _slot_size + 1, _sy + _slot_size + 1, 6, 6, c_white, c_white, false);
+            draw_set_alpha(1.0);
+            draw_roundrect_color_ext(_sx - 1, _sy - 1, _sx + _slot_size + 1, _sy + _slot_size + 1, 6, 6, c_lime, c_lime, true);
+        } else {
+            draw_set_alpha(0.15);
+            draw_roundrect_color_ext(_sx, _sy, _sx + _slot_size, _sy + _slot_size, 4, 4, c_white, c_white, false);
+            draw_set_alpha(1.0);
+            draw_roundrect_color_ext(_sx, _sy, _sx + _slot_size, _sy + _slot_size, 4, 4, c_silver, c_silver, true);
+        }
+
+        // Draw icon
+        var _sz = 44 / max(sprite_get_width(_data.sprite), sprite_get_height(_data.sprite));
+        var _icon_x = _sx + _slot_size/2;
+        var _icon_y = _sy + _slot_size/2;
+        var _cox = (sprite_get_width(_data.sprite) / 2 - sprite_get_xoffset(_data.sprite)) * _sz;
+        var _coy = (sprite_get_height(_data.sprite) / 2 - sprite_get_yoffset(_data.sprite)) * _sz;
+
+        var _col_color = _is_collected ? c_white : c_black;
+        var _col_alpha = _is_collected ? 1.0 : 0.35;
+        draw_set_alpha(_col_alpha);
+        draw_sprite_ext(_data.sprite, _data.subimg, _icon_x - _cox, _icon_y - _coy, _sz, _sz, 0, _col_color, 1);
+        draw_set_alpha(1.0);
+
+        // Name label (solo no recolectados)
+        draw_set_halign(fa_center);
+        if (!_is_collected) {
+            draw_text_transformed_color(_sx + _slot_size/2, _sy + _slot_size + 3, "???", 0.9, 0.9, 0, c_dkgray, c_dkgray, c_dkgray, c_dkgray, 0.6);
+        }
+    }
+
+    // ---- TOOLTIP ----
+    if (_hovered_key != "") {
+        var _tt_data = scr_get_item_data(_hovered_key);
+        if (_tt_data != undefined) {
+            var _is_collected = variable_struct_exists(global.collected_items, _hovered_key);
+            var _tt_w = 220;
+            var _tt_h = 80;
+            var _tt_x = _mx + 16;
+            var _tt_y = _my - _tt_h/2;
+
+            // Build drops text for enemies/animals (needed before positioning)
+            var _drop_names = "";
+            if (_is_collected) {
+                if (variable_struct_exists(global.enemy_data, _hovered_key)) {
+                    var _ed = global.enemy_data[$ _hovered_key];
+                    for (var _di = 0; _di < array_length(_ed.product_drops); _di++) {
+                        if (_drop_names != "") _drop_names += ", ";
+                        var _dd = scr_get_item_data(_ed.product_drops[_di]);
+                        _drop_names += (_dd != undefined) ? _dd.name : _ed.product_drops[_di];
+                    }
+                } else if (variable_struct_exists(global.wild_animal_data, _hovered_key)) {
+                    var _wd = global.wild_animal_data[$ _hovered_key];
+                    for (var _di = 0; _di < array_length(_wd.product_drops); _di++) {
+                        if (_drop_names != "") _drop_names += ", ";
+                        var _dd = scr_get_item_data(_wd.product_drops[_di]);
+                        _drop_names += (_dd != undefined) ? _dd.name : _wd.product_drops[_di];
+                    }
+                } else if (string_pos("farm_", _hovered_key) == 1) {
+                    var _fk = string_copy(_hovered_key, 6, string_length(_hovered_key) - 5);
+                    if (variable_struct_exists(global.animal_data, _fk)) {
+                        var _fad = global.animal_data[$ _fk];
+                        for (var _di = 0; _di < array_length(_fad.product_drops); _di++) {
+                            if (_drop_names != "") _drop_names += ", ";
+                            var _dd = scr_get_item_data(_fad.product_drops[_di]);
+                            _drop_names += (_dd != undefined) ? _dd.name : _fad.product_drops[_di];
+                        }
+                        if (array_length(_fad.crafting_drops) > 0) {
+                            _drop_names += " | +50% material";
+                        }
+                    }
+                }
+
+                if (_drop_names != "") {
+                    // Word-wrap drops text into lines
+                    var _drop_parts = string_split(_drop_names, ", ");
+                    var _wrap_lines = [];
+                    var _cur_line = "";
+                    var _max_lw = 280;
+                    var _scl = 0.8;
+                    for (var _wpi = 0; _wpi < array_length(_drop_parts); _wpi++) {
+                        if (_cur_line == "") {
+                            _cur_line = _drop_parts[_wpi];
+                        } else {
+                            var _test = _cur_line + ", " + _drop_parts[_wpi];
+                            if (string_width(_test) * _scl > _max_lw) {
+                                array_push(_wrap_lines, _cur_line);
+                                _cur_line = _drop_parts[_wpi];
+                            } else {
+                                _cur_line = _test;
+                            }
+                        }
+                    }
+                    if (_cur_line != "") array_push(_wrap_lines, _cur_line);
+
+                    _tt_w = 300;
+                    _tt_h = 55 + array_length(_wrap_lines) * 18;
+                }
+            }
+
+            _tt_x = _mx + 16;
+            _tt_y = _my - _tt_h/2;
+            if (_tt_x + _tt_w > _px2) _tt_x = _mx - _tt_w - 16;
+            if (_tt_y < _py1 + 10) _tt_y = _py1 + 10;
+            if (_tt_y + _tt_h > _py2 - 10) _tt_y = _py2 - 10 - _tt_h;
+
+            draw_set_alpha(0.92);
+            draw_roundrect_color_ext(_tt_x, _tt_y, _tt_x + _tt_w, _tt_y + _tt_h, 8, 8, c_black, c_black, false);
+            draw_set_alpha(1.0);
+            draw_roundrect_color_ext(_tt_x, _tt_y, _tt_x + _tt_w, _tt_y + _tt_h, 8, 8, c_white, c_white, true);
+
+            draw_set_halign(fa_left);
+            draw_set_valign(fa_top);
+
+            if (_is_collected) {
+                draw_text_transformed_color(_tt_x + 10, _tt_y + 8, _tt_data.name, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+
+                if (_drop_names != "") {
+                    draw_text_transformed_color(_tt_x + 10, _tt_y + 36, "Suelta:", 0.8, 0.8, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
+                    for (var _dli = 0; _dli < array_length(_wrap_lines); _dli++) {
+                        draw_text_transformed_color(_tt_x + 10, _tt_y + 36 + (_dli + 1) * 18, _wrap_lines[_dli], 0.8, 0.8, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
+                    }
+                } else {
+                    var _sell = variable_struct_exists(_tt_data, "base_sell_price") ? _tt_data.base_sell_price : 0;
+                    draw_text_transformed_color(_tt_x + 10, _tt_y + 36, "Precio venta: $" + string(_sell), 1.0, 1.0, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
+                }
+
+                if (variable_struct_exists(_tt_data, "type")) {
+                    var _type_str = "";
+                    switch (_tt_data.type) {
+                        case ITEM_TYPE.CROP: _type_str = "Cultivo"; break;
+                        case ITEM_TYPE.FISH: _type_str = "Pescado"; break;
+                        case ITEM_TYPE.INSECT: _type_str = "Insecto"; break;
+                        case ITEM_TYPE.MATERIAL: _type_str = "Material"; break;
+                        case ITEM_TYPE.FOOD: _type_str = "Producto"; break;
+                        case ITEM_TYPE.ORE: _type_str = "Mineral"; break;
+                        case ITEM_TYPE.BAR: _type_str = "Lingote"; break;
+                        case ITEM_TYPE.JAM: _type_str = "Mermelada"; break;
+                        case ITEM_TYPE.SEED: _type_str = "Semilla"; break;
+                    }
+                    if (_type_str != "") {
+                        draw_text_transformed_color(_tt_x + 10, _tt_y + 56, _type_str, 1.0, 1.0, 0, c_aqua, c_aqua, c_aqua, c_aqua, 0.8);
+                    }
+                }
+            } else {
+                draw_text_transformed_color(_tt_x + 10, _tt_y + 20, "???", 1.5, 1.5, 0, c_dkgray, c_dkgray, c_dkgray, c_dkgray, 0.8);
+                draw_text_transformed_color(_tt_x + 10, _tt_y + 48, "Aun no recolectado", 1.0, 1.0, 0, c_ltgray, c_ltgray, c_ltgray, c_ltgray, 0.6);
+            }
+        }
+    }
+
+    // ---- PAGE NAVIGATION ----
+    var _btn_w = 150;
+    var _btn_h = 34;
+    var _btn_y1 = _py2 - 44;
+    var _btn_y2 = _btn_y1 + _btn_h;
+
+    if (_max_page > 0) {
+        // Page indicator above buttons
+        var _page_text = "Pagina " + string(collection_page + 1) + " de " + string(_max_page + 1);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_bottom);
+        draw_text_transformed_color(_right_cx, _btn_y1 - 6, _page_text, 1.2, 1.2, 0, c_ltgray, c_ltgray, c_ltgray, c_ltgray, 0.8);
+
+        // Previous button
+        var _prev_x1 = _right_cx - _btn_w - 10;
+        var _prev_x2 = _right_cx - 10;
+        var _prev_hover = point_in_rectangle(_mx, _my, _prev_x1, _btn_y1, _prev_x2, _btn_y2);
+        draw_set_alpha(_prev_hover ? 0.4 : 0.2);
+        draw_roundrect_color_ext(_prev_x1, _btn_y1, _prev_x2, _btn_y2, 6, 6, c_white, c_white, false);
+        draw_set_alpha(1.0);
+        draw_roundrect_color_ext(_prev_x1, _btn_y1, _prev_x2, _btn_y2, 6, 6, c_silver, c_silver, true);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text_transformed_color((_prev_x1 + _prev_x2) / 2, (_btn_y1 + _btn_y2) / 2, "< ANTERIOR", 1.0, 1.0, 0, _prev_hover ? c_white : c_ltgray, _prev_hover ? c_white : c_ltgray, _prev_hover ? c_white : c_ltgray, _prev_hover ? c_white : c_ltgray, 1.0);
+
+        // Next button
+        var _next_x1 = _right_cx + 10;
+        var _next_x2 = _right_cx + _btn_w + 10;
+        var _next_hover = point_in_rectangle(_mx, _my, _next_x1, _btn_y1, _next_x2, _btn_y2);
+        draw_set_alpha(_next_hover ? 0.4 : 0.2);
+        draw_roundrect_color_ext(_next_x1, _btn_y1, _next_x2, _btn_y2, 6, 6, c_white, c_white, false);
+        draw_set_alpha(1.0);
+        draw_roundrect_color_ext(_next_x1, _btn_y1, _next_x2, _btn_y2, 6, 6, c_silver, c_silver, true);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text_transformed_color((_next_x1 + _next_x2) / 2, (_btn_y1 + _btn_y2) / 2, "SIGUIENTE >", 1.0, 1.0, 0, _next_hover ? c_white : c_ltgray, _next_hover ? c_white : c_ltgray, _next_hover ? c_white : c_ltgray, _next_hover ? c_white : c_ltgray, 1.0);
+    }
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_set_alpha(1.0);
+}
+
 // --- NOTIFICACIONES ---
 draw_set_halign(fa_left);
 draw_set_valign(fa_bottom);

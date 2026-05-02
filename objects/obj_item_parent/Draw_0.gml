@@ -16,14 +16,14 @@ if (is_initialized) {
 
     if (string_starts_with(item_key, "forage_")) {
         var _pulse      = (sin(current_time * 0.004 + (x + y) * 0.05) + 1) * 0.5;
-        var _glow_alpha = lerp(0.25, 0.55, _pulse);
-        var _glow_s     = _s * lerp(1.4, 1.8, _pulse);
-        var _glow_off   = (16 * _glow_s / _s - 16) * 0.5;
+        var _out_alpha  = lerp(0.2, 0.5, _pulse);
+        var _out_s      = _s * lerp(1.08, 1.14, _pulse);
+        var _out_off    = (16 * _out_s / _s - 16) * 0.5;
         draw_sprite_part_ext(
             item_sprite, subimg,
             _x_offset, _y_offset, _fw, _fh,
-            _dx - _glow_off, _dy - _glow_off,
-            _glow_s, _glow_s, c_yellow, _glow_alpha
+            _dx - _out_off, _dy - _out_off,
+            _out_s, _out_s, c_white, _out_alpha
         );
     }
 

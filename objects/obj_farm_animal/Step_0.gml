@@ -12,6 +12,8 @@ if (hp <= 0) {
         var _cd = _adata.crafting_drops;
         inventory_drop_item(_cd[irandom(array_length(_cd) - 1)], 1, x, y);
     }
+    global.collected_items[$ "farm_" + animal_type] = true;
+    scr_check_collection_unlocks();
     instance_destroy();
     exit;
 }

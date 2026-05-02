@@ -766,7 +766,9 @@ function scr_save_game() {
         room_drops: global.room_drops,
         next_drop_uid: global.next_drop_uid,
         mine_unlocks: global.mine_unlocks,
-        mine_progress: global.mine_progress
+        mine_progress: global.mine_progress,
+        collected_items: global.collected_items,
+        shipped_quantities: global.shipped_quantities
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     show_debug_message("Game saved to: " + global.save_file_path);
@@ -794,6 +796,29 @@ function scr_apply_loaded_game(_save_data) {
     global.next_drop_uid = _save_data.next_drop_uid;
     if (variable_struct_exists(_save_data, "mine_unlocks")) global.mine_unlocks = _save_data.mine_unlocks;
     if (variable_struct_exists(_save_data, "mine_progress")) global.mine_progress = _save_data.mine_progress;
+    if (variable_struct_exists(_save_data, "collected_items")) {
+        global.collected_items = _save_data.collected_items;
+    } else {
+        // Migrate: mark all items currently in inventory as collected (pre-collection saves)
+        for (var _mi = 0; _mi < array_length(_players_arr); _mi++) {
+            var _mpd = _players_arr[_mi];
+            for (var _msi = 0; _msi < array_length(_mpd.inventory_array); _msi++) {
+                if (is_struct(_mpd.inventory_array[_msi])) global.collected_items[$ _mpd.inventory_array[_msi].key] = true;
+            }
+            for (var _msi = 0; _msi < array_length(_mpd.backpack_array); _msi++) {
+                if (is_struct(_mpd.backpack_array[_msi])) global.collected_items[$ _mpd.backpack_array[_msi].key] = true;
+            }
+            for (var _msi = 0; _msi < array_length(_mpd.shipping_array); _msi++) {
+                if (is_struct(_mpd.shipping_array[_msi])) global.collected_items[$ _mpd.shipping_array[_msi].key] = true;
+            }
+        }
+    }
+
+    if (variable_struct_exists(_save_data, "shipped_quantities")) {
+        global.shipped_quantities = _save_data.shipped_quantities;
+    } else {
+        global.shipped_quantities = {};
+    }
 
     // Migrar guardados v1 -> v2
     var _players_arr;
@@ -881,6 +906,7 @@ function scr_apply_loaded_game(_save_data) {
         if (instance_exists(obj_controller)) with (obj_controller) update_tilesets();
         global.pending_player_room_name = "";
     }
+    scr_check_collection_unlocks();
 }
 
 function scr_sleep_and_save() {
@@ -980,6 +1006,7 @@ function scr_process_shipping(_player = global.local_player) {
     var _summary = { items: [], total: 0 };
     if (!instance_exists(_player)) return _summary;
 
+    var _prev_tiers = scr_count_unlocked_tiers();
     var _shipping_array = _player.shipping_array;
     
     for (var i = 0; i < array_length(_shipping_array); i++) {
@@ -1014,6 +1041,7 @@ function scr_process_shipping(_player = global.local_player) {
                     });
                 }
             }
+            scr_on_item_shipped(_item.key, _item.quantity);
             // Limpiar slot del shipping bin
             _shipping_array[i] = -1;
         }
@@ -1021,6 +1049,11 @@ function scr_process_shipping(_player = global.local_player) {
     
     if (_summary.total > 0) {
         _player.money += _summary.total;
+    }
+    
+    var _new_tiers = scr_count_unlocked_tiers();
+    if (_new_tiers > _prev_tiers) {
+        scr_notify("Nuevas semillas disponibles en la tienda de Miraculos!");
     }
     
     return _summary;
@@ -1120,6 +1153,10 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.bar_data, _key)) return global.bar_data[$ _key];
     if (variable_struct_exists(global.jam_data, _key)) return global.jam_data[$ _key];
     if (variable_struct_exists(global.gemstone_data, _key)) return global.gemstone_data[$ _key];
+    if (variable_struct_exists(global.dye_data, _key)) return global.dye_data[$ _key];
+    if (variable_struct_exists(global.enemy_collection_data, _key)) return global.enemy_collection_data[$ _key];
+    if (variable_struct_exists(global.wild_animal_collection_data, _key)) return global.wild_animal_collection_data[$ _key];
+    if (variable_struct_exists(global.farm_animal_collection_data, _key)) return global.farm_animal_collection_data[$ _key];
     return undefined;
 }
 function scr_count_item(_key, _player = global.local_player) {

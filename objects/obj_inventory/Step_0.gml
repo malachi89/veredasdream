@@ -31,6 +31,7 @@ if (_p.shop_open) {
 
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
+    if (_p.shop_npc_key == "Miraculos") _sitems = scr_get_miraculos_shop_items();
     var _sn      = array_length(_sitems);
     var _is_bs = (_p.shop_npc_key == "Carlos");
     var _visible = (_p.shop_npc_key == "workbench" || _is_bs) ? 7 : 8;
@@ -70,7 +71,8 @@ if (_p.shop_open) {
                             : scr_count_item(_req.key);
                         if (_have < _req.qty) { _items_ok = false; break; }
                     }
-                    if (_can_afford && _items_ok) {
+                    var _collection_ok = scr_check_collection_req(_entry);
+                    if (_can_afford && _items_ok && _collection_ok) {
                         if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
                             net_send_shop_buy(_p.shop_npc_key, _entry.item_key);
                             _p.shop_msg       = "Procesando...";
@@ -99,6 +101,9 @@ if (_p.shop_open) {
                     } else if (!_can_afford) {
                         _p.shop_msg       = "Fondos insuficientes";
                         _p.shop_msg_timer = 90;
+                    } else if (!_collection_ok) {
+                        _p.shop_msg       = "Colección insuficiente";
+                        _p.shop_msg_timer = 90;
                     } else {
                         _p.shop_msg       = "Te faltan materiales";
                         _p.shop_msg_timer = 90;
@@ -111,7 +116,7 @@ if (_p.shop_open) {
     exit;
 }
 
-if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.pause_menu_open)) {
+if (instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.pause_menu_open || obj_controller.collection_menu_open)) {
     exit;
 }
 
