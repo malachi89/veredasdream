@@ -70,12 +70,6 @@ if (current_room_name != _room_name) {
         scr_restore_forest_enemies();
     }
     
-    // Test animals repopulation
-    if (_room_name == "farm" && global.farm_needs_repopulate_test_animals) {
-        global.farm_needs_repopulate_test_animals = false;
-        scr_populate_test_animals();
-        scr_capture_current_room_state();
-    }
     update_tilesets();
     scr_setup_forest_trees();
 }

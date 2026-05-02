@@ -372,13 +372,71 @@ if (is_struct(_p.hovered_item_data) && !is_struct(_p.held_item)) {
     draw_text_transformed(_tx + 8, _ty + 8, _tooltip_text, 1.2, 1.2, 0);
 }
 
+// === PANEL LETRERO ===
+if (_p.sign_panel_open) {
+    var _gw  = display_get_gui_width();
+    var _gh  = display_get_gui_height();
+    var _pw  = 480;
+    var _ph  = 560;
+    var _px1 = (_gw - _pw) * 0.5;
+    var _py1 = _gh * 0.10;
+    var _px2 = _px1 + _pw;
+    var _py2 = _py1 + _ph;
+
+    draw_set_alpha(0.92);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, make_color_rgb(28, 28, 32), make_color_rgb(28, 28, 32), false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_white, c_white, true);
+
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_px1 + 16, _py1 + 14, _p.sign_panel_title, 1.8, 1.8, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+    draw_set_color(c_white);
+    draw_line(_px1 + 10, _py1 + 48, _px2 - 10, _py1 + 48);
+
+    var _sp_row     = 56;
+    var _sp_visible = 8;
+    var _list_y     = _py1 + 56;
+    var _items      = _p.sign_panel_items;
+    var _n          = array_length(_items);
+
+    for (var _i = 0; _i < _sp_visible; _i++) {
+        var _idx = _i + _p.sign_scroll;
+        if (_idx >= _n) break;
+        var _item    = _items[_idx];
+        var _ry      = _list_y + _i * _sp_row;
+        var _row_col = (_i mod 2 == 0) ? make_color_rgb(50, 50, 55) : make_color_rgb(38, 38, 42);
+        draw_set_alpha(0.7);
+        draw_set_color(_row_col);
+        draw_roundrect_color_ext(_px1 + 8, _ry, _px2 - 8, _ry + _sp_row - 2, 4, 4, _row_col, _row_col, false);
+        draw_set_alpha(1.0);
+
+        var _spr = _item.sprite;
+        var _sub = _item.subimg;
+        var _sz  = 40.0 / max(sprite_get_width(_spr), sprite_get_height(_spr));
+        draw_sprite_ext(_spr, _sub, _px1 + 16, _ry + _sp_row * 0.5 - 21, _sz, _sz, 0, c_white, 1.0);
+
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_middle);
+        draw_set_color(c_white);
+        draw_text_transformed(_px1 + 62, _ry + _sp_row * 0.5, _item.name, 1.5, 1.5, 0);
+    }
+
+    draw_set_halign(fa_right);
+    draw_set_valign(fa_bottom);
+    draw_set_color(c_silver);
+    var _sp_hint = (_n > _sp_visible) ? "Rueda: scroll  [E] Cerrar" : "[E] Cerrar";
+    draw_text_transformed(_px2 - 14, _py2 - 14, _sp_hint, 1.1, 1.1, 0);
+}
+
 // === DIALOGO NPC ===
 if (_p.dialog_open) {
     var _dgw   = display_get_gui_width();
     var _dgh   = display_get_gui_height();
     var _dbw   = _dgw - 80;
     var _lines = string_split(_p.dialog_text, "\n");
-    var _dbh   = (array_length(_lines) > 1) ? 180 : 110;
+    var _dbh   = (array_length(_lines) > 1) ? 190 : 120;
     var _dbx1  = 40;
     var _dby1  = _dgh - _dbh - 20;
     var _dbx2  = _dbx1 + _dbw;
@@ -392,10 +450,10 @@ if (_p.dialog_open) {
     draw_set_valign(fa_top);
     draw_text_transformed_color(_dbx1 + 16, _dby1 + 12, _p.dialog_npc_name, 1.8, 1.8, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
     draw_set_color(c_white);
-    draw_line(_dbx1 + 10, _dby1 + 42, _dbx2 - 10, _dby1 + 42);
+    draw_line(_dbx1 + 10, _dby1 + 50, _dbx2 - 10, _dby1 + 50);
     draw_set_valign(fa_middle);
     for (var _li = 0; _li < array_length(_lines); _li++) {
-        draw_text_transformed_color(_dbx1 + 16, _dby1 + 56 + _li * 44, _lines[_li], 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 66 + _li * 44, _lines[_li], 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
     }
     draw_set_halign(fa_right);
     draw_set_color(c_silver);
@@ -479,11 +537,18 @@ if (_p.shop_open) {
             if (_idata != undefined) {
                 var _f  = variable_struct_exists(_idata, "row") ? (_idata.row * 3) + _idata.subimg : _idata.subimg;
                 var _sz = 16 / max(sprite_get_width(_idata.sprite), sprite_get_height(_idata.sprite));
-                draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
+                var _sox = (_p.shop_npc_key == "Miraculos") ? -16 : 0;
+                var _soy = (_p.shop_npc_key == "Miraculos") ? -8  : 0;
+                if (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) {
+                    var _tq = scr_get_tool_quality(_entry.item_key, _p);
+                    if (_tq >= 0 && _tq < QUALITY.VITOLANIO) _f += _tq + 1;
+                }
+                draw_sprite_ext(_idata.sprite, _f, _px1 + 26 + _sox, _ry + _row / 2 + _soy, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
                     var _name_scale = _wb_or_bs ? 1.7 : 1.4;
-                draw_text_transformed_color(_px1 + 52, _ry + _row / 2, _idata.name, _name_scale, _name_scale, 0, c_white, c_white, c_white, c_white, 1.0);
+                var _ny = (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) ? _ry + _row / 2 - 12 : _ry + _row / 2;
+                draw_text_transformed_color(_px1 + 52, _ny, _idata.name, _name_scale, _name_scale, 0, c_white, c_white, c_white, c_white, 1.0);
             }
 
             if (_is_workbench) {
@@ -575,7 +640,7 @@ if (_p.shop_open) {
                         draw_set_halign(fa_left);
                         draw_set_valign(fa_middle);
                         draw_text_transformed_color(_px1 + 52, _ry + _row / 2 + 14, 
-                            global.quality_names[_tool_quality] + " → " + global.quality_names[_tool_quality + 1],
+                            global.quality_names[_tool_quality] + " > " + global.quality_names[_tool_quality + 1],
                             1.2, 1.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
                     } else if (_tool_quality >= QUALITY.VITOLANIO) {
                         draw_set_halign(fa_left);

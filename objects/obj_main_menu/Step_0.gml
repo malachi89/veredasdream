@@ -45,6 +45,88 @@ if (connect_waiting) {
     exit;
 }
 
+// --- Options menu ---
+if (options_menu_open) {
+    var _cx = display_get_gui_width() * 0.5;
+    var _cy = display_get_gui_height() * 0.5;
+    var _item_count = array_length(settings_items);
+    var _total_rows = _item_count + 2;
+    var _spacing = 38;
+    var _start_y = _cy - 70;
+
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _hit_w = 500;
+    var _hit_h = 32;
+    var _mouse_on_option = false;
+
+    for (var i = 0; i < _total_rows; i++) {
+        var _oy = _start_y + i * _spacing;
+        if (_mx >= _cx - _hit_w * 0.5 && _mx <= _cx + _hit_w * 0.5 &&
+            _my >= _oy - _hit_h * 0.5 && _my <= _oy + _hit_h * 0.5) {
+            options_selection = i;
+            _mouse_on_option = true;
+            break;
+        }
+    }
+
+    if (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W"))) {
+        options_selection -= 1;
+        if (options_selection < 0) options_selection = _total_rows - 1;
+    }
+    if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S"))) {
+        options_selection += 1;
+        if (options_selection >= _total_rows) options_selection = 0;
+    }
+
+    if (options_selection < _item_count && array_length(settings_items[options_selection].values) > 1) {
+        if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
+            var _item = settings_items[options_selection];
+            _item[$ "value_index"] = (_item.value_index - 1 + array_length(_item.values)) % array_length(_item.values);
+        }
+        if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
+            var _item = settings_items[options_selection];
+            _item[$ "value_index"] = (_item.value_index + 1) % array_length(_item.values);
+        }
+    }
+
+    var _confirm = keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)
+                 || (_mouse_on_option && mouse_check_button_pressed(mb_left));
+
+    if (_confirm) {
+        if (options_selection == _item_count) {
+            ini_open("settings.ini");
+            for (var _i = 0; _i < _item_count; _i++) {
+                var _item = settings_items[_i];
+                var _val = _item.values[_item.value_index];
+                ini_write_real(_item.section, _item.key, _val);
+                switch (_item.key) {
+                    case "MusicVolume": global.music_volume = _val; break;
+                    case "TimeSpeedMultiplier":
+                        global.time_multiplier = _val;
+                        if (instance_exists(obj_controller)) {
+                            obj_controller.time_frames_per_minute = 360 / _val;
+                        }
+                        break;
+                    case "DaysPerSeason": global.days_per_season = _val; break;
+                }
+            }
+            ini_close();
+            options_menu_open = false;
+            notif_text = "Opciones guardadas.";
+            notif_timer = 120;
+        } else if (options_selection == _item_count + 1) {
+            options_menu_open = false;
+        }
+    }
+
+    if (keyboard_check_pressed(vk_escape)) {
+        options_menu_open = false;
+    }
+
+    exit;
+}
+
 // --- Normal menu navigation ---
 var _cx = display_get_gui_width() * 0.5;
 var _cy = display_get_gui_height() * 0.5;
@@ -84,6 +166,7 @@ if (_confirm) {
 
     switch (_choice) {
         case "Nueva Granja":
+            audio_stop_sound(menu_music);
             global.net_role = NET_ROLE.NONE;
             global.farm_populated = false;
             global.room_states = {};
@@ -101,7 +184,6 @@ if (_confirm) {
             global.forest_insects = [];
             global.forest_wild_animals = [];
             global.pending_player_room_name = "";
-            global.farm_needs_repopulate_test_animals = false;
             if (instance_exists(obj_controller)) {
                 obj_controller.pending_loaded_game = undefined;
                 obj_controller.load_needs_apply = false;
@@ -114,6 +196,7 @@ if (_confirm) {
             break;
 
         case "Hospedar":
+            audio_stop_sound(menu_music);
             if (net_host_game()) {
                 // Start single-player flow, but with server running.
                 // Load existing save if available, otherwise fresh farm.
@@ -157,6 +240,7 @@ if (_confirm) {
             break;
 
         case "Continuar":
+            audio_stop_sound(menu_music);
             if (save_exists) {
                 global.net_role = NET_ROLE.NONE;
                 var _data = scr_read_save_game();
@@ -195,6 +279,37 @@ if (_confirm) {
                 notif_text  = "No hay partida que borrar.";
                 notif_timer = 120;
             }
+            break;
+
+        case "Opciones":
+            options_menu_open = true;
+            options_selection = 0;
+            // Refresh current values from global state
+            var _current_music = global.music_volume;
+            var _current_time  = global.time_multiplier;
+            var _current_days  = global.days_per_season;
+            ini_open("settings.ini");
+            var _current_port  = ini_read_real("Network", "Port", 7777);
+            ini_close();
+            for (var _i = 0; _i < array_length(settings_items); _i++) {
+                var _item = settings_items[_i];
+                var _current = 1.0;
+                switch (_item.key) {
+                    case "MusicVolume": _current = _current_music; break;
+                    case "TimeSpeedMultiplier": _current = _current_time; break;
+                    case "DaysPerSeason": _current = _current_days; break;
+                    case "Port": _current = _current_port; break;
+                }
+                _item[$ "value_index"] = 0;
+                for (var _j = 0; _j < array_length(_item.values); _j++) {
+                    if (_item.values[_j] == _current) {
+                        _item[$ "value_index"] = _j;
+                        break;
+                    }
+                }
+            }
+            notif_text  = "";
+            notif_timer = 0;
             break;
 
         case "Salir":

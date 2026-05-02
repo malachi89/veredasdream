@@ -1,6 +1,6 @@
 {
   "$GMSound":"v2",
-  "%Name":"sound_music_winter",
+  "%Name":"sound_seeds",
   "audioGroupId":{
     "name":"audiogroup_default",
     "path":"audiogroups/audiogroup_default",
@@ -10,17 +10,17 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":234.96,
+  "duration":0.44408163,
   "exportDir":"",
-  "name":"sound_music_winter",
+  "name":"sound_seeds",
   "parent":{
-    "name":"background_music",
-    "path":"folders/sounds/background_music.yy",
+    "name":"effects",
+    "path":"folders/sounds/effects.yy",
   },
   "preload":false,
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"sound_music_winter.mp3",
+  "soundFile":"sound_seeds.mp3",
   "volume":1.0,
 }

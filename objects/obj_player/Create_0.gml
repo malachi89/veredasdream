@@ -102,6 +102,10 @@ shop_msg_timer = 0;
 dialog_open     = false;
 dialog_npc_name = "";
 dialog_text     = "";
+sign_panel_open  = false;
+sign_panel_title = "";
+sign_panel_items = [];
+sign_scroll      = 0;
 prev_on_door = false;
 
 // --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---

@@ -478,7 +478,8 @@ function net_handle_fish_reel() {
     var _ghost = obj_net.remote_player_ghost;
     if (!instance_exists(_ghost)) return;
 
-    var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+    var _pool = global.fish_pool[global.season_index];
+    var _fish_key  = _pool[irandom(array_length(_pool) - 1)];
     var _fish_data = global.fish_data[$ _fish_key];
 
     net_ghost_add_item(_ghost, _fish_key, 1);

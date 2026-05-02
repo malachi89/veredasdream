@@ -492,6 +492,18 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
         var _seed_info = global.seed_data[$ _item_key];
         var _is_fruit_tree_seed = variable_struct_exists(_seed_info, "is_fruit_tree") && _seed_info.is_fruit_tree;
 
+        var _season_ok = false;
+        for (var _si = 0; _si < array_length(_seed_info.seasons); _si++) {
+            if (_seed_info.seasons[_si] == global.season_index || _seed_info.seasons[_si] == SEASON.ALL) {
+                _season_ok = true;
+                break;
+            }
+        }
+        if (!_season_ok) {
+            if (!_anim_only) scr_notify("Esta semilla no se puede plantar en " + global.season_names[$ global.season] + ".");
+            exit;
+        }
+
         var _can_plant_here = false;
 
         if (_is_fruit_tree_seed) {
@@ -528,6 +540,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
         }
 
         if (_can_plant_here && !_anim_only) {
+            audio_play_sound(sound_seeds, 1, false);
             var _obj_to_create = _is_fruit_tree_seed ? obj_tree : obj_crop;
             var _new_inst  = instance_create_layer(_gx, _gy, "Instances_Crops", _obj_to_create);
 

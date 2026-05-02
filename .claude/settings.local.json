@@ -44,7 +44,12 @@
       "Bash(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\sounds\" -Recurse -Filter \"*goblin*\")",
       "Bash(Select-Object Name)",
       "Bash(cat sprites/sprite_player_alert/sprite_player_alert.yy)",
-      "Bash(dir sprites\\\\sprite_player_alert /b)"
+      "Bash(dir sprites\\\\sprite_player_alert /b)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" -Recurse -Filter \"*.ini\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Test-Path *)",
+      "PowerShell($items = @\\(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\datafiles\" -Force -ErrorAction SilentlyContinue\\); if \\($items.Count -eq 0\\) { Write-Output \"Datafiles folder is empty\" } else { $items | Select-Object Name, FullName })",
+      "Bash(Remove-Item *)"
     ]
   }
 }

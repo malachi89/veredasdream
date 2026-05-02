@@ -23,8 +23,7 @@ global.game_minute = 0;
 global.game_hour = 6;
 global.day = 1;
 global.year = 1;
-global.debug_test_animals = true;
-global.farm_needs_repopulate_test_animals = false;
+global.farm_needs_repopulate_test_animals = false; // used by debug command test_animals on/off
 // money vive en obj_player.money (per-player). global.local_player apunta al jugador de esta maquina.
 global.local_player = noone;
 global.net_role = NET_ROLE.NONE;
@@ -60,7 +59,6 @@ function start_new_day() {
     for (var _i = 0; _i < array_length(_cave_keys); _i++) {
         global.cave_repopulate[$ _cave_keys[_i]] = true;
     }
-    if (global.debug_test_animals) global.farm_needs_repopulate_test_animals = true;
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();
 
@@ -112,8 +110,9 @@ function update_tilesets() {
     
     if (_bg_layer != -1) tilemap_tileset(layer_tilemap_get_id(_bg_layer), _tilesets[global.season_index]);
     
+    var _room = room_get_name(room);
+    
     if (_details_layer != -1) {
-        var _room = room_get_name(room);
         if (_room == "farm" || _room == "forest" || _room == "town") {
             tilemap_tileset(layer_tilemap_get_id(_details_layer), (_room == "farm") ? _tilesets[global.season_index] : _props_tilesets[global.season_index]);
         }

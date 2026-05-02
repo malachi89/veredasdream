@@ -1,6 +1,18 @@
 var _p = local_player;
 if (!instance_exists(_p)) exit;
 
+// === PANEL LETRERO ===
+if (_p.sign_panel_open) {
+    if (keyboard_check_pressed(vk_escape)) {
+        _p.sign_panel_open = false;
+        _p.sign_scroll     = 0;
+    }
+    var _sp_visible = 8;
+    var _wheel = mouse_wheel_down() - mouse_wheel_up();
+    _p.sign_scroll = clamp(_p.sign_scroll + _wheel, 0, max(0, array_length(_p.sign_panel_items) - _sp_visible));
+    exit;
+}
+
 // === DIALOGO ===
 if (_p.dialog_open) {
     if (keyboard_check_pressed(vk_escape)) _p.dialog_open = false;

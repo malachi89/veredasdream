@@ -1,6 +1,6 @@
 {
   "$GMSound":"v2",
-  "%Name":"sound_music_winter",
+  "%Name":"sound_main_menu_theme",
   "audioGroupId":{
     "name":"audiogroup_default",
     "path":"audiogroups/audiogroup_default",
@@ -10,9 +10,9 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":234.96,
+  "duration":214.0,
   "exportDir":"",
-  "name":"sound_music_winter",
+  "name":"sound_main_menu_theme",
   "parent":{
     "name":"background_music",
     "path":"folders/sounds/background_music.yy",
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"sound_music_winter.mp3",
+  "soundFile":"sound_main_menu_theme.mp3",
   "volume":1.0,
 }

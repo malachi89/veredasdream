@@ -3,10 +3,25 @@ var _moving = false;
 if (wanders) {
     wander_timer--;
     if (wander_timer <= 0) {
-        wander_timer = irandom_range(60, 180);
-        var _angle = irandom(7) * 45;
-        wander_dx = lengthdir_x(1, _angle);
-        wander_dy = lengthdir_y(1, _angle);
+        if (wander_resting) {
+            wander_resting = false;
+            wander_timer = irandom_range(60, 180);
+            var _angle = irandom(7) * 45;
+            wander_dx = lengthdir_x(1, _angle);
+            wander_dy = lengthdir_y(1, _angle);
+        } else {
+            if (irandom(4) < 2) {
+                wander_resting = true;
+                wander_timer = irandom_range(40, 120);
+                wander_dx = 0;
+                wander_dy = 0;
+            } else {
+                wander_timer = irandom_range(60, 180);
+                var _angle = irandom(7) * 45;
+                wander_dx = lengthdir_x(1, _angle);
+                wander_dy = lengthdir_y(1, _angle);
+            }
+        }
     }
 
     var _nx = x + wander_dx * wander_speed;
@@ -26,6 +41,13 @@ if (wanders) {
                 if (_tm_fences != -1 && tilemap_get_at_pixel(_tm_fences, _nx, _ny) != 0) _valid = true;
                 if (!_valid) _blocked = true;
             }
+        }
+    }
+
+    if (!_blocked) {
+        var _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
+        if (_tm_buildings != -1 && tilemap_get_at_pixel(_tm_buildings, _nx, _ny) != 0) {
+            _blocked = true;
         }
     }
 

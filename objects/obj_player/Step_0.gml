@@ -15,6 +15,18 @@ if (dialog_open) {
     exit;
 }
 
+if (sign_panel_open) {
+    if (keyboard_check_pressed(ord("E")) || keyboard_check_pressed(vk_escape)) {
+        sign_panel_open = false;
+        sign_scroll     = 0;
+    }
+    state       = STATE.IDLE;
+    frame_anim  = 0;
+    image_speed = 0;
+    depth       = -bbox_bottom;
+    exit;
+}
+
 if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open || obj_controller.pause_menu_open || obj_controller.mine_prompt_open))
     || shop_open) {
     state = STATE.IDLE;
@@ -26,7 +38,6 @@ if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_c
 
 if (keyboard_check_pressed(vk_tab) && !shop_open && !dialog_open) {
     scr_inventory_cycle_hotbars(id);
-    audio_play_sound(axe, 1, false);
 }
 
 var _h   = keyboard_check(ord("D")) - keyboard_check(ord("A"));
@@ -73,56 +84,53 @@ if (keyboard_check_pressed(ord("F"))) {
 if (keyboard_check_pressed(ord("E")) && !show_backpack) {
     var _sign = instance_nearest(x, y, obj_forest_sign);
     if (_sign != noone && point_distance(x, y, _sign.x, _sign.y) < 60) {
-        if (dialog_open) {
-            dialog_open = false;
-        } else {
-            var _animals = [];
-            for (var _i = 0; _i < array_length(global.forest_wild_animals); _i++) {
-                var _ak = global.forest_wild_animals[_i].key;
-                var _adata = global.wild_animal_data[$ _ak];
-                if (_adata == undefined) continue;
-                var _an = _adata.name;
-                var _dup = false;
-                for (var _j = 0; _j < array_length(_animals); _j++) {
-                    if (_animals[_j] == _an) { _dup = true; break; }
+        sign_scroll = 0;
+            if (_sign == inst_52285FF) {
+                sign_panel_title = "Peces del Lago";
+                sign_panel_items = [];
+                var _fkeys_fish = variable_struct_get_names(global.fish_data);
+                for (var _i = 0; _i < array_length(_fkeys_fish); _i++) {
+                    var _fd = global.fish_data[$ _fkeys_fish[_i]];
+                    var _in_season = false;
+                    for (var _si = 0; _si < array_length(_fd.seasons); _si++) {
+                        if (_fd.seasons[_si] == global.season_index || _fd.seasons[_si] == SEASON.ALL) {
+                            _in_season = true; break;
+                        }
+                    }
+                    if (!_in_season) continue;
+                    var _dup = false;
+                    for (var _j = 0; _j < array_length(sign_panel_items); _j++) {
+                        if (sign_panel_items[_j].name == _fd.name) { _dup = true; break; }
+                    }
+                    if (!_dup) array_push(sign_panel_items, { sprite: _fd.sprite, subimg: _fd.subimg, name: _fd.name });
                 }
-                if (!_dup) array_push(_animals, _an);
-            }
-
-            var _forage = [];
-            var _fcount = instance_number(obj_item_parent);
-            for (var _i = 0; _i < _fcount; _i++) {
-                var _fi = instance_find(obj_item_parent, _i);
-                if (!string_starts_with(_fi.item_key, "forage_")) continue;
-                var _fname = global.forage_data[$ _fi.item_key].name;
-                var _dup = false;
-                for (var _j = 0; _j < array_length(_forage); _j++) {
-                    if (_forage[_j] == _fname) { _dup = true; break; }
+            } else {
+                sign_panel_title = "Tablón del Bosque";
+                sign_panel_items = [];
+                for (var _i = 0; _i < array_length(global.forest_wild_animals); _i++) {
+                    var _ak = global.forest_wild_animals[_i].key;
+                    var _adata = global.wild_animal_data[$ _ak];
+                    if (_adata == undefined) continue;
+                    var _dup = false;
+                    for (var _j = 0; _j < array_length(sign_panel_items); _j++) {
+                        if (sign_panel_items[_j].name == _adata.name) { _dup = true; break; }
+                    }
+                    if (!_dup) array_push(sign_panel_items, { sprite: _adata.sprite, subimg: 0, name: _adata.name });
                 }
-                if (!_dup) array_push(_forage, _fname);
+                var _fcount = instance_number(obj_item_parent);
+                for (var _i = 0; _i < _fcount; _i++) {
+                    var _fi = instance_find(obj_item_parent, _i);
+                    if (!string_starts_with(_fi.item_key, "forage_")) continue;
+                    var _fdata = global.forage_data[$ _fi.item_key];
+                    if (_fdata == undefined) continue;
+                    var _dup = false;
+                    for (var _j = 0; _j < array_length(sign_panel_items); _j++) {
+                        if (sign_panel_items[_j].name == _fdata.name) { _dup = true; break; }
+                    }
+                    if (!_dup) array_push(sign_panel_items, { sprite: _fdata.sprite, subimg: _fdata.subimg, name: _fdata.name });
+                }
             }
-
-            var _max = 6;
-            var _astr = "";
-            for (var _i = 0; _i < min(array_length(_animals), _max); _i++) {
-                if (_i > 0) _astr += ", ";
-                _astr += _animals[_i];
-            }
-            if (array_length(_animals) > _max) _astr += "...";
-            if (_astr == "") _astr = "ninguno";
-
-            var _fstr = "";
-            for (var _i = 0; _i < min(array_length(_forage), _max); _i++) {
-                if (_i > 0) _fstr += ", ";
-                _fstr += _forage[_i];
-            }
-            if (array_length(_forage) > _max) _fstr += "...";
-            if (_fstr == "") _fstr = "ninguna";
-
-            dialog_npc_name = "Tablón del Bosque";
-            dialog_text = "Animales: " + _astr + "\nPlantas y setas: " + _fstr;
-            dialog_open = true;
-        }
+            sign_panel_open = true;
         } else {
             var _did_interact = false;
 
@@ -230,7 +238,7 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                         } else {
                             dialog_open     = true;
                             dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
-                            dialog_text     = "Hola campeon, echele ganas";
+                            dialog_text     = global.npc_dialogues[irandom(array_length(global.npc_dialogues) - 1)];
                         }
                     }
                 } else if (dialog_open) {
@@ -529,7 +537,8 @@ if (state == STATE.ACTING) {
                         // Host resolves which fish is caught; result comes back as INVENTORY_UPDATE.
                         net_send_fish_reel();
                     } else {
-                        var _fish_key  = global.fish_pool[irandom(array_length(global.fish_pool) - 1)];
+                        var _pool = global.fish_pool[global.season_index];
+                        var _fish_key  = _pool[irandom(array_length(_pool) - 1)];
                         var _fish_data = global.fish_data[$ _fish_key];
                         var _fw = undefined;
                         if (variable_struct_exists(_fish_data, "weight_min")) {

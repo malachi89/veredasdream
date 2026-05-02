@@ -58,16 +58,5 @@ function scr_populate_test_animals() {
         _test_x += _spacing;
     }
     
-    // 6. Spawn a moving bear for debug (chase/attack testing)
-    var _bear_data = global.wild_animal_data[$ "bear"];
-    var _bear = instance_create_layer(900, 600, _layer, obj_wild_animal);
-    _bear.animal_key = "bear";
-    _bear.is_farm_animal = false;
-    _bear.is_test_animal = true;
-    _bear.sprite_index = _bear_data.sprite;
-    _bear.move_speed = _bear_data.move_speed;
-    _bear.hp = _bear_data.hp;
-    _bear.max_hp = _bear_data.max_hp;
-
     show_debug_message("Farm test animals repopulated.");
 }
