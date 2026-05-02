@@ -9,7 +9,6 @@
     {"name":"inst_62BD6B47","path":"rooms/forest/forest.yy",},
     {"name":"inst_32E82724","path":"rooms/forest/forest.yy",},
     {"name":"inst_739F44","path":"rooms/forest/forest.yy",},
-    {"name":"inst_4B7C2A9F","path":"rooms/forest/forest.yy",},
     {"name":"inst_387B0221","path":"rooms/forest/forest.yy",},
     {"name":"inst_26D672D7","path":"rooms/forest/forest.yy",},
     {"name":"inst_425F5B10","path":"rooms/forest/forest.yy",},
