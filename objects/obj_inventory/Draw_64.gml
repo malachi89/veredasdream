@@ -407,8 +407,10 @@ if (_p.shop_open) {
     var _gw  = display_get_gui_width();
     var _gh  = display_get_gui_height();
     var _is_workbench = (_p.shop_npc_key == "workbench");
-    var _pw  = _is_workbench ? 760 : 520;
-    var _ph  = _is_workbench ? 580 : 460;
+    var _is_bs = (_p.shop_npc_key == "Carlos");
+    var _wb_or_bs = _is_workbench || _is_bs;
+    var _pw  = _wb_or_bs ? 760 : 520;
+    var _ph  = _wb_or_bs ? 580 : 460;
     var _px1 = (_gw - _pw) / 2;
     var _py1 = _gh * 0.10;
     var _px2 = _px1 + _pw;
@@ -417,8 +419,8 @@ if (_p.shop_open) {
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
     var _sn      = array_length(_sitems);
-    var _visible = _is_workbench ? 7 : 8;
-    var _row     = _is_workbench ? 64 : 44;
+    var _visible = _wb_or_bs ? 7 : 8;
+    var _row     = _wb_or_bs ? 64 : 44;
     var _clerk   = variable_struct_exists(global.npc_data, _p.shop_npc_key) ? global.npc_data[$ _p.shop_npc_key].name : _p.shop_npc_key;
 
     draw_set_alpha(0.72);
@@ -433,7 +435,7 @@ if (_p.shop_open) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_top);
     draw_text_transformed_color(_px1 + _pw / 2, _py1 + 10, _clerk, 2.2, 2.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
-    var _header_line_y = _py1 + (_is_workbench ? 66 : 46);
+    var _header_line_y = _py1 + (_wb_or_bs ? 66 : 46);
     draw_set_color(c_silver);
     draw_line(_px1 + 10, _header_line_y, _px2 - 10, _header_line_y);
     draw_set_halign(fa_right);
@@ -460,7 +462,7 @@ if (_p.shop_open) {
             var _idata   = scr_get_item_data(_entry.item_key);
             var _ry      = _list_y + _i * _row;
             var _hovered = (_dmx >= _px1 + 6 && _dmx <= _px2 - 6 && _dmy >= _ry && _dmy <= _ry + _row - 2);
-            if (_is_workbench) {
+            if (_wb_or_bs) {
                 var _row_col = (_i mod 2 == 0) ? make_color_rgb(50, 50, 55) : make_color_rgb(38, 38, 42);
                 draw_set_alpha(_hovered ? 0.7 : 0.4);
                 draw_roundrect_color_ext(_px1 + 6, _ry, _px2 - 6, _ry + _row - 2, 6, 6, _row_col, _row_col, false);
@@ -480,7 +482,7 @@ if (_p.shop_open) {
                 draw_sprite_ext(_idata.sprite, _f, _px1 + 26, _ry + _row / 2, 1.8 * _sz, 1.8 * _sz, 0, c_white, 1.0);
                 draw_set_halign(fa_left);
                 draw_set_valign(fa_middle);
-                var _name_scale = _is_workbench ? 1.7 : 1.4;
+                    var _name_scale = _wb_or_bs ? 1.7 : 1.4;
                 draw_text_transformed_color(_px1 + 52, _ry + _row / 2, _idata.name, _name_scale, _name_scale, 0, c_white, c_white, c_white, c_white, 1.0);
             }
 
@@ -561,6 +563,131 @@ if (_p.shop_open) {
                     draw_set_color(c_white);
                     draw_text_transformed(_tx + _tw / 2, _ty + _th / 2, _tooltip_str, 1.3, 1.3, 0);
                 }
+            } else if (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) {
+                // --- Herreria: mejora de herramientas con cajas dinamicas ---
+                var _tool_key     = _entry.item_key;
+                var _tool_quality = scr_get_tool_quality(_tool_key, _p);
+                var _tool_data    = scr_get_item_data(_tool_key);
+
+                // Informacion de calidad debajo del nombre
+                if (_tool_data != undefined) {
+                    if (_tool_quality >= 0 && _tool_quality < QUALITY.VITOLANIO) {
+                        draw_set_halign(fa_left);
+                        draw_set_valign(fa_middle);
+                        draw_text_transformed_color(_px1 + 52, _ry + _row / 2 + 14, 
+                            global.quality_names[_tool_quality] + " → " + global.quality_names[_tool_quality + 1],
+                            1.2, 1.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+                    } else if (_tool_quality >= QUALITY.VITOLANIO) {
+                        draw_set_halign(fa_left);
+                        draw_set_valign(fa_middle);
+                        draw_text_transformed_color(_px1 + 52, _ry + _row / 2 + 14,
+                            global.quality_names[QUALITY.VITOLANIO] + " (MAX)",
+                            1.2, 1.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+                    }
+                }
+
+                var _can_upgrade = (_tool_quality >= 0 && _tool_quality < QUALITY.VITOLANIO);
+                var _reqs = _can_upgrade ? scr_get_upgrade_requirements(_tool_quality) : undefined;
+
+                if (_reqs != undefined) {
+                    var _can_afford_money  = (_p.money >= _reqs.price_money);
+                    var _bw   = 96;
+                    var _bh   = 48;
+                    var _gap  = 6;
+                    var _n_ingr = array_length(_reqs.price_items);
+                    var _ingr_total_w = (_n_ingr + 1) * _bw + _n_ingr * _gap;
+                    var _ix0  = _px2 - 14 - _ingr_total_w;
+                    var _iy0  = _ry + (_row - _bh) / 2;
+                    var _tooltip_str = "";
+                    var _tooltip_x   = 0;
+                    var _tooltip_y   = 0;
+
+                    // caja de dinero
+                    var _mx_box = _ix0 + _n_ingr * (_bw + _gap);
+                    draw_set_alpha(0.45);
+                    draw_roundrect_color_ext(_mx_box, _iy0, _mx_box + _bw, _iy0 + _bh, 5, 5,
+                        _can_afford_money ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10),
+                        _can_afford_money ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10), false);
+                    draw_set_alpha(1.0);
+                    draw_roundrect_color_ext(_mx_box, _iy0, _mx_box + _bw, _iy0 + _bh, 5, 5,
+                        _can_afford_money ? c_lime : c_red, _can_afford_money ? c_lime : c_red, true);
+                    draw_set_halign(fa_center);
+                    draw_set_valign(fa_middle);
+                    draw_set_color(_can_afford_money ? c_lime : c_red);
+                    draw_set_font(fnt_pixel_operator);
+                    draw_text_transformed(_mx_box + _bw / 2, _iy0 + _bh / 2 - 6, "MXN$", 1.2, 1.2, 0);
+                    draw_text_transformed(_mx_box + _bw / 2, _iy0 + _bh / 2 + 10, string(_reqs.price_money), 1.4, 1.4, 0);
+
+                    if (_dmx >= _mx_box && _dmx <= _mx_box + _bw && _dmy >= _iy0 && _dmy <= _iy0 + _bh) {
+                        _tooltip_str = "MXN$ " + string(_reqs.price_money);
+                        _tooltip_x = _dmx;
+                        _tooltip_y = _iy0 - 6;
+                    }
+
+                    // cajas de ingredientes
+                    for (var _j = 0; _j < _n_ingr; _j++) {
+                        var _req  = _reqs.price_items[_j];
+                        var _rid  = scr_get_item_data(_req.key);
+                        var _have = scr_count_item(_req.key, _p);
+                        var _ok   = (_have >= _req.qty);
+                        var _bx   = _ix0 + _j * (_bw + _gap);
+                        var _by   = _iy0;
+
+                        draw_set_alpha(0.45);
+                        draw_roundrect_color_ext(_bx, _by, _bx + _bw, _by + _bh, 5, 5,
+                            _ok ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10),
+                            _ok ? make_color_rgb(10,40,10) : make_color_rgb(50,10,10), false);
+                        draw_set_alpha(1.0);
+                        draw_roundrect_color_ext(_bx, _by, _bx + _bw, _by + _bh, 5, 5,
+                            _ok ? c_lime : c_red, _ok ? c_lime : c_red, true);
+
+                        if (_rid != undefined) {
+                            var _rf  = variable_struct_exists(_rid, "row") ? (_rid.row * 3) + _rid.subimg : _rid.subimg;
+                            var _rsz = 16 / max(sprite_get_width(_rid.sprite), sprite_get_height(_rid.sprite));
+                            draw_sprite_ext(_rid.sprite, _rf, _bx + 10, _by + _bh / 2 - 17, 2.4 * _rsz, 2.4 * _rsz, 0, c_white, 1.0);
+                        }
+
+                        draw_set_font(fnt_pixel_operator);
+                        draw_set_halign(fa_center);
+                        draw_set_valign(fa_middle);
+                        draw_set_color(_ok ? c_lime : c_red);
+                        draw_text_transformed(_bx + 68, _by + _bh / 2, string(_req.qty), 1.6, 1.6, 0);
+
+                        if (_dmx >= _bx && _dmx <= _bx + _bw && _dmy >= _by && _dmy <= _by + _bh) {
+                            var _item_name = _rid != undefined ? _rid.name : _req.key;
+                            _tooltip_str = string(_req.qty) + " piezas de " + _item_name;
+                            _tooltip_x = _dmx;
+                            _tooltip_y = _by - 6;
+                        }
+                    }
+
+                    if (_tooltip_str != "") {
+                        draw_set_font(fnt_pixel_operator);
+                        var _tw = string_width(_tooltip_str) * 1.3 + 16;
+                        var _th = 24;
+                        var _tx = clamp(_tooltip_x - _tw / 2, _px1 + 6, _px2 - _tw - 6);
+                        var _ty = _tooltip_y - _th;
+                        draw_set_alpha(0.88);
+                        draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 4, 4, c_black, c_black, false);
+                        draw_set_alpha(1.0);
+                        draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 4, 4, c_silver, c_silver, true);
+                        draw_set_halign(fa_center);
+                        draw_set_valign(fa_middle);
+                        draw_set_color(c_white);
+                        draw_text_transformed(_tx + _tw / 2, _ty + _th / 2, _tooltip_str, 1.3, 1.3, 0);
+                    }
+                } else {
+                    // Sin mejora disponible
+                    draw_set_halign(fa_right);
+                    draw_set_valign(fa_middle);
+                    if (_tool_quality < 0) {
+                        draw_set_color(c_red);
+                        draw_text_transformed(_px2 - 14, _ry + _row / 2, "No tienes esta herramienta", 1.3, 1.3, 0);
+                    } else if (_tool_quality >= QUALITY.VITOLANIO) {
+                        draw_set_color(c_yellow);
+                        draw_text_transformed(_px2 - 14, _ry + _row / 2, "MAXIMO", 1.3, 1.3, 0);
+                    }
+                }
             } else {
                 // --- Precio en texto para tiendas NPC ---
                 var _price_str = (_entry.price_money > 0) ? "MXN$ " + string(_entry.price_money) : "";
@@ -597,7 +724,7 @@ if (_p.shop_open) {
         }
     }
 
-    var _footer_line_y = _py2 - (_is_workbench ? 50 : 38);
+    var _footer_line_y = _py2 - (_wb_or_bs ? 50 : 38);
     draw_set_color(c_silver);
     draw_line(_px1 + 10, _footer_line_y, _px2 - 10, _footer_line_y);
     draw_set_halign(fa_left);

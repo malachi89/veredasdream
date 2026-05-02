@@ -58,6 +58,21 @@ sprite_index = _moving ? spr_skin_walk : spr_skin_idle;
 var _counter_layer = layer_get_id("Tiles_blacksmith");
 depth = (_counter_layer != -1) ? layer_get_depth(_counter_layer) + 1 : -bbox_bottom;
 
+var _lp = global.local_player;
+if (instance_exists(_lp) && !_lp.shop_open && !_lp.dialog_open) {
+    var _dist = point_distance(x, y, _lp.x, _lp.y);
+    if (_dist < 48 && keyboard_check_pressed(ord("E"))) {
+        var _shop_data = global.shop_data[$ npc_key];
+        if (_shop_data != undefined && _shop_data.available) {
+            _lp.shop_open      = true;
+            _lp.shop_npc_key   = npc_key;
+            _lp.shop_scroll    = 0;
+            _lp.shop_msg       = "";
+            _lp.shop_msg_timer = 0;
+        }
+    }
+}
+
 cur_skin    = _moving ? spr_skin_walk    : spr_skin_idle;
 cur_eyes    = _moving ? spr_eyes_walk    : spr_eyes_idle;
 cur_clothes = _moving ? spr_clothes_walk : spr_clothes_idle;

@@ -1243,3 +1243,91 @@ function scr_setup_forest_trees() {
         }
     }
 }
+
+/// Devuelve los requisitos para mejorar una herramienta desde la calidad dada
+function scr_get_upgrade_requirements(_quality) {
+    var _tiers = [
+        { bar: "bar_bronce",      stone: 10, coal: 5,  money: 500   },
+        { bar: "bar_plata",       stone: 15, coal: 8,  money: 1000  },
+        { bar: "bar_oro",         stone: 20, coal: 10, money: 2000  },
+        { bar: "bar_broncastanio", stone: 25, coal: 12, money: 4000  },
+        { bar: "bar_chubestanio", stone: 30, coal: 15, money: 8000  },
+        { bar: "bar_picastanio",  stone: 35, coal: 18, money: 16000 },
+        { bar: "bar_hitlerstanio", stone: 40, coal: 20, money: 32000 },
+        { bar: "bar_vitolanio",   stone: 50, coal: 25, money: 64000 },
+    ];
+    if (_quality >= 0 && _quality < array_length(_tiers)) {
+        var _t = _tiers[_quality];
+        return {
+            price_money: _t.money,
+            price_items: [
+                { key: _t.bar, qty: 10 },
+                { key: "stone", qty: _t.stone },
+                { key: "coal", qty: _t.coal }
+            ]
+        };
+    }
+    return undefined;
+}
+
+/// Devuelve la calidad actual de una herramienta en el inventario del jugador (-1 si no la tiene)
+function scr_get_tool_quality(_tool_key, _player = global.local_player) {
+    if (!instance_exists(_player)) return -1;
+    var _arrays = [_player.inventory_array, _player.backpack_array];
+    for (var a = 0; a < 2; a++) {
+        var _arr = _arrays[a];
+        for (var i = 0; i < array_length(_arr); i++) {
+            var _slot = _arr[i];
+            if (is_struct(_slot) && _slot.key == _tool_key) {
+                return variable_struct_exists(_slot, "quality") ? _slot.quality : QUALITY.OXIDADO;
+            }
+        }
+    }
+    return -1;
+}
+
+/// Intenta mejorar una herramienta en la herreria: verifica requisitos, descuenta materiales y mejora
+function scr_blacksmith_upgrade(_tool_key, _player = global.local_player) {
+    if (!instance_exists(_player)) return;
+    var _quality = scr_get_tool_quality(_tool_key, _player);
+    if (_quality < 0) {
+        var _idata = scr_get_item_data(_tool_key);
+        var _tname = (_idata != undefined) ? _idata.name : _tool_key;
+        _player.shop_msg = "No tienes " + _tname;
+        _player.shop_msg_timer = 90;
+        return;
+    }
+    if (_quality >= QUALITY.VITOLANIO) {
+        _player.shop_msg = "Ya esta al maximo!";
+        _player.shop_msg_timer = 90;
+        return;
+    }
+    var _reqs = scr_get_upgrade_requirements(_quality);
+    if (_reqs == undefined) {
+        _player.shop_msg = "Error en requisitos";
+        _player.shop_msg_timer = 90;
+        return;
+    }
+    if (_player.money < _reqs.price_money) {
+        _player.shop_msg = "Fondos insuficientes";
+        _player.shop_msg_timer = 90;
+        return;
+    }
+    for (var i = 0; i < array_length(_reqs.price_items); i++) {
+        var _req = _reqs.price_items[i];
+        if (scr_count_item(_req.key, _player) < _req.qty) {
+            _player.shop_msg = "Te faltan materiales";
+            _player.shop_msg_timer = 90;
+            return;
+        }
+    }
+    _player.money -= _reqs.price_money;
+    for (var i = 0; i < array_length(_reqs.price_items); i++) {
+        var _req = _reqs.price_items[i];
+        scr_remove_item(_req.key, _req.qty, _player);
+    }
+    scr_upgrade_tool(_tool_key);
+    _player.shop_msg = "Herramienta mejorada!";
+    _player.shop_msg_timer = 90;
+    scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
+}

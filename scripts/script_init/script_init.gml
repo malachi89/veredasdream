@@ -1086,7 +1086,20 @@ global.item_groups = {
     crop_any:    _crop_keys
 };
 
-global.shop_data[$ "Carlos"] = { available: false, items: [] };
+global.shop_data[$ "Carlos"] = {
+    available: true,
+    items: [
+        { item_key: "pickaxe",      is_upgrade: true },
+        { item_key: "axe",          is_upgrade: true },
+        { item_key: "hoe",          is_upgrade: true },
+        { item_key: "sickle",       is_upgrade: true },
+        { item_key: "watering_can", is_upgrade: true },
+        { item_key: "shovel",       is_upgrade: true },
+        { item_key: "fishing_rod",  is_upgrade: true },
+        { item_key: "bugnet",       is_upgrade: true },
+
+    ]
+};
 global.shop_data[$ "Pedro"]  = { available: false, items: [] };
 global.shop_data[$ "Jorge"]  = { available: false, items: [] };
 

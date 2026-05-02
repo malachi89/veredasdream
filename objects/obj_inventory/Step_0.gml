@@ -20,7 +20,8 @@ if (_p.shop_open) {
     var _shop    = global.shop_data[$ _p.shop_npc_key];
     var _sitems  = (_shop != undefined && _shop.available) ? _shop.items : [];
     var _sn      = array_length(_sitems);
-    var _visible = (_p.shop_npc_key == "workbench") ? 7 : 8;
+    var _is_bs = (_p.shop_npc_key == "Carlos");
+    var _visible = (_p.shop_npc_key == "workbench" || _is_bs) ? 7 : 8;
 
     var _wheel = mouse_wheel_down() - mouse_wheel_up();
     _p.shop_scroll = clamp(_p.shop_scroll + _wheel, 0, max(0, _sn - _visible));
@@ -31,11 +32,12 @@ if (_p.shop_open) {
         var _sgw  = display_get_gui_width();
         var _sgh  = display_get_gui_height();
         var _is_wb = (_p.shop_npc_key == "workbench");
-        var _spw  = _is_wb ? 760 : 520;
-        var _srow = _is_wb ? 64 : 44;
+        var _wb_or_bs = _is_wb || _is_bs;
+        var _spw  = _wb_or_bs ? 760 : 520;
+        var _srow = _wb_or_bs ? 64 : 44;
         var _spx1 = (_sgw - _spw) / 2;
-        var _spy_panel = _sgh * (_is_wb ? 0.10 : 0.12);
-        var _spy1 = _spy_panel + (_is_wb ? 74 : 52);
+        var _spy_panel = _sgh * (_wb_or_bs ? 0.10 : 0.12);
+        var _spy1 = _spy_panel + (_wb_or_bs ? 74 : 52);
 
         for (var _si = 0; _si < _visible; _si++) {
             var _sidx = _si + _p.shop_scroll;
@@ -43,48 +45,52 @@ if (_p.shop_open) {
             var _sry1 = _spy1 + _si * _srow;
             var _sry2 = _sry1 + _srow - 2;
             if (_smx >= _spx1 && _smx <= _spx1 + _spw && _smy >= _sry1 && _smy <= _sry2) {
-                var _entry      = _sitems[_sidx];
-                var _can_afford = _p.money >= _entry.price_money;
-                var _items_ok   = true;
-                for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
-                    var _req  = _entry.price_items[_sj];
-                    var _have = variable_struct_exists(_req, "group_keys")
-                        ? scr_count_item_group(_req.group_keys)
-                        : scr_count_item(_req.key);
-                    if (_have < _req.qty) { _items_ok = false; break; }
-                }
-                if (_can_afford && _items_ok) {
-                    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
-                        net_send_shop_buy(_p.shop_npc_key, _entry.item_key);
-                        _p.shop_msg       = "Procesando...";
+                var _entry = _sitems[_sidx];
+                if (_is_bs && variable_struct_exists(_entry, "is_upgrade") && _entry.is_upgrade) {
+                    scr_blacksmith_upgrade(_entry.item_key, _p);
+                } else {
+                    var _can_afford = _p.money >= _entry.price_money;
+                    var _items_ok   = true;
+                    for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
+                        var _req  = _entry.price_items[_sj];
+                        var _have = variable_struct_exists(_req, "group_keys")
+                            ? scr_count_item_group(_req.group_keys)
+                            : scr_count_item(_req.key);
+                        if (_have < _req.qty) { _items_ok = false; break; }
+                    }
+                    if (_can_afford && _items_ok) {
+                        if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+                            net_send_shop_buy(_p.shop_npc_key, _entry.item_key);
+                            _p.shop_msg       = "Procesando...";
+                            _p.shop_msg_timer = 90;
+                        } else {
+                            _p.money -= _entry.price_money;
+                            for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
+                                var _req = _entry.price_items[_sj];
+                                if (variable_struct_exists(_req, "group_keys")) {
+                                    scr_remove_items_from_group(_req.group_keys, _req.qty);
+                                } else {
+                                    scr_remove_item(_req.key, _req.qty);
+                                }
+                            }
+                            with (_p) add_item(_entry.item_key, 1);
+                            scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
+                            if (_is_wb) {
+                                var _idata_msg = scr_get_item_data(_entry.item_key);
+                                var _iname_msg = (_idata_msg != undefined) ? _idata_msg.name : _entry.item_key;
+                                _p.shop_msg = _iname_msg + " creado!";
+                            } else {
+                                _p.shop_msg = "Comprado!";
+                            }
+                            _p.shop_msg_timer = 90;
+                        }
+                    } else if (!_can_afford) {
+                        _p.shop_msg       = "Fondos insuficientes";
                         _p.shop_msg_timer = 90;
                     } else {
-                        _p.money -= _entry.price_money;
-                        for (var _sj = 0; _sj < array_length(_entry.price_items); _sj++) {
-                            var _req = _entry.price_items[_sj];
-                            if (variable_struct_exists(_req, "group_keys")) {
-                                scr_remove_items_from_group(_req.group_keys, _req.qty);
-                            } else {
-                                scr_remove_item(_req.key, _req.qty);
-                            }
-                        }
-                        with (_p) add_item(_entry.item_key, 1);
-                        scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
-                        if (_is_wb) {
-                            var _idata_msg = scr_get_item_data(_entry.item_key);
-                            var _iname_msg = (_idata_msg != undefined) ? _idata_msg.name : _entry.item_key;
-                            _p.shop_msg = _iname_msg + " creado!";
-                        } else {
-                            _p.shop_msg = "Comprado!";
-                        }
+                        _p.shop_msg       = "Te faltan materiales";
                         _p.shop_msg_timer = 90;
                     }
-                } else if (!_can_afford) {
-                    _p.shop_msg       = "Fondos insuficientes";
-                    _p.shop_msg_timer = 90;
-                } else {
-                    _p.shop_msg       = "Te faltan materiales";
-                    _p.shop_msg_timer = 90;
                 }
                 break;
             }
