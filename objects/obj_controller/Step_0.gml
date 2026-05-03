@@ -73,6 +73,15 @@ if (current_room_name != _room_name) {
     update_tilesets();
     scr_setup_forest_trees();
     if (_room_name == "farm") scr_check_collection_unlocks();
+    
+    // Rain object lifecycle
+    if (global.weather_today == "rain" && scr_is_outdoor_room()) {
+        if (!instance_exists(obj_rain))
+            instance_create_depth(0, 0, -9999, obj_rain);
+    } else {
+        if (instance_exists(obj_rain))
+            instance_destroy(obj_rain);
+    }
 }
 
 if (global.forest_needs_repopulate && _room_name == "forest"
@@ -129,6 +138,20 @@ if (global.net_role != NET_ROLE.CLIENT && !pause_menu_open) {
             net_send_time_update();
         }
     }
+
+    // Thunder logic
+    if (global.weather_today == "rain" && scr_is_outdoor_room() && global.net_role != NET_ROLE.CLIENT) {
+        if (global.thunder_timer < 0)
+            global.thunder_timer = irandom_range(1800, 7200);
+        global.thunder_timer--;
+        if (global.thunder_timer <= 0) {
+            global.thunder_timer = -1;
+            global.lightning_flash = 4;
+        }
+    } else {
+        global.thunder_timer = -1;
+    }
+    if (global.lightning_flash > 0) global.lightning_flash--;
 }
 
 
@@ -238,6 +261,14 @@ else if (chat_open) {
                     } else {
                         scr_notify("Estacion invalida. Usa: spring summer fall winter");
                     }
+                }
+            } else if (_cmd == "set_weather" && array_length(_parts) >= 2) {
+                var _w = _parts[1];
+                if (_w == "rain" || _w == "sunny") {
+                    global.weather_today = _w;
+                    scr_notify("Clima: " + _w);
+                } else {
+                    scr_notify("Usa: rain o sunny");
                 }
             } else if (_cmd == "spawn_enemy" && array_length(_parts) >= 2) {
                 var _ename = _parts[1];
@@ -463,6 +494,11 @@ if (keyboard_check_pressed(ord("P"))) {
 }
 
 if (keyboard_check_pressed(ord("O"))) start_new_day();
+
+if (keyboard_check_pressed(ord("R"))) {
+    global.force_rain_tomorrow = !global.force_rain_tomorrow;
+    scr_notify(global.force_rain_tomorrow ? "Lluvia forzada manana" : "Clima normal");
+}
 
 if (keyboard_check_pressed(ord("L"))) {
     global.game_hour += 1;

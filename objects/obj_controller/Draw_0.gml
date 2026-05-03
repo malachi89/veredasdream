@@ -53,6 +53,13 @@ if (fade_alpha > 0) {
     draw_set_alpha(1.0);
 }
 
+// Rain overcast overlay
+if (global.weather_today == "rain" && scr_is_outdoor_room()) {
+    draw_set_alpha(0.12);
+    draw_rectangle_color(0, 0, display_get_gui_width(), display_get_gui_height(), c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+}
+
 // Night darkness overlay (after 6 PM)
 var night_start = 18;
 var night_progress = (global.game_hour - night_start + global.game_minute / 60) / (24 - night_start);

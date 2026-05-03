@@ -671,6 +671,20 @@ function scr_advance_stored_room_states(_exclude_room_name) {
         var _room_name = _rooms[r];
         if (_room_name == _exclude_room_name) continue;
         var _state = global.room_states[$ _room_name];
+
+        // Rain auto-watering for off-screen rooms
+        if (global.weather_today == "rain") {
+            for (var _ri = 0; _ri < array_length(_state.crops); _ri++) {
+                var _rc = _state.crops[_ri];
+                var _is_tree_rc = variable_struct_exists(_rc, "is_fruit_tree") && _rc.is_fruit_tree;
+                if (!_is_tree_rc) _rc.is_watered = true;
+            }
+            for (var _rj = 0; _rj < array_length(_state.tilled_tiles); _rj++) {
+                if (_state.tilled_tiles[_rj].tile == 72)
+                    _state.tilled_tiles[_rj].tile = 168;
+            }
+        }
+
         for (var i = 0; i < array_length(_state.crops); i++) {
             var _c_data = _state.crops[i];
             
@@ -789,7 +803,8 @@ function scr_save_game() {
         mine_unlocks: global.mine_unlocks,
         mine_progress: global.mine_progress,
         collected_items: global.collected_items,
-        shipped_quantities: global.shipped_quantities
+        shipped_quantities: global.shipped_quantities,
+        weather: global.weather_today
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     if (global.save_slot > 0) scr_slot_write_info(global.save_slot);
@@ -812,6 +827,10 @@ function scr_apply_loaded_game(_save_data) {
     global.year = _save_data.time.year;
     global.season_index = _save_data.time.season_index;
     global.season = _save_data.time.season;
+    if (variable_struct_exists(_save_data, "weather"))
+        global.weather_today = _save_data.weather;
+    else
+        global.weather_today = "sunny";
     global.room_states = _save_data.room_states;
     global.farm_populated = variable_struct_exists(global.room_states, "farm");
     global.room_drops = _save_data.room_drops;

@@ -24,6 +24,12 @@ if (_room == "forest") {
     _target_track = _season_track;
 }
 
+// Override with rain music on rainy days in outdoor rooms
+var _is_outdoor_rain = (global.weather_today == "rain" && scr_is_outdoor_room());
+if (_is_outdoor_rain) {
+    _target_track = sound_music_when_rains;
+}
+
 if (_music_volume <= 0) {
     if (current_music_instance != noone) {
         audio_stop_sound(current_music_instance);
@@ -42,11 +48,13 @@ if (current_track != _target_track || current_music_instance == noone || _advanc
     current_track = _target_track;
     current_music_instance = noone;
 
+    var _loop = _is_outdoor_rain || !_use_sequence;
     if (audio_exists(current_track)) {
-        current_music_instance = audio_play_sound(current_track, 10, !_use_sequence);
+        current_music_instance = audio_play_sound(current_track, 10, _loop);
     }
 }
 
 if (current_music_instance != noone) {
-    audio_sound_gain(current_music_instance, _music_volume, 0);
+    var _gain = _is_outdoor_rain ? _music_volume * 0.7 : _music_volume;
+    audio_sound_gain(current_music_instance, _gain, 0);
 }

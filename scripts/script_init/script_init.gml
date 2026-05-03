@@ -1825,3 +1825,8 @@ function scr_match_machine_recipe(_machine_type, _item_key) {
 
     return undefined;
 }
+
+function scr_is_outdoor_room() {
+    var _rn = room_get_name(room);
+    return (_rn == "farm" || _rn == "forest" || _rn == "town" || _rn == "road_to_cave");
+}

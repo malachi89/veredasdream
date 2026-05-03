@@ -38,6 +38,15 @@ midnight_collapse_done = false;
 
 function start_new_day() {
     midnight_collapse_done = false;
+    global.lightning_flash = 0;
+
+    if (global.force_rain_tomorrow) {
+        global.weather_today = "rain";
+        global.force_rain_tomorrow = false;
+    } else {
+        global.weather_today = (irandom(99) < 20) ? "rain" : "sunny";
+    }
+    if (global.weather_today == "rain") scr_notify("Hoy llovera");
     fade_alpha = 1.0;
     is_fading_in = true;
 
@@ -62,7 +71,7 @@ function start_new_day() {
         }
     }
 
-    global.forest_needs_repopulate = true;
+global.forest_needs_repopulate = true;
     var _cave_keys = struct_get_names(global.cave_repopulate);
     for (var _i = 0; _i < array_length(_cave_keys); _i++) {
         global.cave_repopulate[$ _cave_keys[_i]] = true;
@@ -70,6 +79,22 @@ function start_new_day() {
     scr_advance_stored_room_states(room_get_name(room));
     scr_advance_common_trees();
     if (_is_season_change) scr_remove_out_of_season_crops();
+
+    if (global.weather_today == "rain") {
+        var _rain_lay = layer_get_id("Tiles_tilled_watered");
+        if (_rain_lay != -1) {
+            var _rain_map = layer_tilemap_get_id(_rain_lay);
+            var _tw = tilemap_get_width(_rain_map);
+            var _th = tilemap_get_height(_rain_map);
+            for (var _rtx = 0; _rtx < _tw; _rtx++) {
+                for (var _rty = 0; _rty < _th; _rty++) {
+                    if (tilemap_get(_rain_map, _rtx, _rty) == 72)
+                        tilemap_set(_rain_map, 168, _rtx, _rty);
+                }
+            }
+        }
+        with (obj_crop) is_watered = true;
+    }
 
     var _lay_id = layer_get_id("Tiles_tilled_watered");
     if (_lay_id != -1) {
@@ -198,6 +223,10 @@ global.season_index = 0;
 global.season = global.season_list[global.season_index];
 global.season_names = { spring: "Primavera", summer: "Verano", fall: "Otono", winter: "Invierno" };
 global.day_names = ["Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sab.", "Dom."];
+global.weather_today = "sunny";
+global.force_rain_tomorrow = false;
+global.thunder_timer = -1;
+global.lightning_flash = 0;
 
 gx = 0;
 gy = 0;
