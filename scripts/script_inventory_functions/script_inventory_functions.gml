@@ -778,6 +778,9 @@ function scr_save_game() {
 
     var _save_data = {
         version: 3,
+        slot: global.save_slot,
+        player_name: global.player_name,
+        farm_name: global.farm_name,
         time: { minute: global.game_minute, hour: global.game_hour, day: global.day, year: global.year, season_index: global.season_index, season: global.season },
         players: _players_arr,
         room_states: global.room_states,
@@ -789,6 +792,7 @@ function scr_save_game() {
         shipped_quantities: global.shipped_quantities
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
+    if (global.save_slot > 0) scr_slot_write_info(global.save_slot);
     show_debug_message("Game saved to: " + global.save_file_path);
     scr_notify("Juego guardado");
 }
@@ -812,6 +816,9 @@ function scr_apply_loaded_game(_save_data) {
     global.farm_populated = variable_struct_exists(global.room_states, "farm");
     global.room_drops = _save_data.room_drops;
     global.next_drop_uid = _save_data.next_drop_uid;
+    if (variable_struct_exists(_save_data, "player_name")) global.player_name = _save_data.player_name;
+    if (variable_struct_exists(_save_data, "farm_name")) global.farm_name = _save_data.farm_name;
+    if (variable_struct_exists(_save_data, "slot") && _save_data.slot > 0) scr_set_save_slot(_save_data.slot);
     if (variable_struct_exists(_save_data, "mine_unlocks")) global.mine_unlocks = _save_data.mine_unlocks;
     if (variable_struct_exists(_save_data, "mine_progress")) global.mine_progress = _save_data.mine_progress;
     if (variable_struct_exists(_save_data, "collected_items")) {
@@ -1406,4 +1413,73 @@ function scr_blacksmith_upgrade(_tool_key, _player = global.local_player) {
     _player.shop_msg = "Herramienta mejorada!";
     _player.shop_msg_timer = 90;
     scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
+}
+
+function scr_slot_get_path(_slot) {
+    return "saves/slot_" + string(_slot) + "/savegame.json";
+}
+
+function scr_slot_get_info_path(_slot) {
+    return "saves/slot_" + string(_slot) + "/slot_info.json";
+}
+
+function scr_slot_is_occupied(_slot) {
+    return file_exists(scr_slot_get_path(_slot));
+}
+
+function scr_slot_read_info(_slot) {
+    // Try reading slot_info.json first (fast path)
+    var _info_path = scr_slot_get_info_path(_slot);
+    if (file_exists(_info_path)) {
+        var _raw = scr_read_text_file(_info_path);
+        if (_raw != "") {
+            var _parsed = json_parse(_raw);
+            if (is_struct(_parsed)) return _parsed;
+        }
+    }
+    // Fallback: read full savegame
+    var _save_path = scr_slot_get_path(_slot);
+    if (!file_exists(_save_path)) return undefined;
+    var _raw = scr_read_text_file(_save_path);
+    if (_raw == "") return undefined;
+    var _data = json_parse(_raw);
+    if (!is_struct(_data)) return undefined;
+    return {
+        farm_name: variable_struct_exists(_data, "farm_name") ? _data.farm_name : "",
+        player_name: variable_struct_exists(_data, "player_name") ? _data.player_name : "",
+        day: _data.time.day,
+        season_index: _data.time.season_index,
+        season: variable_struct_exists(_data.time, "season") ? _data.time.season : "spring",
+        year: _data.time.year
+    };
+}
+
+function scr_slot_write_info(_slot) {
+    if (_slot <= 0) exit;
+    var _info = {
+        farm_name: global.farm_name,
+        player_name: global.player_name,
+        day: global.day,
+        season_index: global.season_index,
+        season: global.season,
+        year: global.year
+    };
+    var _path = scr_slot_get_info_path(_slot);
+    scr_write_text_file(_path, json_stringify(_info));
+}
+
+function scr_set_save_slot(_slot) {
+    global.save_slot = _slot;
+    global.save_dir = "saves";
+    if (!directory_exists(global.save_dir)) directory_create(global.save_dir);
+    var _slot_dir = "saves/slot_" + string(_slot);
+    if (!directory_exists(_slot_dir)) directory_create(_slot_dir);
+    global.save_file_path = _slot_dir + "/savegame.json";
+}
+
+function scr_delete_save_slot(_slot) {
+    var _save_path = scr_slot_get_path(_slot);
+    var _info_path = scr_slot_get_info_path(_slot);
+    if (file_exists(_save_path)) file_delete(_save_path);
+    if (file_exists(_info_path)) file_delete(_info_path);
 }

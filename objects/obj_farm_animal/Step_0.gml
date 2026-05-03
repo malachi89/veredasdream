@@ -12,6 +12,13 @@ if (hp <= 0) {
         var _cd = _adata.crafting_drops;
         inventory_drop_item(_cd[irandom(array_length(_cd) - 1)], 1, x, y);
     }
+    // 5% de probabilidad de dropear un arma
+    if (random(1) < 0.05) {
+        var _w_type  = choose("sword", "bow");
+        var _w_level = irandom(9) + 1;
+        inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 15);
+    }
+
     global.collected_items[$ "farm_" + animal_type] = true;
     scr_check_collection_unlocks();
     instance_destroy();

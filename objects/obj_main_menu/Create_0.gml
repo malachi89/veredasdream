@@ -2,11 +2,7 @@ menu_music = audio_play_sound(sound_main_menu_theme, 10, true);
 
 save_exists = file_exists(global.save_file_path);
 
-if (save_exists) {
-    options = ["Continuar", "Nueva Granja", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
-} else {
-    options = ["Nueva Granja", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
-}
+options = ["Nueva Granja", "Continuar", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
 selected_index = 0;
 
 notif_text  = "";
@@ -50,3 +46,27 @@ for (var _i = 0; _i < array_length(settings_items); _i++) {
         }
     }
 }
+
+// --- Save slot system ---
+slot_select_mode = "";    // "", "new", "continue", "host", "delete"
+slot_selected = 0;        // 0 = none, 1-3
+slot_occupied = [false, false, false];
+slot_info = [undefined, undefined, undefined];
+// Populate slot info from save files
+for (var _s = 0; _s < 3; _s++) {
+    slot_occupied[_s] = scr_slot_is_occupied(_s + 1);
+    if (slot_occupied[_s]) {
+        slot_info[_s] = scr_slot_read_info(_s + 1);
+    }
+}
+
+// Name entry state
+name_entry_mode = false;
+name_entry_field = 0; // 0 = farm name, 1 = player name
+farm_name_input = "";
+player_name_input = "";
+
+// Confirmation dialogs
+confirm_overwrite = false;
+confirm_delete = false;
+confirm_selection = 0; // 0 = No, 1 = Si

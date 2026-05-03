@@ -23,8 +23,8 @@ if (!is_initialized && item_key != "") {
         subimg = _data.subimg;
         col_offset = variable_struct_exists(_data, "offset_x") ? _data.offset_x : 0;
         row_offset = variable_struct_exists(_data, "offset_y") ? _data.offset_y : 0;
+        is_initialized = true;
     }
-    is_initialized = true;
 }
 
 // 2. Fisica de caida (Suelo)

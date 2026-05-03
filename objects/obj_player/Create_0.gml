@@ -177,6 +177,41 @@ function scr_inventory_swap(_target_array, _index) {
 
     var _item_en_slot = _target_array[_index];
 
+    if (is_struct(held_item) && is_struct(_item_en_slot)) {
+        var _held_data = scr_get_item_data(held_item.key);
+        if (is_struct(_held_data) && _held_data.type == ITEM_TYPE.DYE) {
+            if (variable_struct_exists(global.crafting_material_data, _item_en_slot.key)) {
+                var _dye_color = string_delete(held_item.key, 1, 4);
+                var _colors = ["red","orange","yellow","green","blue","lilac","purple","turquoise","pink","lime","amber","brown","black","white"];
+                var _old_color = "";
+                for (var _ci = 0; _ci < array_length(_colors); _ci++) {
+                    var _suf = "_" + _colors[_ci];
+                    var _slen = string_length(_suf);
+                    var _klen = string_length(_item_en_slot.key);
+                    if (_klen > _slen && string_copy(_item_en_slot.key, _klen - _slen + 1, _slen) == _suf) {
+                        _old_color = _colors[_ci];
+                        break;
+                    }
+                }
+                if (_old_color != "") {
+                    var _type_prefix = string_copy(_item_en_slot.key, 1, string_length(_item_en_slot.key) - string_length(_old_color) - 1);
+                    var _new_key = _type_prefix + "_" + _dye_color;
+                    if (variable_struct_exists(global.crafting_material_data, _new_key)) {
+                        if (_old_color == _dye_color) {
+                            scr_notify("Ya tiene ese color");
+                            return;
+                        }
+                        _item_en_slot.key = _new_key;
+                        held_item.quantity -= 1;
+                        if (held_item.quantity <= 0) held_item = -1;
+                        scr_notify("¡" + global.crafting_material_data[$ _new_key].name + "!");
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     if (held_item != -1 && is_struct(_item_en_slot)) {
         if (held_item.key == _item_en_slot.key) {
             var _total = _item_en_slot.quantity + held_item.quantity;

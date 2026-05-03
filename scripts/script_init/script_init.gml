@@ -577,26 +577,26 @@ global.tool_data = {
 // --- BASE DE DATOS DE ARMAS (encontradas en el mundo, 10 niveles) ---
 global.weapon_data = {};
 var _wd = global.weapon_data;
-_wd[$ "sword_1"]  = { name: "Espada Nv.1",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  1, damage:  2, sellable: false, droppable: false };
-_wd[$ "sword_2"]  = { name: "Espada Nv.2",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  2, damage:  5, sellable: false, droppable: false };
-_wd[$ "sword_3"]  = { name: "Espada Nv.3",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  3, damage:  9, sellable: false, droppable: false };
-_wd[$ "sword_4"]  = { name: "Espada Nv.4",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  4, damage: 14, sellable: false, droppable: false };
-_wd[$ "sword_5"]  = { name: "Espada Nv.5",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  5, damage: 20, sellable: false, droppable: false };
-_wd[$ "sword_6"]  = { name: "Espada Nv.6",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  6, damage: 27, sellable: false, droppable: false };
-_wd[$ "sword_7"]  = { name: "Espada Nv.7",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  7, damage: 35, sellable: false, droppable: false };
-_wd[$ "sword_8"]  = { name: "Espada Nv.8",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  8, damage: 40, sellable: false, droppable: false };
-_wd[$ "sword_9"]  = { name: "Espada Nv.9",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level:  9, damage: 45, sellable: false, droppable: false };
-_wd[$ "sword_10"] = { name: "Espada Nv.10", type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_sword, subimg: 0, level: 10, damage: 50, sellable: false, droppable: false };
-_wd[$ "bow_1"]    = { name: "Arco Nv.1",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  1, damage:  1, sellable: false, droppable: false };
-_wd[$ "bow_2"]    = { name: "Arco Nv.2",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  2, damage:  3, sellable: false, droppable: false };
-_wd[$ "bow_3"]    = { name: "Arco Nv.3",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  3, damage:  6, sellable: false, droppable: false };
-_wd[$ "bow_4"]    = { name: "Arco Nv.4",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  4, damage: 10, sellable: false, droppable: false };
-_wd[$ "bow_5"]    = { name: "Arco Nv.5",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  5, damage: 15, sellable: false, droppable: false };
-_wd[$ "bow_6"]    = { name: "Arco Nv.6",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  6, damage: 21, sellable: false, droppable: false };
-_wd[$ "bow_7"]    = { name: "Arco Nv.7",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  7, damage: 28, sellable: false, droppable: false };
-_wd[$ "bow_8"]    = { name: "Arco Nv.8",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  8, damage: 34, sellable: false, droppable: false };
-_wd[$ "bow_9"]    = { name: "Arco Nv.9",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level:  9, damage: 40, sellable: false, droppable: false };
-_wd[$ "bow_10"]   = { name: "Arco Nv.10",   type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_tools, subimg: 4, level: 10, damage: 45, sellable: false, droppable: false };
+_wd[$ "sword_1"]  = { name: "Espada Nv.1",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 10, level:  1, damage:  2, sellable: false, droppable: false };
+_wd[$ "sword_2"]  = { name: "Espada Nv.2",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 11, level:  2, damage:  5, sellable: false, droppable: false };
+_wd[$ "sword_3"]  = { name: "Espada Nv.3",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 12, level:  3, damage:  9, sellable: false, droppable: false };
+_wd[$ "sword_4"]  = { name: "Espada Nv.4",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 13, level:  4, damage: 14, sellable: false, droppable: false };
+_wd[$ "sword_5"]  = { name: "Espada Nv.5",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 14, level:  5, damage: 20, sellable: false, droppable: false };
+_wd[$ "sword_6"]  = { name: "Espada Nv.6",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 15, level:  6, damage: 27, sellable: false, droppable: false };
+_wd[$ "sword_7"]  = { name: "Espada Nv.7",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 16, level:  7, damage: 35, sellable: false, droppable: false };
+_wd[$ "sword_8"]  = { name: "Espada Nv.8",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 17, level:  8, damage: 40, sellable: false, droppable: false };
+_wd[$ "sword_9"]  = { name: "Espada Nv.9",  type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 18, level:  9, damage: 45, sellable: false, droppable: false };
+_wd[$ "sword_10"] = { name: "Espada Nv.10", type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.SWORD, sprite: sprite_weapons, subimg: 19, level: 10, damage: 50, sellable: false, droppable: false };
+_wd[$ "bow_1"]    = { name: "Arco Nv.1",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 0, level:  1, damage:  1, sellable: false, droppable: false };
+_wd[$ "bow_2"]    = { name: "Arco Nv.2",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 1, level:  2, damage:  3, sellable: false, droppable: false };
+_wd[$ "bow_3"]    = { name: "Arco Nv.3",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 2, level:  3, damage:  6, sellable: false, droppable: false };
+_wd[$ "bow_4"]    = { name: "Arco Nv.4",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 3, level:  4, damage: 10, sellable: false, droppable: false };
+_wd[$ "bow_5"]    = { name: "Arco Nv.5",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 4, level:  5, damage: 15, sellable: false, droppable: false };
+_wd[$ "bow_6"]    = { name: "Arco Nv.6",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 5, level:  6, damage: 21, sellable: false, droppable: false };
+_wd[$ "bow_7"]    = { name: "Arco Nv.7",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 6, level:  7, damage: 28, sellable: false, droppable: false };
+_wd[$ "bow_8"]    = { name: "Arco Nv.8",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 7, level:  8, damage: 34, sellable: false, droppable: false };
+_wd[$ "bow_9"]    = { name: "Arco Nv.9",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 8, level:  9, damage: 40, sellable: false, droppable: false };
+_wd[$ "bow_10"]   = { name: "Arco Nv.10",   type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 9, level: 10, damage: 45, sellable: false, droppable: false };
 
 global.placeable_data = {
     chest: {
@@ -1167,6 +1167,16 @@ global.npc_dialogues = [
     "Mi primo jura que vio al Cochabebes una vez en la colonia Villa Juarez, salio corriendo.",
     "Cuando yo vivia en Chihuahua, mi mama no me dejaba ir solo por miedo al Cochabebes.",
     "Ojala hubieran agarrado al Cochabebes antes de que hiciera tanto dano en Chihuahua.",
+    "¡Hola, {player_name}! ¿Cómo va la cosecha por {farm_name}?",
+    "He oido que la granja {farm_name} esta dando frutos bien sabrosos, {player_name}.",
+    "¡{player_name}! Pásele a la tienda, tengo semillas frescas para {farm_name}.",
+    "¿Cómo está {player_name}? Dicen que {farm_name} es la mejor granja de Veredas del Sur.",
+    "¡{player_name}! Cuando vengas a {farm_name} no olvides traerme unos Cheetos.",
+    "Oye {player_name}, ¿ya terminaste de construir el granero de {farm_name}?",
+    "¿{player_name} sabes que en {farm_name} se respira un aire bien puro? Como en la sierra.",
+    "¡Saludos desde la tienda, {player_name}! Que {farm_name} siga creciendo.",
+    "¿{player_name}, ya viste el bei de la granja {farm_name}? Dicen que esta en $500.",
+    "¡{player_name}! La {farm_name} se ve bien bonita esta temporada.",
 ];
 
 // price_items: array de { key, qty } requeridos ademas del dinero

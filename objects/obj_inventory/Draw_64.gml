@@ -435,7 +435,10 @@ if (_p.dialog_open) {
     var _dgw   = display_get_gui_width();
     var _dgh   = display_get_gui_height();
     var _dbw   = _dgw - 80;
-    var _lines = string_split(_p.dialog_text, "\n");
+    // Replace placeholders in dialogue text
+    var _display_text = string_replace_all(_p.dialog_text, "{player_name}", global.player_name);
+    _display_text = string_replace_all(_display_text, "{farm_name}", global.farm_name);
+    var _lines = string_split(_display_text, "\n");
     var _dbh   = (array_length(_lines) > 1) ? 190 : 120;
     var _dbx1  = 40;
     var _dby1  = _dgh - _dbh - 20;

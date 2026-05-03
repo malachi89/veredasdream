@@ -204,7 +204,8 @@ if (shipping_summary_open) {
     // Encabezado
     draw_set_halign(fa_center);
     draw_set_valign(fa_top);
-    draw_text_transformed_color(_cx, _ty1 + 30, "VEREDAS DREAM - RECIBO", 2, 2, 0, c_black, c_black, c_black, c_black, 1);
+    var _receipt_header = (global.farm_name != "") ? global.farm_name + " - NOTA DE VENTA" : "VEREDAS DREAM - NOTA DE VENTA";
+    draw_text_transformed_color(_cx, _ty1 + 30, _receipt_header, 2, 2, 0, c_black, c_black, c_black, c_black, 1);
     draw_text_transformed_color(_cx, _ty1 + 65, "--------------------------------", 1.5, 1.5, 0, c_black, c_black, c_black, c_black, 1);
     
     // Listado de items

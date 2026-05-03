@@ -24,6 +24,13 @@ if (hp <= 0) {
             inventory_drop_item(_wdrops[irandom(array_length(_wdrops) - 1)], 1, x, y);
         }
     }
+    // 5% de probabilidad de dropear un arma
+    if (random(1) < 0.05) {
+        var _w_type  = choose("sword", "bow");
+        var _w_level = irandom(9) + 1;
+        inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 15);
+    }
+
     if (is_farm_animal) {
         global.collected_items[$ "farm_" + animal_key] = true;
     } else {

@@ -358,17 +358,22 @@ if (hurt_timer <= 0 && hp > 0) {
 
 // Muerte por HP = 0
 if (hp <= 0) {
-    hp = max_hp;
+    hp = 4;
     energy = max_energy;
     var _lost = floor(money * 0.1);
     money = max(0, money - _lost);
     scr_notify("Te has desmayado! Has perdido MXN$ " + string(_lost));
-    var _bed = instance_find(obj_bed, 0);
-    if (_bed != noone) {
-        x = _bed.x + 40;
-        y = _bed.y + 18;
-        dir = DIR.RIGHT;
+    if (room_get_name(room) != "farm_house") {
+        scr_capture_current_room_state();
+        room_goto(farm_house);
+    } else {
+        scr_capture_current_room_state();
     }
+    global.mine_state.active = false;
+    global.mine_state.floor = 1;
+    x = 110;
+    y = 120;
+    dir = DIR.RIGHT;
 }
 
 // Auto-enter open mine door when walking through it
@@ -537,17 +542,28 @@ if (state == STATE.ACTING) {
                         // Host resolves which fish is caught; result comes back as INVENTORY_UPDATE.
                         net_send_fish_reel();
                     } else {
-                        var _pool = global.fish_pool[global.season_index];
-                        var _fish_key  = _pool[irandom(array_length(_pool) - 1)];
-                        var _fish_data = global.fish_data[$ _fish_key];
-                        var _fw = undefined;
-                        if (variable_struct_exists(_fish_data, "weight_min")) {
-                            _fw = round(random_range(_fish_data.weight_min, _fish_data.weight_max) * 100) / 100;
+                        // 3% de probabilidad de pescar un arma
+                        if (random(1) < 0.03) {
+                            var _w_type  = choose("sword", "bow");
+                            var _w_level = irandom(9) + 1;
+                            var _w_key   = _w_type + "_" + string(_w_level);
+                            add_item(_w_key, 1);
+                            energy -= 10;
+                            var _wn = global.weapon_data[$ _w_key].name;
+                            scr_notify("¡Atrapaste " + _wn + "!");
+                        } else {
+                            var _pool = global.fish_pool[global.season_index];
+                            var _fish_key  = _pool[irandom(array_length(_pool) - 1)];
+                            var _fish_data = global.fish_data[$ _fish_key];
+                            var _fw = undefined;
+                            if (variable_struct_exists(_fish_data, "weight_min")) {
+                                _fw = round(random_range(_fish_data.weight_min, _fish_data.weight_max) * 100) / 100;
+                            }
+                            add_item(_fish_key, 1, _fw);
+                            energy -= 10;
+                            var _fw_str = (_fw != undefined) ? " (" + scr_format_weight(_fw) + ")" : "";
+                            scr_notify("¡Atrapaste un " + _fish_data.name + _fw_str + "!");
                         }
-                        add_item(_fish_key, 1, _fw);
-                        energy -= 10;
-                        var _fw_str = (_fw != undefined) ? " (" + scr_format_weight(_fw) + ")" : "";
-                        scr_notify("¡Atrapaste un " + _fish_data.name + _fw_str + "!");
                     }
                     state      = STATE.IDLE;
                     frame_anim = 0;

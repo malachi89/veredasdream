@@ -417,7 +417,12 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                                     var _drop_x = _px + 8;
                                     var _drop_y = _py + 8;
 
-                                    if (random(1) < _tier_stats.treasure_chance) {
+                                    if (random(1) < 0.03) {
+                                        // 3% de encontrar un arma enterrada
+                                        var _w_type  = choose("sword", "bow");
+                                        var _w_level = irandom(9) + 1;
+                                        inventory_drop_item(_w_type + "_" + string(_w_level), 1, _drop_x, _drop_y, 15);
+                                    } else if (random(1) < _tier_stats.treasure_chance) {
                                         var _gkey = global.gemstone_pool[irandom(array_length(global.gemstone_pool) - 1)];
                                         inventory_drop_item(_gkey, 1, _drop_x, _drop_y, 15);
                                     } else {

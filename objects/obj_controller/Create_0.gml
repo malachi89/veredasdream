@@ -27,6 +27,9 @@ global.farm_needs_repopulate_test_animals = false; // used by debug command test
 // money vive en obj_player.money (per-player). global.local_player apunta al jugador de esta maquina.
 global.local_player = noone;
 global.net_role = NET_ROLE.NONE;
+global.player_name = "";
+global.farm_name = "";
+global.save_slot = 0;
 
 time_tick_counter = 0;
 time_frames_per_minute = (360 / global.time_multiplier);
@@ -200,8 +203,7 @@ global.next_drop_uid = 0;
 global.room_states = {};
 global.save_dir = "saves";
 if (!directory_exists(global.save_dir)) directory_create(global.save_dir);
-global.save_file_path = global.save_dir + "\\savegame.json";
-show_debug_message("Save path: " + global.save_file_path);
+global.save_file_path = "";
 global.pending_player_room_name = "";
 global.pending_player_x = 0;
 global.pending_player_y = 0;
@@ -243,7 +245,7 @@ pause_menu_open = false;
 pause_menu_selection = 0; // 0=Continuar, 1=Menu Principal, 2=Salir
 
 current_room_name = room_get_name(room);
-pending_loaded_game = scr_read_save_game();
+pending_loaded_game = undefined;
 load_needs_apply = false; // Menu handles it
 
 // Fade variables for day start

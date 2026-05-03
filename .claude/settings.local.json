@@ -49,7 +49,10 @@
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(Test-Path *)",
       "PowerShell($items = @\\(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\datafiles\" -Force -ErrorAction SilentlyContinue\\); if \\($items.Count -eq 0\\) { Write-Output \"Datafiles folder is empty\" } else { $items | Select-Object Name, FullName })",
-      "Bash(Remove-Item *)"
+      "Bash(Remove-Item *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(grep -i \"\\\\.gml$\")"
     ]
   }
 }
