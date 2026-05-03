@@ -139,15 +139,25 @@ function midnight_collapse() {
         global.local_player.dir = DIR.RIGHT;
     }
 
-    // Process shipping
+    // Process ghost (client) shipping first so their items are not lost
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost)) {
+            var _client_summary = scr_process_shipping(_ghost);
+            net_send_money_update(2, _ghost.money);
+            net_send_shipping_summary(2, _client_summary);
+        }
+    }
+
+    // Process host shipping
     var _summary = scr_process_shipping(_lp);
 
     if (array_length(_summary.items) > 0) {
         shipping_summary_data = _summary;
         shipping_summary_open = true;
     } else {
+        if (global.net_role != NET_ROLE.CLIENT) scr_save_game();
         start_new_day();
-        scr_save_game();
         scr_notify("Dia terminado");
     }
 }

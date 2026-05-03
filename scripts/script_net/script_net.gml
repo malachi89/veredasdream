@@ -167,6 +167,9 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.SHIPPING_SUMMARY:
             net_handle_shipping_summary(_payload);
             break;
+        case NET_CMD.CMD_NAP:
+            net_handle_nap();
+            break;
         case NET_CMD.NEW_DAY:
             net_handle_new_day(_payload);
             break;
@@ -225,6 +228,8 @@ function net_handle_handshake(_payload, _client_socket) {
         _g.persistent = true;
         _g.money      = 200;
         _g.energy     = 500;
+        _g.hp         = 20;
+        _g.max_hp     = 20;
         // Clear default inventory and give client starting items
         for (var _gi = 0; _gi < 30; _gi++) _g.inventory_array[_gi] = -1;
         for (var _gi = 0; _gi < 64; _gi++) _g.backpack_array[_gi]  = -1;
@@ -862,6 +867,31 @@ function net_handle_new_day(_payload) {
     scr_notify("Nuevo dia: dia " + string(global.day));
 }
 
+// --- Nap (client → host) ---
+
+function net_send_nap() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_NAP);
+    net_broadcast(_buf);
+}
+
+function net_handle_nap() {
+    if (global.net_role != NET_ROLE.HOST) return;
+
+    global.game_hour += 5;
+
+    // Restore energy on ghost
+    var _ghost = obj_net.remote_player_ghost;
+    if (instance_exists(_ghost)) {
+        _ghost.energy = _ghost.max_energy;
+        net_send_energy_update(2, _ghost.energy);
+    }
+
+    // Sync time and notify
+    net_send_time_update();
+    net_send_notify_peer("Siesta completada. Energia restaurada.");
+}
+
 // --- World events ---
 
 function net_handle_world_event(_payload) {
@@ -1028,6 +1058,16 @@ function net_handle_use_item(_payload) {
         }
     }
 
+    // Bow: scr_use_item only sets animation for BOW type; create arrow manually.
+    // The ghost never runs its Step event so bow_drawing never triggers arrow creation.
+    if (variable_struct_exists(global.weapon_data, _item_key)) {
+        var _wdata = global.weapon_data[$ _item_key];
+        if (_wdata.tool_type == TOOL_TYPE.BOW) {
+            var _arr = instance_create_layer(_ghost.x + 16, _ghost.y + 16, "Instances", obj_arrow);
+            _arr.damage = _wdata.damage;
+        }
+    }
+
     // Return ghost off-screen
     _ghost.x = -2000;
     _ghost.y = -2000;
@@ -1082,14 +1122,29 @@ function net_handle_inventory_update(_payload) {
     var _index = buffer_read(_payload, buffer_u8);
     var _json  = buffer_read(_payload, buffer_string);
 
-    var _lp = global.local_player;
-    if (!instance_exists(_lp) || _lp.player_id != _pid) return;
-
     var _slot = (_json == "null" || _json == "-1") ? -1 : json_parse(_json);
-    if (_kind == 0) {
-        _lp.inventory_array[_index] = _slot;
-    } else if (_kind == 1) {
-        _lp.backpack_array[_index] = _slot;
+
+    // Update local player if this update targets them.
+    var _lp = global.local_player;
+    if (instance_exists(_lp) && _lp.player_id == _pid) {
+        if (_kind == 0) {
+            _lp.inventory_array[_index] = _slot;
+        } else if (_kind == 1) {
+            _lp.backpack_array[_index] = _slot;
+        }
+        return;
+    }
+
+    // If host, also forward the update to the ghost so ghost inventory stays in sync.
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net)) {
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost) && _ghost.player_id == _pid) {
+            if (_kind == 0) {
+                _ghost.inventory_array[_index] = _slot;
+            } else if (_kind == 1) {
+                _ghost.backpack_array[_index] = _slot;
+            }
+        }
     }
 }
 

@@ -40,6 +40,7 @@ enum NET_CMD {
     SLEEP_PROMPT     = 81,
     SLEEP_RESPONSE   = 82,
     SHIPPING_SUMMARY = 83,
+    CMD_NAP          = 84,
     NOTIFY           = 96,
     DISCONNECT       = 112
 }

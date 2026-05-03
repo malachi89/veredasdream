@@ -363,6 +363,10 @@ if (hp <= 0) {
     var _lost = floor(money * 0.1);
     money = max(0, money - _lost);
     scr_notify("Te has desmayado! Has perdido MXN$ " + string(_lost));
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_money_update(player_id, money);
+        net_send_energy_update(player_id, energy);
+    }
     if (room_get_name(room) != "farm_house") {
         scr_capture_current_room_state();
         room_goto(farm_house);

@@ -993,8 +993,25 @@ function scr_take_nap() {
     var _lp = global.local_player;
     if (!instance_exists(_lp)) exit;
 
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        // Request nap from host — host handles time/energy authority.
+        net_send_nap();
+        scr_notify("Esperando siesta...");
+        return;
+    }
+
     global.game_hour += 5;
     _lp.energy = _lp.max_energy;
+
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        // Restore energy on ghost as well
+        var _ghost = obj_net.remote_player_ghost;
+        if (instance_exists(_ghost)) {
+            _ghost.energy = _ghost.max_energy;
+            net_send_energy_update(2, _ghost.energy);
+        }
+        net_send_time_update();
+    }
 
     scr_notify("Siesta completada. Energia restaurada.");
 }
