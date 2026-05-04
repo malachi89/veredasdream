@@ -29,17 +29,11 @@ if (wanders) {
 
     var _blocked = place_meeting(_nx, _ny, obj_collision);
     if (!_blocked) {
-        var _tm_roads  = layer_tilemap_get_id("Tiles_roads");
-        var _tm_fences = layer_tilemap_get_id("Tiles_fences_bridges");
-        if (_tm_roads != -1 || _tm_fences != -1) {
-            var _on_valid = false;
-            if (_tm_roads  != -1 && tilemap_get_at_pixel(_tm_roads,  x, y) != 0) _on_valid = true;
-            if (_tm_fences != -1 && tilemap_get_at_pixel(_tm_fences, x, y) != 0) _on_valid = true;
-            if (_on_valid) {
-                var _valid = false;
-                if (_tm_roads  != -1 && tilemap_get_at_pixel(_tm_roads,  _nx, _ny) != 0) _valid = true;
-                if (_tm_fences != -1 && tilemap_get_at_pixel(_tm_fences, _nx, _ny) != 0) _valid = true;
-                if (!_valid) _blocked = true;
+        var _tm_floor = layer_tilemap_get_id("Tiles_floors_destroyed");
+        if (_tm_floor != -1) {
+            if (tilemap_get_at_pixel(_tm_floor, x, y) != 0) {
+                if (tilemap_get_at_pixel(_tm_floor, _nx, _ny) == 0)
+                    _blocked = true;
             }
         }
     }
