@@ -497,7 +497,7 @@ if (_p.shop_open) {
     draw_set_halign(fa_center);
     draw_set_valign(fa_top);
     draw_text_transformed_color(_px1 + _pw / 2, _py1 + 10, _clerk, 2.2, 2.2, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
-    var _header_line_y = _py1 + (_wb_or_bs ? 66 : 46);
+    var _header_line_y = _py1 + (_wb_or_bs ? 66 : 54);
     draw_set_color(c_silver);
     draw_line(_px1 + 10, _header_line_y, _px2 - 10, _header_line_y);
     draw_set_halign(fa_right);

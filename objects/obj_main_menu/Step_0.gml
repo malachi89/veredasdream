@@ -18,6 +18,31 @@ if (name_entry_mode) {
         player_name_input = keyboard_string;
     }
 
+    // Click detection for text fields
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _fn_bx = _cx + 10;
+    var _fn_by = _cy - 56;
+    var _fn_bw = 320;
+    var _fn_bh = 36;
+    var _pn_bx = _cx + 10;
+    var _pn_by = _cy + 14;
+    var _pn_bw = 320;
+    var _pn_bh = 36;
+
+    if (_mx >= _fn_bx && _mx <= _fn_bx + _fn_bw && _my >= _fn_by && _my <= _fn_by + _fn_bh) {
+        if (mouse_check_button_pressed(mb_left)) {
+            name_entry_field = 0;
+            keyboard_string = farm_name_input;
+        }
+    }
+    if (_mx >= _pn_bx && _mx <= _pn_bx + _pn_bw && _my >= _pn_by && _my <= _pn_by + _pn_bh) {
+        if (mouse_check_button_pressed(mb_left)) {
+            name_entry_field = 1;
+            keyboard_string = player_name_input;
+        }
+    }
+
     // Handle field switching and confirmation
     if (keyboard_check_pressed(vk_tab)) {
         name_entry_field = (name_entry_field + 1) % 2;

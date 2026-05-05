@@ -148,10 +148,27 @@ Building names: `chicken_coop`, `barn`, `stable`, `mill`, `greenhouse`
 
 Animal ids: `chicken`, `cow`, `duck`, `goat`, `ostrich`, `pig`, `sheep`
 
-## Debug Hotkeys
-- `O` — advance one day
-- `P` — advance one season
-- `U` — drop 5 tomato seeds at player position (calls `inventory_drop_item`)
+## Debug Console Commands (Enter para abrir)
+| Command | Description |
+|---------|-------------|
+| `add_item <key> <qty>` | Add items to inventory |
+| `add_animal <id>` | Spawn animal |
+| `upgrade_tool <key>` | Upgrade tool one tier |
+| `buy_building <name>` | Build (chicken_coop, barn, stable, mill, greenhouse) |
+| `set_money <amount>` | Set money |
+| `set_energy <amount>` | Set energy |
+| `heal` | Restore energy and HP |
+| `set_day <n>` | Set day (1-28) |
+| `set_hour <h>` | Set hour (0-23) |
+| `set_season <name>` | Set season (spring, summer, fall, winter) |
+| `set_weather <type>` | Weather (rain, sunny) |
+| `unlock <0-7>` | Unlock mine door |
+| `next_day` | Advance one day |
+| `next_season` | Advance one season |
+| `next_hour` | Advance one hour |
+| `toggle_rain` | Toggle forced rain for tomorrow |
+| `minigame` | Open insect catching minigame |
+| `spawn_seeds <qty>` | Spawn tomato seeds |
 
 ## Settings
 Runtime configuration is read from `settings.ini`:

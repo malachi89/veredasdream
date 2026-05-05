@@ -34,7 +34,8 @@ cur_eyes    = spr_eyes_idle;
 cur_clothes = spr_clothes_idle;
 cur_hair    = spr_hair_idle;
 
-var _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
+var _tm_buildings = -1;
+if (layer_exists("Tiles_buildings")) _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
 if (_tm_buildings != -1 && tilemap_get_at_pixel(_tm_buildings, x, y) != 0) {
     var _found = false;
     for (var _r = 16; _r <= 128 && !_found; _r += 16) {

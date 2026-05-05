@@ -29,7 +29,8 @@ if (wanders) {
 
     var _blocked = place_meeting(_nx, _ny, obj_collision);
     if (!_blocked) {
-        var _tm_floor = layer_tilemap_get_id("Tiles_floors_destroyed");
+        var _tm_floor = -1;
+        if (layer_exists("Tiles_floors_destroyed")) _tm_floor = layer_tilemap_get_id("Tiles_floors_destroyed");
         if (_tm_floor != -1) {
             if (tilemap_get_at_pixel(_tm_floor, x, y) != 0) {
                 if (tilemap_get_at_pixel(_tm_floor, _nx, _ny) == 0)
@@ -39,7 +40,8 @@ if (wanders) {
     }
 
     if (!_blocked) {
-        var _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
+        var _tm_buildings = -1;
+        if (layer_exists("Tiles_buildings")) _tm_buildings = layer_tilemap_get_id("Tiles_buildings");
         if (_tm_buildings != -1 && tilemap_get_at_pixel(_tm_buildings, _nx, _ny) != 0) {
             _blocked = true;
         }

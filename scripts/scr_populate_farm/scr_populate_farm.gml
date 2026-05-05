@@ -141,66 +141,103 @@ function scr_populate_farm() {
     var _y1            = 96;
     var _x2            = 1440;
     var _y2            = 848;
-    var _tree_count    = 84;
-    var _rock_count    = 150;
+    
+    // Randomize total counts
+    var _tree_count    = irandom_range(60, 90);
+    var _rock_count    = irandom_range(100, 160);
+    
     var _max_attempts  = 40;
     var _tree_radius   = 24; // Half-width of a tree sprite (~48px wide)
     var _rock_radius   = 8; // Half-width of a rock sprite (16px wide)
-    // Each placed entry: { x, y, r } — the required clearance radius
-    // Minimum distance between two objects = r_new + r_existing
     var _placed        = [];
 
     var _player_ref = obj_player;
     var _player_cx = instance_exists(_player_ref) ? _player_ref.x : -9999;
     var _player_cy = instance_exists(_player_ref) ? _player_ref.y : -9999;
-    var _player_clearance = 48;
+    var _player_clearance = 64; // Increased clearance for new farm
 
-    // --- Spawn trees ---
-    for (var i = 0; i < _tree_count; i++) {
-        for (var attempt = 0; attempt < _max_attempts; attempt++) {
-            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
-            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
-            var _ok = true;
-            for (var j = 0; j < array_length(_placed); j++) {
-                if (point_distance(_px, _py, _placed[j].x, _placed[j].y) < (_tree_radius + _placed[j].r)) {
-                    _ok = false;
-                    break;
-                }
-            }
-            if (_ok && point_distance(_px, _py, _player_cx, _player_cy) < (_tree_radius + _player_clearance)) {
-                _ok = false;
-            }
-            if (_ok) {
-                var _inst = instance_create_layer(_px, _py, "Instances", obj_common_tree);
-                _inst.tree_type    = _tree_types[irandom(3)];
-                // 70% chance of spawning fully grown, 30% at an early stage (1–3)
-                _inst.growth_stage = (random(1) < 0.7) ? 4 : irandom_range(1, 3);
-                array_push(_placed, { x: _px, y: _py, r: _tree_radius });
-                break;
+    // Helper function for collision check
+    var _check_ok = function(_px, _py, _radius, _placed_list, _pcx, _pcy, _pclearance) {
+        // Player clearance
+        if (point_distance(_px, _py, _pcx, _pcy) < (_radius + _pclearance)) return false;
+        
+        // Boundaries
+        if (_px < 48 || _px > 1440 - 16 || _py < 96 || _py > 848 - 16) return false;
+
+        // Overlap with other placed objects
+        for (var j = 0; j < array_length(_placed_list); j++) {
+            if (point_distance(_px, _py, _placed_list[j].x, _placed_list[j].y) < (_radius + _placed_list[j].r)) {
+                return false;
             }
         }
+        
+        // Static collisions
+        if (instance_position(_px + 8, _py + 8, obj_collision)) return false;
+        
+        return true;
+    };
+
+    // --- Spawn trees in clusters ---
+    var _trees_to_spawn = _tree_count;
+    var _t_attempts = 100;
+    while (_trees_to_spawn > 0 && _t_attempts > 0) {
+        // Pick a cluster seed
+        var _sx = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+        var _sy = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+        
+        if (_check_ok(_sx, _sy, _tree_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+            var _cluster_size = irandom_range(1, 4);
+            for (var c = 0; c < _cluster_size && _trees_to_spawn > 0; c++) {
+                var _tx, _ty;
+                if (c == 0) {
+                    _tx = _sx; _ty = _sy;
+                } else {
+                    // Try to place near the seed
+                    var _angle = random(360);
+                    var _dist = random_range(32, 64);
+                    _tx = floor((_sx + lengthdir_x(_dist, _angle)) / 16) * 16;
+                    _ty = floor((_sy + lengthdir_y(_dist, _angle)) / 16) * 16;
+                }
+                
+                if (_check_ok(_tx, _ty, _tree_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+                    var _inst = instance_create_layer(_tx, _ty, "Instances", obj_common_tree);
+                    _inst.tree_type    = _tree_types[irandom(3)];
+                    _inst.growth_stage = (random(1) < 0.7) ? 4 : irandom_range(1, 3);
+                    array_push(_placed, { x: _tx, y: _ty, r: _tree_radius });
+                    _trees_to_spawn--;
+                }
+            }
+        }
+        _t_attempts--;
     }
 
-    // --- Spawn rocks ---
-    for (var i = 0; i < _rock_count; i++) {
-        for (var attempt = 0; attempt < _max_attempts; attempt++) {
-            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
-            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
-            var _ok = true;
-            for (var j = 0; j < array_length(_placed); j++) {
-                if (point_distance(_px, _py, _placed[j].x, _placed[j].y) < (_rock_radius + _placed[j].r)) {
-                    _ok = false;
-                    break;
+    // --- Spawn rocks in clusters ---
+    var _rocks_to_spawn = _rock_count;
+    var _r_attempts = 150;
+    while (_rocks_to_spawn > 0 && _r_attempts > 0) {
+        var _sx = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+        var _sy = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+        
+        if (_check_ok(_sx, _sy, _rock_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+            var _cluster_size = irandom_range(1, 6);
+            for (var c = 0; c < _cluster_size && _rocks_to_spawn > 0; c++) {
+                var _rx, _ry;
+                if (c == 0) {
+                    _rx = _sx; _ry = _sy;
+                } else {
+                    var _angle = random(360);
+                    var _dist = random_range(16, 32);
+                    _rx = floor((_sx + lengthdir_x(_dist, _angle)) / 16) * 16;
+                    _ry = floor((_sy + lengthdir_y(_dist, _angle)) / 16) * 16;
+                }
+                
+                if (_check_ok(_rx, _ry, _rock_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+                    instance_create_layer(_rx, _ry, "Instances", obj_rock);
+                    array_push(_placed, { x: _rx, y: _ry, r: _rock_radius });
+                    _rocks_to_spawn--;
                 }
             }
-            if (_ok && point_distance(_px, _py, _player_cx, _player_cy) < (_rock_radius + _player_clearance)) {
-                _ok = false;
-            }
-            if (_ok) {
-                instance_create_layer(_px, _py, "Instances", obj_rock);
-                array_push(_placed, { x: _px, y: _py, r: _rock_radius });
-                break;
-            }
         }
+        _r_attempts--;
     }
 }

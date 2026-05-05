@@ -42,7 +42,6 @@ if (instance_exists(_lp)) {
     draw_set_font(fnt_pixel_operator);
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
-    draw_text_transformed_color(_ebx + 5, _eby + _ebh + 5, "ENERGIA", 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 
     // --- HEALTH HEARTS ---
     var _hhx = _ebx;

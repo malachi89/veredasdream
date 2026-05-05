@@ -391,6 +391,55 @@ else if (chat_open) {
                 } else {
                     scr_notify("Indice de puerta invalido (0-7)");
                 }
+            } else if (_cmd == "next_day") {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
+                } else {
+                    start_new_day();
+                    scr_notify("Dia avanzado");
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                }
+            } else if (_cmd == "next_season") {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
+                } else {
+                    global.season_index = (global.season_index + 1) mod 4;
+                    global.season = global.season_list[global.season_index];
+                    update_tilesets();
+                    scr_notify("Estacion: " + global.season_names[$ global.season]);
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                }
+            } else if (_cmd == "next_hour") {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el tiempo");
+                } else {
+                    global.game_hour += 1;
+                    global.game_minute = 0;
+                    scr_notify("Hora: " + string(global.game_hour) + ":00");
+                    if (global.game_hour >= 24) midnight_collapse();
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
+                }
+            } else if (_cmd == "toggle_rain") {
+                global.force_rain_tomorrow = !global.force_rain_tomorrow;
+                scr_notify(global.force_rain_tomorrow ? "Lluvia forzada manana" : "Clima normal");
+            } else if (_cmd == "minigame") {
+                if (!instance_exists(obj_minigame_timing)) {
+                    var _inst = instance_create_depth(0, 0, 0, obj_minigame_timing);
+                    _inst.difficulty = minigame_difficulty;
+                    var _diff_names = ["FACIL", "MODERADO", "DIFICIL", "EXTREMO"];
+                    scr_notify("Minijuego: " + _diff_names[minigame_difficulty]);
+                    minigame_difficulty = (minigame_difficulty + 1) mod 4;
+                } else {
+                    scr_notify("Minijuego ya activo");
+                }
+            } else if (_cmd == "spawn_seeds" && array_length(_parts) >= 2) {
+                if (instance_exists(global.local_player)) {
+                    var _qty = real(_parts[1]);
+                    inventory_drop_item("tomato_seeds", _qty, global.local_player.x, global.local_player.y);
+                    scr_notify("Spawn: " + string(_qty) + " tomato_seeds");
+                } else {
+                    scr_notify("Jugador no encontrado");
+                }
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
@@ -483,49 +532,6 @@ if (pause_menu_open) {
     }
 
     exit; // Block all further Step processing while paused
-}
-
-if (keyboard_check_pressed(ord("P"))) {
-    global.season_index = (global.season_index + 1) mod 4;
-    global.season = global.season_list[global.season_index];
-    update_tilesets();
-    show_debug_message("Estacion: " + global.season_names[$ global.season]);
-    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
-}
-
-if (keyboard_check_pressed(ord("O"))) start_new_day();
-
-if (keyboard_check_pressed(ord("R"))) {
-    global.force_rain_tomorrow = !global.force_rain_tomorrow;
-    scr_notify(global.force_rain_tomorrow ? "Lluvia forzada manana" : "Clima normal");
-}
-
-if (keyboard_check_pressed(ord("L"))) {
-    global.game_hour += 1;
-    global.game_minute = 0;
-    show_debug_message("Hora: " + string(global.game_hour) + ":00");
-    if (global.game_hour >= 24) midnight_collapse();
-    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) net_send_time_update();
-}
-
-if (keyboard_check_pressed(ord("Y"))) {
-    if (!instance_exists(obj_minigame_timing)) {
-        var _inst = instance_create_depth(0, 0, 0, obj_minigame_timing);
-        _inst.difficulty = minigame_difficulty;
-        
-        var _diff_names = ["FACIL", "MODERADO", "DIFICIL", "EXTREMO"];
-        scr_notify("Minijuego: " + _diff_names[minigame_difficulty]);
-        
-        // Cycle difficulty for next time
-        minigame_difficulty = (minigame_difficulty + 1) mod 4;
-    }
-}
-
-if (keyboard_check_pressed(ord("U"))) {
-    if (instance_exists(global.local_player)) {
-        inventory_drop_item("tomato_seeds", 5, global.local_player.x, global.local_player.y);
-        show_debug_message("Drop: 5 Tomato Seeds");
-    }
 }
 
 // --- COLLECTION CATALOG ---

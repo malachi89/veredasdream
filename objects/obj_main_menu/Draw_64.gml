@@ -26,7 +26,7 @@ if (name_entry_mode) {
     draw_set_alpha(0.85);
     draw_roundrect_color_ext(_fn_bx, _fn_by, _fn_bx + _fn_bw, _fn_by + _fn_bh, 6, 6, _fn_col, _fn_col, false);
     draw_set_alpha(1.0);
-    draw_roundrect_color_ext(_fn_bx, _fn_by, _fn_bx + _fn_bw, _fn_by + _fn_bh, 6, 6, c_white, c_white, true);
+    draw_roundrect_color_ext(_fn_bx, _fn_by, _fn_bx + _fn_bw, _fn_by + _fn_bh, 6, 6, make_color_rgb(100, 140, 80), make_color_rgb(100, 140, 80), true);
     draw_set_halign(fa_left);
     draw_set_valign(fa_middle);
     var _fn_display = farm_name_input;
@@ -46,7 +46,7 @@ if (name_entry_mode) {
     draw_set_alpha(0.85);
     draw_roundrect_color_ext(_pn_bx, _pn_by, _pn_bx + _pn_bw, _pn_by + _pn_bh, 6, 6, _pn_col, _pn_col, false);
     draw_set_alpha(1.0);
-    draw_roundrect_color_ext(_pn_bx, _pn_by, _pn_bx + _pn_bw, _pn_by + _pn_bh, 6, 6, c_white, c_white, true);
+    draw_roundrect_color_ext(_pn_bx, _pn_by, _pn_bx + _pn_bw, _pn_by + _pn_bh, 6, 6, make_color_rgb(100, 140, 80), make_color_rgb(100, 140, 80), true);
     draw_set_halign(fa_left);
     draw_set_valign(fa_middle);
     var _pn_display = player_name_input;
@@ -64,12 +64,15 @@ if (name_entry_mode) {
     var _btn_y2 = _btn_y1 + _btn_h;
 
     var _btn_hover = point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2);
-    var _btn_col = _btn_hover ? c_aqua : c_blue;
+    var _btn_col = _btn_hover ? make_color_rgb(85, 120, 80) : make_color_rgb(65, 90, 60);
+    var _border_col = _btn_hover ? make_color_rgb(140, 200, 120) : make_color_rgb(100, 140, 80);
     var _can_confirm = (farm_name_input != "" && player_name_input != "");
-    if (!_can_confirm) _btn_col = c_gray;
+    if (!_can_confirm) { _btn_col = c_dkgray; _border_col = c_gray; }
 
+    draw_set_alpha(0.3);
     draw_roundrect_color_ext(_btn_x1, _btn_y1, _btn_x2, _btn_y2, 10, 10, _btn_col, _btn_col, false);
-    draw_roundrect_color_ext(_btn_x1, _btn_y1, _btn_x2, _btn_y2, 10, 10, c_black, c_black, true);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_btn_x1, _btn_y1, _btn_x2, _btn_y2, 10, 10, _border_col, _border_col, true);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_text_transformed_color(_cx, _btn_y1 + _btn_h * 0.5, "CONFIRMAR", 1.8, 1.8, 0, c_white, c_white, c_white, c_white, 1.0);

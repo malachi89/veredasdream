@@ -3,6 +3,8 @@
     Define enums y estructuras de datos globales.
 */
 
+randomize();
+
 enum NET_ROLE {
     NONE   = 0,
     HOST   = 1,
@@ -1046,7 +1048,7 @@ _tp[$ "shovel"] = [
 // --- NPC DATA ---
 global.npc_data = {
     workbench:  { name: "Mesa de Trabajo" },
-    Miraculos:  { name: "Miraculos", skin: 1, eye_type: "female", eye_color: "brown",  hair_style: "lyria",      hair_color: "black",  clothes_color: "blue",   dialog_id: -1 },
+    Miraculos:  { name: "Miraculos", skin: 4, eye_type: "female", eye_color: "brown",  hair_style: "none",       hair_color: "black",  clothes_color: "blue",   dialog_id: -1 },
     Jose:       { name: "José",      skin: 2, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
     Maria:      { name: "María",     skin: 3, eye_type: "female", eye_color: "black",  hair_style: "iridessa",   hair_color: "brown",  clothes_color: "pink",   dialog_id: -1 },
     Juan:       { name: "Juan",      skin: 1, eye_type: "male",   eye_color: "black",  hair_style: "josh",       hair_color: "brown",  clothes_color: "blue",   dialog_id: -1 },
