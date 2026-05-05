@@ -1,5 +1,8 @@
 // === NAME ENTRY MODE (checked first to override slot selection) ===
 if (name_entry_mode) {
+    var _cx = display_get_gui_width() * 0.5;
+    var _cy = display_get_gui_height() * 0.5;
+
     // Filter keyboard input for farm/player names
     var _filtered = "";
     for (var _ci = 1; _ci <= string_length(keyboard_string); _ci++) {
@@ -58,14 +61,10 @@ if (name_entry_mode) {
     }
 
     // Confirm button via mouse
-    var _cx = display_get_gui_width() * 0.5;
-    var _cy = display_get_gui_height() * 0.5;
-    var _mx = device_mouse_x_to_gui(0);
-    var _my = device_mouse_y_to_gui(0);
-    var _btn_w = 240;
-    var _btn_h = 50;
+    var _btn_w = 260;
+    var _btn_h = 60;
     var _btn_x1 = _cx - _btn_w * 0.5;
-    var _btn_y1 = _cy + 130;
+    var _btn_y1 = _cy + 95;
     var _btn_x2 = _btn_x1 + _btn_w;
     var _btn_y2 = _btn_y1 + _btn_h;
 
