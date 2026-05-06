@@ -203,7 +203,7 @@ function update_tilesets() {
     var _room = room_get_name(room);
     
     if (_details_layer != -1) {
-        if (_room == "farm" || _room == "forest" || _room == "town") {
+        if (_room == "farm" || _room == "forest") {
             tilemap_tileset(layer_tilemap_get_id(_details_layer), (_room == "farm") ? _tilesets[global.season_index] : _props_tilesets[global.season_index]);
         }
     }
@@ -211,7 +211,7 @@ function update_tilesets() {
     if (_props_layer != -1) tilemap_tileset(layer_tilemap_get_id(_props_layer), _props_tilesets[global.season_index]);
     
     if (_trees_layer != -1) {
-        if (_room != "forest") {
+        if (_room != "forest" && _room != "town") {
             tilemap_tileset(layer_tilemap_get_id(_trees_layer), _trees_tilesets[global.season_index]);
             if (_trees_top_layer != -1) tilemap_tileset(layer_tilemap_get_id(_trees_top_layer), _trees_tilesets[global.season_index]);
         }

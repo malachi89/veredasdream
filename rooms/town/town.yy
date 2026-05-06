@@ -148,7 +148,38 @@
         {"$GMRInstance":"v4","%Name":"inst_2703A70","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_2703A70","objectId":{"name":"obj_collision","path":"objects/obj_collision/obj_collision.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":43.9375,"x":1487.0,"y":209.0,},
         {"$GMRInstance":"v4","%Name":"inst_8139863","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_8139863","objectId":{"name":"obj_collision","path":"objects/obj_collision/obj_collision.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":19.4375,"scaleY":1.0,"x":1176.0,"y":896.0,},
       ],"layers":[],"name":"Instances_collision","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":false,},
-    {"$GMRTileLayer":"","%Name":"Tiles_trees","depth":500,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_trees","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_urban_road","depth":500,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_urban_road","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
+          -42,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,
+          79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-84,-2147483648,
+          10,29,-2147483648,-2147483648,77,78,79,80,81,82,83,-84,-2147483648,10,41,-2147483648,-2147483648,74,
+          75,74,75,74,74,75,-84,-2147483648,10,53,-2147483648,-2147483648,86,87,86,87,86,86,87,-87,-2147483648,
+          7,77,78,79,80,81,82,83,-85,-2147483648,11,15,16,77,78,79,80,81,82,83,13,14,-83,-2147483648,11,27,28,
+          77,78,79,80,81,82,83,25,26,-83,-2147483648,11,39,40,77,78,79,80,81,82,83,37,38,-83,-2147483648,11,51,
+          52,77,78,79,80,81,82,83,49,50,-85,-2147483648,7,74,75,74,75,74,74,75,-84,-2147483648,10,29,-2147483648,
+          -2147483648,86,87,86,87,86,86,87,-84,-2147483648,10,41,-2147483648,-2147483648,77,78,79,80,81,82,83,
+          -84,-2147483648,10,53,-2147483648,-2147483648,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,
+          82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,
+          9,77,78,79,80,81,82,83,-2147483648,31,-85,-2147483648,9,77,78,79,80,81,82,83,-2147483648,43,-83,-2147483648,
+          11,15,16,77,78,79,80,81,82,83,-2147483648,55,-83,-2147483648,9,27,28,77,78,79,80,81,82,83,-85,-2147483648,
+          9,39,40,77,78,79,80,81,82,83,-85,-2147483648,9,51,52,77,78,79,80,81,82,83,-84,-2147483648,10,29,-2147483648,
+          -2147483648,77,78,79,80,81,82,83,-84,-2147483648,10,41,-2147483648,-2147483648,74,75,74,75,74,74,75,
+          -84,-2147483648,10,53,-2147483648,-2147483648,86,87,86,87,86,86,87,-87,-2147483648,7,77,78,79,80,81,
+          82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,
+          7,77,78,79,80,81,82,83,-85,-2147483648,11,15,16,77,78,79,80,81,82,83,13,14,-83,-2147483648,11,27,28,
+          77,78,79,80,81,82,83,25,26,-83,-2147483648,11,39,40,74,75,74,74,75,74,75,37,38,-83,-2147483648,11,51,
+          52,86,87,86,86,87,86,87,49,50,-85,-2147483648,7,77,78,79,80,81,82,83,-84,-2147483648,10,29,-2147483648,
+          -2147483648,77,78,79,80,81,82,83,-84,-2147483648,10,41,-2147483648,-2147483648,77,78,79,80,81,82,83,
+          -84,-2147483648,12,53,-2147483648,-2147483648,77,78,79,80,81,82,83,-2147483648,31,-85,-2147483648,9,
+          77,78,79,80,81,82,83,-2147483648,43,-82,-2147483648,12,29,-2147483648,-2147483648,77,78,79,80,81,82,
+          83,-2147483648,55,-82,-2147483648,10,41,-2147483648,-2147483648,77,78,79,80,81,82,83,-84,-2147483648,
+          10,53,-2147483648,-2147483648,77,78,79,80,81,82,83,-87,-2147483648,9,77,78,79,80,81,82,83,13,14,-85,
+          -2147483648,9,77,78,79,80,81,82,83,25,26,-85,-2147483648,9,77,78,79,80,81,82,83,37,38,-85,-2147483648,
+          9,77,78,79,80,81,82,83,49,50,-85,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,74,75,74,75,74,
+          74,75,-87,-2147483648,7,86,87,86,87,86,86,87,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,
+          7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,-87,-2147483648,7,77,78,79,80,81,82,83,
+          -87,-2147483648,7,77,78,79,80,81,82,83,-45,-2147483648,
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_sprite_urban_road","path":"tilesets/ts_sprite_urban_road/ts_sprite_urban_road.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+    {"$GMRTileLayer":"","%Name":"Tiles_trees","depth":600,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_trees","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           42,113,114,115,116,117,113,114,115,116,117,113,114,115,116,117,113,114,115,116,117,113,114,115,116,117,
           113,114,115,116,117,113,114,115,116,117,113,114,113,114,115,116,117,-7,-2147483648,87,113,114,115,116,
           117,113,114,115,116,117,113,114,115,116,117,113,114,115,116,117,113,114,113,114,115,116,117,117,113,
@@ -221,7 +252,7 @@
           56,57,58,-13,-2147483648,2,225,226,-5,-2147483648,2,225,226,-68,-2147483648,5,80,81,82,83,165,-12,-2147483648,
           2,250,251,-5,-2147483648,2,250,251,-67,-2147483648,-21,0,-3,-2147483648,-21,0,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_trees","path":"tilesets/ts_town_trees/ts_town_trees.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_floors_restored","depth":600,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_floors_restored","depth":700,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -41,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,
           -85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,
           -44,577,-41,605,1,615,-7,0,1,617,-44,605,-282,0,-41,597,1,613,-7,0,1,611,-44,597,-41,577,1,601,-7,0,
@@ -243,7 +274,7 @@
           601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,601,-3,
           193,1,593,-20,577,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_road_restored","depth":700,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_road_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileSerialiseData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_road_restored","depth":800,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_road_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileSerialiseData":[
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,3,2,3,2,3,2,
           3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,
@@ -353,7 +384,7 @@
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,
           7,6,7,6,7,6,7,6,
         ],},"tilesetId":{"name":"ts_road_restored","path":"tilesets/ts_road_restored/ts_road_restored.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_details_destroyed_1","depth":800,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_details_destroyed_1","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_details_destroyed_1","depth":900,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_details_destroyed_1","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -202,0,3,224,225,226,-14,0,4,296,297,298,299,-29,0,2,188,189,-14,0,2,219,220,-16,0,4,412,413,414,415,
           -6,0,3,248,249,250,-14,0,4,320,321,322,323,-29,0,2,212,213,-14,0,2,243,244,-16,0,4,436,437,438,439,-6,
           0,3,272,273,274,-14,0,4,344,345,346,347,-45,0,2,267,268,-50,0,2,111,112,-92,0,2,135,136,-370,0,1,235,
@@ -374,7 +405,7 @@
           -14,0,2,87,88,-47,0,2,434,459,-199,0,4,368,369,370,371,-55,0,2,219,220,-33,0,4,392,393,394,395,-55,0,
           2,243,244,-16,0,2,168,169,-15,0,4,416,417,418,419,-43,0,1,433,-11,0,2,267,268,-16,0,2,192,193,-199,0,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_destroyed_details","path":"tilesets/ts_town_destroyed_details/ts_town_destroyed_details.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_floors_destroyed","depth":900,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_destroyed","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_floors_destroyed","depth":1000,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_destroyed","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -40,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,
           401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,
           169,401,-83,385,2,409,161,-7,145,2,169,401,-43,385,-40,413,2,423,161,-7,145,2,169,425,-43,413,-41,165,
@@ -402,7 +433,7 @@
           2,409,161,-3,145,2,169,401,-19,385,-49,145,2,169,401,-17,385,2,409,161,-3,145,2,169,401,-19,385,-49,
           145,2,169,401,-17,385,2,409,161,-3,145,2,169,401,-19,385,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
-    {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":15.0,"animationSpeedType":0,"colour":4278190080,"depth":1000,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":null,"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":false,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
+    {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":15.0,"animationSpeedType":0,"colour":4278190080,"depth":1100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":null,"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":false,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
   ],
   "name":"town",
   "parent":{

@@ -37,6 +37,7 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 - Tiles_floors_restored (depth 500)
 - Tiles_road_restored (depth 600)
 - Tiles_trees (depth 500)
+- Tiles_urban_road (depth 650)
 
 ---
 
@@ -285,6 +286,55 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 
 ---
 
+## Etapa 8: Urbanización Final (Autobuses)
+
+**Acción requerida:** El jugador debe donate materiales para infraestructura urbana final (bancas, luces, autobuses).
+
+**Días de construcción:** 3 días
+
+**Items requeridos para donate:**
+| Item | Cantidad | Notas |
+|------|----------|-------|
+| `stone` | 400 | Piedra (bancas y fundamentos) |
+| `iron_bar` | 30 | Barra de Hierro (postes de luz) |
+| `glass` | 20 | Vidrio (lámparas) |
+| `oil` | 15 | Aceite (combustible autobús) |
+| `cloth_any` | 20 | Cualquier tela (asientos autobús) |
+| `leather_any` | 15 | Cualquier cuero (asientos) |
+
+**Efectos en el mapa al completar:**
+- Se **muestra** `Tiles_urban_road` (nueva capa para carretera urbana)
+- Se **muestra** `obj_bus_stop_1` (parada de autobús 1)
+- Se **muestra** `obj_bus_stop_2` (parada de autobús 2)
+- Se **crean** 2 instancias de autobús en movimiento:
+  - `obj_bus_down`: viajan de norte a sur
+    - Posición inicial: x=700, y=-100 (fuera del mapa, parte superior)
+    - Posición final: x=700, y=1000 (fuera del mapa, parte inferior)
+    - **Parada:** 3 segundos en posición y=740
+    - Velocidad: ~50 pixels/segundo
+  - `obj_bus_up`: viajan de sur a norte
+    - Posición inicial: x=750, y=1000 (fuera del mapa, parte inferior)
+    - Posición final: x=750, y=-100 (fuera del mapa, parte superior)
+    - **Parada:** 3 segundos en posición y=250
+    - Velocidad: ~50 pixels/segundo
+
+**Capas visibles:**
+- Instances
+- Instances_restored_buildings (con buses y paradas)
+- Tiles_floors_restored
+- Tiles_road_restored
+- Tiles_trees
+- Tiles_urban_road (nueva)
+
+**Efectos en NPCs:**
+- Los NPCs de las paradas de autobús están disponibles
+- Los vecinos pueden usar los autobuses (diálogos sobre transporte)
+
+**Progreso de UI:** "Completando infraestructura urbana..."
+**Notificación de construcción:** "La urb. estará lista en X días..."
+
+---
+
 ## Estados de Progresión
 
 ```gml
@@ -300,7 +350,9 @@ enum TownStage {
     TREES_CONSTRUCTION = 8, // Árboles en proceso (sin tiempo real)
     TREES_RESTORED = 9, // Árboles visibles
     BUILDINGS_CONSTRUCTION = 10, // Torre y parque en construcción
-    BUILDINGS_RESTORED = 11 // Torre y parque completados
+    BUILDINGS_RESTORED = 11, // Torre y parque completados
+    URBANIZATION_CONSTRUCTION = 12, // Urbanización final en construcción
+    URBANIZATION_COMPLETE = 13 // Urbanización completada (autobuses)
 }
 ```
 
@@ -410,7 +462,8 @@ scr_restore_town_stage()
 // En scr_apply_loaded_game() o al entrar al town
 if (global.town_stage == TownStage.SHOP_CONSTRUCTION ||
     global.town_stage == TownStage.BLACKSMITH_CONSTRUCTION ||
-    global.town_stage == TownStage.BUILDINGS_CONSTRUCTION) {
+    global.town_stage == TownStage.BUILDINGS_CONSTRUCTION ||
+    global.town_stage == TownStage.URBANIZATION_CONSTRUCTION) {
 
     var _days_passed = global.day - global.town_construction_day;
 
