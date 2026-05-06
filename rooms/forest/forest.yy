@@ -1062,22 +1062,7 @@
           101,100,-311,-2147483648,2,101,100,-311,-2147483648,2,101,100,-311,-2147483648,2,101,100,-311,-2147483648,
           2,101,100,-311,-2147483648,2,101,100,-312,54,
         ],"TileDataFormat":1,},"tilesetId":{"name":"ts_fences_and_bridges","path":"tilesets/ts_fences_and_bridges/ts_fences_and_bridges.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
-    {"$GMRTileLayer":"","%Name":"Tiles_water","depth":500,"effectEnabled":true,"effectType":"_filter_underwater","gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_water","properties":[
-        {"name":"g_Distort1Speed","type":0,"value":"0.01",},
-        {"name":"g_Distort2Speed","type":0,"value":"0.021",},
-        {"name":"g_Distort1Scale","type":0,"value":"-0.9999",},
-        {"name":"g_Distort1Scale","type":0,"value":"1",},
-        {"name":"g_Distort2Scale","type":0,"value":"7",},
-        {"name":"g_Distort2Scale","type":0,"value":"1",},
-        {"name":"g_Distort1Amount","type":0,"value":"0",},
-        {"name":"g_Distort2Amount","type":0,"value":"1",},
-        {"name":"g_ChromaSpreadAmount","type":0,"value":"1",},
-        {"name":"g_CamOffsetScale","type":0,"value":"1",},
-        {"name":"g_GlintCol","type":1,"value":"#FF191919",},
-        {"name":"g_TintCol","type":1,"value":"#FFFFCC7F",},
-        {"name":"g_AddCol","type":1,"value":"#FF331900",},
-        {"name":"g_DistortTexture","type":2,"value":"_filter_underwater_noise_sprite",},
-      ],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":157,"SerialiseWidth":313,"TileCompressedData":[
+    {"$GMRTileLayer":"","%Name":"Tiles_water","depth":500,"effectEnabled":false,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_water","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":157,"SerialiseWidth":313,"TileCompressedData":[
           -17594,-2147483648,-41,0,-265,-2147483648,-89,0,-224,-2147483648,-89,0,-215,-2147483648,-98,0,-203,-2147483648,
           -110,0,-200,-2147483648,-113,0,-200,-2147483648,-113,0,-200,-2147483648,-113,0,-200,-2147483648,-113,
           0,-200,-2147483648,-115,0,-188,-2147483648,-125,0,-181,-2147483648,-132,0,-181,-2147483648,-132,0,-181,

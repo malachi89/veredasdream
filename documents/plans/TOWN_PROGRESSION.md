@@ -36,6 +36,7 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 - Instances_restored_buildings (depth 100)
 - Tiles_floors_restored (depth 500)
 - Tiles_road_restored (depth 600)
+- Tiles_trees (depth 500)
 
 ---
 
@@ -119,13 +120,14 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 
 **Efecto en el mapa al completar:**
 - Se **muestra** `Tiles_road_restored` (depth 600)
+- Se **muestra** `Instances_restored_buildings` (depth 100)
 - Se **oculta** `Tiles_floors_destroyed` (depth 800)
 - Se **oculta** `Tiles_details_destroyed_1` (depth 700)
 - Destruidas las instancias destroyed buildings base
 
 **Capas visibles:**
 - Instances
-- Instances_restored_buildings (edificios base ahora visibles)
+- Instances_restored_buildings (edificios base visibles)
 - Tiles_floors_restored
 - Tiles_road_restored
 
@@ -213,6 +215,76 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 
 ---
 
+## Etapa 6: Árboles del Town
+
+**Acción requerida:** El jugador debe donate materiales incluyendo metales raros (disponibles tras restaurar la herrería).
+
+**Días de construcción:** 1 día (inmediato, solo visibilidad de árboles)
+
+**Items requeridos para donate:**
+| Item | Cantidad | Notas |
+|------|----------|-------|
+| `bar_vitolanio` | 5 | Lingote de Vitolanio (metal raro, disponible tras etapa 5) |
+| `bar_chubestanio` | 20 | Lingote de Chubestanio |
+| `gemstone_any` | 15 | Cualquier gema |
+| `flower_any` | 30 | Cualquier flor |
+| `forage_mushroom_any` | 20 | Cualquier champiñón |
+| `wood` | 500 | Madera |
+| `stone` | 300 | Piedra |
+
+**Efecto en el mapa al completar:**
+- Se **muestra** `Tiles_trees` (depth 500, antes oculto)
+- Los árboles del town se hacen visibles
+
+**Capas visibles:**
+- Instances
+- Instances_restored_buildings
+- Tiles_floors_restored
+- Tiles_road_restored
+- Tiles_trees (nueva)
+
+**Progreso de UI:** "Plantando árboles en el town..."
+
+**Nota de metales raros:** Esta es la primera etapa que requiere `bar_vitolanio`, un metal only obtainable after the blacksmith upgrade. Esto incentiva al jugador a completar la etapa 5 primero.
+
+---
+
+## Etapa 7: Torre de Vecinos y Parque Infantil
+
+**Acción requerida:** El jugador debe donate materiales de construcción para edificios residenciales y de ocio.
+
+**Días de construcción:** 4 días (para ambos edificios)
+
+**Items requeridos para donate:**
+| Item | Cantidad | Notas |
+|------|----------|-------|
+| `stone` | 800 | Piedra (cimiento) |
+| `wood` | 600 | Madera (estructura) |
+| `bar_vitolanio` | 10 | Lingote de Vitolanio |
+| `glass` | 30 | Vidrio |
+| `cloth_any` | 40 | Cualquier tela |
+| `leather_any` | 25 | Cualquier cuero |
+| `yarn_any` | 30 | Cualquier estambre |
+| `dye_green` | 5 | Tinte Verde |
+| `dye_orange` | 5 | Tinte Naranja |
+
+**Efectos en el mapa al completar:**
+- Durante construcción: mostrar `obj_construction_site` en las ubicaciones de ambos edificios
+- Al completar construcción: ocultar `obj_construction_site` y mostrar:
+  - `inst_72DD1105` (`obj_apartments_tower`)
+  - `inst_36DA4A58` (`obj_kid_park`)
+- Ambos edificios visibles en la capa Instances_restored_buildings
+
+**Efectos en NPCs:**
+- Durante construcción: Los vecinos **no están disponibles**
+- Al completar construcción: NPCs de vecinos aparecen en el town
+- Los NPCs mencionan la nueva torre y el parque
+
+**Progreso de UI:** "Construyendo torre de vecinos y parque infantil..."
+**Notificación de construcción:** "Los edificios estarán listos en X días..."
+
+---
+
 ## Estados de Progresión
 
 ```gml
@@ -224,14 +296,19 @@ enum TownStage {
     SHOP_CONSTRUCTION = 4,   // Tienda en construcción
     SHOP_RESTORED = 5,    // Tienda de Miraculos arreglada
     BLACKSMITH_CONSTRUCTION = 6, // Herrero en construcción
-    BLACKSMITH_RESTORED = 7 // Herrero arreglado
+    BLACKSMITH_RESTORED = 7, // Herrero arreglado
+    TREES_CONSTRUCTION = 8, // Árboles en proceso (sin tiempo real)
+    TREES_RESTORED = 9, // Árboles visibles
+    BUILDINGS_CONSTRUCTION = 10, // Torre y parque en construcción
+    BUILDINGS_RESTORED = 11 // Torre y parque completados
 }
 ```
 
 **Notas del enum:**
-- `SHOP_CONSTRUCTION` y `BLACKSMITH_CONSTRUCTION` son estados transient durante la construcción
+- `SHOP_CONSTRUCTION`, `BLACKSMITH_CONSTRUCTION` y `BUILDINGS_CONSTRUCTION` son estados transient durante la construcción
+- `TREES_CONSTRUCTION` es instantáneo (0 días), pero sirve como estado de transición
 - La UI debe mostrar progreso de construcción (días restantes)
-- Los NPCs no están disponibles en estos estados
+- Los NPCs no están disponibles en estados de construcción
 
 ---
 
@@ -331,11 +408,12 @@ scr_restore_town_stage()
 ### Verificación de Construcción al Iniciar/Cargar
 ```gml
 // En scr_apply_loaded_game() o al entrar al town
-if (global.town_stage == TownStage.SHOP_CONSTRUCTION || 
-    global.town_stage == TownStage.BLACKSMITH_CONSTRUCTION) {
-    
+if (global.town_stage == TownStage.SHOP_CONSTRUCTION ||
+    global.town_stage == TownStage.BLACKSMITH_CONSTRUCTION ||
+    global.town_stage == TownStage.BUILDINGS_CONSTRUCTION) {
+
     var _days_passed = global.day - global.town_construction_day;
-    
+
     if (_days_passed >= global.town_construction_duration) {
         // Construcción completada mientras el jugador no estaba
         scr_advance_town_stage(global.town_stage + 1);
