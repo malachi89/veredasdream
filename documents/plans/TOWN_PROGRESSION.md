@@ -13,6 +13,30 @@ Cada etapa requiere que el jugador done items específicos en una **caja de dona
 - El jugador selecciona items de su inventario y los coloca en la caja
 - Al completarse todos los items, la etapa se avanza automáticamente
 
+### Convención de keys `*_any`
+
+Las keys que terminan en `_any` representan **cualquier item cuya key empiece con ese prefijo** (acepta cualquier color o tamaño). El sistema de donativos resuelve estas keys en runtime escaneando las bases de datos correspondientes:
+
+| Key | Resolución | Notas |
+|-----|------------|-------|
+| `cloth_any` | `crafting_material_data` con prefijo `cloth_` | 14 colores |
+| `thread_any` | `crafting_material_data` con prefijo `thread_` | 14 colores |
+| `yarn_any` | `crafting_material_data` con prefijo `yarn_` | 14 colores |
+| `leather_any` | `crafting_material_data` con prefijo `leather_` | **Solo `leather_*` de colores** — NO incluye `cow_hide_*` ni `rabbit_pelt_*` |
+| `pelt_any` | `crafting_material_data` con prefijos `pelt_` o `rabbit_pelt_` | Incluye pieles regulares + de conejo |
+| `egg_any` | `animal_product_data` con prefijo `egg_` | Todos los huevos (gallina, pato, etc.) |
+| `dye_any` | `dye_data` (todas las keys) | 14 colores |
+| `gemstone_any` | `gemstone_data` (todas las keys) | 12 gemas |
+| `forage_any` | `forage_data` (todas las keys) | Hongos + hierbas + flores |
+| `forage_m_any` | `forage_data` con prefijo `forage_m` | Solo champiñones (78 items) |
+| `forage_f_any` | `forage_data` con prefijo `forage_f` | Solo flores (22 items) |
+| `forage_h_any` | `forage_data` con prefijo `forage_h` | Solo hierbas (19 items) |
+| `fruit_any` | `crop_data` filtrando por `is_fruit_tree: true` | **Caso especial — no es por prefijo.** Frutas: cherry, apricot, strawberry, blueberry, banana, orange, mango, peach, watermelon, melon, pineapple, wild_berry, grapes, apple |
+
+**Items individuales que aparecen en el plan sin sufijo `_any`:**
+- `wool` — item único (no tiene 14 colores como otros materiales de costura), por eso siempre se pide directo
+- `stone`, `wood`, `coal`, `honey`, `cheese`, `goat_cheese`, `butter`, lingotes específicos (`bar_*`), tintes específicos (`dye_blue`, etc.), cultivos específicos (`parsnip`, etc.) — son keys exactas
+
 ### Sistema de Construcción
 - **Conteo de días:** El día de la donación cuenta como día 0. El día siguiente es el día 1 de construcción.
   - Ejemplo: Si se donate el día 5 y la construcción dura 3 días, el edificio se termina el día 8 (día 5 = día 0, día 6 = día 1, día 7 = día 2, día 8 = día 3 = listo)
@@ -113,10 +137,10 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 | `stone` | 600 | Piedra (cimiento) |
 | `wood` | 400 | Madera (vigas) |
 | `bar_broncastanio` | 10 | Lingote de Broncastanio |
-| `cloth_any` | 30 | Cualquier tela |
-| `leather_any` | 15 | Cualquier cuero |
-| `thread_any` | 10 | Cualquier hilo |
-| `wool_any` | 10 | Cualquier lana |
+| `cloth_any` | 30 | Cualquier tela de color (`cloth_*`) |
+| `leather_any` | 15 | Cualquier cuero de color (`leather_*` solamente, no incluye `cow_hide_*` ni `rabbit_pelt_*`) |
+| `thread_any` | 10 | Cualquier hilo (`thread_*`) |
+| `wool` | 5 | Lana (item único, sin variantes) |
 | `dye_yellow` | 3 | Tinte Amarillo |
 
 **Efecto en el mapa al completar:**
@@ -149,11 +173,11 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 | `goat_cheese` | 15 | Queso de cabra |
 | `butter` | 20 | Mantequilla |
 | `honey` | 5 | Miel |
-| `thread_any` | 15 | Cualquier hilo |
-| `egg_any` | 15 | Cualquier huevo |
-| `dye_any` | 3 | Cualquier tinte |
-| `fruit_any` | 50 | Cualquier fruta |
-| `forage_any` | 15 | Cualquier hierba/flor |
+| `thread_any` | 15 | Cualquier hilo (`thread_*`) |
+| `egg_any` | 15 | Cualquier huevo (`egg_*` en `animal_product_data`) |
+| `dye_any` | 3 | Cualquier tinte (`dye_*`) |
+| `fruit_any` | 50 | Cualquier fruta (caso especial: entradas de `crop_data` con `is_fruit_tree: true` — cherry, apricot, banana, orange, mango, peach, apple) |
+| `forage_any` | 15 | Cualquier forage (`forage_m*`, `forage_h*`, `forage_f*`) |
 
 **Efectos en el mapa al completar:**
 - Durante construcción: mostrar `obj_construction_site` en lugar de la tienda
@@ -182,10 +206,10 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 | Item | Cantidad | Notas |
 |------|----------|-------|
 | `bar_chubestanio` | 10 | Lingote de Chubestanio |
-| `leather_any` | 40 | Cualquier cuero |
-| `pelt_any` | 20 | Cualquier piel |
-| `yarn_any` | 20 | Cualquier estambre |
-| `gemstone_any` | 10 | Cualquier gema |
+| `leather_any` | 40 | Cualquier cuero de color (`leather_*` solamente) |
+| `pelt_any` | 20 | Cualquier piel (`pelt_*` y `rabbit_pelt_*`) |
+| `yarn_any` | 20 | Cualquier estambre (`yarn_*`) |
+| `gemstone_any` | 10 | Cualquier gema (`gemstone_*` en `gemstone_data`) |
 | `stone` | 200 | Piedra (banco de trabajo) |
 
 **Efectos en el mapa al completar:**
@@ -227,9 +251,9 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 |------|----------|-------|
 | `bar_vitolanio` | 5 | Lingote de Vitolanio (metal raro, disponible tras etapa 5) |
 | `bar_chubestanio` | 20 | Lingote de Chubestanio |
-| `gemstone_any` | 15 | Cualquier gema |
-| `flower_any` | 30 | Cualquier flor |
-| `forage_mushroom_any` | 20 | Cualquier champiñón |
+| `gemstone_any` | 15 | Cualquier gema (`gemstone_*`) |
+| `forage_f_any` | 30 | Cualquier flor (`forage_f*`, 22 items) |
+| `forage_m_any` | 20 | Cualquier champiñón (`forage_m*`, 78 items) |
 | `wood` | 500 | Madera |
 | `stone` | 300 | Piedra |
 
@@ -262,10 +286,9 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 | `stone` | 800 | Piedra (cimiento) |
 | `wood` | 600 | Madera (estructura) |
 | `bar_vitolanio` | 10 | Lingote de Vitolanio |
-| `glass` | 30 | Vidrio |
-| `cloth_any` | 40 | Cualquier tela |
-| `leather_any` | 25 | Cualquier cuero |
-| `yarn_any` | 30 | Cualquier estambre |
+| `cloth_any` | 40 | Cualquier tela de color (`cloth_*`) |
+| `leather_any` | 25 | Cualquier cuero de color (`leather_*` solamente) |
+| `yarn_any` | 30 | Cualquier estambre (`yarn_*`) |
 | `dye_green` | 5 | Tinte Verde |
 | `dye_orange` | 5 | Tinte Naranja |
 
@@ -296,11 +319,10 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 | Item | Cantidad | Notas |
 |------|----------|-------|
 | `stone` | 400 | Piedra (bancas y fundamentos) |
-| `iron_bar` | 30 | Barra de Hierro (postes de luz) |
-| `glass` | 20 | Vidrio (lámparas) |
-| `oil` | 15 | Aceite (combustible autobús) |
-| `cloth_any` | 20 | Cualquier tela (asientos autobús) |
-| `leather_any` | 15 | Cualquier cuero (asientos) |
+| `bar_chubestanio` | 30 | Lingote de Chubestanio (postes de luz) |
+| `coal` | 15 | Carbón (combustible autobús) |
+| `cloth_any` | 20 | Cualquier tela de color (`cloth_*`) (asientos autobús) |
+| `leather_any` | 15 | Cualquier cuero de color (`leather_*`) (asientos) |
 
 **Efectos en el mapa al completar:**
 - Se **muestra** `Tiles_urban_road` (nueva capa para carretera urbana)
@@ -456,6 +478,18 @@ scr_restore_town_stage()
     - Permitir upgrade hasta nivel 9 (VITOLANIO, el máximo)
     
 - La validación ocurre **antes** de intentar hacer el upgrade (no consume items)
+
+### Comandos de Debug
+
+Agregar al sistema de debug console (presionar Enter para abrir) el siguiente comando para testear la progresión sin tener que donar items reales:
+
+| Comando | Descripción |
+|---------|-------------|
+| `set_town_stage <n>` | Establece `global.town_stage` directamente al valor `n` (0-13, ver enum `TownStage`). Aplica todos los cambios visuales (capas, instancias, NPCs) llamando a `scr_restore_town_stage()` |
+
+**Implementación:** Agregar la branch correspondiente en el parser del comando de debug (mismo lugar donde se procesan `add_item`, `set_day`, `buy_building`, etc.). Debe llamar a `scr_restore_town_stage()` y mostrar feedback con `scr_notify()`.
+
+---
 
 ### Verificación de Construcción al Iniciar/Cargar
 ```gml
