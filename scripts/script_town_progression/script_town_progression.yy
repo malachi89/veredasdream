@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"script_town_progression",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"script_town_progression",
+  "parent":{
+    "name":"scripts",
+    "path":"folders/scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

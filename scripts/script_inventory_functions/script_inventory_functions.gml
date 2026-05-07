@@ -804,7 +804,11 @@ function scr_save_game() {
         mine_progress: global.mine_progress,
         collected_items: global.collected_items,
         shipped_quantities: global.shipped_quantities,
-        weather: global.weather_today
+        weather: global.weather_today,
+        town_stage: global.town_stage,
+        town_donations: global.town_donations,
+        town_construction_day: global.town_construction_day,
+        town_construction_duration: global.town_construction_duration
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     if (global.save_slot > 0) scr_slot_write_info(global.save_slot);
@@ -862,6 +866,19 @@ function scr_apply_loaded_game(_save_data) {
         global.shipped_quantities = _save_data.shipped_quantities;
     } else {
         global.shipped_quantities = {};
+    }
+
+    // Town progression
+    if (variable_struct_exists(_save_data, "town_stage")) {
+        global.town_stage = _save_data.town_stage;
+        global.town_donations = variable_struct_exists(_save_data, "town_donations") ? _save_data.town_donations : {};
+        global.town_construction_day = variable_struct_exists(_save_data, "town_construction_day") ? _save_data.town_construction_day : 0;
+        global.town_construction_duration = variable_struct_exists(_save_data, "town_construction_duration") ? _save_data.town_construction_duration : 0;
+    } else {
+        global.town_stage = TownStage.INITIAL;
+        global.town_donations = {};
+        global.town_construction_day = 0;
+        global.town_construction_duration = 0;
     }
 
     // Migrar guardados v1 -> v2

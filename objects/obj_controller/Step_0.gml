@@ -73,6 +73,13 @@ if (current_room_name != _room_name) {
     update_tilesets();
     scr_setup_forest_trees();
     if (_room_name == "farm") scr_check_collection_unlocks();
+    if (_room_name == "town") {
+        if (scr_check_town_construction_completed()) {
+            scr_advance_town_stage(global.town_stage + 1);
+        } else {
+            scr_restore_town_stage();
+        }
+    }
     
     // Rain object lifecycle
     if (global.weather_today == "rain" && scr_is_outdoor_room()) {
@@ -440,6 +447,14 @@ else if (chat_open) {
                 } else {
                     scr_notify("Jugador no encontrado");
                 }
+            } else if (_cmd == "set_town_stage" && array_length(_parts) >= 2) {
+                var _ts = clamp(real(_parts[1]), 0, TownStage.URBANIZATION_COMPLETE);
+                global.town_stage = _ts;
+                global.town_donations = {};
+                global.town_construction_day = 0;
+                global.town_construction_duration = 0;
+                scr_restore_town_stage();
+                scr_notify("Town stage: " + string(_ts));
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }

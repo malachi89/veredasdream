@@ -93,6 +93,22 @@ enum ANIMAL_STATE {
     CHASING
 }
 
+enum TownStage {
+    INITIAL                  = 0,
+    STREETS_CLEARED          = 1,
+    GREENS_RESTORED          = 2,
+    STREETS_RESTORED         = 3,
+    SHOP_CONSTRUCTION        = 4,
+    SHOP_RESTORED            = 5,
+    BLACKSMITH_CONSTRUCTION  = 6,
+    BLACKSMITH_RESTORED      = 7,
+    TREES_RESTORED           = 8,
+    BUILDINGS_CONSTRUCTION   = 9,
+    BUILDINGS_RESTORED       = 10,
+    URBANIZATION_CONSTRUCTION = 11,
+    URBANIZATION_COMPLETE    = 12
+}
+
 global.animal_data = {
     chicken: { move_speed: 1.0,  hp: 2, max_hp: 2, variants: ["black","black_white","blonde","blonde_green","brown_black","brown_white","evil","green","pink","red","universe","white"], product_drops: ["egg_chicken_brown_reg", "egg_chicken_white_reg", "chicken_leg"],  crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["milk_reg", "milk_large", "steak"],                              crafting_drops: ["cow_hide_red","cow_hide_orange","cow_hide_yellow","cow_hide_green","cow_hide_blue","cow_hide_lilac","cow_hide_purple","cow_hide_turquoise","cow_hide_pink","cow_hide_lime","cow_hide_amber","cow_hide_brown","cow_hide_black","cow_hide_white"] },
