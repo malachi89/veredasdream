@@ -776,12 +776,16 @@ function scr_upgrade_tool(_tool_key) {
             var _slot = _arr[i];
             if (is_struct(_slot) && variable_struct_exists(_slot, "key") && _slot.key == _tool_key) {
                 var _cur = variable_struct_exists(_slot, "quality") ? _slot.quality : QUALITY.OXIDADO;
-                if (_cur < QUALITY.VITOLANIO) {
-                    _slot.quality = _cur + 1;
-                    scr_notify(_tool_key + " mejorado a " + global.quality_names[_slot.quality]);
-                } else {
+                if (_cur >= QUALITY.VITOLANIO) {
                     scr_notify(_tool_key + " ya esta al maximo");
+                    return;
                 }
+                if (_cur >= QUALITY.CHUBESTANIO && global.town_stage < TownStage.BLACKSMITH_RESTORED) {
+                    scr_notify("La herreria del town no esta lista para upgrades mayores.");
+                    return;
+                }
+                _slot.quality = _cur + 1;
+                scr_notify(_tool_key + " mejorado a " + global.quality_names[_slot.quality]);
                 return;
             }
         }

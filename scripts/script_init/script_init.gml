@@ -1202,7 +1202,7 @@ global.npc_dialogues = [
 global.shop_data = {};
 
 global.shop_data[$ "Miraculos"] = {
-    available: true,
+    available: false, // se activa al alcanzar TownStage.SHOP_RESTORED
     items: [
         // PRIMAVERA
         { item_key: "cherry_seeds",       price_money: 30, price_items: [] },
@@ -1290,7 +1290,7 @@ global.item_groups = {
 };
 
 global.shop_data[$ "Carlos"] = {
-    available: true,
+    available: false, // se activa al alcanzar TownStage.BLACKSMITH_RESTORED
     items: [
         { item_key: "pickaxe",      is_upgrade: true },
         { item_key: "axe",          is_upgrade: true },

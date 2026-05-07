@@ -880,6 +880,7 @@ function scr_apply_loaded_game(_save_data) {
         global.town_construction_day = 0;
         global.town_construction_duration = 0;
     }
+    scr_update_shop_availability();
 
     // Migrar guardados v1 -> v2
     var _players_arr;

@@ -99,6 +99,10 @@ shop_scroll    = 0;
 shop_msg       = "";
 shop_msg_timer = 0;
 
+donation_box_open = false;
+donation_msg       = "";
+donation_msg_timer = 0;
+
 dialog_open     = false;
 dialog_npc_name = "";
 dialog_text     = "";

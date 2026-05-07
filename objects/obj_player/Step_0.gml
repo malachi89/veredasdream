@@ -28,7 +28,7 @@ if (sign_panel_open) {
 }
 
 if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_controller.chat_open || obj_controller.shipping_summary_open || obj_controller.pause_menu_open || obj_controller.mine_prompt_open))
-    || shop_open) {
+    || shop_open || donation_box_open) {
     state = STATE.IDLE;
     frame_anim = 0;
     image_speed = 0;
@@ -36,7 +36,7 @@ if ((instance_exists(obj_controller) && (obj_controller.sleep_menu_open || obj_c
     exit;
 }
 
-if (keyboard_check_pressed(vk_tab) && !shop_open && !dialog_open) {
+if (keyboard_check_pressed(vk_tab) && !shop_open && !dialog_open && !donation_box_open) {
     scr_inventory_cycle_hotbars(id);
 }
 

@@ -134,7 +134,7 @@
         {"$GMRInstance":"v4","%Name":"inst_36DA4A58","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_36DA4A58","objectId":{"name":"obj_kid_park","path":"objects/obj_kid_park/obj_kid_park.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":385.0,"y":242.0,},
         {"$GMRInstance":"v4","%Name":"inst_6CF6EB96","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_6CF6EB96","objectId":{"name":"obj_bus_stop_1","path":"objects/obj_bus_stop_1/obj_bus_stop_1.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":788.0,"y":247.0,},
         {"$GMRInstance":"v4","%Name":"inst_58B70F42","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_58B70F42","objectId":{"name":"obj_bus_stop_2","path":"objects/obj_bus_stop_2/obj_bus_stop_2.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":573.0,"y":734.0,},
-      ],"layers":[],"name":"Instances_restored_buildings","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
+      ],"layers":[],"name":"Instances_restored_buildings","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":false,},
     {"$GMRInstanceLayer":"","%Name":"Instances_destroyed_buildings","depth":200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
         {"$GMRInstance":"v4","%Name":"inst_miraculos_shop_destroyed","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_miraculos_shop_destroyed","objectId":{"name":"obj_shop_destroyed","path":"objects/obj_shop_destroyed/obj_shop_destroyed.yy",},"previewSprite":{"name":"sprite_shop_destroyed","path":"sprites/sprite_shop_destroyed/sprite_shop_destroyed.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":871.0,"y":412.0,},
         {"$GMRInstance":"v4","%Name":"inst_blacksmith_shop_destroyed","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_blacksmith_shop_destroyed","objectId":{"name":"obj_shop_destroyed","path":"objects/obj_shop_destroyed/obj_shop_destroyed.yy",},"previewSprite":{"name":"sprite_blacksmith_destroyed","path":"sprites/sprite_blacksmith_destroyed/sprite_blacksmith_destroyed.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":865.0,"y":82.0,},
@@ -251,7 +251,7 @@
           -54,-2147483648,4,30,31,32,33,-13,-2147483648,2,200,201,-5,-2147483648,2,200,201,-68,-2147483648,4,55,
           56,57,58,-13,-2147483648,2,225,226,-5,-2147483648,2,225,226,-68,-2147483648,5,80,81,82,83,165,-12,-2147483648,
           2,250,251,-5,-2147483648,2,250,251,-67,-2147483648,-21,0,-3,-2147483648,-21,0,
-        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_trees","path":"tilesets/ts_town_trees/ts_town_trees.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_trees","path":"tilesets/ts_town_trees/ts_town_trees.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
     {"$GMRTileLayer":"","%Name":"Tiles_floors_restored","depth":700,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -41,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,
           -85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,-85,577,1,601,-7,0,1,593,
@@ -273,7 +273,7 @@
           577,1,601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,
           601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,601,-3,193,1,593,-20,577,-49,0,1,593,-19,577,1,601,-3,
           193,1,593,-20,577,
-        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
     {"$GMRTileLayer":"","%Name":"Tiles_road_restored","depth":800,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_road_restored","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileSerialiseData":[
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,3,2,3,2,3,2,
@@ -383,7 +383,7 @@
           3,2,3,2,3,2,3,2,3,2,3,2,3,2,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,
           7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,7,6,
           7,6,7,6,7,6,7,6,
-        ],},"tilesetId":{"name":"ts_road_restored","path":"tilesets/ts_road_restored/ts_road_restored.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
+        ],},"tilesetId":{"name":"ts_road_restored","path":"tilesets/ts_road_restored/ts_road_restored.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
     {"$GMRTileLayer":"","%Name":"Tiles_details_destroyed_1","depth":900,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_details_destroyed_1","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -202,0,3,224,225,226,-14,0,4,296,297,298,299,-29,0,2,188,189,-14,0,2,219,220,-16,0,4,412,413,414,415,
           -6,0,3,248,249,250,-14,0,4,320,321,322,323,-29,0,2,212,213,-14,0,2,243,244,-16,0,4,436,437,438,439,-6,
@@ -404,7 +404,7 @@
           -140,0,2,219,220,-92,0,2,243,244,-7,0,1,411,-5,0,2,15,16,-14,0,2,63,64,-61,0,2,267,268,-13,0,2,39,40,
           -14,0,2,87,88,-47,0,2,434,459,-199,0,4,368,369,370,371,-55,0,2,219,220,-33,0,4,392,393,394,395,-55,0,
           2,243,244,-16,0,2,168,169,-15,0,4,416,417,418,419,-43,0,1,433,-11,0,2,267,268,-16,0,2,192,193,-199,0,
-        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_destroyed_details","path":"tilesets/ts_town_destroyed_details/ts_town_destroyed_details.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_town_destroyed_details","path":"tilesets/ts_town_destroyed_details/ts_town_destroyed_details.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
     {"$GMRTileLayer":"","%Name":"Tiles_floors_destroyed","depth":1000,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_floors_destroyed","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":57,"SerialiseWidth":94,"TileCompressedData":[
           -40,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,
           401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,169,401,-83,385,2,409,161,-7,145,2,
@@ -432,7 +432,7 @@
           169,401,-19,385,-49,145,2,169,401,-17,385,2,409,161,-3,145,2,169,401,-19,385,-49,145,2,169,401,-17,385,
           2,409,161,-3,145,2,169,401,-19,385,-49,145,2,169,401,-17,385,2,409,161,-3,145,2,169,401,-19,385,-49,
           145,2,169,401,-17,385,2,409,161,-3,145,2,169,401,-19,385,
-        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":false,"x":0,"y":0,},
+        ],"TileDataFormat":1,},"tilesetId":{"name":"ts_modern_exteriors_autotile","path":"tilesets/ts_modern_exteriors_autotile/ts_modern_exteriors_autotile.yy",},"userdefinedDepth":false,"visible":true,"x":0,"y":0,},
     {"$GMRBackgroundLayer":"","%Name":"Background","animationFPS":15.0,"animationSpeedType":0,"colour":4278190080,"depth":1100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"hspeed":0.0,"htiled":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Background","properties":[],"resourceType":"GMRBackgroundLayer","resourceVersion":"2.0","spriteId":null,"stretch":false,"userdefinedAnimFPS":false,"userdefinedDepth":false,"visible":false,"vspeed":0.0,"vtiled":false,"x":0,"y":0,},
   ],
   "name":"town",

@@ -5,10 +5,33 @@
 */
 
 // =============================================================
+// NOMBRES DE ETAPA (para UI / notificaciones)
+// =============================================================
+
+function scr_get_town_stage_name(_stage) {
+    switch (_stage) {
+        case TownStage.INITIAL:                   return "Limpiar las Calles";
+        case TownStage.STREETS_CLEARED:           return "Restaurar Areas Verdes";
+        case TownStage.GREENS_RESTORED:           return "Calles Restauradas";
+        case TownStage.STREETS_RESTORED:          return "Tienda de Miraculos";
+        case TownStage.SHOP_CONSTRUCTION:         return "Tienda en construccion";
+        case TownStage.SHOP_RESTORED:             return "Herreria";
+        case TownStage.BLACKSMITH_CONSTRUCTION:   return "Herreria en construccion";
+        case TownStage.BLACKSMITH_RESTORED:       return "Arboles del Town";
+        case TownStage.TREES_RESTORED:            return "Torre y Parque";
+        case TownStage.BUILDINGS_CONSTRUCTION:    return "Torre y Parque en construccion";
+        case TownStage.BUILDINGS_RESTORED:        return "Urbanizacion Final";
+        case TownStage.URBANIZATION_CONSTRUCTION: return "Urbanizacion en construccion";
+        case TownStage.URBANIZATION_COMPLETE:     return "Town Restaurado";
+    }
+    return "Desconocido";
+}
+
+// =============================================================
 // REQUERIMIENTOS DE DONATIVOS POR ETAPA
 // =============================================================
-// Devuelve struct {req_key: cantidad}. Las keys que terminan en
-// "_any" se resuelven por prefijo en runtime (ver scr_match_donation_key).
+// El _stage es el estado ACTUAL del town. Las donaciones aplicables
+// son para AVANZAR a la siguiente etapa.
 
 function scr_get_town_stage_donations(_stage) {
     switch (_stage) {
@@ -103,14 +126,20 @@ function scr_get_town_stage_donations(_stage) {
     return {};
 }
 
+// Dias de construccion al donar la etapa actual (0 = instantaneo)
+function scr_get_stage_construction_duration(_donation_stage) {
+    switch (_donation_stage) {
+        case TownStage.STREETS_RESTORED:   return 3; // Tienda Miraculos
+        case TownStage.SHOP_RESTORED:      return 3; // Herreria
+        case TownStage.TREES_RESTORED:     return 4; // Torre + Parque
+        case TownStage.BUILDINGS_RESTORED: return 3; // Urbanizacion
+    }
+    return 0;
+}
+
 // =============================================================
 // RESOLUCION DE _any KEYS
 // =============================================================
-// Verifica si _item_key cumple el _req_key. Soporta:
-//  - Match exacto: req_key == item_key
-//  - Prefijo: req_key termina en "_any", item_key empieza con prefijo
-//  - Caso especial pelt_any: incluye pelt_* y rabbit_pelt_*
-//  - Caso especial fruit_any: filtra crop_data por is_fruit_tree
 
 function scr_match_donation_key(_req_key, _item_key) {
     if (_req_key == _item_key) return true;
@@ -119,35 +148,28 @@ function scr_match_donation_key(_req_key, _item_key) {
     var _suffix = string_copy(_req_key, string_length(_req_key) - 3, 4);
     if (_suffix != "_any") return false;
 
-    // Caso especial: fruit_any
     if (_req_key == "fruit_any") {
         var _crop = global.crop_data[$ _item_key];
         if (_crop != undefined && variable_struct_exists(_crop, "is_fruit_tree") && _crop.is_fruit_tree) return true;
         return false;
     }
 
-    // Caso especial: pelt_any incluye rabbit_pelt_*
     if (_req_key == "pelt_any") {
         if (string_pos("pelt_", _item_key) == 1) return true;
         if (string_pos("rabbit_pelt_", _item_key) == 1) return true;
         return false;
     }
 
-    // Resto: prefijo simple (todo lo anterior a "_any")
     var _prefix = string_copy(_req_key, 1, string_length(_req_key) - 4);
     return (string_pos(_prefix, _item_key) == 1);
 }
 
-// Devuelve la req_key contra la cual cuenta este item para la etapa actual,
-// o undefined si el item no aplica a ningun requirement
 function scr_resolve_donation_target(_item_key, _stage) {
     var _reqs = scr_get_town_stage_donations(_stage);
     var _req_keys = variable_struct_get_names(_reqs);
-    // Prefer exact matches first
     for (var _i = 0; _i < array_length(_req_keys); _i++) {
         if (_req_keys[_i] == _item_key) return _req_keys[_i];
     }
-    // Then _any matches
     for (var _i = 0; _i < array_length(_req_keys); _i++) {
         if (scr_match_donation_key(_req_keys[_i], _item_key)) return _req_keys[_i];
     }
@@ -176,11 +198,8 @@ function scr_check_donations_complete(_stage) {
 }
 
 // =============================================================
-// DONACION (mover items del inventario del jugador a town_donations)
+// DONACION
 // =============================================================
-// Para cada requirement de la etapa actual, escanea inventario+backpack
-// del jugador y dona items que apliquen, hasta cubrir lo faltante.
-// Retorna struct { donated: bool, items_donated: int, completed: bool }
 
 function scr_donate_to_town(_player = global.local_player) {
     var _result = { donated: false, items_donated: 0, completed: false };
@@ -191,9 +210,7 @@ function scr_donate_to_town(_player = global.local_player) {
     var _req_keys = variable_struct_get_names(_reqs);
     if (array_length(_req_keys) == 0) return _result;
 
-    // Iterar todos los slots del jugador y donar lo que aplique
     var _slots_to_check = [_player.inventory_array, _player.backpack_array];
-
     for (var _ai = 0; _ai < array_length(_slots_to_check); _ai++) {
         var _arr = _slots_to_check[_ai];
         var _len = array_length(_arr);
@@ -211,11 +228,9 @@ function scr_donate_to_town(_player = global.local_player) {
             var _take = min(_slot.quantity, _needed);
             if (_take <= 0) continue;
 
-            // Restar del inventario
             _slot.quantity -= _take;
             if (_slot.quantity <= 0) _arr[@ _si] = -1;
 
-            // Sumar a donaciones
             global.town_donations[$ _target] = scr_get_donation_progress(_target) + _take;
 
             _result.donated = true;
@@ -223,58 +238,191 @@ function scr_donate_to_town(_player = global.local_player) {
         }
     }
 
-    // Verificar si se completo la etapa
     if (_result.donated && scr_check_donations_complete(_stage)) {
         _result.completed = true;
-        scr_advance_town_stage(_stage + 1);
+        scr_complete_donation_stage(_stage);
     }
 
     return _result;
 }
 
 // =============================================================
+// DONACION DIRIGIDA A UN REQUIREMENT ESPECIFICO
+// =============================================================
+// Para uso desde la UI: cuando el jugador clickea una fila,
+// se dona lo disponible de items que cumplan ese requirement
+// hasta cubrir lo faltante.
+
+function scr_donate_specific_target(_target_key, _player = global.local_player) {
+    var _result = { donated: false, items_donated: 0, completed: false };
+    if (!instance_exists(_player)) return _result;
+
+    var _stage = global.town_stage;
+    var _reqs = scr_get_town_stage_donations(_stage);
+    if (!variable_struct_exists(_reqs, _target_key)) return _result;
+
+    var _needed = _reqs[$ _target_key] - scr_get_donation_progress(_target_key);
+    if (_needed <= 0) return _result;
+
+    var _slots_to_check = [_player.inventory_array, _player.backpack_array];
+    for (var _ai = 0; _ai < array_length(_slots_to_check); _ai++) {
+        var _arr = _slots_to_check[_ai];
+        var _len = array_length(_arr);
+        for (var _si = 0; _si < _len && _needed > 0; _si++) {
+            var _slot = _arr[_si];
+            if (!is_struct(_slot)) continue;
+
+            // El slot debe satisfacer ESTE target especifico
+            if (!scr_match_donation_key(_target_key, _slot.key)) continue;
+
+            var _take = min(_slot.quantity, _needed);
+            if (_take <= 0) continue;
+
+            _slot.quantity -= _take;
+            if (_slot.quantity <= 0) _arr[@ _si] = -1;
+
+            global.town_donations[$ _target_key] = scr_get_donation_progress(_target_key) + _take;
+            _result.donated = true;
+            _result.items_donated += _take;
+            _needed -= _take;
+        }
+    }
+
+    if (_result.donated && scr_check_donations_complete(_stage)) {
+        _result.completed = true;
+        scr_complete_donation_stage(_stage);
+    }
+
+    return _result;
+}
+
+// =============================================================
+// METADATA DE DISPLAY POR REQUIREMENT (icono + nombre)
+// =============================================================
+
+function scr_get_donation_target_display(_target_key) {
+    // Match exacto: usar item data directo
+    var _idata = scr_get_item_data(_target_key);
+    if (_idata != undefined) {
+        return { sprite: _idata.sprite, subimg: _idata.subimg, name: _idata.name, is_group: false };
+    }
+
+    // _any keys: nombre legible + sprite del primer item que matchea
+    var _name_map = {
+        cloth_any:           "Tela (cualquier color)",
+        thread_any:          "Hilo (cualquier color)",
+        yarn_any:            "Estambre (cualquier color)",
+        leather_any:         "Cuero (cualquier color)",
+        pelt_any:            "Piel (cualquier color)",
+        egg_any:             "Huevo (cualquier tipo)",
+        dye_any:             "Tinte (cualquier color)",
+        gemstone_any:        "Gema (cualquier tipo)",
+        forage_any:          "Forage (cualquier tipo)",
+        forage_m_any:        "Champinon (cualquiera)",
+        forage_f_any:        "Flor (cualquiera)",
+        forage_h_any:        "Hierba (cualquiera)",
+        fruit_any:           "Fruta (cualquiera)"
+    };
+
+    var _name = variable_struct_exists(_name_map, _target_key) ? _name_map[$ _target_key] : _target_key;
+
+    // Buscar primer item que matchee para usar su sprite como icono
+    var _candidate_keys = [
+        // Las primeras claves de cada categoria como representativos
+        "cloth_red", "thread_red", "yarn_red", "leather_red", "pelt_red",
+        "egg_chicken_brown_reg", "dye_red", "gemstone_ruby",
+        "forage_m00", "forage_f00", "forage_h00", "cherry"
+    ];
+    for (var _i = 0; _i < array_length(_candidate_keys); _i++) {
+        var _ck = _candidate_keys[_i];
+        if (scr_match_donation_key(_target_key, _ck)) {
+            var _cd = scr_get_item_data(_ck);
+            if (_cd != undefined) {
+                return { sprite: _cd.sprite, subimg: _cd.subimg, name: _name, is_group: true };
+            }
+        }
+    }
+
+    // Fallback: sin sprite
+    return { sprite: -1, subimg: 0, name: _name, is_group: true };
+}
+
+// =============================================================
+// COMPLETITUD DE ETAPA - decide construccion o avance directo
+// =============================================================
+
+function scr_complete_donation_stage(_current_stage) {
+    var _construction_days = scr_get_stage_construction_duration(_current_stage);
+    var _next_stage = _current_stage + 1;
+
+    if (_construction_days > 0) {
+        scr_advance_town_stage(_next_stage);
+        scr_start_town_construction(_construction_days);
+    } else {
+        scr_advance_town_stage(_next_stage);
+    }
+}
+
+// =============================================================
 // AVANCE DE ETAPA
 // =============================================================
-// Aplica los efectos visuales/NPC al transicionar a una nueva etapa.
-// Limpia las donaciones (la nueva etapa empieza en cero).
 
 function scr_advance_town_stage(_new_stage) {
     global.town_stage = _new_stage;
     global.town_donations = {};
+    scr_update_shop_availability();
     scr_restore_town_stage();
-    show_debug_message("Town stage avanzo a: " + string(_new_stage));
+    show_debug_message("Town stage avanzo a: " + string(_new_stage) + " (" + scr_get_town_stage_name(_new_stage) + ")");
 }
 
 // =============================================================
-// RESTAURACION VISUAL (al entrar al town o cargar partida)
+// DISPONIBILIDAD DE TIENDAS NPC (Miraculos / Carlos)
 // =============================================================
-// Aplica visibilidad de capas e instancias segun global.town_stage.
+
+function scr_update_shop_availability() {
+    if (variable_struct_exists(global.shop_data, "Miraculos")) {
+        global.shop_data[$ "Miraculos"].available = (global.town_stage >= TownStage.SHOP_RESTORED);
+    }
+    if (variable_struct_exists(global.shop_data, "Carlos")) {
+        global.shop_data[$ "Carlos"].available = (global.town_stage >= TownStage.BLACKSMITH_RESTORED);
+    }
+}
+
+// =============================================================
+// RESTAURACION VISUAL
+// =============================================================
 
 function scr_restore_town_stage() {
     if (room_get_name(room) != "town") return;
 
     var _stage = global.town_stage;
 
-    // Capas destruidas (visibles en estados tempranos)
-    var _show_destroyed_buildings = (_stage < TownStage.STREETS_RESTORED);
-    var _show_destroyed_floors    = (_stage < TownStage.STREETS_RESTORED);
     var _show_destroyed_details   = (_stage < TownStage.STREETS_CLEARED);
-
-    // Capas restauradas (se van revelando progresivamente)
+    var _show_destroyed_floors    = (_stage < TownStage.STREETS_RESTORED);
     var _show_restored_floors     = (_stage >= TownStage.GREENS_RESTORED);
     var _show_restored_road       = (_stage >= TownStage.STREETS_RESTORED);
-    var _show_restored_buildings  = (_stage >= TownStage.STREETS_RESTORED);
     var _show_trees               = (_stage >= TownStage.TREES_RESTORED);
     var _show_urban_road          = (_stage >= TownStage.URBANIZATION_COMPLETE);
 
-    scr_set_layer_visible("Tiles_details_destroyed_1",   _show_destroyed_details);
-    scr_set_layer_visible("Tiles_floors_destroyed",      _show_destroyed_floors);
-    scr_set_layer_visible("Instances_destroyed_buildings", _show_destroyed_buildings);
-    scr_set_layer_visible("Tiles_floors_restored",       _show_restored_floors);
-    scr_set_layer_visible("Tiles_road_restored",         _show_restored_road);
-    scr_set_layer_visible("Instances_restored_buildings", _show_restored_buildings);
-    scr_set_layer_visible("Tiles_trees",                 _show_trees);
-    scr_set_layer_visible("Tiles_urban_road",            _show_urban_road);
+    scr_set_layer_visible("Tiles_details_destroyed_1", _show_destroyed_details);
+    scr_set_layer_visible("Tiles_floors_destroyed",    _show_destroyed_floors);
+    scr_set_layer_visible("Tiles_floors_restored",     _show_restored_floors);
+    scr_set_layer_visible("Tiles_road_restored",       _show_restored_road);
+    scr_set_layer_visible("Tiles_trees",               _show_trees);
+    scr_set_layer_visible("Tiles_urban_road",          _show_urban_road);
+
+    // Capas de instancias siempre visibles (control por instancia)
+    scr_set_layer_visible("Instances_destroyed_buildings", true);
+    scr_set_layer_visible("Instances_restored_buildings",  true);
+
+    scr_set_town_instance_visibility();
+    scr_clear_construction_sites();
+
+    if (global.town_construction_duration > 0) {
+        scr_spawn_construction_sites_for_stage(_stage);
+    }
+
+    scr_setup_buses(_stage);
 }
 
 function scr_set_layer_visible(_name, _visible) {
@@ -283,19 +431,140 @@ function scr_set_layer_visible(_name, _visible) {
 }
 
 // =============================================================
-// CONSTRUCCION (etapas con duracion en dias)
+// VISIBILIDAD POR INSTANCIA EN EL TOWN
+// =============================================================
+// Identifica edificios por su posicion (ya que GMS no expone editor name).
+
+function scr_set_town_instance_visibility() {
+    var _stage = global.town_stage;
+
+    // obj_shop_destroyed (Miraculos en y=412, Blacksmith en y=82)
+    with (obj_shop_destroyed) {
+        if (room_get_name(room) != "town") {
+            // skip
+        } else if (abs(y - 412) < 80) {
+            // Miraculos shop: oculta cuando empieza construccion
+            visible = (_stage <= TownStage.STREETS_RESTORED);
+        } else if (abs(y - 82) < 80) {
+            // Blacksmith: oculta cuando empieza construccion
+            visible = (_stage <= TownStage.SHOP_RESTORED);
+        }
+    }
+
+    // obj_shop (restaurados: Miraculos en y=343, Blacksmith en y=25)
+    with (obj_shop) {
+        if (room_get_name(room) != "town") {
+            // skip
+        } else if (abs(y - 343) < 80) {
+            visible = (_stage >= TownStage.SHOP_RESTORED);
+        } else if (abs(y - 25) < 80) {
+            visible = (_stage >= TownStage.BLACKSMITH_RESTORED);
+        }
+    }
+
+    // Edificios al stage 7
+    with (obj_apartments_tower) {
+        if (room_get_name(room) == "town") visible = (_stage >= TownStage.BUILDINGS_RESTORED);
+    }
+    with (obj_kid_park) {
+        if (room_get_name(room) == "town") visible = (_stage >= TownStage.BUILDINGS_RESTORED);
+    }
+
+    // Bus stops al stage 8
+    with (obj_bus_stop_1) {
+        if (room_get_name(room) == "town") visible = (_stage >= TownStage.URBANIZATION_COMPLETE);
+    }
+    with (obj_bus_stop_2) {
+        if (room_get_name(room) == "town") visible = (_stage >= TownStage.URBANIZATION_COMPLETE);
+    }
+
+    // NPC Carlos en town: solo visible al stage 5+
+    with (obj_npc) {
+        if (room_get_name(room) == "town" && variable_instance_exists(id, "npc_key") && npc_key == "Carlos") {
+            visible = (_stage >= TownStage.BLACKSMITH_RESTORED);
+        }
+    }
+}
+
+// =============================================================
+// CONSTRUCTION SITES
 // =============================================================
 
+function scr_clear_construction_sites() {
+    with (obj_construction_site) instance_destroy();
+}
+
+function scr_spawn_construction_sites_for_stage(_stage) {
+    var _layer = layer_get_id("Instances_restored_buildings");
+    if (_layer == -1) _layer = layer_get_id("Instances");
+    if (_layer == -1) return;
+
+    var _positions = [];
+    switch (_stage) {
+        case TownStage.SHOP_CONSTRUCTION:
+            array_push(_positions, { x: 871, y: 412 });
+            break;
+        case TownStage.BLACKSMITH_CONSTRUCTION:
+            array_push(_positions, { x: 865, y: 82 });
+            break;
+        case TownStage.BUILDINGS_CONSTRUCTION:
+            array_push(_positions, { x: 100, y: 93 });   // apartments
+            array_push(_positions, { x: 385, y: 242 });  // kid_park
+            break;
+        case TownStage.URBANIZATION_CONSTRUCTION:
+            array_push(_positions, { x: 788, y: 247 });  // bus_stop_1
+            array_push(_positions, { x: 573, y: 734 });  // bus_stop_2
+            break;
+    }
+
+    for (var _i = 0; _i < array_length(_positions); _i++) {
+        var _p = _positions[_i];
+        instance_create_layer(_p.x, _p.y, _layer, obj_construction_site);
+    }
+}
+
+// =============================================================
+// BUSES (etapa final)
+// =============================================================
+
+function scr_setup_buses(_stage) {
+    var _layer = layer_get_id("Instances_restored_buildings");
+    if (_layer == -1) _layer = layer_get_id("Instances");
+    if (_layer == -1) return;
+
+    if (_stage >= TownStage.URBANIZATION_COMPLETE) {
+        // Spawn si no existen
+        if (!instance_exists(obj_bus_down)) {
+            instance_create_layer(700, -100, _layer, obj_bus_down);
+        }
+        if (!instance_exists(obj_bus_up)) {
+            instance_create_layer(750, 1000, _layer, obj_bus_up);
+        }
+    } else {
+        // Limpiar si existen
+        with (obj_bus_down) instance_destroy();
+        with (obj_bus_up) instance_destroy();
+    }
+}
+
+// =============================================================
+// CONSTRUCCION (dias)
+// =============================================================
+
+function scr_total_days() {
+    return ((global.year - 1) * 4 * global.days_per_season)
+         + (global.season_index * global.days_per_season)
+         + global.day;
+}
+
 function scr_start_town_construction(_duration) {
-    global.town_construction_day = global.day;
+    global.town_construction_day = scr_total_days();
     global.town_construction_duration = _duration;
 }
 
-// Llamar al iniciar partida o entrar al town para verificar si una
-// construccion en progreso ya termino (por dias transcurridos).
 function scr_check_town_construction_completed() {
     if (global.town_construction_duration <= 0) return false;
-    var _days_passed = global.day - global.town_construction_day;
+    var _days_passed = scr_total_days() - global.town_construction_day;
     if (_days_passed >= global.town_construction_duration) {
         global.town_construction_duration = 0;
         global.town_construction_day = 0;

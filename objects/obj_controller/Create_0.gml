@@ -257,6 +257,7 @@ global.town_stage = TownStage.INITIAL;
 global.town_donations = {};            // {req_key: donated_qty, ...}
 global.town_construction_day = 0;      // global.day cuando empezo construccion
 global.town_construction_duration = 0; // duracion en dias
+scr_update_shop_availability();
 global.forest_insects                = [];
 global.forest_wild_animals           = [];
 global.forest_enemies                = [];

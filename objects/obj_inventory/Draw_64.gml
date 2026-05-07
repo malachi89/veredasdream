@@ -832,3 +832,171 @@ if (_p.shop_open) {
         draw_text_transformed_color(_px2 - 14, _footer_line_y + 16, _p.shop_msg, 1.4, 1.4, 0, c_yellow, c_yellow, c_yellow, c_yellow, _msg_alpha);
     }
 }
+
+// === DONATIVO TOWN ===
+if (_p.donation_box_open) {
+    var _gw = display_get_gui_width();
+    var _gh = display_get_gui_height();
+    var _pw = 720;
+    var _ph = 600;
+    var _px1 = (_gw - _pw) / 2;
+    var _py1 = _gh * 0.08;
+    var _px2 = _px1 + _pw;
+    var _py2 = _py1 + _ph;
+
+    // Fondo overlay
+    draw_set_alpha(0.72);
+    draw_rectangle_color(0, 0, _gw, _gh, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+
+    // Panel
+    draw_set_alpha(0.93);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_px1, _py1, _px2, _py2, 12, 12, c_silver, c_silver, true);
+
+    // Header
+    var _stage = global.town_stage;
+    var _stage_name = scr_get_town_stage_name(_stage);
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_top);
+    draw_text_transformed_color(_px1 + _pw / 2, _py1 + 12, "Donativos: " + _stage_name, 2.0, 2.0, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+
+    var _header_line_y = _py1 + 60;
+    draw_set_color(c_silver);
+    draw_line(_px1 + 10, _header_line_y, _px2 - 10, _header_line_y);
+
+    // ESC hint
+    draw_set_halign(fa_right);
+    draw_set_valign(fa_top);
+    draw_set_color(c_silver);
+    draw_text_transformed(_px2 - 14, _py1 + 16, "[ESC] Cerrar", 1.1, 1.1, 0);
+
+    // Lista de requirements
+    var _reqs = scr_get_town_stage_donations(_stage);
+    var _req_keys = variable_struct_get_names(_reqs);
+    var _row_h = 56;
+    var _list_y = _header_line_y + 8;
+
+    var _dmx = device_mouse_x_to_gui(0);
+    var _dmy = device_mouse_y_to_gui(0);
+
+    var _click = mouse_check_button_pressed(mb_left);
+    var _row_clicked = -1;
+
+    for (var _ri = 0; _ri < array_length(_req_keys); _ri++) {
+        var _rk     = _req_keys[_ri];
+        var _need   = _reqs[$ _rk];
+        var _have   = scr_get_donation_progress(_rk);
+        var _ok     = (_have >= _need);
+        var _ry     = _list_y + _ri * _row_h;
+        var _hovered = (_dmx >= _px1 + 8 && _dmx <= _px2 - 8 && _dmy >= _ry && _dmy <= _ry + _row_h - 4);
+
+        // Fila background
+        var _row_col = (_ri mod 2 == 0) ? make_color_rgb(50, 50, 55) : make_color_rgb(38, 38, 42);
+        if (_ok) _row_col = make_color_rgb(20, 60, 20);
+        draw_set_alpha(_hovered && !_ok ? 0.85 : 0.5);
+        draw_roundrect_color_ext(_px1 + 8, _ry, _px2 - 8, _ry + _row_h - 4, 6, 6, _row_col, _row_col, false);
+        draw_set_alpha(1.0);
+        if (_hovered && !_ok) {
+            draw_roundrect_color_ext(_px1 + 8, _ry, _px2 - 8, _ry + _row_h - 4, 6, 6, c_white, c_white, true);
+            if (_click) _row_clicked = _ri;
+        }
+
+        // Checkbox
+        var _cb_size = 24;
+        var _cb_x = _px1 + 20;
+        var _cb_y = _ry + (_row_h - 4 - _cb_size) / 2;
+        draw_set_alpha(1.0);
+        draw_rectangle_color(_cb_x, _cb_y, _cb_x + _cb_size, _cb_y + _cb_size, c_black, c_black, c_black, c_black, false);
+        var _cb_border = _ok ? c_lime : c_silver;
+        draw_rectangle_color(_cb_x, _cb_y, _cb_x + _cb_size, _cb_y + _cb_size, _cb_border, _cb_border, _cb_border, _cb_border, true);
+        if (_ok) {
+            draw_set_color(c_lime);
+            draw_line_width(_cb_x + 5, _cb_y + 12, _cb_x + 10, _cb_y + 18, 3);
+            draw_line_width(_cb_x + 10, _cb_y + 18, _cb_x + 19, _cb_y + 6, 3);
+        }
+
+        // Icono y nombre
+        var _disp = scr_get_donation_target_display(_rk);
+        var _icon_x = _cb_x + _cb_size + 16;
+        var _icon_y = _ry + (_row_h - 4) / 2;
+        if (_disp.sprite != -1) {
+            var _scl = 32 / max(sprite_get_width(_disp.sprite), sprite_get_height(_disp.sprite));
+            draw_sprite_ext(_disp.sprite, _disp.subimg, _icon_x, _icon_y, _scl, _scl, 0, c_white, 1.0);
+        }
+
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_middle);
+        draw_set_color(_ok ? c_lime : c_white);
+        draw_text_transformed(_icon_x + 24, _icon_y, _disp.name, 1.4, 1.4, 0);
+
+        // Progreso
+        draw_set_halign(fa_right);
+        draw_set_color(_ok ? c_lime : c_white);
+        var _prog_str = string(_have) + " / " + string(_need);
+        draw_text_transformed(_px2 - 24, _icon_y, _prog_str, 1.6, 1.6, 0);
+
+        // Indicador "[Donar]" si aplica
+        if (!_ok && _hovered) {
+            var _avail = 0;
+            // contar items aplicables del jugador
+            var _arrs = [_p.inventory_array, _p.backpack_array];
+            for (var _ai = 0; _ai < array_length(_arrs); _ai++) {
+                var _arr = _arrs[_ai];
+                for (var _si = 0; _si < array_length(_arr); _si++) {
+                    var _slot = _arr[_si];
+                    if (is_struct(_slot) && scr_match_donation_key(_rk, _slot.key)) {
+                        _avail += _slot.quantity;
+                    }
+                }
+            }
+            draw_set_halign(fa_center);
+            draw_set_valign(fa_middle);
+            var _hint = (_avail > 0) ? "[Click] Donar (" + string(_avail) + " disp.)" : "Sin items";
+            draw_text_transformed_color(_px1 + _pw / 2, _ry + _row_h - 12, _hint, 1.0, 1.0, 0, c_yellow, c_yellow, c_yellow, c_yellow, 0.85);
+        }
+    }
+
+    // Footer
+    var _footer_line_y = _py2 - 40;
+    draw_set_color(c_silver);
+    draw_line(_px1 + 10, _footer_line_y, _px2 - 10, _footer_line_y);
+
+    if (_p.donation_msg_timer > 0) {
+        var _alpha2 = min(1.0, _p.donation_msg_timer / 20.0);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text_transformed_color(_px1 + _pw / 2, _footer_line_y + 14, _p.donation_msg, 1.4, 1.4, 0, c_yellow, c_yellow, c_yellow, c_yellow, _alpha2);
+        _p.donation_msg_timer -= 1;
+    }
+
+    // Procesar click
+    if (_row_clicked != -1) {
+        var _target = _req_keys[_row_clicked];
+        var _res = scr_donate_specific_target(_target, _p);
+        if (_res.completed) {
+            _p.donation_msg = "Etapa completada!";
+            _p.donation_msg_timer = 90;
+            _p.donation_box_open = false;
+            scr_notify("Etapa completada: " + _stage_name);
+        } else if (_res.donated) {
+            _p.donation_msg = "Donados " + string(_res.items_donated);
+            _p.donation_msg_timer = 60;
+        } else {
+            _p.donation_msg = "No tienes items para donar.";
+            _p.donation_msg_timer = 60;
+        }
+    }
+
+    // ESC para cerrar
+    if (keyboard_check_pressed(vk_escape)) {
+        _p.donation_box_open = false;
+    }
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_set_color(c_white);
+    draw_set_alpha(1.0);
+}

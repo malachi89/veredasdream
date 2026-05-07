@@ -76,6 +76,7 @@ if (current_room_name != _room_name) {
     if (_room_name == "town") {
         if (scr_check_town_construction_completed()) {
             scr_advance_town_stage(global.town_stage + 1);
+            scr_notify("Construccion terminada: " + scr_get_town_stage_name(global.town_stage));
         } else {
             scr_restore_town_stage();
         }
@@ -453,8 +454,54 @@ else if (chat_open) {
                 global.town_donations = {};
                 global.town_construction_day = 0;
                 global.town_construction_duration = 0;
+                scr_update_shop_availability();
                 scr_restore_town_stage();
-                scr_notify("Town stage: " + string(_ts));
+                scr_notify("Town stage: " + string(_ts) + " (" + scr_get_town_stage_name(_ts) + ")");
+            } else if (_cmd == "command_list") {
+                var _cmds = [
+                    "add_item <key> <qty>",
+                    "add_animal <id>",
+                    "upgrade_tool <key>",
+                    "buy_building <name>",
+                    "set_money <amount>",
+                    "set_energy <amount>",
+                    "set_hp <amount>",
+                    "heal",
+                    "set_day <n>",
+                    "set_hour <h>",
+                    "set_season <name>",
+                    "set_weather <rain|sunny>",
+                    "spawn_enemy <name>",
+                    "spawn_player2",
+                    "focus_player <1|2>",
+                    "test_animals <on|off>",
+                    "debug_mp",
+                    "unlock <0-7>",
+                    "next_day",
+                    "next_season",
+                    "next_hour",
+                    "toggle_rain",
+                    "minigame",
+                    "spawn_seeds <qty>",
+                    "set_town_stage <n>",
+                    "command_list"
+                ];
+                show_debug_message("=== COMMAND LIST ===");
+                for (var _ci = 0; _ci < array_length(_cmds); _ci++) {
+                    show_debug_message("  " + _cmds[_ci]);
+                }
+                show_debug_message("====================");
+
+                // Notificacion en pantalla con la lista completa
+                var _msg = "COMANDOS:\n";
+                for (var _ci = 0; _ci < array_length(_cmds); _ci++) {
+                    _msg += _cmds[_ci] + "\n";
+                }
+                scr_notify(_msg);
+                if (ds_list_size(notifications) > 0) {
+                    var _last = notifications[| ds_list_size(notifications) - 1];
+                    _last.timer = 600;
+                }
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
             }
@@ -485,7 +532,8 @@ if (keyboard_check_pressed(vk_escape)) {
                 _lp_chk.show_shipping ||
                 _lp_chk.show_chest    ||
                 _lp_chk.shop_open     ||
-                _lp_chk.dialog_open
+                _lp_chk.dialog_open   ||
+                _lp_chk.donation_box_open
             ));
         if (!_any_ui_open) {
             pause_menu_open = true;
