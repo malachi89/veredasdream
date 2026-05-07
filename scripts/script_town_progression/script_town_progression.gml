@@ -403,6 +403,9 @@ function scr_restore_town_stage() {
     scr_set_layer_visible("Tiles_floors_restored",     _show_restored_floors);
     scr_set_layer_visible("Tiles_road_restored",       _show_restored_road);
     scr_set_layer_visible("Tiles_trees",               _show_trees);
+    if (_show_trees) scr_setup_forest_trees();
+    if (layer_exists("Tiles_trees_top"))
+        layer_set_visible(layer_get_id("Tiles_trees_top"), _show_trees);
     scr_set_layer_visible("Tiles_urban_road",          _show_urban_road);
 
     // Capas de instancias siempre visibles (control por instancia)
@@ -548,6 +551,32 @@ function scr_rebuild_town_collisions(_stage) {
     if (_stage >= TownStage.URBANIZATION_COMPLETE) {
         scr_spawn_town_collision(_layer, 788, 247, 6, 3);
         scr_spawn_town_collision(_layer, 573, 734, 6, 3);
+    }
+
+    // Colisiones en la base de los árboles (stage 8+)
+    // scr_setup_forest_trees ya corrió antes, Tiles_trees tiene solo la fila inferior de cada árbol
+    if (_stage >= TownStage.TREES_RESTORED) {
+        var _trees_layer = layer_get_id("Tiles_trees");
+        if (_trees_layer != -1) {
+            var _tm = layer_tilemap_get_id(_trees_layer);
+            if (_tm != -1) {
+                var _cols = tilemap_get_width(_tm);
+                var _rows = tilemap_get_height(_tm);
+                for (var _ty = 0; _ty < _rows; _ty++) {
+                    var _run_start = -1;
+                    for (var _tx = 0; _tx <= _cols; _tx++) {
+                        var _tile = (_tx < _cols) ? tilemap_get(_tm, _tx, _ty) : 0;
+                        if (_tile != 0 && _run_start == -1) {
+                            _run_start = _tx;
+                        } else if (_tile == 0 && _run_start != -1) {
+                            var _cx = (_run_start + (_tx - 1)) div 2;
+                            scr_spawn_town_collision(_layer, _cx * 16, _ty * 16, 1, 1);
+                            _run_start = -1;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Colisiones de detalles destruidos (solo en stage 0)
