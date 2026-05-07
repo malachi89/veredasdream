@@ -71,8 +71,10 @@ if (current_room_name != _room_name) {
     }
     
     update_tilesets();
-    scr_setup_forest_trees();
+    if (_room_name != "town") scr_setup_forest_trees();
     if (_room_name == "farm") scr_check_collection_unlocks();
+    if (_room_name == "general_shop") scr_setup_general_shop();
+    if (_room_name == "blacksmith") scr_setup_blacksmith();
     if (_room_name == "town") {
         if (scr_check_town_construction_completed()) {
             scr_advance_town_stage(global.town_stage + 1);

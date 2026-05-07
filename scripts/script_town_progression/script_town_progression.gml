@@ -380,12 +380,6 @@ function scr_advance_town_stage(_new_stage) {
 // =============================================================
 
 function scr_update_shop_availability() {
-    if (variable_struct_exists(global.shop_data, "Miraculos")) {
-        global.shop_data[$ "Miraculos"].available = (global.town_stage >= TownStage.SHOP_RESTORED);
-    }
-    if (variable_struct_exists(global.shop_data, "Carlos")) {
-        global.shop_data[$ "Carlos"].available = (global.town_stage >= TownStage.BLACKSMITH_RESTORED);
-    }
 }
 
 // =============================================================
@@ -418,11 +412,14 @@ function scr_restore_town_stage() {
     scr_set_town_instance_visibility();
     scr_clear_construction_sites();
 
-    if (global.town_construction_duration > 0) {
+    if (scr_is_construction_stage(_stage)) {
         scr_spawn_construction_sites_for_stage(_stage);
     }
 
     scr_setup_buses(_stage);
+    scr_manage_shop_town_transition(_stage);
+    scr_manage_blacksmith_town_transition(_stage);
+    scr_rebuild_town_collisions(_stage);
 }
 
 function scr_set_layer_visible(_name, _visible) {
@@ -478,17 +475,155 @@ function scr_set_town_instance_visibility() {
         if (room_get_name(room) == "town") visible = (_stage >= TownStage.URBANIZATION_COMPLETE);
     }
 
-    // NPC Carlos en town: solo visible al stage 5+
     with (obj_npc) {
-        if (room_get_name(room) == "town" && variable_instance_exists(id, "npc_key") && npc_key == "Carlos") {
-            visible = (_stage >= TownStage.BLACKSMITH_RESTORED);
+        if (room_get_name(room) != "town" || !variable_instance_exists(id, "npc_key")) continue;
+        if (npc_key == "Miraculos") {
+            visible = (_stage < TownStage.SHOP_CONSTRUCTION);
+        } else if (npc_key == "Carlos") {
+            visible = (_stage < TownStage.BLACKSMITH_CONSTRUCTION);
         }
+    }
+
+    with (obj_donation_table) {
+        if (room_get_name(room) == "town") visible = (_stage < TownStage.URBANIZATION_COMPLETE);
     }
 }
 
 // =============================================================
 // CONSTRUCTION SITES
 // =============================================================
+
+function scr_spawn_town_collision(_layer, _x, _y, _sx, _sy) {
+    var _c = instance_create_layer(_x, _y, _layer, obj_collision);
+    _c.image_xscale = _sx;
+    _c.image_yscale = _sy;
+    _c.is_town_building_collision = true;
+}
+
+function scr_rebuild_town_collisions(_stage) {
+    if (room_get_name(room) != "town") return;
+
+    // Colisiones manuales de la tienda Miraculos — activas desde SHOP_RESTORED
+    var _shop_on = (_stage >= TownStage.SHOP_RESTORED);
+    if (instance_exists(inst_miraculos_store1)) {
+        with (inst_miraculos_store1) { x = _shop_on ? 892 : -9999; y = _shop_on ? 396 : -9999; }
+    }
+    if (instance_exists(inst_miraculos_store2)) {
+        with (inst_miraculos_store2) { x = _shop_on ? 856 : -9999; y = _shop_on ? 396 : -9999; }
+    }
+
+    // Colisiones manuales de la herrería Carlos — activas desde BLACKSMITH_RESTORED
+    var _bs_on = (_stage >= TownStage.BLACKSMITH_RESTORED);
+    if (instance_exists(inst_blacksmith1)) {
+        with (inst_blacksmith1) { x = _bs_on ? 892 : -9999; y = _bs_on ? 68.5 : -9999; }
+    }
+    if (instance_exists(inst_blacksmith2)) {
+        with (inst_blacksmith2) { x = _bs_on ? 850 : -9999; y = _bs_on ? 68.5 : -9999; }
+    }
+
+    // Colisiones dinámicas (destruir las anteriores antes de respawnear)
+    with (obj_collision) {
+        if (room_get_name(room) == "town"
+            && variable_instance_exists(id, "is_town_building_collision")
+            && is_town_building_collision) {
+            instance_destroy();
+        }
+    }
+
+    var _layer = layer_get_id("Instances_collision");
+    if (_layer == -1) _layer = layer_get_id("Instances");
+    if (_layer == -1) return;
+
+    // Tabla de donaciones (hasta que el town esté completo)
+    if (_stage < TownStage.URBANIZATION_COMPLETE) {
+        scr_spawn_town_collision(_layer, 1216, 832, 3, 2);
+    }
+
+    // Torre de apartamentos (112x288 → franja base 112x32)
+    if (_stage >= TownStage.BUILDINGS_RESTORED) {
+        scr_spawn_town_collision(_layer, 100, 349, 7, 2);
+        scr_spawn_town_collision(_layer, 385, 354, 11, 2); // kid_park (176x32)
+    }
+    // Bus stops (96x48)
+    if (_stage >= TownStage.URBANIZATION_COMPLETE) {
+        scr_spawn_town_collision(_layer, 788, 247, 6, 3);
+        scr_spawn_town_collision(_layer, 573, 734, 6, 3);
+    }
+
+    // Colisiones de detalles destruidos (solo en stage 0)
+    if (_stage < TownStage.STREETS_CLEARED) {
+        var _tilemap_layer = layer_get_id("Tiles_details_destroyed_1");
+        if (_tilemap_layer != -1) {
+            var _tm = layer_tilemap_get_id(_tilemap_layer);
+            if (_tm != -1) {
+                var _cols = tilemap_get_width(_tm);
+                var _rows = tilemap_get_height(_tm);
+                for (var _ty = 0; _ty < _rows; _ty++) {
+                    for (var _tx = 0; _tx < _cols; _tx++) {
+                        if (tilemap_get(_tm, _tx, _ty) != 0) {
+                            scr_spawn_town_collision(_layer, _tx * 16, _ty * 16, 1, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function scr_manage_shop_town_transition(_stage) {
+    if (room_get_name(room) != "town") return;
+    with (obj_transition) {
+        if (room_get_name(room) == "town" && variable_instance_exists(id, "target_room") && target_room == general_shop) {
+            instance_destroy();
+        }
+    }
+    if (_stage >= TownStage.SHOP_RESTORED) {
+        var _layer = layer_get_id("Instances");
+        if (_layer == -1) return;
+        var _t = instance_create_layer(863, 425, _layer, obj_transition);
+        _t.target_room = general_shop;
+        _t.target_x    = 60;
+        _t.target_y    = 160;
+    }
+}
+
+function scr_manage_blacksmith_town_transition(_stage) {
+    if (room_get_name(room) != "town") return;
+    with (obj_transition) {
+        if (room_get_name(room) == "town" && variable_instance_exists(id, "target_room") && target_room == blacksmith) {
+            instance_destroy();
+        }
+    }
+    if (_stage >= TownStage.BLACKSMITH_RESTORED) {
+        var _layer = layer_get_id("Instances");
+        if (_layer == -1) return;
+        var _t = instance_create_layer(863, 80, _layer, obj_transition);
+        _t.target_room = blacksmith;
+        _t.target_x    = 60;
+        _t.target_y    = 160;
+    }
+}
+
+function scr_setup_general_shop() {
+    if (global.town_stage < TownStage.SHOP_RESTORED) return;
+    var _layer = layer_get_id("Instances");
+    if (_layer == -1) return;
+    instance_create_layer(60, 90, _layer, obj_npc, { npc_key: "Miraculos" });
+}
+
+function scr_setup_blacksmith() {
+    if (global.town_stage < TownStage.BLACKSMITH_RESTORED) return;
+    var _layer = layer_get_id("Instances");
+    if (_layer == -1) return;
+    instance_create_layer(60, 90, _layer, obj_npc, { npc_key: "Carlos" });
+}
+
+function scr_is_construction_stage(_stage) {
+    return (_stage == TownStage.SHOP_CONSTRUCTION
+         || _stage == TownStage.BLACKSMITH_CONSTRUCTION
+         || _stage == TownStage.BUILDINGS_CONSTRUCTION
+         || _stage == TownStage.URBANIZATION_CONSTRUCTION);
+}
 
 function scr_clear_construction_sites() {
     with (obj_construction_site) instance_destroy();
@@ -502,18 +637,18 @@ function scr_spawn_construction_sites_for_stage(_stage) {
     var _positions = [];
     switch (_stage) {
         case TownStage.SHOP_CONSTRUCTION:
-            array_push(_positions, { x: 871, y: 412 });
+            array_push(_positions, { x: 871, y: 340 });
             break;
         case TownStage.BLACKSMITH_CONSTRUCTION:
-            array_push(_positions, { x: 865, y: 82 });
+            array_push(_positions, { x: 865, y: 55 });
             break;
         case TownStage.BUILDINGS_CONSTRUCTION:
-            array_push(_positions, { x: 100, y: 93 });   // apartments
+            array_push(_positions, { x: 385, y: 180 });  // apartments
             array_push(_positions, { x: 385, y: 242 });  // kid_park
             break;
         case TownStage.URBANIZATION_CONSTRUCTION:
-            array_push(_positions, { x: 788, y: 247 });  // bus_stop_1
-            array_push(_positions, { x: 573, y: 734 });  // bus_stop_2
+            array_push(_positions, { x: 758, y: 247 });  // bus_stop_1
+            array_push(_positions, { x: 543, y: 734 });  // bus_stop_2
             break;
     }
 
@@ -535,10 +670,10 @@ function scr_setup_buses(_stage) {
     if (_stage >= TownStage.URBANIZATION_COMPLETE) {
         // Spawn si no existen
         if (!instance_exists(obj_bus_down)) {
-            instance_create_layer(700, -100, _layer, obj_bus_down);
+            instance_create_layer(670, -100, _layer, obj_bus_down);
         }
         if (!instance_exists(obj_bus_up)) {
-            instance_create_layer(750, 1000, _layer, obj_bus_up);
+            instance_create_layer(720, 1000, _layer, obj_bus_up);
         }
     } else {
         // Limpiar si existen

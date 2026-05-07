@@ -127,7 +127,7 @@ global.wild_animal_data = {
     penguin:  { name: "Pinguino", sprite: sprite_forest_animals_penguin,  move_speed: 0.6,  hp: 2, max_hp: 2, product_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     rabbit:   { name: "Conejo",   sprite: sprite_forest_animals_rabbit,   move_speed: 1.0,  hp: 3, max_hp: 3, product_drops: ["rabbit_pelt_red","rabbit_pelt_orange","rabbit_pelt_yellow","rabbit_pelt_green","rabbit_pelt_blue","rabbit_pelt_lilac","rabbit_pelt_purple","rabbit_pelt_turquoise","rabbit_pelt_pink","rabbit_pelt_lime","rabbit_pelt_amber","rabbit_pelt_brown","rabbit_pelt_black","rabbit_pelt_white"] },
     turtle:   { name: "Tortuga",  sprite: sprite_forest_animals_turtle,   move_speed: 0.3,  hp: 9, max_hp: 9, product_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
-    bear:     { name: "Oso",      sprite: sprite_player_bear_walk_bear_brown, move_speed: 0.8,  hp: 25, max_hp: 25, product_drops: ["honey","honey","honey","honey","honey","honey","honey","honey","honey","pelt_brown","pelt_black","pelt_white"], frame_order: [0, 1, 2, 3] },
+    bear:     { name: "Oso",      sprite: sprite_player_bear_walk_bear_brown, move_speed: 0.8,  hp: 25, max_hp: 25, product_drops: ["honey","honey","honey","honey","honey","honey","honey","honey","honey","pelt_brown","pelt_black","pelt_white"], frame_order: [0, 1, 2, 3], weapon_drop_chance: 0.15 },
 };
 
 global.enemy_data = {
@@ -146,6 +146,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["string_black"],
         dye_drops: ["dye_black","dye_white"],
+        weapon_drop_chance: 0.03,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_blue: {
@@ -163,6 +164,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["string_blue","feathers_blue"],
         dye_drops: ["dye_blue","dye_turquoise"],
+        weapon_drop_chance: 0.03,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_golden: {
@@ -180,6 +182,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["yarn_amber","string_amber"],
         dye_drops: ["dye_amber","dye_yellow"],
+        weapon_drop_chance: 0.05,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_green: {
@@ -197,6 +200,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["string_green","feathers_green"],
         dye_drops: ["dye_green","dye_lime"],
+        weapon_drop_chance: 0.03,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_pink: {
@@ -214,6 +218,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["yarn_pink","string_pink"],
         dye_drops: ["dye_pink","dye_red"],
+        weapon_drop_chance: 0.05,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     slime_purple: {
@@ -231,6 +236,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["yarn_purple","string_purple"],
         dye_drops: ["dye_purple","dye_lilac"],
+        weapon_drop_chance: 0.07,
         snd_hurt: sound_slime_damage, snd_death: sound_slime_death, snd_move: sound_slime_moving_attacking
     },
     myconid_blue: {
@@ -252,6 +258,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["pelt_blue","string_blue","thread_blue"],
         dye_drops: ["dye_blue"],
+        weapon_drop_chance: 0.05,
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_green: {
@@ -273,6 +280,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["pelt_green","string_green","thread_green"],
         dye_drops: ["dye_green"],
+        weapon_drop_chance: 0.05,
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     myconid_pink: {
@@ -294,6 +302,7 @@ global.enemy_data = {
         death_anim_frames: 48,
         product_drops: ["pelt_pink","string_pink","thread_pink"],
         dye_drops: ["dye_pink"],
+        weapon_drop_chance: 0.07,
         snd_hurt: sound_myconid_damage, snd_death: sound_myconid_death, snd_attack: sound_myconid_attack
     },
     goblin: {
@@ -314,8 +323,9 @@ global.enemy_data = {
         attack_cooldown: 45,
         attack_range: 30,
         death_anim_frames: 48,
-        product_drops: ["leather_brown","string_brown","pelt_brown","sword_1","bow_1"],
+        product_drops: ["leather_brown","string_brown","pelt_brown"],
         dye_drops: ["dye_brown","dye_orange"],
+        weapon_drop_chance: 0.15,
         snd_hurt: sound_goblin_damage, snd_death: sound_goblin_death, snd_attack: sound_goblin_attack, snd_idle: sound_goblin_idling
     },
 };
@@ -1202,7 +1212,7 @@ global.npc_dialogues = [
 global.shop_data = {};
 
 global.shop_data[$ "Miraculos"] = {
-    available: false, // se activa al alcanzar TownStage.SHOP_RESTORED
+    available: true,
     items: [
         // PRIMAVERA
         { item_key: "cherry_seeds",       price_money: 30, price_items: [] },
@@ -1290,7 +1300,7 @@ global.item_groups = {
 };
 
 global.shop_data[$ "Carlos"] = {
-    available: false, // se activa al alcanzar TownStage.BLACKSMITH_RESTORED
+    available: true,
     items: [
         { item_key: "pickaxe",      is_upgrade: true },
         { item_key: "axe",          is_upgrade: true },

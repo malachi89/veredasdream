@@ -17,6 +17,11 @@ if (is_dying > 0) {
             var _dd = _d_data.dye_drops;
             inventory_drop_item(_dd[irandom(array_length(_dd) - 1)], 1, x, y, 30);
         }
+        if (_d_data != undefined && variable_struct_exists(_d_data, "weapon_drop_chance") && random(1) < _d_data.weapon_drop_chance) {
+            var _w_type  = choose("sword", "bow");
+            var _w_level = ceil(10 * power(random(1), 2));
+            inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 30);
+        }
         global.collected_items[$ enemy_key] = true;
         instance_destroy();
     }

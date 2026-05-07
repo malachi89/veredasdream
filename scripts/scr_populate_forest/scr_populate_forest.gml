@@ -11,6 +11,9 @@ function scr_populate_forest() {
     var _water_layer = layer_get_id("Tiles_water");
     var _water_map   = (_water_layer != -1) ? layer_tilemap_get_id(_water_layer) : -1;
 
+    // Destroy previous day's magic chests
+    with (obj_magic_chest) instance_destroy();
+
     // Clear previous day's forage drops from persistent storage
     if (variable_struct_exists(global.room_drops, _room_name)) {
         var _drops = global.room_drops[$ _room_name];
@@ -368,6 +371,19 @@ function scr_populate_forest() {
             instance_create_layer(_px, _py, "Instances", _edata.object);
             array_push(_eplaced, { x: _px, y: _py });
             array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            break;
+        }
+    }
+
+    // Magic Chest: 50% chance, max 1 per day
+    if (irandom(1) == 0) {
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            if (instance_position(_px + 8, _py + 8, obj_item_parent)) continue;
+            instance_create_layer(_px, _py, "Instances", obj_magic_chest);
             break;
         }
     }

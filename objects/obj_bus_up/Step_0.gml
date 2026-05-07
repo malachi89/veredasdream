@@ -14,6 +14,8 @@ if (state == 0) {
     if (y < end_y) {
         y = start_y;
         paused_at_y = false;
+        state = 1;
+        state_timer = loop_pause_frames;
     }
 } else {
     state_timer -= 1;

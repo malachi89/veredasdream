@@ -1,7 +1,9 @@
 {
   "$GMObject":"",
   "%Name":"obj_apartments_tower",
-  "eventList":[],
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
   "name":"obj_apartments_tower",
   "overriddenProperties":[],

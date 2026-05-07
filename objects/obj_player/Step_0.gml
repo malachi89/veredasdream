@@ -344,7 +344,7 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
     _my = (_mag != 0) ? (_v / _mag) * _spd : 0;
 }
 
-move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign, obj_ladder_down, obj_ladder_exit], 4, 0, 0, -1, -1);
+move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign, obj_ladder_down, obj_ladder_exit, obj_bus_down, obj_bus_up], 4, 0, 0, -1, -1);
 
 // Dano por contacto con animales salvajes que huyen
 if (hurt_timer <= 0 && hp > 0) {

@@ -169,8 +169,9 @@ function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(_s, "horses"))       _s.horses       = [];
     if (!variable_struct_exists(_s, "common_trees")) _s.common_trees = [];
     if (!variable_struct_exists(_s, "rocks"))        _s.rocks        = [];
-    if (!variable_struct_exists(_s, "animals"))      _s.animals      = [];
-    if (!variable_struct_exists(_s, "wild_animals")) _s.wild_animals = [];
+    if (!variable_struct_exists(_s, "animals"))       _s.animals       = [];
+    if (!variable_struct_exists(_s, "wild_animals"))  _s.wild_animals  = [];
+    if (!variable_struct_exists(_s, "magic_chests"))  _s.magic_chests  = [];
     return _s;
 }
 
@@ -338,6 +339,16 @@ function scr_capture_current_room_state() {
     for (var i = 0; i < instance_number(obj_shoveled); i++) {
         var _inst = instance_find(obj_shoveled, i);
         array_push(_state.shoveled_tiles, { x: _inst.x, y: _inst.y });
+    }
+
+    // Capture Magic Chests
+    _state.magic_chests = [];
+    for (var i = 0; i < instance_number(obj_magic_chest); i++) {
+        var _mc = instance_find(obj_magic_chest, i);
+        array_push(_state.magic_chests, {
+            x: _mc.x, y: _mc.y,
+            loot: _mc.loot, is_open: _mc.is_open, image_index: _mc.image_index
+        });
     }
 
     global.room_states[$ _room_name] = _state;
@@ -650,6 +661,27 @@ function scr_restore_room_state(_room_name) {
             _inst.ore_type_index = variable_struct_exists(_r, "ore_type_index") ? _r.ore_type_index : -1;
             _inst.ore_item_key = variable_struct_exists(_r, "ore_item_key") ? _r.ore_item_key : "";
             _inst.hit_counter = variable_struct_exists(_r, "hit_counter") ? _r.hit_counter : 0;
+        }
+    }
+
+    // ---- MAGIC CHESTS ----
+    if (variable_struct_exists(_state, "magic_chests")) {
+        var _mc_map = _build_xy_map(_state.magic_chests);
+        var _to_destroy = [];
+        with (obj_magic_chest) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_mc_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+        for (var i = 0; i < array_length(_state.magic_chests); i++) {
+            var _mcd  = _state.magic_chests[i];
+            var _inst = noone;
+            with (obj_magic_chest) { if (x == _mcd.x && y == _mcd.y) { _inst = id; break; } }
+            if (_inst == noone) _inst = instance_create_layer(_mcd.x, _mcd.y, "Instances", obj_magic_chest);
+            _inst.loot        = _mcd.loot;
+            _inst.is_open     = _mcd.is_open;
+            _inst.image_index = _mcd.image_index;
+            _inst.image_speed = 0;
         }
     }
 

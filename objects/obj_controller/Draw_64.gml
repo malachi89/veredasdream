@@ -628,6 +628,20 @@ if (chat_open) {
     draw_text_transformed_color(_box_x + 10, _box_y + (_box_h / 2), _display_text, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
 }
 
+// --- DEBUG: COORDENADAS DEL JUGADOR ---
+if (instance_exists(global.local_player)) {
+    var _px = round(global.local_player.x);
+    var _py = round(global.local_player.y);
+    var _coord_text = "x=" + string(_px) + "  y=" + string(_py);
+    draw_set_font(fnt_pixel_operator);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_set_alpha(0.7);
+    draw_rectangle_color(14, 158, 14 + string_width(_coord_text) * 1.4 + 12, 182, c_black, c_black, c_black, c_black, false);
+    draw_set_alpha(1.0);
+    draw_text_transformed_color(20, 162, _coord_text, 1.4, 1.4, 0, c_lime, c_lime, c_lime, c_lime, 1.0);
+}
+
 // --- PAUSE MENU ---
 if (pause_menu_open) {
     var _pcx = display_get_gui_width()  * 0.5;

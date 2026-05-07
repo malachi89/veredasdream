@@ -780,7 +780,7 @@ function scr_upgrade_tool(_tool_key) {
                     scr_notify(_tool_key + " ya esta al maximo");
                     return;
                 }
-                if (_cur >= QUALITY.CHUBESTANIO && global.town_stage < TownStage.BLACKSMITH_RESTORED) {
+                if (_cur >= QUALITY.BRONCASTANIO && global.town_stage < TownStage.BLACKSMITH_RESTORED) {
                     scr_notify("La herreria del town no esta lista para upgrades mayores.");
                     return;
                 }
