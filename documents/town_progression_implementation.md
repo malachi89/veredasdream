@@ -24,8 +24,9 @@ Implementación técnica del sistema de restauración del town. Para el diseño 
 16. [Cap de upgrades de herramienta](#cap-de-upgrades-de-herramienta)
 17. [Comandos debug](#comandos-debug)
 18. [Save / Load](#save--load)
-19. [Archivos modificados/creados](#archivos-modificadoscreados)
-20. [Pendiente / mejoras futuras](#pendiente--mejoras-futuras)
+19. [Sincronización multiplayer](#sincronización-multiplayer)
+20. [Archivos modificados/creados](#archivos-modificadoscreados)
+21. [Pendiente / mejoras futuras](#pendiente--mejoras-futuras)
 
 ---
 
@@ -412,6 +413,42 @@ Resetea donaciones y construcción, y llama `scr_restore_town_stage()` que aplic
 
 ---
 
+## Sincronización multiplayer
+
+El estado del town se sincroniza vía dos mecanismos:
+
+### FULL_SNAPSHOT (conexión inicial)
+
+`net_send_full_snapshot()` incluye `town_stage`, `town_donations`, `town_construction_day` y `town_construction_duration`. El cliente los aplica en `net_handle_full_snapshot()` antes de llamar `room_goto`, de modo que `scr_restore_town_stage()` ya tiene el stage correcto al entrar al town.
+
+### NET_CMD.TOWN_STAGE_UPDATE (cambios en tiempo real)
+
+`net_send_town_stage_update()` serializa el estado completo (stage + donations + construction). Se envía desde:
+
+- **`scr_advance_town_stage()`** — automáticamente cuando el HOST avanza de etapa (donación completa o construcción terminada).
+- **`net_handle_donate()`** — para actualizaciones parciales de donación (items donados pero etapa no completada aún).
+- **`set_town_stage <n>` debug command** — cuando lo ejecuta el HOST.
+
+`net_handle_town_stage_update()` en el cliente aplica los globals y llama `scr_restore_town_stage()` si está en el town.
+
+### NET_CMD.CMD_DONATE (donaciones del cliente)
+
+`scr_donate_specific_target()` detecta `NET_ROLE.CLIENT` y en lugar de modificar globals localmente, envía `net_send_donate(_target_key)`. El HOST recibe el paquete en `net_handle_donate()`, ejecuta la lógica de donación contra el ghost del cliente, y:
+
+1. Envía `INVENTORY_UPDATE` para cada slot del ghost que cambió.
+2. Si la etapa avanzó: `scr_advance_town_stage` broadcast `TOWN_STAGE_UPDATE` automáticamente.
+3. Si fue donación parcial: `net_handle_donate` envía `TOWN_STAGE_UPDATE` con el progreso actualizado.
+
+### Guard de auto-avance por construcción
+
+En `obj_controller/Step_0.gml`, el bloque de `scr_check_town_construction_completed()` está guardado con `global.net_role != NET_ROLE.CLIENT` para que solo el HOST detecte y avance la etapa cuando termina la construcción.
+
+### Debug command `set_town_stage`
+
+Bloqueado en CLIENT. En HOST: setea globals, llama `scr_restore_town_stage()` y broadcast `net_send_town_stage_update()`.
+
+---
+
 ## Archivos modificados/creados
 
 ### Nuevos
@@ -428,11 +465,13 @@ Resetea donaciones y construcción, y llama `scr_restore_town_stage()` que aplic
 - `objects/obj_bus_stop_2/Create_0.gml`
 
 ### Modificados
-- `scripts/script_init/script_init.gml` — enum TownStage, Miraculos/Carlos `available: true`
+- `scripts/script_init/script_init.gml` — enum TownStage, Miraculos/Carlos `available: true`, `NET_CMD.CMD_DONATE` (45) y `NET_CMD.TOWN_STAGE_UPDATE` (52)
+- `scripts/script_net/script_net.gml` — FULL_SNAPSHOT incluye town state; nuevas funciones `net_send_town_stage_update`, `net_handle_town_stage_update`, `net_send_donate`, `net_handle_donate`; dispatch de CMD_DONATE y TOWN_STAGE_UPDATE
+- `scripts/script_town_progression/script_town_progression.gml` — `scr_donate_specific_target` enruta al host en CLIENT; `scr_advance_town_stage` broadcast en HOST
 - `scripts/script_inventory_functions/script_inventory_functions.gml` — save/load del estado town
 - `scripts/script_player_actions/script_player_actions.gml` — cap BRONCASTANIO en `scr_upgrade_tool`
 - `objects/obj_controller/Create_0.gml` — globals
-- `objects/obj_controller/Step_0.gml` — room-change handlers (town, general_shop, blacksmith), excluye town de `scr_setup_forest_trees`
+- `objects/obj_controller/Step_0.gml` — room-change handlers (town, general_shop, blacksmith), excluye town de `scr_setup_forest_trees`, guard `net_role != CLIENT` en auto-avance de construcción, `set_town_stage` debug bloqueado en CLIENT + broadcast en HOST
 - `objects/obj_controller/Draw_64.gml` — debug overlay coordenadas
 - `objects/obj_player/Step_0.gml` — buses añadidos a `move_and_collide`
 - `objects/obj_construction_site/obj_construction_site.yy` — evento CleanUp añadido
@@ -451,8 +490,8 @@ Resetea donaciones y construcción, y llama `scr_restore_town_stage()` que aplic
 
 3. **NPCs vecinos en stage 7** — el plan dice "NPCs de vecinos aparecen en el town" pero no especifica qué objetos. Requeriría crear nuevos `obj_npc` instances o un sistema de vecinos.
 
-4. **Multiplayer sync** — `global.town_stage` no se sincroniza vía `script_net.gml`. Habría que añadir un `NET_CMD.TOWN_STAGE_UPDATE`.
+4. **Scroll en panel de donativos** — actualmente las 9 filas máximas caben sin scroll. Si una etapa futura tuviera más de 9 requirements habría que añadir scroll vertical.
 
-5. **Scroll en panel de donativos** — actualmente las 9 filas máximas caben sin scroll. Si una etapa futura tuviera más de 9 requirements habría que añadir scroll vertical.
+5. **Colisiones de bancas/farolas** — si en el futuro se agregan objetos de mobiliario urbano como objetos GML (no tiles), necesitarán colisiones propias o ser añadidos a `scr_rebuild_town_collisions`.
 
-6. **Colisiones de bancas/farolas** — si en el futuro se agregan objetos de mobiliario urbano como objetos GML (no tiles), necesitarán colisiones propias o ser añadidos a `scr_rebuild_town_collisions`.
+6. **Multiplayer: estado entre sesiones del cliente** — el ghost arranca con inventario fijo de ítems iniciales; si el cliente tuviera un save propio habría que serializar su inventario en el save del host.

@@ -255,6 +255,10 @@ function scr_donate_to_town(_player = global.local_player) {
 
 function scr_donate_specific_target(_target_key, _player = global.local_player) {
     var _result = { donated: false, items_donated: 0, completed: false };
+    if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_donate(_target_key);
+        return _result;
+    }
     if (!instance_exists(_player)) return _result;
 
     var _stage = global.town_stage;
@@ -372,6 +376,9 @@ function scr_advance_town_stage(_new_stage) {
     global.town_donations = {};
     scr_update_shop_availability();
     scr_restore_town_stage();
+    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+        net_send_town_stage_update();
+    }
     show_debug_message("Town stage avanzo a: " + string(_new_stage) + " (" + scr_get_town_stage_name(_new_stage) + ")");
 }
 

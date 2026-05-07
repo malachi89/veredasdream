@@ -76,7 +76,7 @@ if (current_room_name != _room_name) {
     if (_room_name == "general_shop") scr_setup_general_shop();
     if (_room_name == "blacksmith") scr_setup_blacksmith();
     if (_room_name == "town") {
-        if (scr_check_town_construction_completed()) {
+        if (global.net_role != NET_ROLE.CLIENT && scr_check_town_construction_completed()) {
             scr_advance_town_stage(global.town_stage + 1);
             scr_notify("Construccion terminada: " + scr_get_town_stage_name(global.town_stage));
         } else {
@@ -451,6 +451,9 @@ else if (chat_open) {
                     scr_notify("Jugador no encontrado");
                 }
             } else if (_cmd == "set_town_stage" && array_length(_parts) >= 2) {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede cambiar el town stage");
+                } else {
                 var _ts = clamp(real(_parts[1]), 0, TownStage.URBANIZATION_COMPLETE);
                 global.town_stage = _ts;
                 global.town_donations = {};
@@ -459,6 +462,10 @@ else if (chat_open) {
                 scr_update_shop_availability();
                 scr_restore_town_stage();
                 scr_notify("Town stage: " + string(_ts) + " (" + scr_get_town_stage_name(_ts) + ")");
+                if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                    net_send_town_stage_update();
+                }
+                }
             } else if (_cmd == "command_list") {
                 var _cmds = [
                     "add_item <key> <qty>",

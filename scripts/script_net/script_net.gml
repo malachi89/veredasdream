@@ -128,6 +128,12 @@ function net_dispatch(_cmd, _payload, _from_socket) {
         case NET_CMD.CMD_DROP:
             net_handle_drop(_payload);
             break;
+        case NET_CMD.CMD_DONATE:
+            net_handle_donate(_payload);
+            break;
+        case NET_CMD.TOWN_STAGE_UPDATE:
+            net_handle_town_stage_update(_payload);
+            break;
         case NET_CMD.CMD_MINE_ENTER:
             net_handle_mine_enter(_payload);
             break;
@@ -288,7 +294,11 @@ function net_send_full_snapshot(_client_socket) {
         mine_unlocks:             global.mine_unlocks,
         mine_progress:            global.mine_progress,
         mine_floor_room_assigned: global.mine_floor_room_assigned,
-        cave_repopulate:          global.cave_repopulate
+        cave_repopulate:          global.cave_repopulate,
+        town_stage:               global.town_stage,
+        town_donations:           global.town_donations,
+        town_construction_day:    global.town_construction_day,
+        town_construction_duration: global.town_construction_duration
     };
 
     var _json = json_stringify(_snap);
@@ -319,6 +329,10 @@ function net_handle_full_snapshot(_payload) {
     global.mine_progress            = _snap.mine_progress;
     global.mine_floor_room_assigned = _snap.mine_floor_room_assigned;
     global.cave_repopulate          = _snap.cave_repopulate;
+    global.town_stage                 = variable_struct_exists(_snap, "town_stage") ? _snap.town_stage : TownStage.INITIAL;
+    global.town_donations             = variable_struct_exists(_snap, "town_donations") ? _snap.town_donations : {};
+    global.town_construction_day      = variable_struct_exists(_snap, "town_construction_day") ? _snap.town_construction_day : 0;
+    global.town_construction_duration = variable_struct_exists(_snap, "town_construction_duration") ? _snap.town_construction_duration : 0;
 
     // Destroy any existing players, spawn player2 as local player
     with (obj_player) instance_destroy();
@@ -1409,4 +1423,68 @@ function net_handle_chest_slot(_payload) {
             break;
         }
     }
+}
+
+// --- TOWN_STAGE_UPDATE (host → client) ---
+
+function net_send_town_stage_update() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _data = {
+        town_stage:               global.town_stage,
+        town_donations:           global.town_donations,
+        town_construction_day:    global.town_construction_day,
+        town_construction_duration: global.town_construction_duration
+    };
+    var _buf = net_begin(NET_CMD.TOWN_STAGE_UPDATE);
+    buffer_write(_buf, buffer_string, json_stringify(_data));
+    net_broadcast(_buf);
+}
+
+function net_handle_town_stage_update(_payload) {
+    var _data = json_parse(buffer_read(_payload, buffer_string));
+    global.town_stage                 = _data.town_stage;
+    global.town_donations             = _data.town_donations;
+    global.town_construction_day      = _data.town_construction_day;
+    global.town_construction_duration = _data.town_construction_duration;
+    if (room_get_name(room) == "town") scr_restore_town_stage();
+}
+
+// --- CMD_DONATE (client → host) ---
+
+function net_send_donate(_target_key) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_DONATE);
+    buffer_write(_buf, buffer_string, _target_key);
+    net_broadcast(_buf);
+}
+
+function net_handle_donate(_payload) {
+    if (global.net_role != NET_ROLE.HOST) return;
+    var _target_key = buffer_read(_payload, buffer_string);
+    if (!instance_exists(obj_net)) return;
+    var _ghost = obj_net.remote_player_ghost;
+    if (!instance_exists(_ghost)) return;
+
+    // Snapshot inventory before to detect which slots change
+    var _inv_before  = array_create(10);
+    var _back_before = array_create(64);
+    for (var _i = 0; _i < 10;  _i++) _inv_before[_i]  = _ghost.inventory_array[_i];
+    for (var _i = 0; _i < 64; _i++) _back_before[_i] = _ghost.backpack_array[_i];
+
+    var _result = scr_donate_specific_target(_target_key, _ghost);
+    if (!_result.donated) return;
+
+    for (var _i = 0; _i < 10; _i++) {
+        if (_ghost.inventory_array[_i] != _inv_before[_i]) {
+            net_send_inventory_update(2, 0, _i, _ghost.inventory_array[_i]);
+        }
+    }
+    for (var _i = 0; _i < 64; _i++) {
+        if (_ghost.backpack_array[_i] != _back_before[_i]) {
+            net_send_inventory_update(2, 1, _i, _ghost.backpack_array[_i]);
+        }
+    }
+
+    // Stage advance broadcasts via scr_advance_town_stage; only needed here for partial donations
+    if (!_result.completed) net_send_town_stage_update();
 }
