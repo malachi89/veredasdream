@@ -657,7 +657,6 @@
     {"id":{"name":"obj_construction_site","path":"objects/obj_construction_site/obj_construction_site.yy",},},
     {"id":{"name":"obj_controller","path":"objects/obj_controller/obj_controller.yy",},},
     {"id":{"name":"obj_crop","path":"objects/obj_crop/obj_crop.yy",},},
-    {"id":{"name":"obj_donation_box","path":"objects/obj_donation_box/obj_donation_box.yy",},},
     {"id":{"name":"obj_donation_table","path":"objects/obj_donation_table/obj_donation_table.yy",},},
     {"id":{"name":"obj_enemy_goblin","path":"objects/obj_enemy_goblin/obj_enemy_goblin.yy",},},
     {"id":{"name":"obj_enemy_myconid_blue","path":"objects/obj_enemy_myconid_blue/obj_enemy_myconid_blue.yy",},},
