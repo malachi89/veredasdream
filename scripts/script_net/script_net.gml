@@ -194,6 +194,36 @@ function net_dispatch(_cmd, _payload, _from_socket) {
                 obj_net.peer_socket  = -1;
             }
             break;
+        case NET_CMD.CMD_ENEMY_DAMAGE:
+            net_handle_enemy_damage(_payload);
+            break;
+        case NET_CMD.CMD_ENEMY_DEATH:
+            net_handle_enemy_death(_payload);
+            break;
+        case NET_CMD.CMD_ROOM_ENEMIES:
+            net_handle_room_enemies(_payload);
+            break;
+        case NET_CMD.PLAYER_DAMAGE:
+            net_handle_player_damage(_payload);
+            break;
+        case NET_CMD.CMD_ANIMAL_EVENT:
+            net_handle_animal_event(_payload);
+            break;
+        case NET_CMD.CMD_WEATHER_SYNC:
+            net_handle_weather_sync(_payload);
+            break;
+        case NET_CMD.CMD_CRAFT_COMPLETE:
+            net_handle_craft_complete(_payload);
+            break;
+        case NET_CMD.CMD_FISH_EVENT:
+            net_handle_fish_event(_payload);
+            break;
+        case NET_CMD.CMD_NPC_INTERACT:
+            net_handle_npc_interact(_payload);
+            break;
+        case NET_CMD.CMD_GIVE_ITEM:
+            net_handle_give_item(_payload);
+            break;
         default:
     }
 }
@@ -1055,7 +1085,7 @@ function net_handle_use_item(_payload) {
 
     // Execute action on ghost (full mutation — no _anim_only)
     with (_ghost) {
-        scr_use_item(_item_data, _gx, _gy);
+        scr_use_item(_item_data, _gx, _gy, false, false);
     }
 
     // Bugnet: Step_0 ACTING check never runs on ghost, so resolve catch here.
@@ -1487,4 +1517,413 @@ function net_handle_donate(_payload) {
 
     // Stage advance broadcasts via scr_advance_town_stage; only needed here for partial donations
     if (!_result.completed) net_send_town_stage_update();
+}
+
+// --- ENEMY SYNC ---
+
+function net_send_enemy_damage(_enemy_key, _enemy_x, _enemy_y, _damage, _room_name) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_ENEMY_DAMAGE);
+    buffer_write(_buf, buffer_string, _enemy_key);
+    buffer_write(_buf, buffer_s32,    _enemy_x);
+    buffer_write(_buf, buffer_s32,    _enemy_y);
+    buffer_write(_buf, buffer_u16,   _damage);
+    buffer_write(_buf, buffer_string, _room_name);
+    net_broadcast(_buf);
+}
+
+function net_handle_enemy_damage(_payload) {
+    var _enemy_key = buffer_read(_payload, buffer_string);
+    var _ex        = buffer_read(_payload, buffer_s32);
+    var _ey        = buffer_read(_payload, buffer_s32);
+    var _damage    = buffer_read(_payload, buffer_u16);
+    var _room_name = buffer_read(_payload, buffer_string);
+
+    if (_room_name != room_get_name(room)) return;
+
+    var _nearest = noone;
+    var _best_dist = 64;
+    with (obj_enemy) {
+        var _d = point_distance(x, y, _ex, _ey);
+        if (_d < _best_dist && enemy_key == _enemy_key) {
+            _nearest = id;
+            _best_dist = _d;
+        }
+    }
+    if (_nearest != noone) {
+        _nearest.hp -= _damage;
+        _nearest.hurt_flash_timer = 20;
+        if (_nearest.snd_hurt != undefined) {
+            audio_play_sound(_nearest.snd_hurt, 1, false);
+        }
+    }
+}
+
+function net_send_enemy_death(_enemy_key, _enemy_x, _enemy_y, _room_name, _drops_json) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_ENEMY_DEATH);
+    buffer_write(_buf, buffer_string, _enemy_key);
+    buffer_write(_buf, buffer_s32,    _enemy_x);
+    buffer_write(_buf, buffer_s32,    _enemy_y);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, _drops_json);
+    net_broadcast(_buf);
+}
+
+function net_handle_enemy_death(_payload) {
+    var _enemy_key = buffer_read(_payload, buffer_string);
+    var _ex        = buffer_read(_payload, buffer_s32);
+    var _ey        = buffer_read(_payload, buffer_s32);
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _drops_json = buffer_read(_payload, buffer_string);
+
+    if (_room_name != room_get_name(room)) return;
+
+    var _nearest = noone;
+    var _best_dist = 64;
+    with (obj_enemy) {
+        var _d = point_distance(x, y, _ex, _ey);
+        if (_d < _best_dist && enemy_key == _enemy_key) {
+            _nearest = id;
+            _best_dist = _d;
+        }
+    }
+    if (_nearest != noone) {
+        instance_destroy(_nearest);
+    }
+
+    var _drops = json_parse(_drops_json);
+    for (var i = 0; i < array_length(_drops); i++) {
+        var _drop = _drops[i];
+        inventory_drop_item(_drop.key, _drop.qty, _ex + irandom(20) - 10, _ey + irandom(20) - 10, 0);
+    }
+}
+
+function net_send_room_enemies(_room_name) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+
+    var _enemies = [];
+    for (var i = 0; i < instance_number(obj_enemy); i++) {
+        var _e = instance_find(obj_enemy, i);
+        array_push(_enemies, {
+            enemy_key: _e.enemy_key,
+            x: _e.x,
+            y: _e.y,
+            hp: _e.hp,
+            max_hp: _e.max_hp,
+            dir: _e.dir,
+            state: _e.state
+        });
+    }
+
+    var _buf = net_begin(NET_CMD.CMD_ROOM_ENEMIES);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, json_stringify(_enemies));
+    net_broadcast(_buf);
+}
+
+function net_handle_room_enemies(_payload) {
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _json = buffer_read(_payload, buffer_string);
+    var _enemies = json_parse(_json);
+
+    if (_room_name != room_get_name(room)) return;
+
+    for (var i = 0; i < array_length(_enemies); i++) {
+        var _ed = _enemies[i];
+        var _e_data = global.enemy_data[$ _ed.enemy_key];
+        if (_e_data == undefined) continue;
+
+        var _obj = _e_data.object;
+        if (_obj == undefined || _obj < 0) continue;
+
+        var _e = instance_create_layer(_ed.x, _ed.y, "Instances", _obj);
+        _e.enemy_key = _ed.enemy_key;
+        _e.hp = _ed.hp;
+        _e.max_hp = _ed.max_hp;
+        _e.dir = _ed.dir;
+        _e.state = _ed.state;
+    }
+}
+
+// --- PLAYER DAMAGE SYNC ---
+
+function net_send_player_damage(_player_id, _damage, _new_hp) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.PLAYER_DAMAGE);
+    buffer_write(_buf, buffer_u8,  _player_id);
+    buffer_write(_buf, buffer_u16, _damage);
+    buffer_write(_buf, buffer_s32, _new_hp);
+    net_broadcast(_buf);
+}
+
+function net_handle_player_damage(_payload) {
+    var _pid = buffer_read(_payload, buffer_u8);
+    var _dmg = buffer_read(_payload, buffer_u16);
+    var _new_hp = buffer_read(_payload, buffer_s32);
+
+    if (_pid == 1) {
+        with (obj_player) {
+            if (is_local) {
+                hp = _new_hp;
+                hurt_timer = 60;
+            }
+        }
+    } else if (_pid == 2) {
+        var _rp = noone;
+        with (obj_remote_player) {
+            if (player_id == 2) { _rp = id; break; }
+        }
+        if (_rp != noone) {
+            _rp.rem_hp = _new_hp;
+            _rp.hurt_timer = 60;
+        }
+    }
+}
+
+// --- ANIMAL EVENT SYNC ---
+
+function net_send_animal_event(_event_type, _animal_key, _animal_x, _animal_y, _room_name, _data_json) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_ANIMAL_EVENT);
+    buffer_write(_buf, buffer_u8,     _event_type);
+    buffer_write(_buf, buffer_string, _animal_key);
+    buffer_write(_buf, buffer_s32,    _animal_x);
+    buffer_write(_buf, buffer_s32,    _animal_y);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, _data_json);
+    net_broadcast(_buf);
+}
+
+function net_handle_animal_event(_payload) {
+    var _event_type = buffer_read(_payload, buffer_u8);
+    var _animal_key = buffer_read(_payload, buffer_string);
+    var _ax = buffer_read(_payload, buffer_s32);
+    var _ay = buffer_read(_payload, buffer_s32);
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _data_json = buffer_read(_payload, buffer_string);
+
+    if (_room_name != room_get_name(room)) return;
+
+    var _target = noone;
+    var _best_dist = 48;
+    with (obj_farm_animal) {
+        if (animal_type == _animal_key) {
+            var _d = point_distance(x, y, _ax, _ay);
+            if (_d < _best_dist) { _target = id; _best_dist = _d; }
+        }
+    }
+    with (obj_wild_animal) {
+        if (animal_key == _animal_key) {
+            var _d = point_distance(x, y, _ax, _ay);
+            if (_d < _best_dist) { _target = id; _best_dist = _d; }
+        }
+    }
+
+    switch (_event_type) {
+        case 1: // ANIMAL_HURT
+            if (_target != noone) {
+                var _data = json_parse(_data_json);
+                _target.hp = _data.hp;
+                _target.hurt_timer = 30;
+            }
+            break;
+        case 2: // ANIMAL_DEATH
+            if (_target != noone) {
+                var _drops = json_parse(_data_json);
+                for (var i = 0; i < array_length(_drops); i++) {
+                    var _d = _drops[i];
+                    inventory_drop_item(_d.key, _d.qty, _ax + irandom(20) - 10, _ay + irandom(20) - 10, 0);
+                }
+                instance_destroy(_target);
+            }
+            break;
+        case 3: // ANIMAL_PRODUCE
+            if (_target != noone) {
+                var _prod_data = json_parse(_data_json);
+                _target.production_ready = true;
+                _target.production_item = _prod_data.item;
+                _target.production_qty = _prod_data.qty;
+            }
+            break;
+    }
+}
+
+// --- WEATHER SYNC ---
+
+function net_send_weather_sync() {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_WEATHER_SYNC);
+    buffer_write(_buf, buffer_u8, global.is_raining ? 1 : 0);
+    buffer_write(_buf, buffer_u8, global.is_thundering ? 1 : 0);
+    buffer_write(_buf, buffer_u8, global.rain_intensity);
+    net_broadcast(_buf);
+}
+
+function net_handle_weather_sync(_payload) {
+    global.is_raining = buffer_read(_payload, buffer_u8) == 1;
+    global.is_thundering = buffer_read(_payload, buffer_u8) == 1;
+    global.rain_intensity = buffer_read(_payload, buffer_u8);
+
+    if (global.is_raining) {
+        if (!instance_exists(obj_rain)) {
+            instance_create_layer(0, 0, "Instances", obj_rain);
+        }
+        with (obj_rain) {
+            rain_intensity = other.global.rain_intensity;
+            is_thundering = other.global.is_thundering;
+        }
+    } else {
+        with (obj_rain) instance_destroy();
+    }
+}
+
+// --- CRAFT SYNC ---
+
+function net_send_craft_complete(_machine_x, _machine_y, _room_name, _output_key, _output_qty) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_CRAFT_COMPLETE);
+    buffer_write(_buf, buffer_s32,    _machine_x);
+    buffer_write(_buf, buffer_s32,    _machine_y);
+    buffer_write(_buf, buffer_string, _room_name);
+    buffer_write(_buf, buffer_string, _output_key);
+    buffer_write(_buf, buffer_u8,     _output_qty);
+    net_broadcast(_buf);
+}
+
+function net_handle_craft_complete(_payload) {
+    var _mx = buffer_read(_payload, buffer_s32);
+    var _my = buffer_read(_payload, buffer_s32);
+    var _room_name = buffer_read(_payload, buffer_string);
+    var _output_key = buffer_read(_payload, buffer_string);
+    var _output_qty = buffer_read(_payload, buffer_u8);
+
+    if (_room_name != room_get_name(room)) return;
+
+    with (obj_machine) {
+        if (abs(x - _mx) < 8 && abs(y - _my) < 8) {
+            state = "idle";
+            output_key = _output_key;
+            output_qty = _output_qty;
+            var _odata = global.item_data[$ _output_key];
+            if (_odata != undefined && variable_struct_exists(_odata, "name")) {
+                scr_notify("Maquina terminada: " + _odata.name);
+            }
+            break;
+        }
+    }
+}
+
+// --- FISHING SYNC ---
+
+function net_send_fish_event(_event_type, _fish_key, _fish_qty) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_FISH_EVENT);
+    buffer_write(_buf, buffer_u8,     _event_type);
+    buffer_write(_buf, buffer_string, _fish_key);
+    buffer_write(_buf, buffer_u8,     _fish_qty);
+    net_broadcast(_buf);
+}
+
+function net_handle_fish_event(_payload) {
+    var _event_type = buffer_read(_payload, buffer_u8);
+    var _fish_key = buffer_read(_payload, buffer_string);
+    var _fish_qty = buffer_read(_payload, buffer_u8);
+
+    var _fish_data = global.fish_data[$ _fish_key];
+    var _fish_name = (_fish_data != undefined) ? _fish_data.name : _fish_key;
+
+    switch (_event_type) {
+        case 1: // FISH_CAUGHT
+            var _lp = global.local_player;
+            if (instance_exists(_lp)) {
+                _lp.add_item(_fish_key, _fish_qty);
+            }
+            scr_notify("Capturaste un " + _fish_name + "!");
+            break;
+        case 2: // FISH_LOST
+            scr_notify("El pez escapo!");
+            break;
+    }
+}
+
+// --- NPC INTERACTION SYNC ---
+
+function net_send_npc_interact(_npc_key, _is_shop, _dialog_index) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_NPC_INTERACT);
+    buffer_write(_buf, buffer_string, _npc_key);
+    buffer_write(_buf, buffer_u8,     _is_shop ? 1 : 0);
+    buffer_write(_buf, buffer_u8,     _dialog_index);
+    net_broadcast(_buf);
+}
+
+function net_handle_npc_interact(_payload) {
+    var _npc_key = buffer_read(_payload, buffer_string);
+    var _is_shop = buffer_read(_payload, buffer_u8) == 1;
+    var _dialog_index = buffer_read(_payload, buffer_u8);
+
+    var _npc = noone;
+    with (obj_npc) {
+        if (npc_key == _npc_key) { _npc = id; break; }
+    }
+
+    if (_npc == noone) return;
+
+    var _lp = global.local_player;
+    if (!instance_exists(_lp)) return;
+
+    if (_is_shop) {
+        var _shop_entry = global.shop_data[$ _npc_key];
+        if (_shop_entry != undefined) {
+            _lp.shop_open = true;
+            _lp.shop_npc_key = _npc_key;
+            _lp.shop_scroll = 0;
+            _lp.shop_msg = "";
+            _lp.shop_msg_timer = 0;
+        }
+    } else {
+        var _dialogues = [];
+        if (variable_struct_exists(global, "npc_dialogues")) {
+            _dialogues = global.npc_dialogues;
+        }
+        var _didx = 0;
+        if (_dialog_index >= 0 && _dialog_index < array_length(_dialogues)) {
+            _didx = _dialog_index;
+        } else {
+            _didx = irandom(array_length(_dialogues) - 1);
+        }
+        var _npc_data = global.npc_data[$ _npc_key];
+        var _npc_name = (_npc_data != undefined && variable_struct_exists(_npc_data, "name")) ? _npc_data.name : _npc_key;
+        _lp.dialog_open = true;
+        _lp.dialog_npc_name = _npc_name;
+        _lp.dialog_text = _dialogues[_didx];
+    }
+}
+
+// --- GIVE ITEM (host gives item to client) ---
+
+function net_send_give_item(_player_id, _item_key, _qty, _quality) {
+    if (!instance_exists(obj_net) || !obj_net.is_connected) return;
+    var _buf = net_begin(NET_CMD.CMD_GIVE_ITEM);
+    buffer_write(_buf, buffer_u8,     _player_id);
+    buffer_write(_buf, buffer_string, _item_key);
+    buffer_write(_buf, buffer_u8,     _qty);
+    buffer_write(_buf, buffer_u8,     _quality);
+    net_broadcast(_buf);
+}
+
+function net_handle_give_item(_payload) {
+    var _pid = buffer_read(_payload, buffer_u8);
+    var _item_key = buffer_read(_payload, buffer_string);
+    var _qty = buffer_read(_payload, buffer_u8);
+    var _quality = buffer_read(_payload, buffer_u8);
+
+    var _lp = global.local_player;
+    if (!instance_exists(_lp) || _lp.player_id != _pid) return;
+
+    _lp.add_item(_item_key, _qty, _quality);
+    var _idata = global.item_data[$ _item_key];
+    var _name = (_idata != undefined && variable_struct_exists(_idata, "name")) ? _idata.name : _item_key;
+    scr_notify("Recibiste: " + _name + " x" + string(_qty));
 }

@@ -32,6 +32,8 @@ enum NET_CMD {
     CMD_MINE_GO_DEEPER = 43,
     CMD_MINE_EXIT      = 44,
     CMD_DONATE         = 45,
+    CMD_ENEMY_DAMAGE   = 46,
+    CMD_ENEMY_DEATH    = 47,
     INVENTORY_UPDATE   = 48,
     MONEY_UPDATE       = 49,
     ENERGY_UPDATE      = 50,
@@ -46,7 +48,16 @@ enum NET_CMD {
     SHIPPING_SUMMARY = 83,
     CMD_NAP          = 84,
     NOTIFY           = 96,
-    DISCONNECT       = 112
+    DISCONNECT       = 112,
+    CMD_NPC_INTERACT = 113,
+    CMD_ANIMAL_EVENT = 114,
+    CMD_WEATHER_SYNC = 115,
+    CMD_CRAFT_START  = 116,
+    CMD_CRAFT_COMPLETE = 117,
+    CMD_FISH_EVENT   = 118,
+    CMD_ROOM_ENEMIES = 119,
+    PLAYER_DAMAGE    = 120,
+    CMD_GIVE_ITEM    = 121
 }
 
 enum DIR {
@@ -1099,115 +1110,105 @@ global.npc_data = {
 };
 
 // --- DIALOGOS NPC ---
+// Organizados por fase del town (ver script_town_progression)
 global.npc_dialogues = [
-    "¿Ya viste como esta el queso Chihuahua? ¡Esta por las nubes! Ya ni pa' las quesadillas alcanza.",
-    "Se me antoja una buldak 3x para que se me voltee el fundillo al reves como higo partido a la mitad.",
-    "Quisiera ir a las Barrancas del Cobre, dicen que esta bien chido el paseo.",
-    "Con estos precios del queso mejor me voy a poner a ordeñar yo mismo.",
-    "Unos chetos y una coca eso es vida",
-    "Cuando voy a Creel siempre traigo un ware de los tarahumaras de recuerdo, pero hoy no traigo ni pa' los Cheetos.",
-    "¡Ah how! Ya mero voy pa'l Divisadero, a ver la puesta de sol y olvidarme de la carestia.",
-    "El queso Chihuahua ya cuesta casi lo mismo que un kilo de tortillas, ¡no mames!",
-    "Unos Cheetos Flaming Hot con salsa valentina, eso si es comida de dioses.",
-    "Como extrano ir a la Feria de Santa Rita, ahi si se ponia buena la fiesta.",
-    "¿Pa' cuando la carne asada con queloite? Pero el queso Chihuahua ya mejor lo miramos de lejitos.",
-    "Me conformo con unos Cheetos Flaming Hot sentado en la plaza de Guachochi.",
-    "El queso Chihuahua esta mas caro que el de importacion, ¡ni que fuera de oro!",
-    "Quiero ir al Museo de la Revolucion en la Frontera, a ver si aprendo algo nuevo.",
-    "Ya me dio hambre, mejor me voy a comprar un elote con todo y unos Cheetos.",
-    "Dicen que en Batopilas el queso es mas barato, pero esta bien lejos, compadre.",
-    "Unos Cheetos Flaming Hot con un refresquito bien helado, ahi en la sombrita del mezquite.",
-    "Pos quiero ir a Parral a la casa de Pancho Villa, pero si no puedo, me como mis Cheetos y ya.",
-    "El queso Chihuahua deberia ser mas barato, ¡es de aqui! No tiene logica.",
-    "Ojala viviera en la Sierra Tarahumara, ahi el aire es puro y el queso no falta.",
-    "Los Cheetos Flaming Hot me recuerdan cuando iba a la secundaria en Delicias.",
-    "Me late ir a Cusihuiriachi, oyes, me gusta el nombre nomas.",
-    "¡Chihuahua! Ya ni el queso de aqui se puede comprar, mejor puro pan con frijoles.",
-    "Quiero ir a pasear a la Presa el Rejon con una bolsa bien grande de Cheetos.",
-    "La neta voy a ahorrar pa' irme a las Grutas de Nombre de Dios, dicen que estan bien bonitas.",
-    "El queso Chihuahua... mire compa, mejor me como un pinole y ya.",
-    "Anoro los Cheetos Flaming Hot que vendian en la tienda de don Chuy, esos si estaban buenos.",
-    "Si Dios quiere, manana me voy pa'l Mirador de la Presa Chihuahua.",
-    "Los del gobierno deberian fijarse en el precio del queso, esto es un robo.",
-    "Traigo ganas de unos Cheetos con una coca bien helada, ahi en la sombrita.",
-    "Hay que ir a la Catedral de la Ciudad, a ver si le bajan a los precios del queso.",
-    "Mejor me voy a la sierra, ahi el queso es mas barato y el paisaje esta bien chingon.",
-    "Ese Miraculos siempre me ve feo, parece que nunca ha visto a una nena buenota.",
-    "¿Ya viste a Miraculos? Todo el dia nomas viendo a las muchachas, que oso.",
-    "Traigo unos pants de los de a 150, ¿le entras? Los tengo en mi perfil de neni.",
-    "Miraculos se pasa de lanza, siempre con la mirada incomodando a la gente.",
-    "Soy neni, vendo cremas, ropa, zapatos, y si el precio es correcto hasta te hago un descuento especial.",
-    "Miraculos deberia poner una tienda de hielo, nomas puro mirar y mirar hace el wey.",
-    "Tengo unos accesorios bien bonitos, se los dejo en 200, y si quiere algo mas... pos veremos.",
-    "A Miraculos le gusta estar de metiche, siempre husmeando lo que vendo.",
-    "Ando vendiendo productos de catalogo, ¿gusta ver? Tambien hago envios a todo Chihuahua.",
-    "Ese don Miraculos ya me tiene harta, puro mirar y mirar como si nunca hubiera visto una mujer.",
-    "Soy neni de tiempo completo: ropa, calzado, y servicios de relajacion si ando de buenas.",
-    "Miraculos cree que uno no se da cuenta, pero todos sabemos que se la pasa mirando.",
-    "Le entro a la venta por catalogo: cosmeticos, bisuteria, y si me cae bien el cliente, hasta mas.",
-    "Desde el cataclismo que destruyo Chihuahua, todos vivimos en Veredas del Sur. Ya nada fue igual.",
-    "Los tarahumaras nomas no le entran al jale, andan en su rollo y uno aqui partiéndose el lomo.",
-    "Cuando paso el cataclismo pense que todo se acababa, pero Veredas del Sur se levanto de nuevo.",
-    "Antes vivia en la ciudad de Chihuahua, antes de que se cayera todo. Ahora esto es lo que hay, y ni hablar.",
-    "Los tarahumaras son buena gente pero no les gusta el trabajo pesado, nomas viven de lo que da la sierra.",
-    "Veredas del Sur era solo una colonia, pero despues del cataclismo aqui nos quedamos todos.",
-    "El cataclismo no dejo piedra sobre piedra en Chihuahua. Tuvimos que empezar de cero en Veredas del Sur.",
-    "Los de la sierra dicen que los tarahumaras trabajan a su modo, pero a veces nomas no ayudan.",
-    "Yo me acorde cuando Chihuahua era ciudad grande. Llego el cataclismo y pa' fuera, todo al suelo.",
-    "Veredas del Sur es pura raza buena, todos nos conocemos, como en los viejos tiempos del rancho.",
-    "Los tarahumaras le tienen fe a sus costumbres, pero pa' trabajar la tierra mejor se van al monte.",
-    "Despues del cataclismo reconstruimos Veredas del Sur entre todos, una casa a la vez.",
-    "Dicen que los tarahumaras no se quejan, pero tampoco jalan parejo en la chamba.",
-    "Todo lo que era Chihuahua quedo enterrado bajo el polvo. Veredas del Sur es el nuevo comienzo.",
-    "Los tarahumaras nomas bajan a vender sus artesanias y se van, no les gusta echar la mano en la colonia.",
-    "Mi abuelo me conto como era Chihuahua antes del cataclismo: pura ciudad, puro ruido. Ahora es puro campo.",
-    "Veredas del Sur es chico pero aca todos ayudamos. Los tarahumaras nomas no, esos viven aparte.",
-    "El cataclismo nos enseno a valorar lo poco que tenemos. Veredas del Sur es nuestra segunda oportunidad.",
-    "Llegan los prietos de la sierra a querer mandar y nomas vienen a pedir.",
-    "Yo no tengo nada contra ellos, pero los prietos siempre quieren todo regalado.",
-    "¿Has visto a los de la sierra? Puro prieto y nomas vienen a hacer relajo.",
-    "Antes no habia tantos prietos por Veredas del Sur. Desde el cataclismo puro moreno llego.",
-    "Los prietos nomas vienen a pedir limosna, que no trabajen como uno.",
-    "Esa raza prieta siempre anda queriendo agarrar lo que no es de ellos.",
-    "La buldak carbonara con queso derretido, eso si es amor de verdad.",
-    "Una buldak 2x bien preparada te quita hasta el hipo y te pone a volar.",
-    "Extrano Netflix, aqui en Veredas del Sur nomas hay Cheetos y cataclismo.",
-    "Cuando vivia en Chihuahua veia Netflix todo el dia, ahorita ni pa' datos tengo.",
-    "Antes me aventaba maratones de Netflix, ahora mi unico entretenimiento es ver a Miraculos mirando.",
-    "Una buldak 1x pa' empezar el dia y una 3x pa' terminarlo bien chingon.",
-    "Ya quisiera tener Netflix pa' distraerme de tanto caminar como pendejo por este mapa.",
-    "A veces siento que soy un NPC mal programado, nomas camino sin sentido por la vida.",
-    "Estoy harto de caminar de aqui pa'lla sin proposito, pero es lo que hay con esta programacion chafa.",
-    "Los desarrolladores nos dejaron con pura IA generica, ni siquiera tenemos rutina de sueño.",
-    "A veces pienso que soy un NPC y mi unica razon de existir es repetir dialogos y caminar.",
-    "Me late la buldak negro, esa si te pone a brincar como venado en temporada de caza.",
-    "Ojala Netflix llegara a Veredas del Sur, nomas pa' no tener que hablar con Miraculos.",
-    "Toda la vida caminando en circulos, como NPC de juegos indie sin presupuesto.",
-    "Esta noche voy a meter el elote, pero no el de la tienda de Miraculos...",
-    "Me gusta que me den leche, pero no la de la vaca, si sabes a que me refiero.",
-    "Que rico un elote calientito, de esos que te caben bien en la mano... y en la boca.",
-    "Ya quisiera yo ser ese sombrero pa' que me agarren bien fuerte de las alas.",
-    "Ando buscando una buena mermelada pa' untarle a mi bolillo todas las noches.",
-    "Que bien se siente cuando te meten el elote bien adentro... del caldo, digo.",
-    "Esa neni vende cremas, pero yo quiero que me embarre la que ella usa.",
-    "A mi me gusta elote con mantequilla, de esos bien larguitos y que chorrean.",
-    "Necesito una buena leche, de esas que te dejan espuma en los labios.",
+    // === FASE 0: LIMPIAR LAS CALLES ===
+    "Aguanta el polvo, que ni a barrer se dignan. Esto esta peor que cuando llego el cataclismo.",
+    "Limpien eso de una vez, no pense que ivan a tardar tanto en recoger la basura.",
+    "Los tarahumaras no movieron ni una piedra. Ahi nomas viendo mientras uno parte el lomo.",
+    "Ya deberiamos estar construyendo algo, no perdiendo el tiempo con escombros.",
+    "Calor y polvo, mi unica compania. Ni para conseguir una escoba alcanza.",
+    "Si no lo hacemos nosotros, no lo hace nadie. Como siempre, el pueblo somos nosotros.",
+
+    // === FASE 1-2: RESTAURAR AREAS VERDES ===
+    "Ya por fin hay areas verdes, pero los riegos ni funcionan. A ver si alguien les da mantenimiento.",
+    "Los huertos sobrevivieron al cataclismo pero ahora les dan mas trabajo a uno que sembrar.",
+    "Unas areas verdes con yerba seca no es area verde, es desierto con pintitas.",
+    "Mi abuela sembraba mejor que todos estos 'jardineros' juntos. Verguenza ajena.",
+    "Quedo todo bien culero parece que lo hicieron tarahumaras.",
+    "Unos arbolitos aqui y alla, pero mientras no haya agua de verdad esto no prospera.",
+
+    // === FASE 3-4: TIENDA DE MIRACULOS ===
+    "La tienda de Miraculos esta bien culera. Pura semilla vende. Segun iba a vender cosas utiles, a ver si es verdad.",
+    "Miraculos vale para pura verga. Siempre andara de metiche.",
+    "Miraculos de mierda cobra comision por pagar con tarjeta.",
+    "Si Miraculos vende semillas de mala calidad.",
+    "La tienda lleva anos en construccion. En Veredas del Sur todo tarda el doble.",
+    "Ya abrio la tienda, pero todavia le falta mucho. Presupuesto jodido como el mismo Miraculos.",
+
+    // === FASE 5: HERRERIA ===
+    "Una herreria! Aunque segun Carlos el carbon que hay no sirve pa'nada.",
+    "Carlos es bueno en lo que hace, pero cobra un ojo de la cara por cualquier cosa.",
+    "Con una herreria deberiamos hacer herramientas pa'todo, pero pinchi viejo carero lo hace imposible.",
+    "Mano de obra mala que hace el herrero y bien carero. Ni pone el material, lo tengo que llevar yo.",
+    "Quiero culearme al herrero.",
+    "El herrero es un viejo mamon cara de culo, quiero matarlo a chingazos.",
+
+    // === FASE 6-7: ARBOLES DEL TOWN ===
+    "Los arboles ya crecieron, pero no daran sombra hasta dentro de unos anos. Mientras, prepara tu ano para el cancer.",
+    "Arboles culeros, la neta.",
+    "Plantar esperanza no llena la panza. Mientras haya hambre, los arboles son puro adorno.",
+    "Tengo mucho coraje.",
+    "Al menos esto no lo hizo un tarahumara todo a medias.",
+    "Con sombra y aire puro se ve bonito, pero no se come nada de eso.",
+
+    // === FASE 8-9: TORRE Y PARQUE ===
+    "Una torre y un parque! Aunque los juegos ya tienen oxido y nadie les ha dado mantenimiento.",
+    "Los ninos ya tienen donde jugar, pero no hay quien los supervise. Peligro a la orden del dia.",
+    "Mi abuelo decia que en Veredas habia una cancha de futbol. Aqui pura tierra.",
+    "La torre se ve bonita pero por dentro esta vacia. Pura fachada como siempre.",
+    "Un parque sin bancos nomas sirve pa'estar parado. Parada traigo la verga mas bien.",
+    "Por fin tenemos un lugar de reunion, aunque la mayoria del tiempo nadie viene.",
+
+    // === FASE 10-12: URBANIZACION FINAL ===
+    "Increible quanto hemos construido, pero a los politicos ni les importa. Solamente el pueblo.",
+    "Las paradas de autobus estan bien, pero los autobuses nunca llegan. Pura simulacion.",
+    "Despues del cataclismo pense que no sobrevivia. Y ahorita que sobrevivi, todavia mejoro nada.",
+    "Mira todo lo que hemos logrado, pero todavia falta mucho pa' lo que Chihuahua fue.",
+    "El Cochabebes puede dormir tranquilo. Aqui no hay nada que valga la pena robar.",
+    "Veredas del Sur es exemplo de que la comunidad tiene que hacer todo sola. Gracias, poco agradecimiento.",
+    "Por fin el pueblo se ve bien, pero aun asi nadie quiere vivir aqui. Solo nosotros. Lo bueno.",
+
+    // === MISCELANEOS (cataclismo, chismes, quejumbrosos) ===
+    "Desde el cataclismo que destruyo Chihuahua, todos vivimos en Veredas del Sur. Y aun asi no aprendemos.",
+    "Los tarahumaras sobrevivieron al cataclismo pero ahora puro flojos. Uno aqui partiendonos de ellos.",
+    "Veredas del Sur se levanto del cataclismo, pero con puras manos vazias y nada de ayuda.",
+    "Antes vivia en el Sanfra. Ahora esto. No hay derecho.",
+    "Los tarahumaras no les gusta trabajar. Como todos en este pais.",
+    "Veredas del Sur era solo una colonia. Ahora es lo unico que nos queda, y ni modo de quejarse.",
+    "El cataclismo no dejo piedra sobre piedra. Y nosotros tampoco recibimos ayuda de nadie.",
+    "Los de la sierra nomas vienen a vender artesanias y a pedir. Despues se van a su mundo.",
+    "Chihuahua era grande. Ahora es pura area verde y piedras. Que caida mas penosa.",
+    "Veredas del Sur es pura buena gente, pero la ayuda mutua solo existe en el papel.",
+    "Despues del cataclismo reconstruimos entre todos. Aunque algunos nomas posteen y no trabajan.",
+    "Los tarahumaras le tienen fe a sus costumbres. Bueno para ellos, pesimo para nosotros.",
+    "Todo Chihuahua quedo bajo el polvo. Y aca en Veredas del Sur puras promesas rotas.",
+    "Los tarahumaras nomas bajan a vender y se van. Cuando hay trabajo pesado, nadie aparece.",
+    "Mi abuelo contaba Chihuahua antes del cataclismo. Siempre suena mejor en los recuerdos.",
+    "Veredas del Sur es pequena pero aqui todos se quejan. Y pocos hacen algo.",
+    "El cataclismo ensena a valorar lo poco que hay. Que poco es poco, eso si.",
+    "Cada dia hay mas gente de la sierra queriendose mudar. Y luego no hay trabajo pa'tantos.",
+    "Yo no tengo nada contra nadie, pero aqui siempre hay alguien que se sale con la suya.",
+    "La Sierra Tarahumara es mas tranquila. Aunque alla tampoco hay empleo ni nada.",
+    "Dicen que en otros lugares ya tienen internet. Aqui ni senal pa'llamar por telefono.",
+    "La buldak carbonara esta cara, pero al menos te olvidas de la vida por unos minutos.",
+    "Una buldak 2x te pone a volar, pero a la hora de trabajar no puedes ni pararte.",
+    "Extrano cuando habia Netflix y no habia cataclismo. Ahora nada mas cataclismo sin Netflix.",
+    "Cuando vivia en Chihuahua veia Netflix todo el dia. Ahora veo piedras y mas piedras.",
+    "Antes me entretenia con Netflix, ahora nomas miro a Miraculos mirando a la gente.",
+    "A veces siento que soy un NPC mal programado, nomas camino y camino sin sentido.",
+    "Estoy harto de caminar de aqui pa'lla sin proposito. Aunque uno en la vida real igual.",
+    "Los desarrolladores nos dejaron con pura IA generica. Ni soar podemos enserio.",
+    "A veces pienso que soy un NPC. Y si lo soy? Al menos no pago renta.",
+    "Me late la buldak negro, aunque te chamusca hasta las pestanas.",
+    "Ojala Netflix llegara a Veredas del Sur, sin internet ni nada.",
+    "Toda la vida caminando en circulos. Si esto no es un juego, esta muy biecho pa'serlo.",
     "¿Te acuerdas del Cochabebes? Ese wey tenia a todo Chihuahua con miedo en los 2020s.",
-    "Dicen que el Cochabebes nunca lo agarraron, que todavia anda suelto por ahi.",
-    "El Cochabebes azotaba bien feo en Chihuahua, mejor no salir de noche ni de dia.",
-    "Mi primo jura que vio al Cochabebes una vez en la colonia Villa Juarez, salio corriendo.",
-    "Cuando yo vivia en Chihuahua, mi mama no me dejaba ir solo por miedo al Cochabebes.",
-    "Ojala hubieran agarrado al Cochabebes antes de que hiciera tanto dano en Chihuahua.",
-    "¡Hola, {player_name}! ¿Cómo va la cosecha por {farm_name}?",
-    "He oido que la granja {farm_name} esta dando frutos bien sabrosos, {player_name}.",
-    "¡{player_name}! Pásele a la tienda, tengo semillas frescas para {farm_name}.",
-    "¿Cómo está {player_name}? Dicen que {farm_name} es la mejor granja de Veredas del Sur.",
-    "¡{player_name}! Cuando vengas a {farm_name} no olvides traerme unos Cheetos.",
-    "Oye {player_name}, ¿ya terminaste de construir el granero de {farm_name}?",
-    "¿{player_name} sabes que en {farm_name} se respira un aire bien puro? Como en la sierra.",
-    "¡Saludos desde la tienda, {player_name}! Que {farm_name} siga creciendo.",
-    "¿{player_name}, ya viste el bei de la granja {farm_name}? Dicen que esta en $500.",
-    "¡{player_name}! La {farm_name} se ve bien bonita esta temporada.",
+    "Dicen que el Cochabebes nunca lo agarraron. Segun sigue suelto por ahi, esperando.",
+    "El Cochabebes azotaba bien feo en Chihuahua. Aqui en Veredas al menos estamos mas seguros.",
+    "Mi primo jura que vio al Cochabebes en la colonia Rosario. Salio corriendo y no volta a ver.",
+    "Cuando vivia en la Dale, mi mama no me dejaba salir solito. Y con razon.",
+    "Ojala hubieran agarrado al Cochabebes antes del cataclismo. Aunque talvez nada habria cambiado.",
 ];
 
 // price_items: array de { key, qty } requeridos ademas del dinero
@@ -1413,19 +1414,19 @@ _fish[$ "fish_26"] = { name: "Pez Martillo",       seasons: [SEASON.SUMMER], typ
 _fish[$ "fish_27"] = { name: "Tiburón Blanco",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 27, rarity: 2,  base_sell_price: 7,    weight_min: 8.0,   weight_max: 30.0   };
 _fish[$ "fish_28"] = { name: "Tiburón Ballena",    seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 28, rarity: 2,  base_sell_price: 10,   weight_min: 10.0,  weight_max: 40.0   };
 _fish[$ "fish_29"] = { name: "Raya Látigo",        seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 29, rarity: 7,  base_sell_price: 6,   weight_min: 5.0,   weight_max: 20.0   };
-_fish[$ "fish_30"] = { name: "Pez Globo",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 30, rarity: 7,  base_sell_price: 68,  weight_min: 0.3,   weight_max: 1.5    };
-_fish[$ "fish_31"] = { name: "Pez León",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 31, rarity: 7,  base_sell_price: 71,  weight_min: 0.3,   weight_max: 1.5    };
-_fish[$ "fish_32"] = { name: "Pez Cirujano",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 32, rarity: 20, base_sell_price: 54,  weight_min: 0.2,   weight_max: 1.0    };
-_fish[$ "fish_33"] = { name: "Pez Ángel",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 33, rarity: 20, base_sell_price: 41,  weight_min: 0.3,   weight_max: 1.5    };
-_fish[$ "fish_34"] = { name: "Pez Mariposa",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 34, rarity: 20, base_sell_price: 112,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_30"] = { name: "Pez Globo",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 30, rarity: 7,  base_sell_price: 51,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_31"] = { name: "Pez León",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 31, rarity: 7,  base_sell_price: 54,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_32"] = { name: "Pez Cirujano",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 32, rarity: 20, base_sell_price: 40,  weight_min: 0.2,   weight_max: 1.0    };
+_fish[$ "fish_33"] = { name: "Pez Ángel",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 33, rarity: 20, base_sell_price: 30,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_34"] = { name: "Pez Mariposa",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 34, rarity: 20, base_sell_price: 84,  weight_min: 0.1,   weight_max: 0.5    };
 _fish[$ "fish_35"] = { name: "Pez Loro",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 35, rarity: 20, base_sell_price: 23,   weight_min: 0.5,   weight_max: 2.0    };
 _fish[$ "fish_36"] = { name: "Pez Ballesta",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 36, rarity: 20, base_sell_price: 34,  weight_min: 0.3,   weight_max: 1.5    };
-_fish[$ "fish_37"] = { name: "Pez Cofre",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 37, rarity: 20, base_sell_price: 90,  weight_min: 0.1,   weight_max: 0.5    };
-_fish[$ "fish_38"] = { name: "Pez Trompeta",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 38, rarity: 7,  base_sell_price: 44,  weight_min: 0.5,   weight_max: 2.0    };
-_fish[$ "fish_39"] = { name: "Pez Flauta",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 39, rarity: 7,  base_sell_price: 56,  weight_min: 0.3,   weight_max: 1.5    };
-_fish[$ "fish_40"] = { name: "Pez Pipa",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 40, rarity: 7,  base_sell_price: 158,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_37"] = { name: "Pez Cofre",          seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 37, rarity: 20, base_sell_price: 68,  weight_min: 0.1,   weight_max: 0.5    };
+_fish[$ "fish_38"] = { name: "Pez Trompeta",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 38, rarity: 7,  base_sell_price: 33,  weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_39"] = { name: "Pez Flauta",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 39, rarity: 7,  base_sell_price: 42,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_40"] = { name: "Pez Pipa",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 40, rarity: 7,  base_sell_price: 118,  weight_min: 0.1,   weight_max: 0.5    };
 _fish[$ "fish_41"] = { name: "Pez Piedra",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 41, rarity: 20, base_sell_price: 19,   weight_min: 0.5,   weight_max: 2.0    };
-_fish[$ "fish_42"] = { name: "Pez Escorpión",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 42, rarity: 7,  base_sell_price: 66,  weight_min: 0.3,   weight_max: 1.5    };
+_fish[$ "fish_42"] = { name: "Pez Escorpión",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 42, rarity: 7,  base_sell_price: 50,  weight_min: 0.3,   weight_max: 1.5    };
 _fish[$ "fish_43"] = { name: "Pez Sapo",           seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 43, rarity: 20, base_sell_price: 15,   weight_min: 0.5,   weight_max: 2.5    };
 _fish[$ "fish_44"] = { name: "Pez Diablo",         seasons: [SEASON.SUMMER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 44, rarity: 2,  base_sell_price: 12,   weight_min: 5.0,   weight_max: 20.0   };
 
@@ -1441,16 +1442,16 @@ _fish[$ "fish_50"] = { name: "Calamar Común",          seasons: [SEASON.FALL], 
 _fish[$ "fish_51"] = { name: "Sepia",                  seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 51, rarity: 50, base_sell_price: 24,   weight_min: 0.2,   weight_max: 0.8    };
 _fish[$ "fish_52"] = { name: "Nautilo",                seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 52, rarity: 2,  base_sell_price: 313,  weight_min: 0.3,   weight_max: 1.0    };
 _fish[$ "fish_53"] = { name: "Cangrejo Real",          seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 53, rarity: 20, base_sell_price: 13,   weight_min: 1.5,   weight_max: 5.0    };
-_fish[$ "fish_54"] = { name: "Langosta Espinosa",      seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 54, rarity: 7,  base_sell_price: 82,  weight_min: 0.5,   weight_max: 2.0    };
-_fish[$ "fish_55"] = { name: "Bogavante",              seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 55, rarity: 7,  base_sell_price: 68,  weight_min: 0.5,   weight_max: 3.0    };
-_fish[$ "fish_56"] = { name: "Cigala",                 seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 56, rarity: 20, base_sell_price: 122,  weight_min: 0.1,   weight_max: 0.4    };
-_fish[$ "fish_57"] = { name: "Gamba Roja",             seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 57, rarity: 20, base_sell_price: 218,  weight_min: 0.05,  weight_max: 0.2    };
+_fish[$ "fish_54"] = { name: "Langosta Espinosa",      seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 54, rarity: 7,  base_sell_price: 62,  weight_min: 0.5,   weight_max: 2.0    };
+_fish[$ "fish_55"] = { name: "Bogavante",              seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 55, rarity: 7,  base_sell_price: 51,  weight_min: 0.5,   weight_max: 3.0    };
+_fish[$ "fish_56"] = { name: "Cigala",                 seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 56, rarity: 20, base_sell_price: 92,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_57"] = { name: "Gamba Roja",             seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 57, rarity: 20, base_sell_price: 163,  weight_min: 0.05,  weight_max: 0.2    };
 _fish[$ "fish_58"] = { name: "Langostino",             seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 58, rarity: 50, base_sell_price: 54,  weight_min: 0.1,   weight_max: 0.4    };
 _fish[$ "fish_59"] = { name: "Camarón",                seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 59, rarity: 50, base_sell_price: 226,  weight_min: 0.01,  weight_max: 0.05   };
 _fish[$ "fish_60"] = { name: "Centollo",               seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 60, rarity: 20, base_sell_price: 27,   weight_min: 0.5,   weight_max: 2.0    };
-_fish[$ "fish_61"] = { name: "Nécora",                 seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 61, rarity: 20, base_sell_price: 116,  weight_min: 0.1,   weight_max: 0.4    };
+_fish[$ "fish_61"] = { name: "Nécora",                 seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 61, rarity: 20, base_sell_price: 87,  weight_min: 0.1,   weight_max: 0.4    };
 _fish[$ "fish_62"] = { name: "Buey de Mar",            seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 62, rarity: 20, base_sell_price: 20,   weight_min: 0.8,   weight_max: 3.0    };
-_fish[$ "fish_63"] = { name: "Percebe",                seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 63, rarity: 7,  base_sell_price: 765, weight_min: 0.04,  weight_max: 0.12   };
+_fish[$ "fish_63"] = { name: "Percebe",                seasons: [SEASON.FALL], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 63, rarity: 7,  base_sell_price: 574, weight_min: 0.04,  weight_max: 0.12   };
 _fish[$ "fish_64"] = { name: "Mejillón",               seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 64, rarity: 50, base_sell_price: 51,  weight_min: 0.05,  weight_max: 0.15   };
 _fish[$ "fish_65"] = { name: "Almeja",                 seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 65, rarity: 50, base_sell_price: 68,  weight_min: 0.05,  weight_max: 0.15   };
 _fish[$ "fish_66"] = { name: "Berberecho",             seasons: [SEASON.WINTER], type: ITEM_TYPE.FISH, sprite: sprite_all_fishes, subimg: 66, rarity: 50, base_sell_price: 82,  weight_min: 0.02,  weight_max: 0.08   };

@@ -1,4 +1,4 @@
-function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
+function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = true) {
     // 1. Extraer Key (por si viene un struct o un string)
     var _item_key = is_struct(_item_data) ? _item_data.key : _item_data;
     if (_item_key == undefined || _item_key == -1) _item_key = "";
@@ -508,10 +508,56 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false) {
                 collision_rectangle_list(_hx1, _hy1, _hx2, _hy2, obj_farm_animal,  false, true, _targets, false);
                 for (var _si = 0; _si < ds_list_size(_targets); _si++) {
                     var _hit = _targets[| _si];
+                    var _was_enemy = object_is_ancestor(_hit.object_index, obj_enemy);
+                    var _was_wild = object_get_name(_hit.object_index) == "obj_wild_animal";
+                    var _was_farm = object_get_name(_hit.object_index) == "obj_farm_animal";
+                    var _pre_hp = _hit.hp;
                     _hit.hp -= _sword_damage;
                     _hit.hurt_flash_timer = 15;
                     if (variable_instance_exists(_hit, "snd_hurt") && _hit.snd_hurt != undefined) audio_play_sound(_hit.snd_hurt, 1, false);
-                    if (object_get_name(_hit.object_index) == "obj_wild_animal" || object_get_name(_hit.object_index) == "obj_farm_animal") scr_animal_hurt_sound();
+                    if (_was_wild || _was_farm) scr_animal_hurt_sound();
+
+                    if (_send_network && self.is_local) {
+                        var _room_name = room_get_name(room);
+                        if (_was_enemy && variable_struct_exists(_hit, "enemy_key")) {
+                            if (_hit.hp <= 0 && _pre_hp > 0) {
+                                var _drops = [];
+                                var _edata = global.enemy_data[$ _hit.enemy_key];
+                                if (_edata != undefined) {
+                                    if (array_length(_edata.product_drops) > 0) {
+                                        array_push(_drops, { key: _edata.product_drops[irandom(array_length(_edata.product_drops) - 1)], qty: 1 });
+                                    }
+                                    if (variable_struct_exists(_edata, "dye_drops") && array_length(_edata.dye_drops) > 0 && irandom(2) == 0) {
+                                        array_push(_drops, { key: _edata.dye_drops[irandom(array_length(_edata.dye_drops) - 1)], qty: 1 });
+                                    }
+                                    if (variable_struct_exists(_edata, "weapon_drop_chance") && random(1) < _edata.weapon_drop_chance) {
+                                        var _wtype = choose("sword", "bow");
+                                        var _wlevel = ceil(10 * power(random(1), 2));
+                                        array_push(_drops, { key: _wtype + "_" + string(_wlevel), qty: 1 });
+                                    }
+                                }
+                                net_send_enemy_death(_hit.enemy_key, _hit.x, _hit.y, _room_name, json_stringify(_drops));
+                            } else {
+                                net_send_enemy_damage(_hit.enemy_key, _hit.x, _hit.y, _sword_damage, _room_name);
+                            }
+                        } else if (_was_wild || _was_farm) {
+                            if (_hit.hp <= 0 && _pre_hp > 0) {
+                                var _animal_key = _was_wild ? _hit.animal_key : _hit.animal_type;
+                                var _adata = _was_wild ? global.wild_animal_data[$ _animal_key] : global.animal_data[$ _animal_key];
+                                var _drops = [];
+                                if (_adata != undefined && variable_struct_exists(_adata, "product_drops")) {
+                                    array_push(_drops, { key: _adata.product_drops[irandom(array_length(_adata.product_drops) - 1)], qty: 1 });
+                                }
+                                var _data_json = json_stringify(_drops);
+                                net_send_animal_event(2, _animal_key, _hit.x, _hit.y, _room_name, _data_json);
+                            } else {
+                                var _animal_key = _was_wild ? _hit.animal_key : _hit.animal_type;
+                                var _data_json = json_stringify({ hp: _hit.hp });
+                                net_send_animal_event(1, _animal_key, _hit.x, _hit.y, _room_name, _data_json);
+                            }
+                        }
+                    }
+
                     var _fdir = point_direction(self.x, self.y, _hit.x, _hit.y);
                     if (_fdir >= 45 && _fdir < 135)       _hit.dir = DIR.UP;
                     else if (_fdir >= 135 && _fdir < 225) _hit.dir = DIR.LEFT;

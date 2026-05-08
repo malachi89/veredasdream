@@ -228,9 +228,9 @@ El town comienza en estado destruido. Las siguientes capas deben estar **visible
 **Notificación de construcción:** "La herrería estará lista en X días..."
 
 **Restricción de Herramientas:**
-- Antes de etapa 5: herramientas pueden mejorarse hasta **nivel 6** (CHUBESTANIO) máximo
+- Antes de etapa 5: herramientas pueden mejorarse hasta **nivel 5** (BRONCASTANIO) máximo inclusive
 - Al completar etapa 5: herramientas pueden mejorarse hasta **nivel 9** (VITOLANIO) máximo
-- Intentar upgradear más allá de nivel 6 antes de etapa 5 → Carlos rechaza (diálogo: "La herrería no está lista...")
+- Intentar upgradear más allá de nivel 5 (BRONCASTANIO) antes de etapa 5 → Carlos rechaza (diálogo: "La herrería no está lista...")
 
 **Consecuencias finales:** Una vez completadas todas las 5 etapas:
 - Town completamente restaurado (BLACKSMITH_RESTORED = 5)

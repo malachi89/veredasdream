@@ -52,7 +52,19 @@
       "Bash(Remove-Item *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" -Recurse -Directory)",
       "Bash(Select-Object -First 20)",
-      "Bash(grep -i \"\\\\.gml$\")"
+      "Bash(grep -i \"\\\\.gml$\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" -Directory)",
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(Format-Table FullName)",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(cat objects/obj_magic_chest/Create_0.gml)",
+      "Bash(cat scripts/scr_magic_chest_loot/scr_magic_chest_loot.gml)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\" -Recurse -Filter \"*.gml\")",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\\\\obj_shop\\\\\" 2>&1 | ForEach-Object { $_.FullName })",
+      "Bash(powershell -Command \"Get-Item 'sprites\\\\sprite_town_trees\\\\sprite_town_trees.yy' -ErrorAction SilentlyContinue | ForEach-Object { 'File exists' }\")",
+      "Bash(Get-ChildItem -Path scripts -Name)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\scripts\" -Filter \"*.gml\")"
     ]
   }
 }

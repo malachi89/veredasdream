@@ -226,19 +226,32 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                 var _npc = instance_nearest(x, y, obj_npc);
                 if (_npc != noone && point_distance(x, y, _npc.x, _npc.y) < 48) {
                     var _shop_entry = global.shop_data[$ _npc.npc_key];
-                    if (_shop_entry != undefined) {
-                        shop_open      = true;
-                        shop_npc_key   = _npc.npc_key;
-                        shop_scroll    = 0;
-                        shop_msg       = "";
-                        shop_msg_timer = 0;
+                    var _is_shop = (_shop_entry != undefined);
+                    var _dialog_idx = -1;
+                    if (!_is_shop) {
+                        _dialog_idx = irandom(array_length(global.npc_dialogues) - 1);
+                    }
+
+                    if (global.net_role == NET_ROLE.CLIENT) {
+                        net_send_npc_interact(_npc.npc_key, _is_shop, _dialog_idx);
                     } else {
-                        if (dialog_open) {
-                            dialog_open = false;
+                        if (_is_shop) {
+                            shop_open      = true;
+                            shop_npc_key   = _npc.npc_key;
+                            shop_scroll    = 0;
+                            shop_msg       = "";
+                            shop_msg_timer = 0;
                         } else {
-                            dialog_open     = true;
-                            dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
-                            dialog_text     = global.npc_dialogues[irandom(array_length(global.npc_dialogues) - 1)];
+                            if (dialog_open) {
+                                dialog_open = false;
+                            } else {
+                                dialog_open     = true;
+                                dialog_npc_name = global.npc_data[$ _npc.npc_key].name;
+                                dialog_text     = global.npc_dialogues[_dialog_idx];
+                            }
+                        }
+                        if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                            net_send_npc_interact(_npc.npc_key, _is_shop, _dialog_idx);
                         }
                     }
                 } else if (dialog_open) {
@@ -279,7 +292,7 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
             bow_sound_id = audio_play_sound(sound_bow, 1, false);
             audio_sound_set_track_position(bow_sound_id, 0.30);
             // Start bow draw — animation only; arrow fires on LMB release
-            scr_use_item(_selected_item, _gx, _gy, true);
+            scr_use_item(_selected_item, _gx, _gy, true, false);
             bow_drawing = true;
             bow_quality = 0;
         } else if (global.net_role == NET_ROLE.CLIENT) {
@@ -287,7 +300,7 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
             var _quality  = (is_struct(_selected_item) && variable_struct_exists(_selected_item, "quality"))
                             ? _selected_item.quality : 0;
             var _quantity = is_struct(_selected_item) ? _selected_item.quantity : 1;
-            scr_use_item(_selected_item, _gx, _gy, true);
+            scr_use_item(_selected_item, _gx, _gy, true, false);
             net_send_use_item(_item_key, _quality, _quantity, selected_slot, _gx, _gy, dir);
         } else {
             scr_use_item(_selected_item, _gx, _gy);
@@ -552,7 +565,7 @@ if (state == STATE.ACTING) {
                             var _w_level = irandom(9) + 1;
                             var _w_key   = _w_type + "_" + string(_w_level);
                             add_item(_w_key, 1);
-                            energy -= 10;
+                            energy -= 15;
                             var _wn = global.weapon_data[$ _w_key].name;
                             scr_notify("¡Atrapaste " + _wn + "!");
                         } else {
@@ -564,7 +577,7 @@ if (state == STATE.ACTING) {
                                 _fw = round(random_range(_fish_data.weight_min, _fish_data.weight_max) * 100) / 100;
                             }
                             add_item(_fish_key, 1, _fw);
-                            energy -= 10;
+                            energy -= 15;
                             var _fw_str = (_fw != undefined) ? " (" + scr_format_weight(_fw) + ")" : "";
                             scr_notify("¡Atrapaste un " + _fish_data.name + _fw_str + "!");
                         }
