@@ -1729,6 +1729,8 @@ global.cave_repopulate = {
 };
 
 global.collected_items = {};
+global.bears_killed = 0;
+global.bear_unlocked = false;
 
 // --- DATOS DE MÁQUINAS ---
 global.machine_data = {

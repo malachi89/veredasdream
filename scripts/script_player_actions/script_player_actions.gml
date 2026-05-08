@@ -786,11 +786,8 @@ function scr_buy_building(_building_name, _from_net = false) {
         instance_create_layer(_x, _y, _layer, _actual_obj);
 
         if (_building_name == "stable") {
-            // Spawn 2 horses + 1 bear outside the stable
             instance_create_layer(_x + 96, _y + 16, "Instances", obj_horse1);
             instance_create_layer(_x + 96, _y + 40, "Instances", obj_horse1);
-            var _bear = instance_create_layer(_x + 96, _y + 64, "Instances", obj_horse1);
-            _bear.is_bear = true;
         }
 
         scr_capture_current_room_state();

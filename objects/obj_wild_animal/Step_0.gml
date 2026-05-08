@@ -39,6 +39,17 @@ if (hp <= 0) {
     } else {
         global.collected_items[$ animal_key] = true;
     }
+    if (animal_key == "bear") {
+        global.bears_killed++;
+        if (global.bears_killed >= 20 && !global.bear_unlocked && instance_exists(obj_stable)) {
+            global.bear_unlocked = true;
+            var _stable = instance_find(obj_stable, 0);
+            var _bear = instance_create_layer(_stable.x + 96, _stable.y + 64, "Instances", obj_horse1);
+            _bear.is_bear = true;
+            scr_notify("!Un oso salvaje ha llegado al establo!");
+        }
+    }
+
     scr_check_collection_unlocks();
     instance_destroy();
     exit;
