@@ -840,7 +840,11 @@ function scr_save_game() {
         town_stage: global.town_stage,
         town_donations: global.town_donations,
         town_construction_day: global.town_construction_day,
-        town_construction_duration: global.town_construction_duration
+        town_construction_duration: global.town_construction_duration,
+        pending_farm_event: global.pending_farm_event,
+        pending_farm_event_enemies: global.pending_farm_event_enemies,
+        farm_event_scheduled_day: global.farm_event_scheduled_day,
+        farm_event_type: global.farm_event_type
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     if (global.save_slot > 0) scr_slot_write_info(global.save_slot);
@@ -913,6 +917,12 @@ function scr_apply_loaded_game(_save_data) {
         global.town_construction_duration = 0;
     }
     scr_update_shop_availability();
+
+    // Farm events
+    global.pending_farm_event         = variable_struct_exists(_save_data, "pending_farm_event")         ? _save_data.pending_farm_event         : "";
+    global.pending_farm_event_enemies = variable_struct_exists(_save_data, "pending_farm_event_enemies") ? _save_data.pending_farm_event_enemies : [];
+    global.farm_event_scheduled_day   = variable_struct_exists(_save_data, "farm_event_scheduled_day")   ? _save_data.farm_event_scheduled_day   : -1;
+    global.farm_event_type            = variable_struct_exists(_save_data, "farm_event_type")            ? _save_data.farm_event_type            : "";
 
     // Migrar guardados v1 -> v2
     var _players_arr;
@@ -1198,9 +1208,9 @@ function scr_format_weight(_w) {
     return string_format(_w / 1000, 1, 1) + "t";
 }
 
-function scr_notify(_text) {
+function scr_notify(_text, _duration = 120) {
     if (instance_exists(obj_controller)) {
-        var _notif = { text: _text, timer: 120, alpha: 1.0 };
+        var _notif = { text: _text, timer: _duration, alpha: 1.0 };
         ds_list_add(obj_controller.notifications, _notif);
     }
 }

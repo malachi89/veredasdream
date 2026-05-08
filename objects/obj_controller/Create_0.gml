@@ -64,11 +64,22 @@ function start_new_day() {
         if (global.season_index == 0) global.year += 1;
 
         // NEW: Remove fruit trees in winter
-        if (global.season == "winter") { 
+        if (global.season == "winter") {
             with(obj_tree) {
                 instance_destroy();
             }
         }
+    }
+
+    // Farm events: schedule for this season on season change, then check each day
+    if (_is_season_change) scr_schedule_season_event();
+    scr_farm_clear_event_animals();
+    global.pending_farm_event = "";
+    if (global.farm_event_scheduled_day != -1 && global.day == global.farm_event_scheduled_day) {
+        global.pending_farm_event = global.farm_event_type;
+        global.farm_event_scheduled_day = -1;
+        global.farm_event_type = "";
+        scr_apply_farm_event(global.pending_farm_event);
     }
 
 global.forest_needs_repopulate = true;
@@ -125,6 +136,7 @@ global.forest_needs_repopulate = true;
         global.local_player.energy = global.local_player.max_energy;
     }
 
+    scr_farm_event_notify(global.pending_farm_event);
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
 
@@ -181,8 +193,8 @@ function midnight_collapse() {
         shipping_summary_data = _summary;
         shipping_summary_open = true;
     } else {
-        if (global.net_role != NET_ROLE.CLIENT) scr_save_game();
         start_new_day();
+        if (global.net_role != NET_ROLE.CLIENT) scr_save_game();
         scr_notify("Dia terminado");
     }
 }
@@ -226,6 +238,10 @@ global.day_names = ["Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sab.", "Dom."];
 global.weather_today = "sunny";
 global.force_rain_tomorrow = false;
 global.thunder_timer = -1;
+global.pending_farm_event = "";
+global.pending_farm_event_enemies = [];
+global.farm_event_scheduled_day = -1;
+global.farm_event_type = "";
 global.lightning_flash = 0;
 
 gx = 0;

@@ -64,7 +64,8 @@
       "Bash(powershell -Command \"Get-Item 'sprites\\\\sprite_town_trees\\\\sprite_town_trees.yy' -ErrorAction SilentlyContinue | ForEach-Object { 'File exists' }\")",
       "Bash(Get-ChildItem -Path scripts -Name)",
       "Bash(Sort-Object)",
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\scripts\" -Filter \"*.gml\")"
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\scripts\" -Filter \"*.gml\")",
+      "PowerShell(ls \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" | Where-Object {$_.PSIsContainer})"
     ]
   }
 }

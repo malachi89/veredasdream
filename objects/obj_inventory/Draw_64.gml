@@ -308,23 +308,7 @@ if (is_struct(_p.held_item)) {
 }
 
 // === 5. NOTIFICACIONES ===
-if (instance_exists(obj_controller)) {
-    var _notif_list = obj_controller.notifications;
-    var _yy = display_get_gui_height() * 0.7;
-    var _xx = 20;
-    draw_set_font(fnt_pixel_operator);
-    draw_set_halign(fa_left);
-    draw_set_valign(fa_bottom);
-    for (var i = 0; i < ds_list_size(_notif_list); i++) {
-        var _n = _notif_list[| i];
-        draw_set_alpha(_n.alpha * 0.5);
-        draw_text_color(_xx + 1, _yy + 1, _n.text, c_black, c_black, c_black, c_black, _n.alpha * 0.5);
-        draw_set_alpha(_n.alpha);
-        draw_text_color(_xx, _yy, _n.text, c_white, c_white, c_white, c_white, _n.alpha);
-        _yy -= 20;
-    }
-    draw_set_alpha(1.0);
-}
+// Las notificaciones las dibuja obj_controller/Draw_64
 
 // === 6. TOOLTIP ===
 if (is_struct(_p.hovered_item_data) && !is_struct(_p.held_item)) {
@@ -924,7 +908,7 @@ if (_p.donation_box_open) {
         var _icon_y = _ry + (_row_h - 4) / 2;
         if (_disp.sprite != -1) {
             var _scl = 32 / max(sprite_get_width(_disp.sprite), sprite_get_height(_disp.sprite));
-            draw_sprite_ext(_disp.sprite, _disp.subimg, _icon_x, _icon_y, _scl, _scl, 0, c_white, 1.0);
+            draw_sprite_ext(_disp.sprite, _disp.subimg, _icon_x - 11, _icon_y - 13, _scl, _scl, 0, c_white, 1.0);
         }
 
         draw_set_halign(fa_left);

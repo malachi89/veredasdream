@@ -302,6 +302,7 @@
     {"id":{"name":"scr_magic_chest_loot","path":"scripts/scr_magic_chest_loot/scr_magic_chest_loot.yy",},},
     {"id":{"name":"scr_play_sound_clip","path":"scripts/scr_play_sound_clip/scr_play_sound_clip.yy",},},
     {"id":{"name":"scr_populate_cave","path":"scripts/scr_populate_cave/scr_populate_cave.yy",},},
+    {"id":{"name":"scr_farm_events","path":"scripts/scr_farm_events/scr_farm_events.yy",},},
     {"id":{"name":"scr_populate_farm","path":"scripts/scr_populate_farm/scr_populate_farm.yy",},},
     {"id":{"name":"scr_populate_forest","path":"scripts/scr_populate_forest/scr_populate_forest.yy",},},
     {"id":{"name":"scr_populate_test_animals","path":"scripts/scr_populate_test_animals/scr_populate_test_animals.yy",},},

@@ -73,6 +73,17 @@ if (current_room_name != _room_name) {
     update_tilesets();
     if (_room_name != "town") scr_setup_forest_trees();
     if (_room_name == "farm") scr_check_collection_unlocks();
+    if (_room_name == "farm" && array_length(global.pending_farm_event_enemies) > 0) {
+        var _enemies_to_spawn = global.pending_farm_event_enemies;
+        global.pending_farm_event_enemies = [];
+        for (var _ei = 0; _ei < array_length(_enemies_to_spawn); _ei++) {
+            var _edata = global.enemy_data[$ _enemies_to_spawn[_ei]];
+            if (_edata == undefined) continue;
+            var _ex = 48 + irandom(1392 - 16);
+            var _ey = 96 + irandom(752 - 16);
+            instance_create_layer(_ex, _ey, "Instances", _edata.object);
+        }
+    }
     if (_room_name == "general_shop") scr_setup_general_shop();
     if (_room_name == "blacksmith") scr_setup_blacksmith();
     if (_room_name == "town") {
@@ -466,6 +477,29 @@ else if (chat_open) {
                     net_send_town_stage_update();
                 }
                 }
+            } else if (_cmd == "farm_event") {
+                if (global.net_role == NET_ROLE.CLIENT) {
+                    scr_notify("Solo el host puede programar eventos");
+                } else {
+                    var _valid_types = ["bears", "storm", "enemies"];
+                    var _etype = "";
+                    if (array_length(_parts) >= 2) {
+                        var _arg = _parts[1];
+                        for (var _vi = 0; _vi < array_length(_valid_types); _vi++) {
+                            if (_arg == _valid_types[_vi]) { _etype = _arg; break; }
+                        }
+                        if (_etype == "") {
+                            scr_notify("Tipo invalido. Usa: bears, storm, o enemies");
+                        }
+                    } else {
+                        _etype = _valid_types[irandom(2)];
+                    }
+                    if (_etype != "") {
+                        global.farm_event_scheduled_day = global.day + 1;
+                        global.farm_event_type = _etype;
+                        scr_notify("Evento '" + _etype + "' programado para manana (dia " + string(global.day + 1) + ")");
+                    }
+                }
             } else if (_cmd == "command_list") {
                 var _cmds = [
                     "add_item <key> <qty>",
@@ -493,6 +527,8 @@ else if (chat_open) {
                     "minigame",
                     "spawn_seeds <qty>",
                     "set_town_stage <n>",
+                    "farm_event [bears|storm|enemies]",
+                    "teleport",
                     "command_list"
                 ];
                 show_debug_message("=== COMMAND LIST ===");
@@ -510,6 +546,20 @@ else if (chat_open) {
                 if (ds_list_size(notifications) > 0) {
                     var _last = notifications[| ds_list_size(notifications) - 1];
                     _last.timer = 600;
+                }
+            } else if (_cmd == "teleport") {
+                if (!instance_exists(global.local_player)) {
+                    scr_notify("No hay jugador local.");
+                } else {
+                    scr_capture_current_room_state();
+                    var _old_room = room_get_name(room);
+                    room_goto(farm);
+                    global.local_player.x = 755;
+                    global.local_player.y = 90;
+                    if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
+                        net_broadcast_room_state(_old_room);
+                    }
+                    scr_notify("Teleportado a farm.");
                 }
             } else {
                 scr_notify("Comando desconocido: " + _cmd);
