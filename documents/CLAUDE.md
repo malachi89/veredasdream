@@ -112,6 +112,21 @@ The fishing rod triggers `STATE.FISHING` in `obj_player`. Sub-states via `FISHIN
 ### Workbench System
 `obj_workbench` is a crafting station. Press **E** to open crafting menu; pick up with **axe**. Recipes live in `global.shop_data[$ "workbench"]` and use the standard shop format extended with `group_keys` for multi-item ingredients. Helper functions `scr_count_item_group` and `scr_remove_items_from_group` handle group checks/removals. The shop UI uses a wider panel (760px) with sprite-box ingredient display instead of text. See `WORKBENCH.md` for full recipe list and UI dimensions.
 
+### Alchemy Machine System
+`obj_machine_alchemy` — crafting station for potions. Behaves identically to `obj_workbench` (same wide-panel shop UI, same ingredient group mechanic). Item key `"machine_alchemy"` in `global.placeable_data` with `is_alchemy: true` — placement logic in `scr_use_item()` spawns `obj_machine_alchemy`. Crafted at the workbench (60 madera + 40 piedra + 5 miel). Picked up with axe. Recipes in `global.shop_data[$ "machine_alchemy"]`. `global.npc_data` has a `machine_alchemy` entry (`name: "Tabla de Alquimia"`) for the UI title. The `_is_workbench` flag in `obj_inventory/Draw_64.gml` and `Step_0.gml` covers both `"workbench"` and `"machine_alchemy"` keys.
+
+### Potion System
+`global.potion_data` — four consumable potions, type `ITEM_TYPE.POTION`, sprite `sprite_potions` (subimgs 0–3):
+
+| Key | Subimg | Effect | Ingredients |
+|---|---|---|---|
+| `potion_energy` | 0 | Restores energy to max | 10 crop_any + 10 herb_any + 1 honey |
+| `potion_health` | 1 | Restores HP to max | 10 crop_any + 10 herb_any + 1 goat_milk_reg |
+| `potion_animals` | 2 | Spawns 2–3 random farm animals near player | 3 egg_any + 10 mushroom_any + 5 fish_any |
+| `potion_strength` | 3 | `damage_mult = 2.0` for 3 min (10 800 frames) | 10 crop_any + 10 mushroom_any + 1 steak |
+
+Consumed on left-click (no energy cost, checked before energy gate in `scr_use_item()`). `obj_player` has `damage_mult` (default `1.0`) and `damage_mult_timer` (frames remaining); sword damage is `_wdata.damage * self.damage_mult`. `scr_get_item_data` and `obj_item_parent/Step_0` both search `global.potion_data` (keep in sync).
+
 ### Weight-Based Selling
 Items can carry a `weight` field (kg float) in their slot struct. `scr_process_shipping` applies it: `subtotal = base_sell_price × quantity × weight`. Items without `weight` default to multiplier 1 (unchanged behavior). The inventory UI displays weight in the slot corner and in the tooltip (with estimated sell value). Format via `scr_format_weight`: grams for `< 1 kg`, kg for `1–999`, tonnes for `≥ 1000`. Currently weight-bearing items: **fish** (99 types, assigned on catch) and **cheese/goat_cheese** (assigned by prensa_queso on completion).
 

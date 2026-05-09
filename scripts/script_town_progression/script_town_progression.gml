@@ -40,6 +40,7 @@ function scr_get_town_stage_donations(_stage) {
                 stone:      500,
                 wood:       300,
                 coal:       25,
+                weed:       60,
                 bar_plata:  15,
                 bar_bronce: 15,
                 dye_blue:   3,
@@ -52,6 +53,7 @@ function scr_get_town_stage_donations(_stage) {
                 parsnip:    50,
                 carrot:     25,
                 onion:      25,
+                weed:       40,
                 forage_any: 35,
                 bar_oro:    10
             };

@@ -18,6 +18,7 @@ if (!is_initialized && item_key != "") {
     else if (variable_struct_exists(global.enemy_collection_data, item_key)) _data = global.enemy_collection_data[$ item_key];
     else if (variable_struct_exists(global.wild_animal_collection_data, item_key)) _data = global.wild_animal_collection_data[$ item_key];
     else if (variable_struct_exists(global.farm_animal_collection_data, item_key)) _data = global.farm_animal_collection_data[$ item_key];
+    else if (variable_struct_exists(global.potion_data, item_key)) _data = global.potion_data[$ item_key];
 
     if (_data != undefined) {
 

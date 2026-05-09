@@ -56,6 +56,8 @@ energy = 500;
 max_hp = 20;
 hp = 20;
 hurt_timer = 0;
+damage_mult       = 1.0;
+damage_mult_timer = 0;
 
 tool_cooldown    = 0;
 tool_locked_frames = 0;

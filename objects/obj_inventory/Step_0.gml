@@ -34,7 +34,7 @@ if (_p.shop_open) {
     if (_p.shop_npc_key == "Miraculos") _sitems = scr_get_miraculos_shop_items();
     var _sn      = array_length(_sitems);
     var _is_bs = (_p.shop_npc_key == "Carlos");
-    var _visible = (_p.shop_npc_key == "workbench" || _is_bs) ? 7 : 8;
+    var _visible = (_p.shop_npc_key == "workbench" || _p.shop_npc_key == "machine_alchemy" || _is_bs) ? 7 : 8;
 
     var _wheel = mouse_wheel_down() - mouse_wheel_up();
     _p.shop_scroll = clamp(_p.shop_scroll + _wheel, 0, max(0, _sn - _visible));
@@ -44,7 +44,7 @@ if (_p.shop_open) {
         var _smy  = device_mouse_y_to_gui(0);
         var _sgw  = display_get_gui_width();
         var _sgh  = display_get_gui_height();
-        var _is_wb = (_p.shop_npc_key == "workbench");
+        var _is_wb = (_p.shop_npc_key == "workbench" || _p.shop_npc_key == "machine_alchemy");
         var _wb_or_bs = _is_wb || _is_bs;
         var _spw  = _wb_or_bs ? 760 : 520;
         var _srow = _wb_or_bs ? 64 : 44;

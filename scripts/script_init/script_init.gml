@@ -379,7 +379,8 @@ enum ITEM_TYPE {
     ORE,        // Minerales de la mina
     BAR,        // Lingotes de metal
     JAM,        // Mermelada
-    DYE         // Tinte
+    DYE,        // Tinte
+    POTION      // Pocimas consumibles
 }
 
 enum TOOL_TYPE {
@@ -764,6 +765,16 @@ global.placeable_data = {
         droppable: true,
         base_sell_price: 0,
         is_workbench: true
+    },
+    machine_alchemy: {
+        name: "Tabla de Alquimia",
+        type: ITEM_TYPE.PLACEABLE,
+        sprite: sprite_machine_alchemy,
+        subimg: 0,
+        sellable: true,
+        droppable: true,
+        base_sell_price: 90,
+        is_alchemy: true
     }
 };
 
@@ -1115,7 +1126,8 @@ _tp[$ "shovel"] = [
 
 // --- NPC DATA ---
 global.npc_data = {
-    workbench:  { name: "Mesa de Trabajo" },
+    workbench:       { name: "Mesa de Trabajo" },
+    machine_alchemy: { name: "Tabla de Alquimia" },
     Miraculos:  { name: "Miraculos", skin: 4, eye_type: "female", eye_color: "brown",  hair_style: "none",       hair_color: "black",  clothes_color: "blue",   dialog_id: -1 },
     Jose:       { name: "José",      skin: 2, eye_type: "male",   eye_color: "brown",  hair_style: "standard",   hair_color: "black",  clothes_color: "green",  dialog_id: -1 },
     Maria:      { name: "María",     skin: 3, eye_type: "female", eye_color: "black",  hair_style: "iridessa",   hair_color: "brown",  clothes_color: "pink",   dialog_id: -1 },
@@ -1326,11 +1338,22 @@ for (var _ci = 0; _ci < array_length(_colors); _ci++) {
     array_push(_leather_keys, "pelt_" + _colors[_ci], "cow_hide_" + _colors[_ci], "rabbit_pelt_" + _colors[_ci]);
     array_push(_yarn_keys, "yarn_" + _colors[_ci]);
 }
+var _herb_keys     = [];
+var _mushroom_keys = [];
+var _fish_keys     = [];
+for (var _i = 0; _i <= 18; _i++) array_push(_herb_keys,     "forage_h" + (_i < 10 ? "0" : "") + string(_i));
+for (var _i = 0; _i <= 77; _i++) array_push(_mushroom_keys, "forage_m" + (_i < 10 ? "0" : "") + string(_i));
+for (var _i = 0; _i <= 98; _i++) array_push(_fish_keys,     "fish_"    + (_i < 10 ? "0" : "") + string(_i));
 global.item_groups = {
-    milk_any:    _milk_keys,
-    leather_any: _leather_keys,
-    yarn_any:    _yarn_keys,
-    crop_any:    _crop_keys
+    milk_any:     _milk_keys,
+    leather_any:  _leather_keys,
+    yarn_any:     _yarn_keys,
+    crop_any:     _crop_keys,
+    egg_any:      ["egg_chicken_white_reg","egg_chicken_brown_reg","egg_chicken_white_large",
+                   "egg_chicken_brown_large","egg_chicken_large_generic","egg_duck_reg","egg_duck_large"],
+    herb_any:     _herb_keys,
+    mushroom_any: _mushroom_keys,
+    fish_any:     _fish_keys
 };
 
 global.shop_data[$ "Carlos"] = {
@@ -1407,7 +1430,50 @@ global.shop_data[$ "workbench"] = {
             { key: "honey",            qty: 3  },
             { key: "bar_broncastanio", qty: 5  }
           ], collection_req: { cat: 4, min: 50 }},
+        { item_key: "machine_alchemy",
+          price_money: 0, price_items: [
+            { key: "wood",  qty: 60 },
+            { key: "stone", qty: 40 },
+            { key: "honey", qty: 5  }
+          ]},
     ]
+};
+
+global.shop_data[$ "machine_alchemy"] = {
+    available: true,
+    items: [
+        { item_key: "potion_energy",
+          price_money: 0, price_items: [
+            { key: "crop_any", qty: 10, name: "Cultivo",  group_keys: global.item_groups.crop_any  },
+            { key: "herb_any", qty: 10, name: "Hierba",   group_keys: global.item_groups.herb_any  },
+            { key: "honey",    qty: 1 }
+          ]},
+        { item_key: "potion_health",
+          price_money: 0, price_items: [
+            { key: "crop_any", qty: 10, name: "Cultivo",  group_keys: global.item_groups.crop_any  },
+            { key: "herb_any", qty: 10, name: "Hierba",   group_keys: global.item_groups.herb_any  },
+            { key: "goat_milk_reg", qty: 1 }
+          ]},
+        { item_key: "potion_animals",
+          price_money: 0, price_items: [
+            { key: "egg_any",      qty: 3,  name: "Huevo",   group_keys: global.item_groups.egg_any      },
+            { key: "mushroom_any", qty: 10, name: "Hongo",   group_keys: global.item_groups.mushroom_any },
+            { key: "fish_any",     qty: 5,  name: "Pescado", group_keys: global.item_groups.fish_any     }
+          ]},
+        { item_key: "potion_strength",
+          price_money: 0, price_items: [
+            { key: "crop_any",     qty: 10, name: "Cultivo", group_keys: global.item_groups.crop_any     },
+            { key: "mushroom_any", qty: 10, name: "Hongo",   group_keys: global.item_groups.mushroom_any },
+            { key: "steak",        qty: 1 }
+          ]},
+    ]
+};
+
+global.potion_data = {
+    potion_energy:   { name: "Poción de Energía",  type: ITEM_TYPE.POTION, sprite: sprite_potions, subimg: 0, sellable: true, droppable: true, base_sell_price: 80  },
+    potion_health:   { name: "Poción de Salud",    type: ITEM_TYPE.POTION, sprite: sprite_potions, subimg: 1, sellable: true, droppable: true, base_sell_price: 100 },
+    potion_animals:  { name: "Poción de Animales", type: ITEM_TYPE.POTION, sprite: sprite_potions, subimg: 2, sellable: true, droppable: true, base_sell_price: 120 },
+    potion_strength: { name: "Poción de Fuerza",   type: ITEM_TYPE.POTION, sprite: sprite_potions, subimg: 3, sellable: true, droppable: true, base_sell_price: 150 },
 };
 
 // --- DATOS DE PESCA ---

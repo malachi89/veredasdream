@@ -5,6 +5,10 @@ if (!is_local) {
 }
 
 if (hurt_timer > 0) hurt_timer--;
+if (damage_mult_timer > 0) {
+    damage_mult_timer--;
+    if (damage_mult_timer <= 0) damage_mult = 1.0;
+}
 
 if (dialog_open) {
     if (keyboard_check_pressed(ord("E"))) dialog_open = false;

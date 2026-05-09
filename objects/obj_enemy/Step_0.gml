@@ -1,5 +1,23 @@
 depth = -bbox_bottom;
 
+// Escape si está dentro de una colisión (e.g. spawneado encima de un árbol)
+if (place_meeting(x, y, obj_collision)) {
+    var _push_steps = [4, 8, 16, 32];
+    var _push_angles = [0, 90, 180, 270, 45, 135, 225, 315];
+    var _escaped = false;
+    for (var _si = 0; _si < array_length(_push_steps) && !_escaped; _si++) {
+        for (var _ai = 0; _ai < array_length(_push_angles) && !_escaped; _ai++) {
+            var _ex = x + lengthdir_x(_push_steps[_si], _push_angles[_ai]);
+            var _ey = y + lengthdir_y(_push_steps[_si], _push_angles[_ai]);
+            if (!place_meeting(_ex, _ey, obj_collision)) {
+                x = _ex;
+                y = _ey;
+                _escaped = true;
+            }
+        }
+    }
+}
+
 frame_anim += 0.15;
 while (frame_anim >= anim_frames) frame_anim -= anim_frames;
 while (frame_anim < 0) frame_anim += anim_frames;

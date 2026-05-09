@@ -21,6 +21,7 @@
 | Prensa de Queso | 60 madera + 30 piedra + 3 lingote oro + 10 Leche |
 | Horno | 80 piedra + 10 carbón |
 | Colmena | 20 madera + 3 miel + 5 lingote broncastanio |
+| Tabla de Alquimia | 60 madera + 40 piedra + 5 miel |
 
 ## Item Groups
 
@@ -32,6 +33,10 @@
 | `leather_any` | `pelt_*`, `cow_hide_*`, `rabbit_pelt_*` (all 14 colors each) |
 | `yarn_any` | `yarn_*` (all 14 colors) |
 | `crop_any` | All 37 crop types from `global.crop_data` |
+| `egg_any` | All chicken and duck egg variants (7 keys) |
+| `herb_any` | `forage_h00`–`forage_h18` (19 herbs) — generated via loop |
+| `mushroom_any` | `forage_m00`–`forage_m77` (78 mushrooms) — generated via loop |
+| `fish_any` | `fish_00`–`fish_98` (99 fish) — generated via loop |
 
 ### Recipe ingredient struct format
 
@@ -52,7 +57,7 @@ The `name` field is used for display when `scr_get_item_data(key)` returns `unde
 
 ## Shop UI — Workbench vs NPC
 
-The shop UI in `obj_inventory/Draw_64.gml` and `obj_inventory/Step_0.gml` both branch on `shop_npc_key == "workbench"`:
+The shop UI in `obj_inventory/Draw_64.gml` and `obj_inventory/Step_0.gml` both branch on `shop_npc_key == "workbench" || shop_npc_key == "machine_alchemy"` (the `_is_workbench` flag covers both):
 
 | Property | NPC shop | Workbench |
 |---|---|---|

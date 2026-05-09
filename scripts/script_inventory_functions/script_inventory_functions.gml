@@ -1329,6 +1329,7 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.enemy_collection_data, _key)) return global.enemy_collection_data[$ _key];
     if (variable_struct_exists(global.wild_animal_collection_data, _key)) return global.wild_animal_collection_data[$ _key];
     if (variable_struct_exists(global.farm_animal_collection_data, _key)) return global.farm_animal_collection_data[$ _key];
+    if (variable_struct_exists(global.potion_data, _key)) return global.potion_data[$ _key];
     return undefined;
 }
 function scr_count_item(_key, _player = global.local_player) {

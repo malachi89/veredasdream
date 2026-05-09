@@ -45,13 +45,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Enemy system:** All enemies inherit from `obj_enemy`. Stats are data-driven via `global.enemy_data` in `script_init.gml`. Children set `enemy_key`, call `event_inherited()`, then load their stats. Slimes use a single 48-frame sprite strip (4 directions × 4 frames × 3 states). Myconids use 4-direction quarter sprites. Goblins use 3-direction third sprites (LEFT mirrors RIGHT). Skeletons use the same multi-sprite pattern as myconids.
 
-**Graveyard system (new):** Room `graveyard` contains `obj_coffin` instances placed in the editor. `scr_populate_graveyard()` spawns 2–4 `obj_enemy_skeleton` at random non-colliding positions on room entry. Coffins (press **E** within 40px) open with one of 5 sprites and randomly: spawn a skeleton (15%), drop a random crop/gemstone item (35%), or nothing (50%). Skeleton entry in `global.enemy_data` key `"skeleton"` — hp 24, attack 6, drops gemstones.
+**Graveyard system:** Room `graveyard` contains `obj_coffin` instances placed in the editor. `scr_populate_graveyard()` spawns 2–4 `obj_enemy_skeleton` at random non-colliding positions on room entry (uses `collision_rectangle` for overlap check). Coffins (press **E** within 40px) open with one of 5 sprites and randomly: spawn a skeleton at a nearby free tile (15%), drop a random crop/gemstone item (35%), or nothing (50%). `obj_enemy` escapes collision on its first step (handles cases where it spawns inside geometry). Skeleton entry in `global.enemy_data` key `"skeleton"` — hp 24, attack 6, drops gemstones.
 
 **Drop system:** `inventory_drop_item(_key, _qty, _px, _py)` creates `obj_item_parent` on `"Instances"` layer and registers it in `global.room_drops`. All rooms that need drops must have an `"Instances"` layer.
 
 **Weight selling:** `scr_process_shipping` applies `subtotal = base_sell_price × qty × weight` for items with a `weight` field. Format via `scr_format_weight(_w)`: `< 1 kg` → grams, `1–999` → kg, `≥ 1000` → tonnes.
 
-**Machines:** `obj_machine` states: `0` idle, `1` processing, `2` ready. E key to insert input or collect output. Picked up with axe only; cannot pick up if state 1 or 2. Entries with `machine_type` in `placeable_data` spawn `obj_machine`; entries with `is_workbench: true` spawn `obj_workbench`.
+**Machines:** `obj_machine` states: `0` idle, `1` processing, `2` ready. E key to insert input or collect output. Picked up with axe only; cannot pick up if state 1 or 2. Entries with `machine_type` in `placeable_data` spawn `obj_machine`; entries with `is_workbench: true` spawn `obj_workbench`; entries with `is_alchemy: true` spawn `obj_machine_alchemy`.
+
+**Alchemy machine (`obj_machine_alchemy`):** Works like the workbench (same wide-panel shop UI, multi-ingredient recipes). Item key `"machine_alchemy"`, crafted at the workbench (60 madera + 40 piedra + 5 miel). Recipes live in `global.shop_data[$ "machine_alchemy"]`. Picked up with axe.
+
+**Potions (`global.potion_data`):** Keys `potion_energy`, `potion_health`, `potion_animals`, `potion_strength`. Type `ITEM_TYPE.POTION`. Consumed on left-click (no energy cost). Effects: energy/HP to max; spawn 2–3 farm animals near the player; double sword damage for 3 min (10 800 frames via `damage_mult` / `damage_mult_timer` on `obj_player`). `scr_get_item_data` and `obj_item_parent` both search `global.potion_data`.
 
 ## Debug Console (press Enter in-game)
 

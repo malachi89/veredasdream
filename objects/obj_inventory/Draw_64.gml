@@ -451,7 +451,7 @@ if (_p.dialog_open) {
 if (_p.shop_open) {
     var _gw  = display_get_gui_width();
     var _gh  = display_get_gui_height();
-    var _is_workbench = (_p.shop_npc_key == "workbench");
+    var _is_workbench = (_p.shop_npc_key == "workbench" || _p.shop_npc_key == "machine_alchemy");
     var _is_bs = (_p.shop_npc_key == "Carlos");
     var _wb_or_bs = _is_workbench || _is_bs;
     var _pw  = _wb_or_bs ? 760 : 520;

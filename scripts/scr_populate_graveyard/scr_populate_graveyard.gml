@@ -28,7 +28,7 @@ function scr_populate_graveyard() {
                 }
             }
             if (!_ok) continue;
-            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            if (collision_rectangle(_px - 16, _py - 16, _px + 16, _py + 16, obj_collision, false, false) != noone) continue;
 
             instance_create_layer(_px, _py, "Instances", obj_enemy_skeleton);
             array_push(_placed, { x: _px, y: _py });

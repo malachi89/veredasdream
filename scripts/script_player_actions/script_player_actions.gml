@@ -23,6 +23,56 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
     var _eff_w = _facing_vertical ? _tier_stats.area_height : _tier_stats.area_width;
     var _eff_h = _facing_vertical ? _tier_stats.area_width  : _tier_stats.area_height;
 
+    // Pociones: consumir sin requerir energia ni posición objetivo
+    var _pidata = scr_get_item_data(_item_key);
+    if (_pidata != undefined && variable_struct_exists(_pidata, "type") && _pidata.type == ITEM_TYPE.POTION) {
+        if (!_anim_only) {
+            var _lp = global.local_player;
+            if (_item_key == "potion_energy") {
+                _lp.energy = _lp.max_energy;
+                scr_notify("¡Energía restaurada!");
+            } else if (_item_key == "potion_health") {
+                _lp.hp = _lp.max_hp;
+                scr_notify("¡Salud restaurada!");
+            } else if (_item_key == "potion_animals") {
+                var _animal_keys = struct_get_names(global.animal_data);
+                var _count = 2 + irandom(1);
+                repeat (_count) {
+                    var _ak    = _animal_keys[irandom(array_length(_animal_keys) - 1)];
+                    var _ax    = _lp.x + random_range(-80, 80);
+                    var _ay    = _lp.y + random_range(-80, 80);
+                    var _adata = global.animal_data[$ _ak];
+                    var _v_list = _adata.variants;
+                    var _av    = (_v_list != undefined && array_length(_v_list) > 0)
+                                 ? _v_list[irandom(array_length(_v_list) - 1)] : "white";
+                    var _ainst = instance_create_layer(_ax, _ay, "Instances", obj_farm_animal);
+                    with (_ainst) {
+                        animal_type  = _ak;
+                        variant      = _av;
+                        var _spr     = asset_get_index("sprite_" + animal_type + "_" + variant);
+                        sprite_anim  = (sprite_exists(_spr)) ? _spr : sprite_chicken_white;
+                        sprite_index = sprite_anim;
+                        frame_count  = sprite_get_number(sprite_anim);
+                        move_speed   = (global.animal_data[$ animal_type] != undefined) ? global.animal_data[$ animal_type].move_speed : 0.6;
+                        idle_type    = irandom(4);
+                        if (frame_count == 32 && idle_type > 3) idle_type = 3;
+                    }
+                }
+                scr_notify("¡Los animales te escuchan!");
+            } else if (_item_key == "potion_strength") {
+                _lp.damage_mult       = 2.0;
+                _lp.damage_mult_timer = 10800;
+                scr_notify("¡Fuerza aumentada!");
+            }
+            var _inv_slot = self.inventory_array[self.selected_slot];
+            if (is_struct(_inv_slot)) {
+                _inv_slot.quantity -= 1;
+                if (_inv_slot.quantity <= 0) self.inventory_array[self.selected_slot] = -1;
+            }
+        }
+        return;
+    }
+
     // Check Energy — host authoritative; skip in anim_only mode
     if (!_anim_only && self.energy <= 0 && _item_key != "" && !_skip_energy) {
         scr_notify("¡Sin energia!");
@@ -252,6 +302,16 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                                 if (self.add_item("workbench", 1)) {
                                     scr_notify("Mesa de trabajo recogida");
                                     instance_destroy(_workbench_hit);
+                                    if (!_skip_energy) self.energy -= 2;
+                                } else {
+                                    scr_notify("Inventario lleno");
+                                }
+                            }
+                            var _alchemy_hit = instance_position(_target_x, _target_y, obj_machine_alchemy);
+                            if (_workbench_hit == noone && _alchemy_hit != noone) {
+                                if (self.add_item("machine_alchemy", 1)) {
+                                    scr_notify("Tabla de alquimia recogida");
+                                    instance_destroy(_alchemy_hit);
                                     if (!_skip_energy) self.energy -= 2;
                                 } else {
                                     scr_notify("Inventario lleno");
@@ -503,7 +563,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
 
         if (_wdata.tool_type == TOOL_TYPE.SWORD) {
             if (!_anim_only) {
-                var _sword_damage = _wdata.damage;
+                var _sword_damage = _wdata.damage * self.damage_mult;
                 var _hit_range    = 48;
                 var _hit_side     = 20;
                 var _hx1 = self.x; var _hy1 = self.y; var _hx2 = self.x; var _hy2 = self.y;
@@ -735,6 +795,8 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                 var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_machine, { machine_type: _data.machine_type });
             } else if (variable_struct_exists(_data, "is_workbench")) {
                 var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_workbench);
+            } else if (variable_struct_exists(_data, "is_alchemy")) {
+                var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_machine_alchemy);
             } else {
                 var _inst = instance_create_layer(_gx + _off_x, _gy + _off_y, "Instances", obj_chest);
             }

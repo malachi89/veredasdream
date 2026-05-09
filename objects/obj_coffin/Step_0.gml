@@ -15,8 +15,20 @@ if (keyboard_check_pressed(ord("E"))) {
     if (irandom(1) == 0) {
         // 50%: nada
     } else if (irandom(9) < 3) {
-        // 15% efectivo: summon skeleton
-        instance_create_layer(x, y, "Instances", obj_enemy_skeleton);
+        // 15% efectivo: summon skeleton - busca posición libre cercana
+        var _sx = x;
+        var _sy = y;
+        var _coffin_offsets = [[0,0],[32,0],[-32,0],[0,32],[0,-32],[32,32],[-32,32],[32,-32],[-32,-32],[64,0],[-64,0],[0,64],[0,-64]];
+        for (var _oi = 0; _oi < array_length(_coffin_offsets); _oi++) {
+            var _tx = x + _coffin_offsets[_oi][0];
+            var _ty = y + _coffin_offsets[_oi][1];
+            if (collision_rectangle(_tx - 16, _ty - 16, _tx + 16, _ty + 16, obj_collision, false, false) == noone) {
+                _sx = _tx;
+                _sy = _ty;
+                break;
+            }
+        }
+        instance_create_layer(_sx, _sy, "Instances", obj_enemy_skeleton);
     } else {
         // 35% efectivo: drop item
         var _pool = [
