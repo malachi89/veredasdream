@@ -1,5 +1,6 @@
 function scr_populate_cave(_ore_type = -1, _floor = 1) {
     with (obj_rock) instance_destroy();
+    with (obj_weed) instance_destroy();
     with (obj_ladder_down) instance_destroy();
 
     var _margin   = 32;
@@ -104,6 +105,23 @@ function scr_populate_cave(_ore_type = -1, _floor = 1) {
                     _inst.max_hits = _inst.hits_remaining;
                 }
             }
+        }
+    }
+
+    // --- Weeds ---
+    var _cave_weed_count = irandom_range(1, 3);
+    for (var i = 0; i < _cave_weed_count; i++) {
+        repeat (30) {
+            var _gx = _margin + (irandom((room_width  - 2 * _margin) div 16 - 1)) * 16;
+            var _gy = _margin + (irandom((room_height - 2 * _margin) div 16 - 1)) * 16;
+            var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _gx, _gy) < _spawn_safe_radius);
+            if (_near_spawn) continue;
+            var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _gx + 8, _gy + 8) != 0);
+            if (_has_wall) continue;
+            if (instance_position(_gx + 8, _gy + 8, obj_collision)) continue;
+            if (instance_position(_gx + 8, _gy + 8, obj_rock)) continue;
+            instance_create_layer(_gx, _gy, "Instances", obj_weed);
+            break;
         }
     }
 

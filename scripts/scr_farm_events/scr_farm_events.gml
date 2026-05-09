@@ -138,6 +138,16 @@ function scr_farm_storm_spawn_resources(_farm_state) {
             _occ[$ string(_pos.x) + "_" + string(_pos.y)] = true;
         }
     }
+
+    if (!variable_struct_exists(_farm_state, "weeds")) _farm_state.weeds = [];
+    var _weed_count = irandom_range(3, 8);
+    repeat (_weed_count) {
+        var _pos = scr_farm_find_free_pos(_occ);
+        if (_pos.valid) {
+            array_push(_farm_state.weeds, { x: _pos.x, y: _pos.y });
+            _occ[$ string(_pos.x) + "_" + string(_pos.y)] = true;
+        }
+    }
 }
 
 function scr_farm_event_notify(_event_type) {
@@ -148,7 +158,7 @@ function scr_farm_event_notify(_event_type) {
             break;
         case "storm":
             scr_notify("Hubo una gran tormenta en la noche...", 300);
-            scr_notify("Destruyo cultivos y trajo arboles, rocas y animales que buscan refugio.", 300);
+            scr_notify("Destruyo cultivos y trajo arboles, rocas, hierbas y animales que buscan refugio.", 300);
             break;
         case "enemies":
             scr_notify("Monstruos invaden tu granja!", 300);
@@ -183,7 +193,7 @@ function scr_farm_clear_event_animals() {
 
 function scr_farm_occupied_positions(_farm_state) {
     var _occ = {};
-    var _arrays = ["crops", "common_trees", "rocks", "wild_animals", "buildings"];
+    var _arrays = ["crops", "common_trees", "rocks", "weeds", "wild_animals", "buildings"];
     for (var _a = 0; _a < array_length(_arrays); _a++) {
         var _arr = _farm_state[$ _arrays[_a]];
         if (!is_array(_arr)) continue;

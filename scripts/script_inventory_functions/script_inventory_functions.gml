@@ -158,7 +158,7 @@ function scr_restore_forest_enemies() {
 
 function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(global.room_states, _room_name)) {
-        global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [], animals: [], wild_animals: [], machines: [] };
+        global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [], weeds: [], animals: [], wild_animals: [], machines: [] };
     }
     var _s = global.room_states[$ _room_name];
     // Defensive fill — guards against {} sent for unvisited rooms in multiplayer ROOM_SNAPSHOT
@@ -169,6 +169,7 @@ function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(_s, "horses"))       _s.horses       = [];
     if (!variable_struct_exists(_s, "common_trees")) _s.common_trees = [];
     if (!variable_struct_exists(_s, "rocks"))        _s.rocks        = [];
+    if (!variable_struct_exists(_s, "weeds"))        _s.weeds        = [];
     if (!variable_struct_exists(_s, "animals"))       _s.animals       = [];
     if (!variable_struct_exists(_s, "wild_animals"))  _s.wild_animals  = [];
     if (!variable_struct_exists(_s, "magic_chests"))  _s.magic_chests  = [];
@@ -333,6 +334,14 @@ function scr_capture_current_room_state() {
         });
     }
     _state.rocks = _rock_state;
+
+    // Capture Weeds
+    var _weed_state = [];
+    for (var i = 0; i < instance_number(obj_weed); i++) {
+        var _inst = instance_find(obj_weed, i);
+        array_push(_weed_state, { x: _inst.x, y: _inst.y });
+    }
+    _state.weeds = _weed_state;
 
     // Capture Shoveled Holes
     _state.shoveled_tiles = [];
@@ -664,6 +673,26 @@ function scr_restore_room_state(_room_name) {
         }
     }
 
+    // ---- WEEDS ----
+    if (variable_struct_exists(_state, "weeds")) {
+        var _weed_map = _build_xy_map(_state.weeds);
+        var _to_destroy = [];
+        with (obj_weed) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_weed_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+        for (var i = 0; i < array_length(_state.weeds); i++) {
+            var _w = _state.weeds[i];
+            var _inst = noone;
+            with (obj_weed) { if (x == _w.x && y == _w.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_w.x, _w.y, "Instances", obj_weed);
+                _inst.image_speed = 0;
+            }
+        }
+    }
+
     // ---- MAGIC CHESTS ----
     if (variable_struct_exists(_state, "magic_chests")) {
         var _mc_map = _build_xy_map(_state.magic_chests);
@@ -873,6 +902,7 @@ function scr_apply_loaded_game(_save_data) {
         global.weather_today = "sunny";
     global.room_states = _save_data.room_states;
     global.farm_populated = variable_struct_exists(global.room_states, "farm");
+    global.road_to_cave_populated = variable_struct_exists(global.room_states, "road_to_cave");
     global.room_drops = _save_data.room_drops;
     global.next_drop_uid = _save_data.next_drop_uid;
     if (variable_struct_exists(_save_data, "player_name")) global.player_name = _save_data.player_name;

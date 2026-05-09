@@ -31,6 +31,14 @@ if (!global.farm_populated && room_get_name(room) == "farm"
     scr_capture_current_room_state();
 }
 
+// Populate road_to_cave with weeds on first visit
+if (!global.road_to_cave_populated && room_get_name(room) == "road_to_cave"
+        && instance_exists(global.local_player) && instance_exists(obj_inventory)) {
+    global.road_to_cave_populated = true;
+    scr_populate_road_to_cave();
+    scr_capture_current_room_state();
+}
+
 var _room_name = room_get_name(room);
 if (current_room_name != _room_name) {
     current_room_name = _room_name;
@@ -122,29 +130,7 @@ if (global.forest_needs_repopulate && _room_name == "forest"
 if (global.graveyard_needs_repopulate && _room_name == "graveyard"
         && instance_exists(global.local_player) && instance_exists(obj_inventory)) {
     global.graveyard_needs_repopulate = false;
-    with (obj_enemy_skeleton) instance_destroy();
-    var _skel_data = global.enemy_data[$ "skeleton"];
-    if (_skel_data != undefined) {
-        var _gx1 = 96;  var _gy1 = 96;
-        var _gx2 = room_width - 96;  var _gy2 = room_height - 96;
-        var _gcount = irandom_range(2, 4);
-        var _gplaced = [];
-        for (var _gi = 0; _gi < _gcount; _gi++) {
-            for (var _gatt = 0; _gatt < 30; _gatt++) {
-                var _gsx = floor(random_range(_gx1, _gx2 - 1) / 16) * 16;
-                var _gsy = floor(random_range(_gy1, _gy2 - 1) / 16) * 16;
-                var _gok = true;
-                for (var _gj = 0; _gj < array_length(_gplaced); _gj++) {
-                    if (point_distance(_gsx, _gsy, _gplaced[_gj].x, _gplaced[_gj].y) < 64) { _gok = false; break; }
-                }
-                if (!_gok) continue;
-                if (collision_rectangle(_gsx, _gsy - 16, _gsx + 32, _gsy + 16, obj_collision, false, true)) continue;
-                instance_create_layer(_gsx, _gsy, "Instances", obj_enemy_skeleton);
-                array_push(_gplaced, { x: _gsx, y: _gsy });
-                break;
-            }
-        }
-    }
+    scr_populate_graveyard();
 }
 
 if (struct_exists(global.cave_repopulate, _room_name)

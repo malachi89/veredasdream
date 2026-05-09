@@ -102,6 +102,17 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                         _inst.days_since_harvest = 0;
                     }
                 }
+                ds_list_clear(_list);
+                _count = collision_rectangle_list(_x1, _y1, _x2, _y2, obj_weed, false, true, _list, false);
+                for (var i = 0; i < _count; i++) {
+                    var _inst = _list[| i];
+                    _is_harvesting = true;
+                    if (!_skip_energy) self.energy -= 1;
+                    var _wdrop_qty = irandom_range(1, 2);
+                    if (random(1) < _tier_stats.double_drop_chance) _wdrop_qty *= 2;
+                    inventory_drop_item("weed", _wdrop_qty, _inst.x + 8, _inst.y + 8);
+                    instance_destroy(_inst);
+                }
                 ds_list_destroy(_list);
             }
         }

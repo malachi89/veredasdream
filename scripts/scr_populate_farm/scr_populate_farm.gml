@@ -1,7 +1,8 @@
 function scr_daily_farm_spawn(_is_season_change = false) {
     var _tree_spawn = _is_season_change ? irandom_range(3, 5) : irandom(2);
     var _rock_spawn = _is_season_change ? irandom_range(3, 5) : irandom(2);
-    if (_tree_spawn == 0 && _rock_spawn == 0) return;
+    var _weed_spawn = _is_season_change ? irandom_range(2, 4) : irandom(2);
+    if (_tree_spawn == 0 && _rock_spawn == 0 && _weed_spawn == 0) return;
 
     var _x1 = 48, _y1 = 96, _x2 = 1440, _y2 = 848;
     var _max_attempts = 20;
@@ -41,11 +42,27 @@ function scr_daily_farm_spawn(_is_season_change = false) {
                 }
             }
         }
+        for (var i = 0; i < _weed_spawn; i++) {
+            for (var attempt = 0; attempt < _max_attempts; attempt++) {
+                var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+                var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+                if (!instance_position(_px + 8, _py + 8, obj_crop) &&
+                    !instance_position(_px + 8, _py + 8, obj_common_tree) &&
+                    !instance_position(_px + 8, _py + 8, obj_rock) &&
+                    !instance_position(_px + 8, _py + 8, obj_weed) &&
+                    !instance_position(_px + 8, _py + 8, obj_tree) &&
+                    !instance_position(_px + 8, _py + 8, obj_collision) &&
+                    !instance_position(_px + 8, _py + 8, obj_item_parent)) {
+                    instance_create_layer(_px, _py, "Instances", obj_weed);
+                    break;
+                }
+            }
+        }
     }
 
     var _farm_state = scr_get_room_state("farm");
     var _occupied = {};
-    var _arrays = ["crops", "common_trees", "rocks"];
+    var _arrays = ["crops", "common_trees", "rocks", "weeds"];
     for (var a = 0; a < array_length(_arrays); a++) {
         var _arr = _farm_state[$ _arrays[a]];
         if (!is_array(_arr)) continue;
@@ -85,6 +102,20 @@ function scr_daily_farm_spawn(_is_season_change = false) {
                     is_ore_rock: false, is_coal_rock: false, is_gemstone_rock: false,
                     ore_type_index: -1, ore_item_key: "", hit_counter: 0
                 });
+                break;
+            }
+        }
+    }
+
+    if (!variable_struct_exists(_farm_state, "weeds")) _farm_state.weeds = [];
+    for (var i = 0; i < _weed_spawn; i++) {
+        for (var attempt = 0; attempt < _max_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            var _key = string(_px) + "_" + string(_py);
+            if (!variable_struct_exists(_occupied, _key)) {
+                _occupied[$ _key] = true;
+                array_push(_farm_state.weeds, { x: _px, y: _py });
                 break;
             }
         }
@@ -239,5 +270,36 @@ function scr_populate_farm() {
             }
         }
         _r_attempts--;
+    }
+
+    // --- Spawn weeds scattered ---
+    var _weeds_to_spawn = irandom_range(20, 40);
+    var _weed_radius   = 8;
+    var _w_attempts    = 80;
+    while (_weeds_to_spawn > 0 && _w_attempts > 0) {
+        var _sx = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+        var _sy = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+
+        if (_check_ok(_sx, _sy, _weed_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+            var _cluster_size = irandom_range(1, 4);
+            for (var c = 0; c < _cluster_size && _weeds_to_spawn > 0; c++) {
+                var _wx, _wy;
+                if (c == 0) {
+                    _wx = _sx; _wy = _sy;
+                } else {
+                    var _angle = random(360);
+                    var _dist = random_range(16, 32);
+                    _wx = floor((_sx + lengthdir_x(_dist, _angle)) / 16) * 16;
+                    _wy = floor((_sy + lengthdir_y(_dist, _angle)) / 16) * 16;
+                }
+
+                if (_check_ok(_wx, _wy, _weed_radius, _placed, _player_cx, _player_cy, _player_clearance)) {
+                    instance_create_layer(_wx, _wy, "Instances", obj_weed);
+                    array_push(_placed, { x: _wx, y: _wy, r: _weed_radius });
+                    _weeds_to_spawn--;
+                }
+            }
+        }
+        _w_attempts--;
     }
 }

@@ -141,6 +141,10 @@ global.graveyard_needs_repopulate = true;
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
 
+    var _mshop = global.shop_data[$ "Miraculos"];
+    if (_mshop != undefined) _mshop.specials_day = -1;
+    scr_generate_miraculos_daily_specials();
+
     // Broadcast new day state to client so their world advances in sync.
     if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
         net_send_new_day();
@@ -265,6 +269,7 @@ global.pending_player_x = 0;
 global.pending_player_y = 0;
 global.pending_player_dir = DIR.DOWN;
 global.farm_populated = false;
+global.road_to_cave_populated = false;
 global.forest_needs_repopulate = true;
 global.graveyard_needs_repopulate = true;
 global.forest_days_since_rare = 0;

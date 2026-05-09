@@ -780,6 +780,12 @@ global.material_data = {
         sprite: sprite_material_stone,
         subimg: 0
     },
+    weed: {
+        name: "Hierba",
+        type: ITEM_TYPE.MATERIAL,
+        sprite: sprite_weed,
+        subimg: 0
+    },
     coal: {
         name: "Carbon",
         type: ITEM_TYPE.MATERIAL,
@@ -1239,6 +1245,8 @@ global.shop_data = {};
 
 global.shop_data[$ "Miraculos"] = {
     available: true,
+    daily_specials: [],
+    specials_day: -1,
     items: [
         // PRIMAVERA
         { item_key: "cherry_seeds",       price_money: 30, price_items: [] },
