@@ -54,6 +54,12 @@ if (hp <= 0) {
 
 switch (state) {
     case ANIMAL_STATE.IDLE:
+        // Proactive aggro
+        if (is_aggressive && instance_exists(obj_player) && point_distance(x, y, obj_player.x, obj_player.y) < aggro_range) {
+            state = ANIMAL_STATE.CHASING;
+            chase_timer = chase_timer_max;
+            break;
+        }
         idle_timer -= 1;
         if (idle_timer <= 0) {
             state            = ANIMAL_STATE.WANDERING;
@@ -64,6 +70,11 @@ switch (state) {
     break;
 
     case ANIMAL_STATE.WANDERING:
+        if (is_aggressive && instance_exists(obj_player) && point_distance(x, y, obj_player.x, obj_player.y) < aggro_range) {
+            state = ANIMAL_STATE.CHASING;
+            chase_timer = chase_timer_max;
+            break;
+        }
         var _dx = 0;
         var _dy = 0;
         if (dir == DIR.LEFT) _dx = -move_speed;

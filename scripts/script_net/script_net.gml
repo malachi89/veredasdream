@@ -816,6 +816,7 @@ function net_handle_shipping_summary(_payload) {
     obj_controller.shipping_summary_data = _summary;
     if (array_length(_summary.items) > 0) {
         obj_controller.shipping_summary_open = true;
+        obj_controller.shipping_summary_scroll = 0;
     }
 }
 
@@ -1090,8 +1091,8 @@ function net_handle_use_item(_payload) {
 
     // Bugnet: Step_0 ACTING check never runs on ghost, so resolve catch here.
     if (_item_key == "bugnet") {
-        var _nearest = instance_nearest(_ghost.x, _ghost.y, obj_insect);
-        if (_nearest != noone && point_distance(_ghost.x, _ghost.y, _nearest.x, _nearest.y) <= 40) {
+        var _nearest = instance_nearest(_gx + 8, _gy + 8, obj_insect);
+        if (_nearest != noone && point_distance(_gx + 8, _gy + 8, _nearest.x, _nearest.y) <= 32) {
             var _ikey  = _nearest.insect_key;
             var _idata = global.insect_data[$ _ikey];
             net_ghost_add_item(_ghost, _ikey, 1);

@@ -20,6 +20,8 @@ wander_steps     = 0;
 max_wander_steps = irandom_range(30, 120);
 product_drops    = [];
 image_speed      = 0;
+is_aggressive    = false;
+aggro_range      = 200;
 
 snd_hurt   = undefined;
 snd_death  = undefined;

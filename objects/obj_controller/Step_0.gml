@@ -991,6 +991,13 @@ if (shipping_summary_open) {
         var _cx = display_get_gui_width() * 0.5;
         var _cy = display_get_gui_height() * 0.5;
 
+        // Scroll con rueda del mouse
+        var _visible = 8;
+        var _wheel = mouse_wheel_down() - mouse_wheel_up();
+        if (_wheel != 0) {
+            shipping_summary_scroll = clamp(shipping_summary_scroll + _wheel, 0, max(0, array_length(shipping_summary_data.items) - _visible));
+        }
+
         // Boton "Continuar" (Debe coincidir EXACTAMENTE con el Draw Event)
         var _tw = 450;
         var _th = 550;

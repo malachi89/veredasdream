@@ -184,7 +184,7 @@ if (confirm_overwrite) {
     var _btn_h = 40;
     var _no_x1 = _cx - _btn_w - 10;
     var _yes_x1 = _cx + 10;
-    var _btn_y1 = _cy + 30;
+    var _btn_y1 = _cy + 80;
     var _no_x2 = _no_x1 + _btn_w;
     var _yes_x2 = _yes_x1 + _btn_w;
     var _btn_y2 = _btn_y1 + _btn_h;
@@ -241,7 +241,7 @@ if (confirm_delete) {
     var _btn_h = 40;
     var _no_x1 = _cx - _btn_w - 10;
     var _yes_x1 = _cx + 10;
-    var _btn_y1 = _cy + 30;
+    var _btn_y1 = _cy + 70;
     var _no_x2 = _no_x1 + _btn_w;
     var _yes_x2 = _yes_x1 + _btn_w;
     var _btn_y2 = _btn_y1 + _btn_h;

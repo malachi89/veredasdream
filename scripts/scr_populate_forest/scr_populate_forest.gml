@@ -188,8 +188,8 @@ function scr_populate_forest() {
     global.forest_wild_animals = [];
 
     var _wild_keys  = variable_struct_get_names(global.wild_animal_data);
-    var _is_saturday = ((global.day - 1) mod 7) == 5;
-    if (!_is_saturday) {
+    var _is_bear_day = ((global.day - 1) mod 7) == 1 || ((global.day - 1) mod 7) == 3 || ((global.day - 1) mod 7) == 6;
+    if (!_is_bear_day) {
         _wild_keys = array_filter(_wild_keys, function(_k) { return _k != "bear"; });
     }
     var _wild_count = irandom_range(10, 15);
@@ -307,8 +307,8 @@ function scr_populate_forest() {
     var _emin_dist      = 64;
     var _emax_attempts  = 30;
 
-    // Slimes: 3 a 6
-    var _slime_count = irandom_range(3, 6);
+    // Slimes: 5 a 10
+    var _slime_count = irandom_range(5, 10);
     for (var i = 0; i < _slime_count; i++) {
         var _ekey  = _enemy_slimes[irandom(array_length(_enemy_slimes) - 1)];
         var _edata = global.enemy_data[$ _ekey];
@@ -323,15 +323,16 @@ function scr_populate_forest() {
             if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
             if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
             if (_map_walls_forest != -1 && tilemap_get_at_pixel(_map_walls_forest, _px + 8, _py + 8) != 0) continue;
-            instance_create_layer(_px, _py, "Instances", _edata.object);
+            var _inst = instance_create_layer(_px, _py, "Instances", _edata.object);
+            _inst.is_aggressive = irandom(1) == 0;
             array_push(_eplaced, { x: _px, y: _py });
-            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp, is_aggressive: _inst.is_aggressive });
             break;
         }
     }
 
-    // Myconids: 1 a 2
-    var _myconid_count = irandom_range(1, 2);
+    // Myconids: 2 a 4
+    var _myconid_count = irandom_range(2, 4);
     for (var i = 0; i < _myconid_count; i++) {
         var _ekey  = _enemy_myconids[irandom(array_length(_enemy_myconids) - 1)];
         var _edata = global.enemy_data[$ _ekey];
@@ -346,15 +347,16 @@ function scr_populate_forest() {
             if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
             if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
             if (_map_walls_forest != -1 && tilemap_get_at_pixel(_map_walls_forest, _px + 8, _py + 8) != 0) continue;
-            instance_create_layer(_px, _py, "Instances", _edata.object);
+            var _inst = instance_create_layer(_px, _py, "Instances", _edata.object);
+            _inst.is_aggressive = irandom(1) == 0;
             array_push(_eplaced, { x: _px, y: _py });
-            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp, is_aggressive: _inst.is_aggressive });
             break;
         }
     }
 
-    // Goblin: 33% de probabilidad de 1
-    if (irandom(2) == 0) {
+    // Goblin: 50% de probabilidad de 1
+    if (irandom(1) == 0) {
         var _ekey  = "goblin";
         var _edata = global.enemy_data[$ _ekey];
         for (var attempt = 0; attempt < _emax_attempts; attempt++) {
@@ -368,15 +370,16 @@ function scr_populate_forest() {
             if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
             if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
             if (_map_walls_forest != -1 && tilemap_get_at_pixel(_map_walls_forest, _px + 8, _py + 8) != 0) continue;
-            instance_create_layer(_px, _py, "Instances", _edata.object);
+            var _inst = instance_create_layer(_px, _py, "Instances", _edata.object);
+            _inst.is_aggressive = irandom(1) == 0;
             array_push(_eplaced, { x: _px, y: _py });
-            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp, is_aggressive: _inst.is_aggressive });
             break;
         }
     }
 
-    // Venom Bloom: 1 a 2 (planta estacionaria tramposa)
-    var _venom_count = irandom_range(1, 2);
+    // Venom Bloom: 2 a 3 (planta estacionaria tramposa)
+    var _venom_count = irandom_range(2, 3);
     for (var i = 0; i < _venom_count; i++) {
         var _ekey  = "venom_bloom";
         var _edata = global.enemy_data[$ _ekey];
@@ -391,9 +394,10 @@ function scr_populate_forest() {
             if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
             if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
             if (_map_walls_forest != -1 && tilemap_get_at_pixel(_map_walls_forest, _px + 8, _py + 8) != 0) continue;
-            instance_create_layer(_px, _py, "Instances", _edata.object);
+            var _inst = instance_create_layer(_px, _py, "Instances", _edata.object);
+            _inst.is_aggressive = irandom(1) == 0;
             array_push(_eplaced, { x: _px, y: _py });
-            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp, is_aggressive: _inst.is_aggressive });
             break;
         }
     }

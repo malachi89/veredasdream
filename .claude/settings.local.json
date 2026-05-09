@@ -65,7 +65,20 @@
       "Bash(Get-ChildItem -Path scripts -Name)",
       "Bash(Sort-Object)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\scripts\" -Filter \"*.gml\")",
-      "PowerShell(ls \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" | Where-Object {$_.PSIsContainer})"
+      "PowerShell(ls \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" | Where-Object {$_.PSIsContainer})",
+      "Bash(Get-ChildItem *)",
+      "PowerShell(grep *)",
+      "Bash(grep -E \"\\\\.gml$|\\\\.json$\")",
+      "Bash(Get-Content -Path \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\scripts\\\\script_init\\\\script_init.gml\")",
+      "Bash(Select-String \"machine_data|placeable_data\" -Context 0,50)",
+      "Bash(Select-Object -First 200)",
+      "Bash(cd /d C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream)",
+      "Bash(dir objects *)",
+      "Bash(findstr /i \"plant\\\\|stationary\\\\|bush\\\\|flower\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" | Where-Object { $_.Name -match \"plant|stationary|bush|flower\" } | ForEach-Object { $_.Name })",
+      "Bash(cat)",
+      "Read(//tmp/**)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" -Directory | ForEach-Object { $_.Name } | Sort-Object)"
     ]
   }
 }

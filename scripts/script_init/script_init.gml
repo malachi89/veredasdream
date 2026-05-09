@@ -1056,6 +1056,10 @@ _fd[$ "forage_f19"] = { name: "Magnolio",            subimg: 116, rarity: 4, spr
 _fd[$ "forage_f20"] = { name: "Loto Azul",           subimg: 117, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 51 };
 _fd[$ "forage_f21"] = { name: "Orquídea de Cristal", subimg: 118, rarity: 5, sprite: sprite_mushrooms_herbs_flowers, type: ITEM_TYPE.MATERIAL, base_sell_price: 51 };
 
+// Berries (own sprites)
+_fd[$ "forage_b00"] = { name: "Arándano Azul",  subimg: 0, rarity: 2, sprite: sprite_blueberry,  type: ITEM_TYPE.MATERIAL, base_sell_price: 6  };
+_fd[$ "forage_b01"] = { name: "Arándano Rojo",  subimg: 0, rarity: 3, sprite: sprite_cranberry, type: ITEM_TYPE.MATERIAL, base_sell_price: 12 };
+
 // --- SISTEMA DE PROGRESIÓN DE HERRAMIENTAS ---
 // global.tool_progression[$ "key"][QUALITY_tier] = { stats }
 // hits_required: daño por golpe = 1 + hits_required (recursos tienen 10 HP base)

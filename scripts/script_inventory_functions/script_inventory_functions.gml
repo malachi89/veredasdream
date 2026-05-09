@@ -151,8 +151,9 @@ function scr_restore_forest_enemies() {
         var _edata = global.enemy_data[$ _d.key];
         if (_edata == undefined) continue;
         var _inst  = instance_create_layer(_d.x, _d.y, "Instances", _edata.object);
-        _inst.hp     = _d.hp;
-        _inst.max_hp = _d.max_hp;
+        _inst.hp            = _d.hp;
+        _inst.max_hp        = _d.max_hp;
+        if (variable_struct_exists(_d, "is_aggressive")) _inst.is_aggressive = _d.is_aggressive;
     }
 }
 
@@ -1064,6 +1065,7 @@ function scr_sleep_and_save() {
         if (instance_exists(obj_controller)) {
             obj_controller.shipping_summary_data = _summary;
             obj_controller.shipping_summary_open = true;
+            obj_controller.shipping_summary_scroll = 0;
         }
     } else {
         start_new_day();
@@ -1157,6 +1159,7 @@ function scr_sleep_and_save_mp() {
         if (instance_exists(obj_controller)) {
             obj_controller.shipping_summary_data = _host_summary;
             obj_controller.shipping_summary_open = true;
+            obj_controller.shipping_summary_scroll = 0;
         }
     } else {
         start_new_day();

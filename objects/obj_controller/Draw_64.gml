@@ -207,12 +207,16 @@ if (shipping_summary_open) {
     draw_text_transformed_color(_cx, _ty1 + 30, _receipt_header, 2, 2, 0, c_black, c_black, c_black, c_black, 1);
     draw_text_transformed_color(_cx, _ty1 + 65, "--------------------------------", 1.5, 1.5, 0, c_black, c_black, c_black, c_black, 1);
     
-    // Listado de items
-    var _item_y = _ty1 + 100;
+    // Listado de items (con scroll)
     var _items = shipping_summary_data.items;
+    var _n = array_length(_items);
+    var _visible = 8;
+    var _item_y = _ty1 + 100;
     
-    for (var i = 0; i < array_length(_items); i++) {
-        var _it = _items[i];
+    for (var _i = 0; _i < _visible; _i++) {
+        var _idx = _i + shipping_summary_scroll;
+        if (_idx >= _n) break;
+        var _it = _items[_idx];
         
         // Icono
         draw_sprite_ext(_it.sprite, _it.subimg, _tx1 + 40, _item_y + 12, 1.0, 1.0, 0, c_white, 1);
@@ -226,11 +230,17 @@ if (shipping_summary_open) {
         draw_text_transformed_color(_tx2 - 40, _item_y, "$" + string(_it.subtotal), 1.2, 1.2, 0, c_black, c_black, c_black, c_black, 1);
         
         _item_y += 40;
-        
-        if (_item_y > _ty2 - 120) {
-            draw_set_halign(fa_center);
-            draw_text_transformed_color(_cx, _item_y, "... y mas ...", 1.2, 1.2, 0, c_black, c_black, c_black, c_black, 1);
-            break;
+    }
+    
+    // Indicadores de scroll
+    if (_n > _visible) {
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        if (shipping_summary_scroll > 0) {
+            draw_text_transformed_color(_cx, _ty1 + 85, "^", 1.5, 1.5, 0, c_black, c_black, c_black, c_black, 1);
+        }
+        if (shipping_summary_scroll + _visible < _n) {
+            draw_text_transformed_color(_cx, _ty2 - 125, "v", 1.5, 1.5, 0, c_black, c_black, c_black, c_black, 1);
         }
     }
     

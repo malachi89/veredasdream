@@ -262,6 +262,47 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                     dialog_open = false;
                 }
             }
+
+            // Bushes con fruta
+            if (!_did_interact) {
+                var _bush = instance_nearest(x, y, obj_bush);
+                if (_bush != noone && point_distance(x, y, _bush.x, _bush.y) < 40) {
+                    if (_bush.has_fruit) {
+                        var _berry_key = (_bush.sprite_index == sprite_bush_1 || _bush.sprite_index == sprite_bush_3)
+                            ? "forage_b00" : "forage_b01";
+                        var _bx = _bush.x + 24;
+                        var _by = _bush.y + 16;
+                        var _dd = point_direction(_bx, _by, x, y);
+                        inventory_drop_item(_berry_key, irandom_range(1, 3), _bx + lengthdir_x(28, _dd), _by + lengthdir_y(28, _dd));
+                        _bush.has_fruit = false;
+                        _bush.image_index = 1;
+                        var _bk = string(room_get_name(room)) + "_" + string(_bush.x) + "_" + string(_bush.y);
+                        global.bush_harvested[$ _bk] = true;
+                    }
+                    _did_interact = true;
+                }
+            }
+
+            // Bugnet con E
+            if (!_did_interact && state != STATE.ACTING && state != STATE.FISHING) {
+                var _sel = inventory_array[selected_slot];
+                var _sk = is_struct(_sel) ? _sel.key : _sel;
+                if (_sk == "bugnet") {
+                    var _tx = x, _ty = y;
+                    switch (dir) {
+                        case DIR.UP:    _ty = y - 32; break;
+                        case DIR.DOWN:  _ty = y + 32; break;
+                        case DIR.LEFT:  _tx = x - 32; break;
+                        case DIR.RIGHT: _tx = x + 32; break;
+                    }
+                    var _egx = floor(_tx / 16) * 16;
+                    var _egy = floor(_ty / 16) * 16;
+                    bugnet_target_x = _egx + 8;
+                    bugnet_target_y = _egy + 8;
+                    scr_use_item(_sel, _egx, _egy);
+                    tool_cooldown = 50;
+                }
+            }
         }
     }
 
@@ -286,7 +327,11 @@ if (mouse_check_button_pressed(mb_left) && !_mouse_over_ui && state != STATE.ACT
     var _is_bow_weapon  = (_wdata != undefined && _wdata.tool_type == TOOL_TYPE.BOW);
     var _is_sword_weapon = (_wdata != undefined && _wdata.tool_type == TOOL_TYPE.SWORD);
 
-    if ((_actual_dist <= 32 || _is_bow_weapon || _item_key == "sickle" || _item_key == "bugnet" || _is_sword_weapon || _is_placeable) && !show_backpack) {
+    if ((_actual_dist <= 32 || _is_bow_weapon || _item_key == "sickle" || _is_sword_weapon || _is_placeable) && !show_backpack) {
+        if (_item_key == "bugnet") {
+            bugnet_target_x = mouse_x;
+            bugnet_target_y = mouse_y;
+        }
         if (_is_bow_weapon) {
             // Stop any previous bow sound before starting a new draw
             if (bow_sound_id != -1 && audio_is_playing(bow_sound_id)) {
@@ -362,6 +407,23 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
 }
 
 move_and_collide(_mx, _my, [obj_collision, obj_chest, obj_forest_sign, obj_ladder_down, obj_ladder_exit, obj_bus_down, obj_bus_up], 4, 0, 0, -1, -1);
+
+if (place_meeting(x, y, obj_collision)) {
+	var _prev_x = x;
+	var _prev_y = y;
+	for (var _r = 2; _r <= 16; _r += 2) {
+		for (var _a = 0; _a < 360; _a += 45) {
+			var _tx = _prev_x + lengthdir_x(_r, _a);
+			var _ty = _prev_y + lengthdir_y(_r, _a);
+			if (!place_meeting(_tx, _ty, obj_collision)) {
+				x = _tx;
+				y = _ty;
+				break;
+			}
+		}
+		if (!place_meeting(x, y, obj_collision)) break;
+	}
+}
 
 // Dano por contacto con animales salvajes que huyen
 if (hurt_timer <= 0 && hp > 0) {
@@ -444,8 +506,8 @@ if (state == STATE.ACTING) {
             bugnet_caught = true;
             // CLIENT: host resolved the catch via net_handle_use_item; just play animation.
             if (global.net_role != NET_ROLE.CLIENT) {
-                var _nearest = instance_nearest(mouse_x, mouse_y, obj_insect);
-                if (_nearest != noone && point_distance(mouse_x, mouse_y, _nearest.x, _nearest.y) <= 40) {
+                var _nearest = instance_nearest(bugnet_target_x, bugnet_target_y, obj_insect);
+                if (_nearest != noone && point_distance(bugnet_target_x, bugnet_target_y, _nearest.x, _nearest.y) <= 32) {
                     var _ikey  = _nearest.insect_key;
                     var _idata = global.insect_data[$ _ikey];
                     add_item(_ikey, 1);

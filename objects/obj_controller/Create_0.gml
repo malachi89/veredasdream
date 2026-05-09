@@ -84,6 +84,7 @@ function start_new_day() {
 
 global.forest_needs_repopulate = true;
 global.graveyard_needs_repopulate = true;
+global.bush_harvested = {};
     var _cave_keys = struct_get_names(global.cave_repopulate);
     for (var _i = 0; _i < array_length(_cave_keys); _i++) {
         global.cave_repopulate[$ _cave_keys[_i]] = true;
@@ -197,6 +198,7 @@ function midnight_collapse() {
     if (array_length(_summary.items) > 0) {
         shipping_summary_data = _summary;
         shipping_summary_open = true;
+        shipping_summary_scroll = 0;
     } else {
         start_new_day();
         if (global.net_role != NET_ROLE.CLIENT) scr_save_game();
@@ -274,6 +276,7 @@ global.forest_needs_repopulate = true;
 global.graveyard_needs_repopulate = true;
 global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
+global.bush_harvested = {};
 
 // --- TOWN PROGRESSION ---
 global.town_stage = TownStage.INITIAL;
