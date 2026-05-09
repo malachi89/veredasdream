@@ -34,13 +34,6 @@ if (hp <= 0) {
     exit;
 }
 
-// Detección del jugador: entrar en modo persecución
-if (is_dying <= 0 && state != ANIMAL_STATE.CHASING && instance_exists(obj_player)
-        && point_distance(x, y, obj_player.x, obj_player.y) < 200) {
-    state = ANIMAL_STATE.CHASING;
-    chase_timer = chase_timer_max;
-}
-
 switch (state) {
     case ANIMAL_STATE.IDLE:
         idle_timer -= 1;

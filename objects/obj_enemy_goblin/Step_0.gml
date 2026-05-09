@@ -24,3 +24,10 @@ if (hurt_anim_timer > 0) hurt_anim_timer -= 1;
 
 // Resetear frame al inicio de muerte o daño para que arranquen desde frame 0
 if (_hurt_just_started || is_dying == death_anim_frames) frame_anim = 0;
+
+// Aggro: detectar y perseguir al jugador
+if (is_dying <= 0 && state != ANIMAL_STATE.CHASING && instance_exists(obj_player)
+        && point_distance(x, y, obj_player.x, obj_player.y) < 200) {
+    state = ANIMAL_STATE.CHASING;
+    chase_timer = chase_timer_max;
+}
