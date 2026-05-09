@@ -43,7 +43,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Item keys:** String identifiers (e.g. `"tomato_seeds"`, `"fish_00"`, `"pelt_red"`). `scr_get_item_data(_key)` searches all databases in order. Inventory slots are `-1` (empty) or `{ key, quantity [, quality] [, weight] }`. Weight (kg float) is present on fish and cheese; for those `base_sell_price` is per-kg.
 
-**Enemy system:** All enemies inherit from `obj_enemy`. Stats are data-driven via `global.enemy_data` in `script_init.gml`. Children set `enemy_key`, call `event_inherited()`, then load their stats. Slimes use a single 48-frame sprite strip (4 directions × 4 frames × 3 states). Myconids use 4-direction quarter sprites. Goblins use 3-direction third sprites (LEFT mirrors RIGHT). Skeletons use the same multi-sprite pattern as myconids.
+**Enemy system:** All enemies inherit from `obj_enemy`. Stats are data-driven via `global.enemy_data` in `script_init.gml`. Children set `enemy_key`, call `event_inherited()`, then load their stats. Slimes use a single 48-frame sprite strip (4 directions × 4 frames × 3 states). Myconids/Skeletons use 4-direction quarter sprites. Goblins/Sprout Slimes use 3-direction third sprites (LEFT mirrors RIGHT). Venom Bloom is stationary with a custom state machine (no `event_inherited()` in Step): starts frozen looking like a forageable, wakes up when the player approaches, then idles or attacks depending on distance. See `documents/ENEMY.md` for full layout tables and sound clip assignments.
 
 **Graveyard system:** Room `graveyard` contains `obj_coffin` instances placed in the editor. `scr_populate_graveyard()` spawns 2–4 `obj_enemy_skeleton` at random non-colliding positions on room entry (uses `collision_rectangle` for overlap check). Coffins (press **E** within 40px) open with one of 5 sprites and randomly: spawn a skeleton at a nearby free tile (15%), drop a random crop/gemstone item (35%), or nothing (50%). `obj_enemy` escapes collision on its first step (handles cases where it spawns inside geometry). Skeleton entry in `global.enemy_data` key `"skeleton"` — hp 24, attack 6, drops gemstones.
 
@@ -70,7 +70,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `unlock <0-7>` | Unlock mine door |
 | `next_day / next_season / next_hour` | Advance time |
 | `toggle_rain` | Force rain tomorrow |
-| `spawn_enemy <key>` | Spawn enemy at cursor (`slime_blue`, `goblin`, `skeleton`, etc.) |
+| `spawn_enemy <key>` | Spawn enemy at cursor (`slime_blue`, `goblin`, `skeleton`, `sprout_slime_blue`, `venom_bloom`, etc.) |
 | `minigame` | Open insect catching minigame |
 | `spawn_seeds <qty>` | Spawn tomato seeds |
 

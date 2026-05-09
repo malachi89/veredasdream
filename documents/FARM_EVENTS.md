@@ -79,7 +79,7 @@ El evento de tormenta sobrescribe `global.weather_today = "rain"` directamente, 
 
 - No destruye cultivos
 - Spawna **6–12 enemigos** al entrar a la granja (no a través de room_states)
-- Pool de enemigos: `slime_blue`, `slime_green`, `slime_black`, `slime_pink`, `myconid_blue`, `myconid_green`, `goblin`
+- Pool de enemigos: `slime_blue`, `slime_green`, `slime_black`, `slime_pink`, `myconid_blue`, `myconid_green`, `goblin`, `sprout_slime_blue`, `sprout_slime_pink`, `venom_bloom`
 - Los enemigos desaparecen si el jugador sale y regresa a la granja (no persisten en room_states)
 - **Anuncio:** "Monstruos invaden tu granja!" + "Defiendela antes de que lleguen mas!"
 

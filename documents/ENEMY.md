@@ -19,7 +19,10 @@ obj_enemy (parent, abstract)
   ├── obj_enemy_myconid_green (myconid_green)
   ├── obj_enemy_myconid_pink (myconid_pink)
   ├── obj_enemy_goblin (goblin)
-  └── obj_enemy_skeleton (skeleton)
+  ├── obj_enemy_skeleton (skeleton)
+  ├── obj_enemy_sprout_slime_blue (sprout_slime_blue)
+  ├── obj_enemy_sprout_slime_pink (sprout_slime_pink)
+  └── obj_enemy_venom_bloom (venom_bloom)
 ```
 
 ---
@@ -63,7 +66,7 @@ slime_black: {
 }
 ```
 
-### Multi-sprite entries (myconid/goblin — separate sprites per state):
+### Multi-sprite entries (myconid/goblin/sprout_slime — separate sprites per state):
 ```gml
 myconid_blue: {
     name: "Micónido Azul",
@@ -77,6 +80,21 @@ myconid_blue: {
     chase_speed_mult: 1.4,
     hp: 6,
     ...
+}
+```
+
+### Stationary entries (venom_bloom — no movement, custom state machine):
+No `move_speed`, `chase_speed_mult`, or `chase_timer` fields. `object` is the only required reference besides stats.
+```gml
+venom_bloom: {
+    name: "Venom Bloom",
+    object: obj_enemy_venom_bloom,
+    sprite_idle: sprite_venom_bloom_idle,  // requerido por el sistema de colección
+    hp: 22, max_hp: 22,
+    attack_damage: 6, attack_cooldown: 80, attack_range: 56,
+    death_anim_frames: 48,
+    product_drops: ["forage_f12", "ore_plata"],
+    dye_drops: ["dye_lilac"],
 }
 ```
 
@@ -133,8 +151,9 @@ Each child must provide:
 - Load all variables from `global.enemy_data[enemy_key]`
 - Compute `anim_frames` based on the sprite's directional division:
   - Slimes: `sprite_get_number(sprite_index) / 4` (4 directions × 4 frames = 16 per state, but full sprite is 48 with 3 states)
-  - Myconids: `sprite_get_number(sprite_idle) / 4` (4 directional quarters)
-  - Goblins: `sprite_get_number(sprite_idle) / 3` (3 directional thirds)
+  - Myconids/Skeletons: `sprite_get_number(sprite_idle) / 4` (4 directional quarters)
+  - Goblins/Sprout Slimes: `sprite_get_number(sprite_idle) / 3` (3 directional thirds)
+  - Venom Bloom: `anim_frames = 1` initial (frozen); updated when state changes sprite
 - Set `hurt_anim_timer = 0`
 
 ### Step
@@ -242,7 +261,7 @@ On hit:
 
 Example: `spawn_enemy slime_blue`, `spawn_enemy myconid_pink`, `spawn_enemy goblin`
 
-All enemy keys: `slime_black`, `slime_blue`, `slime_golden`, `slime_green`, `slime_pink`, `slime_purple`, `myconid_blue`, `myconid_green`, `myconid_pink`, `goblin`, `skeleton`
+All enemy keys: `slime_black`, `slime_blue`, `slime_golden`, `slime_green`, `slime_pink`, `slime_purple`, `myconid_blue`, `myconid_green`, `myconid_pink`, `goblin`, `skeleton`, `sprout_slime_blue`, `sprout_slime_pink`, `venom_bloom`
 
 ---
 
@@ -259,3 +278,108 @@ Skeletons spawn in the `graveyard` room via `scr_populate_graveyard()` (2–4 pe
 ### Coffin (`obj_coffin`)
 
 Placed in the graveyard room in the editor. Press **E** within 40px to open. Opens with one of 5 animated sprites (`sprite_coffin_opened_1` through `_5`). Outcomes (50% nothing / 15% skeleton spawn / 35% random item drop from a pool of crops and gems).
+
+---
+
+## Sprout Slimes (`obj_enemy_sprout_slime_blue`, `obj_enemy_sprout_slime_pink`)
+
+Moving enemies that use the **goblin frame layout** (directional thirds, LEFT mirrors RIGHT). No attack animation — use `sprite_walk` while chasing.
+
+### Stats
+
+| Key | HP | ATK | ATK cooldown | ATK range | Speed | Chase mult | Chase timer |
+|-----|-----|-----|-------------|-----------|-------|------------|-------------|
+| `sprout_slime_blue` | 18 | 3 | 45 | 32 | 0.9 | ×1.8 | 480 |
+| `sprout_slime_pink` | 35 | 4 | 40 | 32 | 0.75 | ×1.6 | 540 |
+
+### Sprites (multi-sprite, directional thirds)
+
+| State | Sprite |
+|-------|--------|
+| IDLE / WANDERING | `sprite_sprout_slime_<color>_idle` |
+| CHASING | `sprite_sprout_slime_<color>_walk` |
+| DAMAGE | `sprite_sprout_slime_<color>_damage` |
+| DEATH | `sprite_sprout_slime_<color>_dead` |
+
+Each sprite has 6 frames divided into 3 thirds (2 frames/direction): third 0 = DOWN, third 1 = UP, third 2 = RIGHT. LEFT mirrors RIGHT via `_xscale = -1`.
+
+`anim_frames = sprite_get_number(active_sprite) / 3`
+
+### Drops
+
+| Key | product_drops | dye_drops |
+|-----|---------------|-----------|
+| `sprout_slime_blue` | `coal`, `forage_h04` | `dye_lilac` (exclusive) |
+| `sprout_slime_pink` | `ore_bronce`, `forage_h13` | `dye_orange` |
+
+### Sound (`sound_sprout_slime`, 5.067 s) — via `scr_play_sound_clip`
+
+Sound fields are **not** set in `enemy_data` (stay `undefined`). The child's Step handles all clips manually:
+
+| Trigger | Clip |
+|---------|------|
+| Hurt (`hurt_anim_timer == 15`) | 0.25 – 1.00 s |
+| Chase movement (every 90 frames) | 2.50 – 3.00 s |
+| Death (is_dying just started) | 4.20 – 5.00 s |
+
+Aggro detection is proactive (detects player within 200px without needing to be hit first), same as skeleton.
+
+### Forest spawn
+Added to the `_enemy_slimes` pool in `scr_populate_forest.gml` (3–6 slimes total per day, randomly selected from the combined pool).
+
+---
+
+## Venom Bloom (`obj_enemy_venom_bloom`)
+
+**Stationary plant enemy** with a custom state machine. Does **not** call `event_inherited()` in Step — the parent's IDLE/WANDERING/CHASING logic is completely bypassed. `move_speed = 0`.
+
+### Stats
+
+| HP | ATK | ATK cooldown | ATK range |
+|----|-----|-------------|-----------|
+| 22 | 6 | 80 frames | 56 px |
+
+### State machine (`vb_state`)
+
+| State | Value | Description |
+|-------|-------|-------------|
+| DORMANT | 0 | Frozen on frame 0 of wake_up sprite. Looks like a forageable. Triggers on player within 100px or when hit. |
+| WAKING | 1 | Plays `sprite_venom_bloom_wake_up` once (full animation). Plays `sound_venom_bloom` (full). |
+| IDLE | 2 | Loops `sprite_venom_bloom_idle`. Plays idle sound clip (0.9–1.56s) randomly (1/300). Transitions to ATTACKING if player < 90px. |
+| ATTACKING | 3 | Loops `sprite_venom_bloom_attack`. Deals `attack_damage` to player when within 56px (cooldown 80 frames). Plays attack clip (0.0–0.8s). Returns to IDLE if player > 130px. |
+
+Death plays `sound_venom_bloom` (full) and switches to `sprite_venom_bloom_dead`.
+
+### Sprites (no directional layout — stationary)
+
+| State | Sprite | Frames |
+|-------|--------|--------|
+| DORMANT / WAKING | `sprite_venom_bloom_wake_up` | 6+ |
+| IDLE | `sprite_venom_bloom_idle` | 3 |
+| ATTACKING | `sprite_venom_bloom_attack` | 4 |
+| DEATH | `sprite_venom_bloom_dead` | 5 |
+
+No mirroring. `xscale = 1` always.
+
+### Drops
+
+| product_drops | dye_drops |
+|---------------|-----------|
+| `forage_f12`, `ore_plata` | `dye_lilac` |
+
+### Sound (`sound_venom_bloom`, 1.56 s)
+
+| Trigger | Method |
+|---------|--------|
+| Wake up / death | `audio_play_sound(sound_venom_bloom, 1, false)` (full) |
+| Attack | `scr_play_sound_clip(sound_venom_bloom, 0.0, 0.8)` |
+| Idle (random) | `scr_play_sound_clip(sound_venom_bloom, 0.9, 1.56)` |
+| Hurt (hp decreased) | `scr_play_sound_clip(sound_venom_bloom, 0.3, 1.0)` |
+
+Hurt detection: compares `hp` against `vb_prev_hp` each frame (set in Create). Arrow/sword reduce hp externally; the change is caught on the next Step.
+
+### Forest spawn
+Separate spawn block in `scr_populate_forest.gml` after the goblin block: **1–2 per day**.
+
+### Drop logic
+Death/drops are handled entirely within the custom Step (not the parent). Logic mirrors parent: one random `product_drops` item + 1/3 chance for one random `dye_drops` item.

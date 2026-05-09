@@ -301,7 +301,7 @@ function scr_populate_forest() {
     var _layer_walls_forest = layer_get_id("Tiles_walls");
     var _map_walls_forest = (_layer_walls_forest != -1) ? layer_tilemap_get_id(_layer_walls_forest) : -1;
 
-    var _enemy_slimes   = ["slime_black", "slime_blue", "slime_green", "slime_pink", "slime_purple", "slime_golden"];
+    var _enemy_slimes   = ["slime_black", "slime_blue", "slime_green", "slime_pink", "slime_purple", "slime_golden", "sprout_slime_blue", "sprout_slime_pink"];
     var _enemy_myconids = ["myconid_blue", "myconid_green", "myconid_pink"];
     var _eplaced        = [];
     var _emin_dist      = 64;
@@ -356,6 +356,29 @@ function scr_populate_forest() {
     // Goblin: 33% de probabilidad de 1
     if (irandom(2) == 0) {
         var _ekey  = "goblin";
+        var _edata = global.enemy_data[$ _ekey];
+        for (var attempt = 0; attempt < _emax_attempts; attempt++) {
+            var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;
+            var _py = floor(random_range(_y1, _y2 - 1) / 16) * 16;
+            var _ok = true;
+            for (var j = 0; j < array_length(_eplaced); j++) {
+                if (point_distance(_px, _py, _eplaced[j].x, _eplaced[j].y) < _emin_dist) { _ok = false; break; }
+            }
+            if (!_ok) continue;
+            if (instance_position(_px + 8, _py + 8, obj_collision)) continue;
+            if (_water_map != -1 && tilemap_get_at_pixel(_water_map, _px + 8, _py + 8) != 0) continue;
+            if (_map_walls_forest != -1 && tilemap_get_at_pixel(_map_walls_forest, _px + 8, _py + 8) != 0) continue;
+            instance_create_layer(_px, _py, "Instances", _edata.object);
+            array_push(_eplaced, { x: _px, y: _py });
+            array_push(global.forest_enemies, { key: _ekey, x: _px, y: _py, hp: _edata.hp, max_hp: _edata.max_hp });
+            break;
+        }
+    }
+
+    // Venom Bloom: 1 a 2 (planta estacionaria tramposa)
+    var _venom_count = irandom_range(1, 2);
+    for (var i = 0; i < _venom_count; i++) {
+        var _ekey  = "venom_bloom";
         var _edata = global.enemy_data[$ _ekey];
         for (var attempt = 0; attempt < _emax_attempts; attempt++) {
             var _px = floor(random_range(_x1, _x2 - 1) / 16) * 16;

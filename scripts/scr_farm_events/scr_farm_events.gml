@@ -85,7 +85,8 @@ function scr_apply_enemy_invasion() {
     global.pending_farm_event_enemies = [];
     var _pool = [
         "slime_blue", "slime_green", "slime_black", "slime_pink",
-        "myconid_blue", "myconid_green", "goblin"
+        "myconid_blue", "myconid_green", "goblin",
+        "sprout_slime_blue", "sprout_slime_pink", "venom_bloom"
     ];
     var _count = irandom_range(6, 12);
     repeat (_count) {
