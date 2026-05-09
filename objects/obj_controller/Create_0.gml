@@ -83,6 +83,7 @@ function start_new_day() {
     }
 
 global.forest_needs_repopulate = true;
+global.graveyard_needs_repopulate = true;
     var _cave_keys = struct_get_names(global.cave_repopulate);
     for (var _i = 0; _i < array_length(_cave_keys); _i++) {
         global.cave_repopulate[$ _cave_keys[_i]] = true;
@@ -136,7 +137,7 @@ global.forest_needs_repopulate = true;
         global.local_player.energy = global.local_player.max_energy;
     }
 
-    scr_farm_event_notify(global.pending_farm_event);
+    // Notificacion diferida: se muestra cuando el jugador entra a la granja
     scr_capture_current_room_state();
     show_debug_message("Nuevo dia: " + string(global.day) + " de " + global.season_names[$ global.season] + " Ano " + string(global.year));
 
@@ -265,6 +266,7 @@ global.pending_player_y = 0;
 global.pending_player_dir = DIR.DOWN;
 global.farm_populated = false;
 global.forest_needs_repopulate = true;
+global.graveyard_needs_repopulate = true;
 global.forest_days_since_rare = 0;
 global.forest_days_since_rare_insect = 0;
 

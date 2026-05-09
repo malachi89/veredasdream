@@ -372,10 +372,10 @@ if (hurt_timer <= 0 && hp > 0) {
 // Muerte por HP = 0
 if (hp <= 0) {
     hp = 4;
-    energy = max_energy;
+    energy = floor(max_energy * 0.5);
     var _lost = floor(money * 0.1);
     money = max(0, money - _lost);
-    scr_notify("Te has desmayado! Has perdido MXN$ " + string(_lost));
+    scr_notify("Te has desmayado! Has perdido MXN$ " + string(_lost) + " y energia.");
     if (global.net_role == NET_ROLE.CLIENT && instance_exists(obj_net) && obj_net.is_connected) {
         net_send_money_update(player_id, money);
         net_send_energy_update(player_id, energy);

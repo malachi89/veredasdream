@@ -69,19 +69,26 @@ if (current_room_name != _room_name) {
         scr_restore_forest_wild_animals();
         scr_restore_forest_enemies();
     }
+    if (_room_name == "graveyard") global.graveyard_needs_repopulate = true;
     
     update_tilesets();
     if (_room_name != "town") scr_setup_forest_trees();
     if (_room_name == "farm") scr_check_collection_unlocks();
-    if (_room_name == "farm" && array_length(global.pending_farm_event_enemies) > 0) {
-        var _enemies_to_spawn = global.pending_farm_event_enemies;
-        global.pending_farm_event_enemies = [];
-        for (var _ei = 0; _ei < array_length(_enemies_to_spawn); _ei++) {
-            var _edata = global.enemy_data[$ _enemies_to_spawn[_ei]];
-            if (_edata == undefined) continue;
-            var _ex = 48 + irandom(1392 - 16);
-            var _ey = 96 + irandom(752 - 16);
-            instance_create_layer(_ex, _ey, "Instances", _edata.object);
+    if (_room_name == "farm") {
+        if (global.pending_farm_event != "") {
+            scr_farm_event_notify(global.pending_farm_event);
+            global.pending_farm_event = "";
+        }
+        if (array_length(global.pending_farm_event_enemies) > 0) {
+            var _enemies_to_spawn = global.pending_farm_event_enemies;
+            global.pending_farm_event_enemies = [];
+            for (var _ei = 0; _ei < array_length(_enemies_to_spawn); _ei++) {
+                var _edata = global.enemy_data[$ _enemies_to_spawn[_ei]];
+                if (_edata == undefined) continue;
+                var _ex = 48 + irandom(1392 - 16);
+                var _ey = 96 + irandom(752 - 16);
+                instance_create_layer(_ex, _ey, "Instances", _edata.object);
+            }
         }
     }
     if (_room_name == "general_shop") scr_setup_general_shop();
@@ -110,6 +117,34 @@ if (global.forest_needs_repopulate && _room_name == "forest"
     global.forest_needs_repopulate = false;
     scr_populate_forest();
     scr_capture_current_room_state();
+}
+
+if (global.graveyard_needs_repopulate && _room_name == "graveyard"
+        && instance_exists(global.local_player) && instance_exists(obj_inventory)) {
+    global.graveyard_needs_repopulate = false;
+    with (obj_enemy_skeleton) instance_destroy();
+    var _skel_data = global.enemy_data[$ "skeleton"];
+    if (_skel_data != undefined) {
+        var _gx1 = 96;  var _gy1 = 96;
+        var _gx2 = room_width - 96;  var _gy2 = room_height - 96;
+        var _gcount = irandom_range(2, 4);
+        var _gplaced = [];
+        for (var _gi = 0; _gi < _gcount; _gi++) {
+            for (var _gatt = 0; _gatt < 30; _gatt++) {
+                var _gsx = floor(random_range(_gx1, _gx2 - 1) / 16) * 16;
+                var _gsy = floor(random_range(_gy1, _gy2 - 1) / 16) * 16;
+                var _gok = true;
+                for (var _gj = 0; _gj < array_length(_gplaced); _gj++) {
+                    if (point_distance(_gsx, _gsy, _gplaced[_gj].x, _gplaced[_gj].y) < 64) { _gok = false; break; }
+                }
+                if (!_gok) continue;
+                if (collision_rectangle(_gsx, _gsy - 16, _gsx + 32, _gsy + 16, obj_collision, false, true)) continue;
+                instance_create_layer(_gsx, _gsy, "Instances", obj_enemy_skeleton);
+                array_push(_gplaced, { x: _gsx, y: _gsy });
+                break;
+            }
+        }
+    }
 }
 
 if (struct_exists(global.cave_repopulate, _room_name)

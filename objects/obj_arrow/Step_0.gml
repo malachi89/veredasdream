@@ -59,10 +59,3 @@ if (_hit != noone) {
     has_hit = true;
     exit;
 }
-
-// Wall collision
-if (instance_place(x, y, obj_collision)) {
-    audio_play_sound(sound_arrow_hit, 1, false);
-    has_hit = true;
-    exit;
-}

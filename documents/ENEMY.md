@@ -18,7 +18,8 @@ obj_enemy (parent, abstract)
   ├── obj_enemy_myconid_blue (myconid_blue)
   ├── obj_enemy_myconid_green (myconid_green)
   ├── obj_enemy_myconid_pink (myconid_pink)
-  └── obj_enemy_goblin (goblin)
+  ├── obj_enemy_goblin (goblin)
+  └── obj_enemy_skeleton (skeleton)
 ```
 
 ---
@@ -241,4 +242,20 @@ On hit:
 
 Example: `spawn_enemy slime_blue`, `spawn_enemy myconid_pink`, `spawn_enemy goblin`
 
-All enemy keys: `slime_black`, `slime_blue`, `slime_golden`, `slime_green`, `slime_pink`, `slime_purple`, `myconid_blue`, `myconid_green`, `myconid_pink`, `goblin`
+All enemy keys: `slime_black`, `slime_blue`, `slime_golden`, `slime_green`, `slime_pink`, `slime_purple`, `myconid_blue`, `myconid_green`, `myconid_pink`, `goblin`, `skeleton`
+
+---
+
+## Skeleton (`obj_enemy_skeleton`)
+
+Uses the **myconid frame layout** (multi-sprite, 4-direction quarters). Stats from `global.enemy_data[$ "skeleton"]`:
+- HP: 24, attack: 6, attack cooldown: 40, attack range: 32
+- Move speed: 0.84, chase speed mult: 1.4, chase timer: 720
+- Drops: random gem from `["gemstone_ruby","gemstone_sapphire","gemstone_emerald"]`
+- Sounds: `sound_skeleton_dead`, `sound_skeleton_walk`, `sound_skeleton_general`
+
+Skeletons spawn in the `graveyard` room via `scr_populate_graveyard()` (2–4 per visit) and can also be summoned by `obj_coffin` when the player opens it (15% chance).
+
+### Coffin (`obj_coffin`)
+
+Placed in the graveyard room in the editor. Press **E** within 40px to open. Opens with one of 5 animated sprites (`sprite_coffin_opened_1` through `_5`). Outcomes (50% nothing / 15% skeleton spawn / 35% random item drop from a pool of crops and gems).

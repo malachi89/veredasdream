@@ -394,7 +394,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
 
                 if (!_anim_only) {
                     var _room_name = room_get_name(room);
-                    if (_room_name == "farm" || _room_name == "forest" || string_starts_with(_room_name, "cave_")) {
+                    if (_room_name == "farm" || _room_name == "forest" || string_starts_with(_room_name, "cave_") || _room_name == "graveyard") {
                         var _sw = _eff_w;
                         var _sh = _eff_h;
                         var _sox = floor(_sw / 2) * 16;

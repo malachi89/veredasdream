@@ -18,6 +18,8 @@ if (_room == "forest") {
     _target_track = sound_music_enchanted_forest;
 } else if (string_pos("cave_", _room) == 1) {
     _target_track = sound_music_mines;
+} else if (_room == "graveyard") {
+    _target_track = sound_graveyard;
 } else if (_use_sequence) {
     _target_track = _season_track[current_track_index];
 } else {

@@ -24,11 +24,11 @@ GameMaker Studio 2 (GML) farming/life sim RPG. Spanish in-game text; English cod
 | `objects/obj_controller/Step_0.gml` | Game master, day cycle, room transitions, debug console |
 | `objects/obj_player/Step_0.gml` | Movement, tool use, fishing, horse mounting |
 | `objects/obj_wild_animal/Step_0.gml` | Wild animal death/drops/kill tracking |
-| `stable_construction.md` | Active plan for bear unlock kill tracking |
+| `scripts/scr_populate_graveyard/scr_populate_graveyard.gml` | Spawns 2–4 skeletons in the graveyard room on entry |
 
 ## Debug console (Enter in-game)
 
-`add_item`, `add_animal`, `buy_building`, `upgrade_tool`, `set_money`, `set_energy`, `heal`, `set_day`, `set_hour`, `set_season`, `set_weather`, `unlock`, `next_day`, `next_season`, `next_hour`, `toggle_rain`, `minigame`, `spawn_seeds`. See `documents/CLAUDE.md` for full details.
+`add_item`, `add_animal`, `buy_building`, `upgrade_tool`, `set_money`, `set_energy`, `heal`, `set_day`, `set_hour`, `set_season`, `set_weather`, `unlock`, `next_day`, `next_season`, `next_hour`, `toggle_rain`, `minigame`, `spawn_seeds`, `spawn_enemy <key>`. See `documents/CLAUDE.md` for full details.
 
 ## Architecture at a glance
 
