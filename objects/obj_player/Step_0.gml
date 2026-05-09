@@ -393,7 +393,7 @@ if (state != STATE.ACTING && state != STATE.FISHING) {
     if (_mag == 0) {
         state = STATE.IDLE;
     } else {
-        if (is_riding) state = _run ? STATE.RUN : STATE.WALK;
+        if (is_riding) state = _run ? STATE.WALK : STATE.RUN;
         else state = _run ? STATE.WALK : STATE.RUN;
         if (abs(_h) > abs(_v)) dir = (_h > 0) ? DIR.RIGHT : DIR.LEFT;
         else dir = (_v > 0) ? DIR.DOWN : DIR.UP;

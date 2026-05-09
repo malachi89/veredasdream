@@ -53,8 +53,8 @@ frames_run  = 8;
 max_energy = 500;
 energy = 500;
 
-max_hp = 20;
-hp = 20;
+max_hp = min(20 + global.town_stage * 2, 40);
+hp = max_hp;
 hurt_timer = 0;
 damage_mult       = 1.0;
 damage_mult_timer = 0;

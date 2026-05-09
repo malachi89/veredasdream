@@ -47,12 +47,15 @@ if (instance_exists(_lp)) {
     var _hhx = _ebx;
     var _hhy = _eby + _ebh + 4;
     var _hp_rem = _p.hp;
-    for (var i = 0; i < 10; i++) {
+    var _heart_count = _p.max_hp div 2;
+    for (var i = 0; i < _heart_count; i++) {
         var _frame;
         if (_hp_rem >= 2)      { _frame = 0; _hp_rem -= 2; }
         else if (_hp_rem == 1) { _frame = 1; _hp_rem -= 1; }
         else                     _frame = 2;
-        draw_sprite_ext(sprite_health, _frame, _hhx + i * 34, _hhy, 2, 2, 0, c_white, 1);
+        var _row = i div 10;
+        var _col = i mod 10;
+        draw_sprite_ext(sprite_health, _frame, _hhx + _col * 34, _hhy + _row * 40, 2, 2, 0, c_white, 1);
     }
 
     // Multiplayer role badge

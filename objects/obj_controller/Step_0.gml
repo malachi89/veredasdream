@@ -493,6 +493,7 @@ else if (chat_open) {
                 global.town_construction_duration = 0;
                 scr_update_shop_availability();
                 scr_restore_town_stage();
+                scr_apply_town_hp_bonus();
                 scr_notify("Town stage: " + string(_ts) + " (" + scr_get_town_stage_name(_ts) + ")");
                 if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
                     net_send_town_stage_update();

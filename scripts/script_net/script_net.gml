@@ -407,6 +407,7 @@ function net_handle_full_snapshot(_payload) {
         global.pending_player_room_name = "";
     }
 
+    scr_apply_town_hp_bonus();
     scr_notify("Conectado como Jugador 2!");
 }
 
@@ -1477,6 +1478,7 @@ function net_handle_town_stage_update(_payload) {
     global.town_donations             = _data.town_donations;
     global.town_construction_day      = _data.town_construction_day;
     global.town_construction_duration = _data.town_construction_duration;
+    scr_apply_town_hp_bonus();
     if (room_get_name(room) == "town") scr_restore_town_stage();
 }
 

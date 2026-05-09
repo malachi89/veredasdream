@@ -6,7 +6,7 @@ function get_sprite_set(_idle, _walk, _run, _action)
         case STATE.IDLE:    return _idle;
         case STATE.WALK:    return _walk;
         case STATE.RUN:     return _run;
-        case STATE.ACTING:  return _action;
+        case STATE.ACTING:  return (_action != -1) ? _action : _idle;
         case STATE.FISHING: return (_action != -1) ? _action : _idle;
         default:            return _idle;
     }

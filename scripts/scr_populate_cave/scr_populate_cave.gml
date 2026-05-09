@@ -178,4 +178,20 @@ function scr_populate_cave(_ore_type = -1, _floor = 1) {
             }
         }
     }
+
+    // --- Magic Chest (pisos 8-10, 30%) ---
+    if (_ore_type >= 0 && _floor >= 8 && random(100) < 30) {
+        repeat (50) {
+            var _gx = _margin + (irandom((room_width  - 2 * _margin) div 16 - 1)) * 16;
+            var _gy = _margin + (irandom((room_height - 2 * _margin) div 16 - 1)) * 16;
+            var _near_spawn = (_spawn_x != -1) && (point_distance(_spawn_x, _spawn_y, _gx, _gy) < _spawn_safe_radius);
+            if (_near_spawn) continue;
+            var _has_wall = (_map_walls != -1) && (tilemap_get_at_pixel(_map_walls, _gx + 8, _gy + 8) != 0);
+            if (_has_wall) continue;
+            if (instance_position(_gx + 8, _gy + 8, obj_collision)) continue;
+            if (instance_position(_gx + 8, _gy + 8, obj_rock)) continue;
+            instance_create_layer(_gx, _gy, "Instances", obj_magic_chest);
+            break;
+        }
+    }
 }

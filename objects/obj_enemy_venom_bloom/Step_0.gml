@@ -84,7 +84,7 @@ switch (vb_state) {
         if (irandom(299) == 0) scr_play_sound_clip(sound_venom_bloom, 0.9, 1.56);
     break;
 
-    case 3: // ATTACKING — daña al jugador si está en rango
+    case 3: // ATTACKING — daño melee + dispara proyectil a distancia
         frame_anim += 0.12;
         if (frame_anim >= sprite_get_number(sprite_venom_bloom_attack)) frame_anim -= sprite_get_number(sprite_venom_bloom_attack);
         if (_dist > vb_attack_range_off) {
@@ -94,10 +94,18 @@ switch (vb_state) {
             frame_anim   = 0;
         } else {
             if (attack_cooldown > 0) attack_cooldown--;
-            if (attack_cooldown <= 0 && _dist < attack_range && obj_player.hp > 0) {
-                obj_player.hp -= attack_damage;
-                obj_player.hurt_timer = 60;
-                audio_play_sound(sound_hurt, 1, false);
+            if (attack_cooldown <= 0 && obj_player.hp > 0) {
+                if (_dist < attack_range) {
+                    obj_player.hp -= attack_damage;
+                    obj_player.hurt_timer = 60;
+                    audio_play_sound(sound_hurt, 1, false);
+                } else {
+                    var _proj = instance_create_layer(x, y, "Instances", obj_enemy_projectile);
+                    _proj.damage = attack_damage;
+                    var _angle = point_direction(x, y, obj_player.x, obj_player.y);
+                    _proj.hspeed = lengthdir_x(projectile_speed, _angle);
+                    _proj.vspeed = lengthdir_y(projectile_speed, _angle);
+                }
                 scr_play_sound_clip(sound_venom_bloom, 0.0, 0.8);
                 attack_cooldown = attack_cooldown_max;
             }

@@ -104,7 +104,7 @@ switch (state) {
     break;
 
     case ANIMAL_STATE.FLEEING:
-        var _fspeed = move_speed * (is_panicked ? 5.0 : 2.5);
+        var _fspeed = move_speed * (is_panicked ? 2.5 : 2.0);
         var _fdx = 0;
         var _fdy = 0;
         if (dir == DIR.LEFT) _fdx = -_fspeed;

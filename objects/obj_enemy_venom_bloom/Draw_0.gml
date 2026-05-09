@@ -9,7 +9,7 @@ draw_sprite_ext(sprite_index, _frame, x,     y,       1, 1, 0, _blend,   1);
 if (hp < max_hp) {
     var _bw = 20;
     var _bh = 2;
-    var _bx = x - _bw / 2;
+    var _bx = x + (sprite_width / 2) - (_bw / 2);
     var _by = bbox_top - 8;
     draw_set_color(c_black);
     draw_rectangle(_bx - 1, _by - 1, _bx + _bw + 1, _by + _bh + 1, false);

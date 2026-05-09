@@ -373,11 +373,20 @@ function scr_complete_donation_stage(_current_stage) {
 // AVANCE DE ETAPA
 // =============================================================
 
+function scr_apply_town_hp_bonus() {
+    with (obj_player) {
+        var _new_max = min(20 + global.town_stage * 2, 40);
+        if (_new_max > max_hp) hp += _new_max - max_hp;
+        max_hp = _new_max;
+    }
+}
+
 function scr_advance_town_stage(_new_stage) {
     global.town_stage = _new_stage;
     global.town_donations = {};
     scr_update_shop_availability();
     scr_restore_town_stage();
+    scr_apply_town_hp_bonus();
     if (global.net_role == NET_ROLE.HOST && instance_exists(obj_net) && obj_net.is_connected) {
         net_send_town_stage_update();
     }

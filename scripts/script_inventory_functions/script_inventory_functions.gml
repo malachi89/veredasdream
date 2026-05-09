@@ -992,7 +992,7 @@ function scr_apply_loaded_game(_save_data) {
 
         _pinst.money          = _pd.money;
         _pinst.energy         = _pd.energy;
-        if (variable_struct_exists(_pd, "hp")) _pinst.hp = _pd.hp;
+        if (variable_struct_exists(_pd, "hp")) _pinst.hp = min(_pd.hp, _pinst.max_hp);
         _pinst.selected_slot  = _pd.selected_slot;
         _pinst.inventory_array = _pd.inventory_array;
         _pinst.backpack_array  = _pd.backpack_array;
