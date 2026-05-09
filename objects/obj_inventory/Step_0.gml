@@ -87,7 +87,8 @@ if (_p.shop_open) {
                                     scr_remove_item(_req.key, _req.qty);
                                 }
                             }
-                            with (_p) add_item(_entry.item_key, 1);
+                            var _buy_weight = variable_struct_exists(_entry, "weight") ? _entry.weight : undefined;
+                            with (_p) add_item(_entry.item_key, 1, _buy_weight);
                             scr_play_sound_clip(sound_item_pickup, 0.75, 1.00);
                             if (_is_wb) {
                                 var _idata_msg = scr_get_item_data(_entry.item_key);
