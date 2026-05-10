@@ -1,6 +1,35 @@
 var _room = room_get_name(room);
 var _moving = false;
 
+if (walk_to_farm) {
+    var _tx = -50;
+    var _ty = 105;
+    if (point_distance(x, y, _tx, _ty) < wander_speed) {
+        instance_destroy();
+        exit;
+    }
+    var _a = point_direction(x, y, _tx, _ty);
+    wander_dx = lengthdir_x(1, _a);
+    wander_dy = lengthdir_y(1, _a);
+    dir = (abs(wander_dx) >= abs(wander_dy)) ? ((wander_dx > 0) ? DIR.RIGHT : DIR.LEFT) : ((wander_dy > 0) ? DIR.DOWN : DIR.UP);
+    var _nx = x + wander_dx * wander_speed;
+    var _ny = y + wander_dy * wander_speed;
+    if (!place_meeting(_nx, _ny, obj_collision)) {
+        x = _nx;
+        y = _ny;
+        _moving = true;
+    } else {
+        instance_destroy();
+        exit;
+    }
+    frame_anim += 0.15;
+    if (frame_anim >= frames_walk) frame_anim = 0;
+    var _sra_dir_start = [0, 9, 6, 3];
+    image_index = _sra_dir_start[dir] + floor(frame_anim);
+    depth = -bbox_bottom;
+    exit;
+}
+
 if (_room == "farm") {
     if (global.sra_rata_state.contract_type == "none" ||
         (global.sra_rata_state.contract_type == "daily" && global.day != global.sra_rata_state.hired_on_day)) {

@@ -1250,7 +1250,7 @@ global.sra_rata_state = {
 global.sra_rata_dialogs = {
     greeting: "¡Oh! ¡Hola! Soy La Señora Rata, encantada de conocerte.\nMe encanta la vida de granja.",
     offer: "Si necesitas ayuda en tu granja,\npuedo regar cultivos, quitar piedras y maleza, y talar árboles.\n¿Qué te parece?",
-    daily_option: "[1] Contrato por un día  |  800G",
+    daily_option: "[1] Contrato por un día  |  1,500G",
     lifetime_option: "[2] Contrato vitalicio  |  25,000G",
     hired_daily: "¡Trato hecho! Hoy mismo empiezo a trabajar.",
     hired_lifetime: "¡Maravilloso! Esta granja será mi hogar.",

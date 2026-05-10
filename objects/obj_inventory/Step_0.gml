@@ -26,13 +26,18 @@ if (_p.sra_dialog_open) {
         if (keyboard_check_pressed(ord("1"))) {
             if (global.sra_rata_state.contract_type == "lifetime") {
                 _p.sra_dialog_stage = 4;
-            } else if (_p.money >= 800) {
-                _p.money -= 800;
+            } else if (_p.money >= 1500) {
+                _p.money -= 1500;
                 global.sra_rata_state.contract_type = "daily";
                 global.sra_rata_state.hired_on_day = global.day;
                 scr_notify("La Señora Rata contratada por un día");
-                with (obj_sra_rata) instance_destroy();
-                _p.sra_dialog_stage = 2;
+                with (obj_sra_rata) {
+                    walk_to_farm = true;
+                    wander_dx = 0;
+                    wander_dy = 0;
+                }
+                _p.sra_dialog_open = false;
+                _p.sra_dialog_stage = 0;
             } else {
                 _p.sra_dialog_stage = 5;
             }
@@ -44,8 +49,13 @@ if (_p.sra_dialog_open) {
                 global.sra_rata_state.contract_type = "lifetime";
                 global.sra_rata_state.hired_on_day = global.day;
                 scr_notify("La Señora Rata contratada vitalicia");
-                with (obj_sra_rata) instance_destroy();
-                _p.sra_dialog_stage = 6;
+                with (obj_sra_rata) {
+                    walk_to_farm = true;
+                    wander_dx = 0;
+                    wander_dy = 0;
+                }
+                _p.sra_dialog_open = false;
+                _p.sra_dialog_stage = 0;
             } else {
                 _p.sra_dialog_stage = 5;
             }
