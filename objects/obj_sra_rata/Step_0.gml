@@ -141,7 +141,7 @@ if (_room == "farm") {
                 work_stuck_time = 0;
             } else {
                     var _wd = point_distance(x, y, work_target.x, work_target.y);
-                if (_wd > 24) {
+                if (_wd > 32) {
                     var _a = point_direction(x, y, work_target.x, work_target.y);
                     wander_dx = lengthdir_x(1, _a);
                     wander_dy = lengthdir_y(1, _a);
