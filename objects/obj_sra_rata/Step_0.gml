@@ -226,25 +226,25 @@ if (_room == "farm") {
                 with (obj_crop) {
                     if (!is_watered) {
                         var _d = point_distance(other.x, other.y, x, y);
-                        if (_d < _near_d && _d < 320) { _near = id; _near_d = _d; _near_t = "water"; }
+                        if (_d < _near_d && _d < 320 && !collision_line(other.x, other.y, x, y, obj_collision, false, true)) { _near = id; _near_d = _d; _near_t = "water"; }
                     }
                 }
                 if (_near == noone) {
                     with (obj_rock) {
                         var _d = point_distance(other.x, other.y, x, y);
-                        if (_d < _near_d && _d < 320) { _near = id; _near_d = _d; _near_t = "rock"; }
+                        if (_d < _near_d && _d < 320 && !collision_line(other.x, other.y, x, y, obj_collision, false, true)) { _near = id; _near_d = _d; _near_t = "rock"; }
                     }
                 }
                 if (_near == noone) {
                     with (obj_weed) {
                         var _d = point_distance(other.x, other.y, x, y);
-                        if (_d < _near_d && _d < 320) { _near = id; _near_d = _d; _near_t = "weed"; }
+                        if (_d < _near_d && _d < 320 && !collision_line(other.x, other.y, x, y, obj_collision, false, true)) { _near = id; _near_d = _d; _near_t = "weed"; }
                     }
                 }
                 if (_near == noone) {
                     with (obj_common_tree) {
                         var _d = point_distance(other.x, other.y, x, y);
-                        if (_d < _near_d && _d < 320) { _near = id; _near_d = _d; _near_t = "tree"; }
+                        if (_d < _near_d && _d < 320 && !collision_line(other.x, other.y, x, y, obj_collision, false, true)) { _near = id; _near_d = _d; _near_t = "tree"; }
                     }
                 }
 
