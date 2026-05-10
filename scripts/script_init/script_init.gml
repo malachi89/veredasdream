@@ -359,6 +359,10 @@ global.enemy_data = {
         attack_range: 32,
         death_anim_frames: 48,
         product_drops: ["gemstone_ruby","gemstone_sapphire","gemstone_emerald"],
+        exclusive_drops: [
+            { type: "gem", chance: 0.10 },
+            { type: "weapon", chance: 0.04 }
+        ],
         snd_death: sound_skeleton_dead,
         snd_move:  sound_skeleton_walk,
         snd_idle:  sound_skeleton_general,

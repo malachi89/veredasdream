@@ -27,20 +27,42 @@ if (hurt_flash_timer > 0) hurt_flash_timer -= 1;
 if (is_dying > 0) {
     is_dying -= 1;
     if (is_dying <= 0) {
-        if (array_length(product_drops) > 0) {
-            inventory_drop_item(product_drops[irandom(array_length(product_drops) - 1)], 1, x, y);
-        }
         var _d_data = global.enemy_data[$ enemy_key];
-        if (_d_data != undefined && variable_struct_exists(_d_data, "dye_drops") && array_length(_d_data.dye_drops) > 0 && irandom(2) == 0) {
-            var _dd = _d_data.dye_drops;
-            inventory_drop_item(_dd[irandom(array_length(_dd) - 1)], 1, x, y, 30);
-        }
-        if (_d_data != undefined && variable_struct_exists(_d_data, "weapon_drop_chance") && random(1) < _d_data.weapon_drop_chance) {
-            var _w_type = choose("sword", "bow");
-            var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
-            var _player_level = scr_get_player_max_weapon_level(_tool_type);
-            var _w_level = min(_player_level + 1, 10);
-            inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 30);
+        if (_d_data != undefined && variable_struct_exists(_d_data, "exclusive_drops")) {
+            var _r = random(1);
+            var _cum = 0;
+            for (var _i = 0; _i < array_length(_d_data.exclusive_drops); _i++) {
+                _cum += _d_data.exclusive_drops[_i].chance;
+                if (_r < _cum) {
+                    var _ed = _d_data.exclusive_drops[_i];
+                    if (_ed.type == "gem") {
+                        var _pool = variable_struct_exists(_ed, "pool") ? _ed.pool : variable_struct_get_names(global.gemstone_data);
+                        inventory_drop_item(_pool[irandom(array_length(_pool) - 1)], 1, x, y);
+                    } else if (_ed.type == "weapon") {
+                        var _w_type = choose("sword", "bow");
+                        var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+                        var _player_level = scr_get_player_max_weapon_level(_tool_type);
+                        var _w_level = min(_player_level + 1, 10);
+                        inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 30);
+                    }
+                    break;
+                }
+            }
+        } else {
+            if (array_length(product_drops) > 0) {
+                inventory_drop_item(product_drops[irandom(array_length(product_drops) - 1)], 1, x, y);
+            }
+            if (_d_data != undefined && variable_struct_exists(_d_data, "dye_drops") && array_length(_d_data.dye_drops) > 0 && irandom(2) == 0) {
+                var _dd = _d_data.dye_drops;
+                inventory_drop_item(_dd[irandom(array_length(_dd) - 1)], 1, x, y, 30);
+            }
+            if (_d_data != undefined && variable_struct_exists(_d_data, "weapon_drop_chance") && random(1) < _d_data.weapon_drop_chance) {
+                var _w_type = choose("sword", "bow");
+                var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+                var _player_level = scr_get_player_max_weapon_level(_tool_type);
+                var _w_level = min(_player_level + 1, 10);
+                inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 30);
+            }
         }
         global.collected_items[$ enemy_key] = true;
         instance_destroy();
