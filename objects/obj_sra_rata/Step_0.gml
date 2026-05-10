@@ -8,6 +8,11 @@ if (_room == "farm") {
         exit;
     }
 
+    if (work_fail_timer > 0) {
+        work_fail_timer--;
+        if (work_fail_timer <= 0) work_fail_target = noone;
+    }
+
     if (!is_resting) {
         if (is_working) {
             if (!instance_exists(work_target)) {
@@ -16,7 +21,7 @@ if (_room == "farm") {
                 work_progress = 0;
                 work_stuck_time = 0;
             } else {
-                var _wd = point_distance(x, y, work_target.x, work_target.y);
+                    var _wd = point_distance(x, y, work_target.x, work_target.y);
                 if (_wd > 24) {
                     var _a = point_direction(x, y, work_target.x, work_target.y);
                     wander_dx = lengthdir_x(1, _a);
@@ -35,6 +40,8 @@ if (_room == "farm") {
                     } else {
                         work_stuck_time++;
                         if (work_stuck_time > 60) {
+                            work_fail_target = work_target;
+                            work_fail_timer = 300;
                             is_working = false;
                             work_target = noone;
                             work_progress = 0;
@@ -49,6 +56,8 @@ if (_room == "farm") {
                     work_stuck_time = 0;
                     work_progress += 1 / work_duration;
                     if (work_progress >= 1) {
+                        work_fail_target = noone;
+                        work_fail_timer = 0;
                         var _map_w = -1;
                         if (layer_exists("Tiles_tilled_watered"))
                             _map_w = layer_tilemap_get_id("Tiles_tilled_watered");
@@ -118,6 +127,11 @@ if (_room == "farm") {
                         var _d = point_distance(other.x, other.y, x, y);
                         if (_d < _near_d && _d < 320) { _near = id; _near_d = _d; _near_t = "tree"; }
                     }
+                }
+
+                if (_near != noone && _near == work_fail_target) {
+                    _near = noone;
+                    _near_t = "";
                 }
 
                 if (_near != noone) {

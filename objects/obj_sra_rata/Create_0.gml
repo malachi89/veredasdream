@@ -22,3 +22,5 @@ work_progress   = 0;
 work_duration   = 0;
 work_scan_timer = 0;
 work_stuck_time = 0;
+work_fail_target = noone;
+work_fail_timer = 0;

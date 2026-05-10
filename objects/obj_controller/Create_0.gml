@@ -13,6 +13,8 @@ var _window_h = max(720, _display_h - 120);
 window_set_size(_window_w, _window_h);
 window_center();
 
+display_reset(0, true);
+
 ini_open("settings.ini");
 global.time_multiplier = ini_read_real("Time", "TimeSpeedMultiplier", 1.0);
 global.days_per_season = ini_read_real("Time", "DaysPerSeason", 28);
