@@ -70,6 +70,24 @@ All game-wide data lives in `global.*` structs defined in `script_init.gml`:
 
 Both share `ANIMAL_STATE` (IDLE, WANDERING, FLEEING) and `hurt_flash_timer`.
 
+### La Señora Rata — Hireable NPC (`obj_sra_rata`)
+
+Hireable NPC for farm work (water crops, break rocks, remove weeds, chop trees) and bodyguard. See `documents/SENORA_RATA.md` for full reference.
+
+**State:** `global.sra_rata_state` with fields `contract_type` ("none"/"daily"/"lifetime"), `hired_on_day`, `bodyguard`, `bodyguard_hired_on_day`, `is_resting`.
+
+**Dialogs:** `global.sra_rata_dialogs` in `script_init.gml:1255`. Interaction stages 0-33 handled in `obj_inventory`.
+
+**Work system:** Scans in 320px radius every 15 frames, priority: unwatered crops → rocks → weeds → trees. Uses `collision_line` to check clear path (line of sight). Works once within 32px of target. Aborts after 60 stuck frames with 300-frame cooldown on that target.
+
+**Bodyguard:** Follows player at 87% speed. Attacks target set by sword/bow hooks, 9 damage every 30 frames.
+
+**Key file locations:**
+- `objects/obj_sra_rata/Step_0.gml` — All logic (movement, work, bodyguard, wander)
+- `objects/obj_sra_rata/Create_0.gml` — Instance variables
+- `objects/obj_sra_rata/Draw_0.gml` — Sprite + progress bar
+- `scripts/script_init/script_init.gml` — State + dialogs init (lines 1245-1281)
+
 ### Room Persistence Pattern
 Rooms are not persistent by default. When the player leaves a room, `scr_capture_current_room_state()` saves crops/tiles/chests/buildings/horses into `global.room_states[room_name]`. When re-entering, `obj_controller`'s Step event calls `scr_restore_room_state()` and `scr_restore_room_drops()`. Off-screen crop/tile advancement is handled by `scr_advance_stored_room_states()` on each new day.
 

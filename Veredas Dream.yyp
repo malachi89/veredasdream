@@ -329,6 +329,7 @@
     {"id":{"name":"scr_populate_road_to_cave","path":"scripts/scr_populate_road_to_cave/scr_populate_road_to_cave.yy",},},
     {"id":{"name":"scr_populate_test_animals","path":"scripts/scr_populate_test_animals/scr_populate_test_animals.yy",},},
     {"id":{"name":"scr_seed_unlock_functions","path":"scripts/scr_seed_unlock_functions/scr_seed_unlock_functions.yy",},},
+    {"id":{"name":"scr_sra_rata_move_to","path":"scripts/scr_sra_rata_move_to/scr_sra_rata_move_to.yy",},},
     {"id":{"name":"script_init","path":"scripts/script_init/script_init.yy",},},
     {"id":{"name":"script_inventory_functions","path":"scripts/script_inventory_functions/script_inventory_functions.yy",},},
     {"id":{"name":"script_net","path":"scripts/script_net/script_net.yy",},},

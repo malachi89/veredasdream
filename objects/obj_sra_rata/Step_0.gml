@@ -12,16 +12,7 @@ if (walk_to_farm) {
     wander_dx = lengthdir_x(1, _a);
     wander_dy = lengthdir_y(1, _a);
     dir = (abs(wander_dx) >= abs(wander_dy)) ? ((wander_dx > 0) ? DIR.RIGHT : DIR.LEFT) : ((wander_dy > 0) ? DIR.DOWN : DIR.UP);
-    var _nx = x + wander_dx * wander_speed;
-    var _ny = y + wander_dy * wander_speed;
-    if (!place_meeting(_nx, _ny, obj_collision)) {
-        x = _nx;
-        y = _ny;
-        _moving = true;
-    } else {
-        instance_destroy();
-        exit;
-    }
+    _moving = scr_sra_rata_move_to(_tx, _ty, wander_speed);
     frame_anim += 0.15;
     if (frame_anim >= frames_walk) frame_anim = 0;
     var _sra_dir_start = [0, 9, 6, 3];
@@ -46,11 +37,7 @@ if (go_to_rest) {
         wander_dx = lengthdir_x(1, _a);
         wander_dy = lengthdir_y(1, _a);
         dir = (abs(wander_dx) >= abs(wander_dy)) ? ((wander_dx > 0) ? DIR.RIGHT : DIR.LEFT) : ((wander_dy > 0) ? DIR.DOWN : DIR.UP);
-        var _nx = x + wander_dx * wander_speed;
-        var _ny = y + wander_dy * wander_speed;
-        if (!place_meeting(_nx, _ny, obj_collision)) {
-            x = _nx; y = _ny; _moving = true;
-        } else { _moving = false; }
+        _moving = scr_sra_rata_move_to(_tx, _ty, wander_speed);
     }
     frame_anim += _moving ? 0.15 : 0.1;
     if (frame_anim >= frames_walk) frame_anim = 0;
@@ -78,15 +65,11 @@ if (global.sra_rata_state.bodyguard && instance_exists(global.local_player)) {
             var _ba = point_direction(x, y, _target.x, _target.y);
             wander_dx = lengthdir_x(1, _ba);
             wander_dy = lengthdir_y(1, _ba);
-            var _bnx = x + wander_dx * _bg_spd;
-            var _bny = y + wander_dy * _bg_spd;
-            if (!place_meeting(_bnx, _bny, obj_collision)) {
-                x = _bnx; y = _bny; _moving = true;
-                if (abs(wander_dx) >= abs(wander_dy))
-                    dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
-                else
-                    dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
-            } else { _moving = false; }
+            if (abs(wander_dx) >= abs(wander_dy))
+                dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+            else
+                dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+            _moving = scr_sra_rata_move_to(_target.x, _target.y, _bg_spd);
         } else {
             _moving = false;
             if (bodyguard_attack_timer <= 0) {
@@ -101,15 +84,11 @@ if (global.sra_rata_state.bodyguard && instance_exists(global.local_player)) {
             var _pa = point_direction(x, y, _p.x, _p.y);
             wander_dx = lengthdir_x(1, _pa);
             wander_dy = lengthdir_y(1, _pa);
-            var _pnx = x + wander_dx * _bg_spd;
-            var _pny = y + wander_dy * _bg_spd;
-            if (!place_meeting(_pnx, _pny, obj_collision)) {
-                x = _pnx; y = _pny; _moving = true;
-                if (abs(wander_dx) >= abs(wander_dy))
-                    dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
-                else
-                    dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
-            } else { _moving = false; }
+            if (abs(wander_dx) >= abs(wander_dy))
+                dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+            else
+                dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+            _moving = scr_sra_rata_move_to(_p.x, _p.y, _bg_spd);
         } else { _moving = false; }
     }
     frame_anim += _moving ? 0.15 : 0.1;
@@ -145,17 +124,13 @@ if (_room == "farm") {
                     var _a = point_direction(x, y, work_target.x, work_target.y);
                     wander_dx = lengthdir_x(1, _a);
                     wander_dy = lengthdir_y(1, _a);
-                    var _nx = x + wander_dx * wander_speed;
-                    var _ny = y + wander_dy * wander_speed;
-                    if (!place_meeting(_nx, _ny, obj_collision)) {
+                    if (abs(wander_dx) >= abs(wander_dy))
+                        dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+                    else
+                        dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+                    _moving = scr_sra_rata_move_to(work_target.x, work_target.y, wander_speed);
+                    if (_moving) {
                         work_stuck_time = 0;
-                        x = _nx;
-                        y = _ny;
-                        _moving = true;
-                        if (abs(wander_dx) >= abs(wander_dy))
-                            dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
-                        else
-                            dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
                     } else {
                         work_stuck_time++;
                         if (work_stuck_time > 60) {
@@ -292,23 +267,20 @@ if (_room == "farm") {
                     }
                 }
 
-                var _nx = x + wander_dx * wander_speed;
-                var _ny = y + wander_dy * wander_speed;
-                var _blocked = place_meeting(_nx, _ny, obj_collision);
-                if (!_blocked) {
-                    x = _nx;
-                    y = _ny;
-                    _moving = (wander_dx != 0 || wander_dy != 0);
+                if (wander_dx == 0 && wander_dy == 0) {
+                    _moving = false;
+                } else {
+                    _moving = scr_sra_rata_move_to(x + wander_dx * 1000, y + wander_dy * 1000, wander_speed);
                     if (_moving) {
                         if (abs(wander_dx) >= abs(wander_dy))
                             dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
                         else
                             dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+                    } else {
+                        wander_timer = 0;
+                        wander_dx = 0;
+                        wander_dy = 0;
                     }
-                } else {
-                    wander_timer = 0;
-                    wander_dx = 0;
-                    wander_dy = 0;
                 }
             }
         }

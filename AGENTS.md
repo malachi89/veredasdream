@@ -24,6 +24,9 @@ GameMaker Studio 2 (GML) farming/life sim RPG. Spanish in-game text; English cod
 | `objects/obj_controller/Step_0.gml` | Game master, day cycle, room transitions, debug console |
 | `objects/obj_player/Step_0.gml` | Movement, tool use, fishing, horse mounting |
 | `objects/obj_wild_animal/Step_0.gml` | Wild animal death/drops/kill tracking |
+| `objects/obj_sra_rata/Step_0.gml` | La Señora Rata: work, bodyguard, wander, farm AI |
+| `objects/obj_sra_rata/Draw_0.gml` | Sra Rata sprite + progress bar rendering |
+| `objects/obj_sra_rata/Create_0.gml` | Sra Rata instance variable init |
 | `scripts/scr_populate_graveyard/scr_populate_graveyard.gml` | Spawns 2–4 skeletons in the graveyard room on entry |
 
 ## Debug console (Enter in-game)
