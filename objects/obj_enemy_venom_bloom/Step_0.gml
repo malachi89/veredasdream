@@ -96,8 +96,7 @@ switch (vb_state) {
             if (attack_cooldown > 0) attack_cooldown--;
             if (attack_cooldown <= 0 && obj_player.hp > 0) {
                 if (_dist < attack_range) {
-                    obj_player.hp -= attack_damage;
-                    obj_player.hurt_timer = 60;
+                    scr_player_take_damage(obj_player, attack_damage);
                     audio_play_sound(sound_hurt, 1, false);
                 } else {
                     var _proj = instance_create_layer(x, y, "Instances", obj_enemy_projectile);

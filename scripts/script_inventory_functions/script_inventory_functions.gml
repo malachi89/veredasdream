@@ -910,7 +910,11 @@ function scr_save_game() {
             inventory_array: inventory_array,
             backpack_array:  backpack_array,
             shipping_array:  shipping_array,
-            held_item:       held_item
+            held_item:       held_item,
+            armor_casco:     armor_casco,
+            armor_peto:      armor_peto,
+            armor_perneras:  armor_perneras,
+            armor_botas:     armor_botas
         });
     }
 
@@ -1068,6 +1072,10 @@ function scr_apply_loaded_game(_save_data) {
         }
 
         _pinst.held_item       = _pd.held_item;
+        _pinst.armor_casco    = variable_struct_exists(_pd, "armor_casco")    ? _pd.armor_casco    : "";
+        _pinst.armor_peto     = variable_struct_exists(_pd, "armor_peto")     ? _pd.armor_peto     : "";
+        _pinst.armor_perneras = variable_struct_exists(_pd, "armor_perneras") ? _pd.armor_perneras : "";
+        _pinst.armor_botas    = variable_struct_exists(_pd, "armor_botas")    ? _pd.armor_botas    : "";
         _pinst.show_backpack   = false;
         _pinst.show_shipping   = false;
 
@@ -1400,6 +1408,7 @@ function scr_get_item_data(_key) {
     if (variable_struct_exists(global.wild_animal_collection_data, _key)) return global.wild_animal_collection_data[$ _key];
     if (variable_struct_exists(global.farm_animal_collection_data, _key)) return global.farm_animal_collection_data[$ _key];
     if (variable_struct_exists(global.potion_data, _key)) return global.potion_data[$ _key];
+    if (variable_struct_exists(global.armor_data, _key)) return global.armor_data[$ _key];
     return undefined;
 }
 function scr_count_item(_key, _player = global.local_player) {
@@ -1679,4 +1688,29 @@ function scr_delete_save_slot(_slot) {
     var _info_path = scr_slot_get_info_path(_slot);
     if (file_exists(_save_path)) file_delete(_save_path);
     if (file_exists(_info_path)) file_delete(_info_path);
+}
+
+function scr_player_take_damage(_player, _damage) {
+    if (!instance_exists(_player)) exit;
+    var _total_defense = 0;
+    if (_player.armor_casco != "") {
+        var _d = global.armor_data[$ _player.armor_casco];
+        if (_d != undefined) _total_defense += _d.defense;
+    }
+    if (_player.armor_peto != "") {
+        var _d = global.armor_data[$ _player.armor_peto];
+        if (_d != undefined) _total_defense += _d.defense;
+    }
+    if (_player.armor_perneras != "") {
+        var _d = global.armor_data[$ _player.armor_perneras];
+        if (_d != undefined) _total_defense += _d.defense;
+    }
+    if (_player.armor_botas != "") {
+        var _d = global.armor_data[$ _player.armor_botas];
+        if (_d != undefined) _total_defense += _d.defense;
+    }
+    _total_defense = clamp(_total_defense, 0, 1);
+    var _final_damage = ceil(_damage * (1 - _total_defense));
+    _player.hp -= _final_damage;
+    _player.hurt_timer = 60;
 }

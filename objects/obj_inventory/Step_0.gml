@@ -209,6 +209,44 @@ if (_l_press || _r_press || _r_held) {
     }
 
     if (_p.show_backpack) {
+        // --- Armor slots click ---
+        var _armor_count = 4;
+        var _armor_panel_h = _armor_count * _grid_slot_size + (_armor_count - 1) * _grid_sp;
+        var _armor_x = _base_x - _gap - _grid_slot_size;
+        var _armor_y_start = _base_y - _armor_panel_h / 2;
+        for (var _ai = 0; _ai < _armor_count; _ai++) {
+            var _asx = _armor_x;
+            var _asy = _armor_y_start + _ai * (_grid_slot_size + _grid_sp);
+            if (point_in_rectangle(_mx, _my, _asx, _asy, _asx + _grid_slot_size, _asy + _grid_slot_size)) {
+                _clicked_on_ui = true;
+                var _armor_vars = ["armor_casco", "armor_peto", "armor_perneras", "armor_botas"];
+                var _a_var = _armor_vars[_ai];
+                var _equipped_key = _p[$ _a_var];
+                if (_l_press) {
+                    if (is_struct(_p.held_item)) {
+                        var _held_data = scr_get_item_data(_p.held_item.key);
+                        if (_held_data != undefined && _held_data.type == ITEM_TYPE.ARMOR) {
+                            var _old_key = _equipped_key;
+                            _p[$ _a_var] = _p.held_item.key;
+                            if (_old_key != "") {
+                                _p.held_item = { key: _old_key, quantity: 1 };
+                            } else {
+                                _p.held_item.quantity -= 1;
+                                if (_p.held_item.quantity <= 0) _p.held_item = -1;
+                            }
+                        }
+                    } else if (_equipped_key != "") {
+                        _p.held_item = { key: _equipped_key, quantity: 1 };
+                        _p[$ _a_var] = "";
+                    }
+                } else if (_r_press && _equipped_key != "") {
+                    with (_p) add_item(_equipped_key, 1);
+                    _p[$ _a_var] = "";
+                }
+                break;
+            }
+        }
+
         var _rows = ceil(max_backpack_slots / _cols);
         var _bh = (_rows * _grid_slot_size) + ((_rows - 1) * _grid_sp);
         var _bx = _base_x;

@@ -129,8 +129,7 @@ switch (state) {
         if (attack_cooldown > 0) attack_cooldown--;
 
         if (attack_cooldown <= 0 && _dist < attack_range && obj_player.hp > 0) {
-            obj_player.hp -= attack_damage;
-            obj_player.hurt_timer = 60;
+            scr_player_take_damage(obj_player, attack_damage);
             audio_play_sound(sound_hurt, 1, false);
             if (snd_attack != undefined) audio_play_sound(snd_attack, 1, false);
             attack_cooldown = attack_cooldown_max;

@@ -424,7 +424,8 @@ enum ITEM_TYPE {
     BAR,        // Lingotes de metal
     JAM,        // Mermelada
     DYE,        // Tinte
-    POTION      // Pocimas consumibles
+    POTION,      // Pocimas consumibles
+    ARMOR       // Piezas de armadura (casco, peto, etc.)
 }
 
 enum TOOL_TYPE {
@@ -707,6 +708,49 @@ _wd[$ "bow_7"]    = { name: "Arco Nv.7",    type: ITEM_TYPE.WEAPON, tool_type: T
 _wd[$ "bow_8"]    = { name: "Arco Nv.8",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 7, level:  8, damage: 34, sellable: false, droppable: false };
 _wd[$ "bow_9"]    = { name: "Arco Nv.9",    type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 8, level:  9, damage: 40, sellable: false, droppable: false };
 _wd[$ "bow_10"]   = { name: "Arco Nv.10",   type: ITEM_TYPE.WEAPON, tool_type: TOOL_TYPE.BOW,   sprite: sprite_weapons, subimg: 9, level: 10, damage: 45, sellable: false, droppable: false };
+
+global.armor_data = {
+    armor_casco: {
+        name: "Casco",
+        type: ITEM_TYPE.ARMOR,
+        sprite: sprite_armor,
+        subimg: 0,
+        defense: 0.12,
+        sellable: true,
+        droppable: false,
+        base_sell_price: 50
+    },
+    armor_peto: {
+        name: "Peto",
+        type: ITEM_TYPE.ARMOR,
+        sprite: sprite_armor,
+        subimg: 1,
+        defense: 0.24,
+        sellable: true,
+        droppable: false,
+        base_sell_price: 100
+    },
+    armor_perneras: {
+        name: "Pernerass",
+        type: ITEM_TYPE.ARMOR,
+        sprite: sprite_armor,
+        subimg: 2,
+        defense: 0.14,
+        sellable: true,
+        droppable: false,
+        base_sell_price: 75
+    },
+    armor_botas: {
+        name: "Botas",
+        type: ITEM_TYPE.ARMOR,
+        sprite: sprite_armor,
+        subimg: 3,
+        defense: 0.10,
+        sellable: true,
+        droppable: false,
+        base_sell_price: 40
+    }
+};
 
 global.placeable_data = {
     chest: {

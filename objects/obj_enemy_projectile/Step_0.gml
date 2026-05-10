@@ -12,8 +12,7 @@ if (place_meeting(x, y, obj_collision)) {
 
 var _hit = instance_place(x, y, obj_player);
 if (_hit != noone) {
-    _hit.hp -= damage;
-    _hit.hurt_timer = 60;
+    scr_player_take_damage(_hit, damage);
     audio_play_sound(sound_hurt, 1, false);
     instance_destroy();
     exit;

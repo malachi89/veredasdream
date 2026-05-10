@@ -58,6 +58,10 @@ hp = max_hp;
 hurt_timer = 0;
 damage_mult       = 1.0;
 damage_mult_timer = 0;
+armor_casco   = "";
+armor_peto    = "";
+armor_perneras = "";
+armor_botas   = "";
 
 tool_cooldown    = 0;
 tool_locked_frames = 0;

@@ -104,6 +104,73 @@ if (_p.show_shipping || _p.show_chest) _total_w = (_grid_w * 2) + _gap;
 var _base_x = (display_get_gui_width() / 2) - (_total_w / 2);
 var _base_y = (display_get_gui_height() * 0.45);
 
+// === 2.5 ARMOR SLOTS ===
+if (_p.show_backpack) {
+    var _armor_count = 4;
+    var _armor_panel_h = _armor_count * _grid_slot_size + (_armor_count - 1) * _grid_sp;
+    var _armor_x = _base_x - _gap - _grid_slot_size;
+    var _armor_y_start = _base_y - _armor_panel_h / 2;
+
+    draw_set_halign(fa_center);
+    draw_text_transformed(_armor_x + _grid_slot_size/2, _armor_y_start - 40, "ARMADURA", 1.5, 1.5, 0);
+
+    for (var _ai = 0; _ai < _armor_count; _ai++) {
+        var _asx = _armor_x;
+        var _asy = _armor_y_start + _ai * (_grid_slot_size + _grid_sp);
+        var _a_hover = (_mx >= _asx && _mx <= _asx + _grid_slot_size && _my >= _asy && _my <= _asy + _grid_slot_size);
+
+        var _armor_vars = ["armor_casco", "armor_peto", "armor_perneras", "armor_botas"];
+        var _a_var = _armor_vars[_ai];
+        var _a_names = ["Casco", "Peto", "Pernerass", "Botas"];
+        var _equipped_key = variable_instance_exists(_p, _a_var) ? _p[$ _a_var] : "";
+        var _has_item = (_equipped_key != "");
+
+        var _bg_col = _a_hover ? c_gray : _c_base;
+        var _bd_col = _a_hover ? c_white : _c_border;
+        var _ap_alpha = _a_hover ? 0.9 : _alpha;
+
+        draw_set_alpha(_ap_alpha);
+        draw_roundrect_color_ext(_asx, _asy, _asx + _grid_slot_size, _asy + _grid_slot_size, _rad, _rad, _bg_col, _bg_col, false);
+        draw_set_alpha(1.0);
+        draw_roundrect_color_ext(_asx, _asy, _asx + _grid_slot_size, _asy + _grid_slot_size, _rad, _rad, _bd_col, _bd_col, true);
+
+        if (_has_item) {
+            var _a_data = scr_get_item_data(_equipped_key);
+            if (_a_data != undefined) {
+                var _f  = variable_struct_exists(_a_data, "row") ? (_a_data.row * 3) + _a_data.subimg : _a_data.subimg;
+                var _sz = 16 / max(sprite_get_width(_a_data.sprite), sprite_get_height(_a_data.sprite));
+                var _cox = (sprite_get_width(_a_data.sprite)  / 2 - sprite_get_xoffset(_a_data.sprite)) * _sz * _icon_scale;
+                var _coy = (sprite_get_height(_a_data.sprite) / 2 - sprite_get_yoffset(_a_data.sprite)) * _sz * _icon_scale;
+                draw_sprite_ext(_a_data.sprite, _f, _asx + _grid_slot_size/2 - _cox, _asy + _grid_slot_size/2 - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_white, 1);
+            }
+        } else {
+            var _a_data = global.armor_data[$ _a_var];
+            if (_a_data != undefined) {
+                var _f  = variable_struct_exists(_a_data, "row") ? (_a_data.row * 3) + _a_data.subimg : _a_data.subimg;
+                var _sz = 16 / max(sprite_get_width(_a_data.sprite), sprite_get_height(_a_data.sprite));
+                var _cox = (sprite_get_width(_a_data.sprite)  / 2 - sprite_get_xoffset(_a_data.sprite)) * _sz * _icon_scale;
+                var _coy = (sprite_get_height(_a_data.sprite) / 2 - sprite_get_yoffset(_a_data.sprite)) * _sz * _icon_scale;
+                draw_sprite_ext(_a_data.sprite, _f, _asx + _grid_slot_size/2 - _cox, _asy + _grid_slot_size/2 - _coy, _icon_scale * _sz, _icon_scale * _sz, 0, c_black, 0.35);
+            }
+        }
+
+        if (_a_hover) {
+            if (_has_item) {
+                var _a_data = scr_get_item_data(_equipped_key);
+                _p.hovered_item_slot_data = { key: _equipped_key, quantity: 1 };
+                _p.hovered_item_data = _a_data;
+            } else {
+                draw_set_halign(fa_center);
+                draw_set_valign(fa_top);
+                draw_set_color(c_white);
+                draw_text_transformed(_asx + _grid_slot_size/2, _asy + _grid_slot_size + 4, _a_names[_ai], 1.1, 1.1, 0);
+                draw_set_color(c_silver);
+                draw_text_transformed(_asx + _grid_slot_size/2, _asy + _grid_slot_size + 22, "Vacío", 0.9, 0.9, 0);
+            }
+        }
+    }
+}
+
 // === 3. CUADRICULA DE LA MOCHILA ===
 if (_p.show_backpack) {
     var _rows = ceil(max_backpack_slots / _cols);
@@ -351,6 +418,10 @@ if (is_struct(_p.hovered_item_data) && !is_struct(_p.held_item)) {
             _level = _p.hovered_item_data.level;
         }
         _tooltip_text += "\nNivel: " + string(_level);
+    }
+    if (_type == ITEM_TYPE.ARMOR && variable_struct_exists(_p.hovered_item_data, "defense")) {
+        var _def_pct = _p.hovered_item_data.defense * 100;
+        _tooltip_text += "\nDefensa: " + string(_def_pct) + "%";
     }
     draw_set_font(fnt_pixel_operator);
     var _tw = (string_width(_tooltip_text) + 16) * 1.2;
