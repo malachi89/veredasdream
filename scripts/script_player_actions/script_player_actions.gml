@@ -126,7 +126,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                 var _count = collision_rectangle_list(_x1, _y1, _x2, _y2, obj_crop, false, true, _list, false);
                 for (var i = 0; i < _count; i++) {
                     var _inst = _list[| i];
-                    if (_inst.growth_stage >= _inst.max_stages) {
+                    if (_inst.days_passed >= _inst.days_to_grow) {
                         _is_harvesting = true;
                         if (!_skip_energy) self.energy -= 2;
                         var _drop_qty = 1;
@@ -160,7 +160,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                     if (!_skip_energy) self.energy -= 1;
                     var _wdrop_qty = irandom_range(1, 2);
                     if (random(1) < _tier_stats.double_drop_chance) _wdrop_qty *= 2;
-                    inventory_drop_item("weed", _wdrop_qty, _inst.x + 8, _inst.y + 8);
+                    inventory_drop_item("weed", _wdrop_qty, _inst.x + 8, _inst.y);
                     instance_destroy(_inst);
                 }
                 ds_list_destroy(_list);
@@ -181,7 +181,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
             }
         }
 
-        if (_crop_inst != noone && _crop_inst.growth_stage >= _crop_inst.max_stages) {
+        if (_crop_inst != noone && _crop_inst.days_passed >= _crop_inst.days_to_grow) {
             _is_harvesting = true;
             if (!_anim_only) {
                 self.energy -= 2;
@@ -730,9 +730,10 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
             var _new_inst  = instance_create_layer(_gx, _gy, "Instances_Crops", _obj_to_create);
 
             with(_new_inst) {
+                depth = -bbox_bottom;
                 crop_type    = _seed_info.crop_base_name;
                 days_to_grow = _seed_info.growth_time;
-                max_stages   = _seed_info.growth_time;
+                max_stages   = _seed_info.growth_time - 1; // El frame de madurez (ej: 5 días -> índice 4)
 
                 if (_is_fruit_tree_seed) {
                     fruit_item = crop_type;
@@ -740,7 +741,12 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                     days_since_harvest = 0;
                     has_fruit = false;
                 } else {
-                    if (crop_type == "pumpkin" || crop_type == "grapes") skip_blank_frame = true;
+                    if (crop_type == "pumpkin" || crop_type == "grapes" || crop_type == "beetroot") skip_blank_frame = true;
+                    if (crop_type == "tomato") {
+                        var _rand = irandom(1);
+                        days_to_grow += _rand;
+                        max_stages   += _rand;
+                    }
                 }
             }
 

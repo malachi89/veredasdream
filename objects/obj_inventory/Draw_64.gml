@@ -26,8 +26,21 @@ if (_p.show_backpack || _p.show_shipping) {
 var _icon_scale = gui_scale * 1.8;
 var _off        = 7.2 * _icon_scale;
 
+// 2.0 INDICADOR DE FILA (HOTBAR INDEX) - LADO IZQUIERDO
+var _ix = menu_x_start;
+var _iy = menu_y_start;
+draw_set_alpha(_alpha);
+draw_roundrect_color_ext(_ix, _iy, _ix + slot_size, _iy + slot_size, _rad, _rad, c_green, c_green, false);
+draw_set_alpha(1.0);
+
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
+draw_set_font(fnt_pixel_operator);
+var _h_num = string(_p.current_hotbar_index + 1);
+draw_text_transformed_color(_ix + slot_size/2, _iy + slot_size/2, _h_num, 1.5, 1.5, 0, c_white, c_white, c_white, c_white, 1.0);
+
 for (var i = 0; i < total_slots; i++) {
-    var _cx = menu_x_start + (i * (slot_size + spacing));
+    var _cx = menu_x_start + ((i + 1) * (slot_size + spacing));
     var _cy = menu_y_start;
 
     var _hover = (_mx >= _cx && _mx <= _cx + slot_size && _my >= _cy && _my <= _cy + slot_size);

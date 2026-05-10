@@ -194,7 +194,7 @@ if (_l_press || _r_press || _r_held) {
 
     if (_my >= menu_y_start && _my <= menu_y_start + slot_size) {
         for (var i = 0; i < total_slots; i++) {
-            var _x1 = menu_x_start + (i * (slot_size + spacing));
+            var _x1 = menu_x_start + ((i + 1) * (slot_size + spacing));
             if (_mx >= _x1 && _mx <= _x1 + slot_size) {
                 _clicked_on_ui = true;
                 if (_l_press) {

@@ -15,18 +15,7 @@ mask_index = asset_get_index("sprite_crops_icons");
 grow = function() {
     if (is_watered) {
         days_passed += 1; 
-
-        // Cálculo de etapa basado en el tiempo transcurrido
-        var _ideal_stage = floor((days_passed / days_to_grow) * max_stages);
-        growth_stage = clamp(_ideal_stage, 0, max_stages);
-
-        // Evitar frame blanco en ciertos sprites (Pumpkin/Grapes)
-        if (skip_blank_frame && growth_stage == 1) {
-            image_index = 0; 
-        } else {
-            image_index = growth_stage;
-        }
-
+        growth_stage = days_passed; // Mantener 1:1 para lógica de cosecha
         is_watered = persistent_water;
     }
 }

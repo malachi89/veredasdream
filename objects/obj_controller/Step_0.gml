@@ -848,30 +848,30 @@ if (sleep_menu_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx, _my, _sleep_x1, _btn_y1, _sleep_x2, _btn_y2)) {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
             scr_on_sleep_yes();
         } else if (_can_nap && point_in_rectangle(_mx, _my, _nap_x1, _btn_y1, _nap_x2, _btn_y2)) {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
             scr_take_nap();
         } else if (point_in_rectangle(_mx, _my, _no_x1, _btn_y1, _no_x2, _btn_y2)) {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
         }
     }
 
     if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(ord("E"))) {
         if (sleep_menu_selection == 0) {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
             scr_on_sleep_yes();
         } else if (_can_nap && sleep_menu_selection == 1) {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
             scr_take_nap();
         } else {
             sleep_menu_open = false;
-            if (instance_exists(_lp)) _lp.tool_locked_frames = 5;
+            if (instance_exists(_lp)) _lp.tool_locked_frames = 15;
         }
     }
 
@@ -897,13 +897,13 @@ if (sleep_prompt_open) {
     if (mouse_check_button_pressed(mb_left)) {
         if (point_in_rectangle(_mx2, _my2, _yes_x1b, _yes_y1b, _yes_x2b, _yes_y2b)) {
             sleep_prompt_open = false;
-            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
             sent_sleep_request = true;
             net_send_sleep_response(true);
             scr_notify("Esperando nuevo dia...");
         } else if (point_in_rectangle(_mx2, _my2, _no_x1b, _no_y1b, _no_x2b, _no_y2b)) {
             sleep_prompt_open = false;
-            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
             net_send_sleep_response(false);
         }
     }
@@ -951,7 +951,7 @@ if (mine_prompt_open) {
             }
         } else if (point_in_rectangle(_mx3, _my3, _no_x3, _no_y3, _no_x4, _no_y4)) {
             mine_prompt_open = false;
-            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
         }
     }
 
@@ -965,12 +965,12 @@ if (mine_prompt_open) {
             }
         } else {
             mine_prompt_open = false;
-            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+            if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
         }
     }
     if (keyboard_check_pressed(vk_escape)) {
         mine_prompt_open = false;
-        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
     }
 }
 
@@ -978,7 +978,7 @@ if (shipping_summary_open) {
     if (shipping_summary_pending_close) {
         shipping_summary_open = false;
         shipping_summary_pending_close = false;
-        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+        if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
         sent_sleep_request  = false;
         host_wants_sleep    = false;
         client_wants_sleep  = false;
@@ -1014,7 +1014,7 @@ if (shipping_summary_open) {
         if (mouse_check_button_pressed(mb_left)) {
             if (point_in_rectangle(_mx, _my, _btn_x1, _btn_y1, _btn_x2, _btn_y2)) {
                 shipping_summary_pending_close = true;
-                if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 5;
+                if (instance_exists(global.local_player)) global.local_player.tool_locked_frames = 15;
             }
         }
 
@@ -1161,6 +1161,39 @@ instance_position(xx + 8, yy + 8, obj_tree) ||
                 } else {
                     selector_color = c_green; // Other tools always show green
                 }
+            }
+        }
+    }
+}
+
+// --- CROP HOVER ---
+crop_hover_show = false;
+if (instance_exists(_lp) && !sleep_menu_open && !pause_menu_open && !_lp.show_backpack) {
+    var _crop_inst = instance_position(gx + 8, gy + 8, obj_crop);
+    if (instance_exists(_crop_inst)) {
+        crop_hover_show = true;
+        var _data = scr_get_item_data(_crop_inst.crop_type);
+        var _name = (_data != undefined) ? _data.name : _crop_inst.crop_type;
+        if (_crop_inst.growth_stage >= _crop_inst.max_stages) {
+            crop_hover_tooltip_text = _name + "\nListo para cosechar!";
+        } else {
+            var _left = _crop_inst.days_to_grow - _crop_inst.days_passed;
+            crop_hover_tooltip_text = _name + "\nDias restantes: " + string(max(0, _left));
+        }
+    } else {
+        var _tree_inst = instance_position(gx + 8, gy + 8, obj_tree);
+        if (instance_exists(_tree_inst)) {
+            crop_hover_show = true;
+            var _tdata = scr_get_item_data(_tree_inst.crop_type);
+            var _tname = (_tdata != undefined) ? _tdata.name : _tree_inst.crop_type;
+            if (_tree_inst.days_passed < _tree_inst.max_stages) {
+                var _left = _tree_inst.days_to_grow - _tree_inst.days_passed;
+                crop_hover_tooltip_text = _tname + " (Arbol)\nDias restantes: " + string(max(0, _left));
+            } else if (_tree_inst.has_fruit) {
+                crop_hover_tooltip_text = _tname + " (Arbol)\nListo para cosechar!";
+            } else {
+                var _fruit_left = _tree_inst.fruit_cycle_days - _tree_inst.days_since_harvest;
+                crop_hover_tooltip_text = _tname + " (Arbol)\nFrutal en: " + string(max(0, _fruit_left)) + " dias";
             }
         }
     }

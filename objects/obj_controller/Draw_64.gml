@@ -683,3 +683,24 @@ if (pause_menu_open) {
     draw_set_valign(fa_top);
     draw_set_alpha(1.0);
 }
+
+// === CROP / TREE HOVER TOOLTIP ===
+if (crop_hover_show && instance_exists(_lp) && !is_struct(_lp.held_item)) {
+    draw_set_font(fnt_pixel_operator);
+    var _tw = (string_width(crop_hover_tooltip_text) + 16) * 1.2;
+    var _th = (string_height(crop_hover_tooltip_text) + 16) * 1.2;
+    var _mx = device_mouse_x_to_gui(0);
+    var _my = device_mouse_y_to_gui(0);
+    var _tx = _mx + 20;
+    var _ty = _my + 20;
+    if (_tx + _tw > display_get_gui_width()) _tx = _mx - _tw - 8;
+    if (_ty + _th > display_get_gui_height()) _ty = _my - _th - 8;
+    draw_set_alpha(0.9);
+    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_dkgray, c_dkgray, false);
+    draw_roundrect_color_ext(_tx, _ty, _tx + _tw, _ty + _th, 8, 8, c_silver, c_silver, true);
+    draw_set_alpha(1.0);
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_text_transformed(_tx + 8, _ty + 8, crop_hover_tooltip_text, 1.2, 1.2, 0);
+}

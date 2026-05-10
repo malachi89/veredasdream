@@ -1,10 +1,5 @@
 menu_music = audio_play_sound(sound_main_menu_theme, 10, true);
 
-save_exists = file_exists(global.save_file_path);
-
-options = ["Nueva Granja", "Continuar", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
-selected_index = 0;
-
 notif_text  = "";
 notif_timer = 0;
 
@@ -59,6 +54,18 @@ for (var _s = 0; _s < 3; _s++) {
         slot_info[_s] = scr_slot_read_info(_s + 1);
     }
 }
+
+// Build menu options — "Continuar" first if any save exists
+var _any_save = false;
+for (var _s = 0; _s < 3; _s++) {
+    if (slot_occupied[_s]) { _any_save = true; break; }
+}
+if (_any_save) {
+    options = ["Continuar", "Nueva Granja", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
+} else {
+    options = ["Nueva Granja", "Hospedar", "Unirse", "Opciones", "Borrar Granja", "Salir"];
+}
+selected_index = 0;
 
 // Name entry state
 name_entry_mode = false;

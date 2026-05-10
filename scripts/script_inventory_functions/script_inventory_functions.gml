@@ -159,7 +159,7 @@ function scr_restore_forest_enemies() {
 
 function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(global.room_states, _room_name)) {
-        global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [], weeds: [], animals: [], wild_animals: [], machines: [] };
+        global.room_states[$ _room_name] = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], common_trees: [], rocks: [], weeds: [], animals: [], wild_animals: [], machines: [], workbenches: [], alchemy_tables: [] };
     }
     var _s = global.room_states[$ _room_name];
     // Defensive fill — guards against {} sent for unvisited rooms in multiplayer ROOM_SNAPSHOT
@@ -173,13 +173,15 @@ function scr_get_room_state(_room_name) {
     if (!variable_struct_exists(_s, "weeds"))        _s.weeds        = [];
     if (!variable_struct_exists(_s, "animals"))       _s.animals       = [];
     if (!variable_struct_exists(_s, "wild_animals"))  _s.wild_animals  = [];
-    if (!variable_struct_exists(_s, "magic_chests"))  _s.magic_chests  = [];
+    if (!variable_struct_exists(_s, "magic_chests"))   _s.magic_chests   = [];
+    if (!variable_struct_exists(_s, "workbenches"))    _s.workbenches    = [];
+    if (!variable_struct_exists(_s, "alchemy_tables")) _s.alchemy_tables = [];
     return _s;
 }
 
 function scr_capture_current_room_state() {
     var _room_name = scr_current_room_key();
-    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [], machines: [] };
+    var _state = { crops: [], tilled_tiles: [], chests: [], buildings: [], horses: [], animals: [], wild_animals: [], machines: [], workbenches: [], alchemy_tables: [] };
     
     // Capture Regular Crops
     for (var i = 0; i < instance_number(obj_crop); i++) {
@@ -252,6 +254,20 @@ function scr_capture_current_room_state() {
                 output_qty: _inst.output_qty
             });
         }
+    }
+
+    // Capture Workbenches
+    _state.workbenches = [];
+    for (var i = 0; i < instance_number(obj_workbench); i++) {
+        var _inst = instance_find(obj_workbench, i);
+        array_push(_state.workbenches, { x: _inst.x, y: _inst.y });
+    }
+
+    // Capture Alchemy Tables
+    _state.alchemy_tables = [];
+    for (var i = 0; i < instance_number(obj_machine_alchemy); i++) {
+        var _inst = instance_find(obj_machine_alchemy, i);
+        array_push(_state.alchemy_tables, { x: _inst.x, y: _inst.y });
     }
 
     // Capture Horses
@@ -444,6 +460,7 @@ function scr_restore_room_state(_room_name) {
                 _inst = instance_create_layer(_c_data.x, _c_data.y, "Instances_Crops", _obj_type);
             }
             with (_inst) {
+                depth = -bbox_bottom;
                 crop_type    = _c_data.crop_type;
                 days_passed  = _c_data.days_passed;
                 days_to_grow = _c_data.days_to_grow;
@@ -524,6 +541,48 @@ function scr_restore_room_state(_room_name) {
             } else {
                 _inst.image_speed = 0;
                 _inst.image_index = 0;
+            }
+        }
+    }
+
+    // ---- WORKBENCHES ----
+    if (variable_struct_exists(_state, "workbenches")) {
+        var _wb_map = _build_xy_map(_state.workbenches);
+        var _to_destroy = [];
+        with (obj_workbench) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_wb_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+        for (var i = 0; i < array_length(_state.workbenches); i++) {
+            var _wd = _state.workbenches[i];
+            if (_wd.x < 0 || _wd.y < 0 || _wd.x >= room_width - 16 || _wd.y >= room_height - 16) continue;
+            var _inst = noone;
+            with (obj_workbench) { if (x == _wd.x && y == _wd.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_wd.x, _wd.y, "Instances", obj_workbench);
+            }
+        }
+    }
+
+    // ---- ALCHEMY TABLES ----
+    if (variable_struct_exists(_state, "alchemy_tables")) {
+        var _at_map = _build_xy_map(_state.alchemy_tables);
+        var _to_destroy = [];
+        with (obj_machine_alchemy) {
+            var _k = string(x) + "_" + string(y);
+            if (!variable_struct_exists(_at_map, _k)) array_push(_to_destroy, id);
+        }
+        for (var i = 0; i < array_length(_to_destroy); i++) instance_destroy(_to_destroy[i]);
+
+        for (var i = 0; i < array_length(_state.alchemy_tables); i++) {
+            var _ad = _state.alchemy_tables[i];
+            if (_ad.x < 0 || _ad.y < 0 || _ad.x >= room_width - 16 || _ad.y >= room_height - 16) continue;
+            var _inst = noone;
+            with (obj_machine_alchemy) { if (x == _ad.x && y == _ad.y) { _inst = id; break; } }
+            if (_inst == noone) {
+                _inst = instance_create_layer(_ad.x, _ad.y, "Instances", obj_machine_alchemy);
             }
         }
     }
@@ -784,12 +843,14 @@ function scr_advance_stored_room_states(_exclude_room_name) {
                 var _ideal = floor((_c_data.days_passed / _c_data.days_to_grow) * _c_data.max_stages);
                 _c_data.growth_stage = clamp(_ideal, 0, _c_data.max_stages);
                 _c_data.image_index = (_c_data.skip_blank_frame && _c_data.growth_stage == 1) ? 0 : _c_data.growth_stage;
-                _c_data.is_watered = (variable_struct_exists(_c_data, "persistent_water") && _c_data.persistent_water);
+                _c_data.is_watered = (global.weather_today == "rain") || (variable_struct_exists(_c_data, "persistent_water") && _c_data.persistent_water);
                 _state.crops[i] = _c_data;
             }
         }
-        for (var j = 0; j < array_length(_state.tilled_tiles); j++) {
-            if (_state.tilled_tiles[j].tile == 168) _state.tilled_tiles[j].tile = 72;
+        if (global.weather_today != "rain") {
+            for (var j = 0; j < array_length(_state.tilled_tiles); j++) {
+                if (_state.tilled_tiles[j].tile == 168) _state.tilled_tiles[j].tile = 72;
+            }
         }
         // Re-water tiles for crops with persistent_water
         for (var ci = 0; ci < array_length(_state.crops); ci++) {
@@ -845,6 +906,7 @@ function scr_save_game() {
             energy:          energy,
             hp:              hp,
             selected_slot:   selected_slot,
+            current_hotbar_index: current_hotbar_index,
             inventory_array: inventory_array,
             backpack_array:  backpack_array,
             shipping_array:  shipping_array,
@@ -994,6 +1056,7 @@ function scr_apply_loaded_game(_save_data) {
         _pinst.energy         = _pd.energy;
         if (variable_struct_exists(_pd, "hp")) _pinst.hp = min(_pd.hp, _pinst.max_hp);
         _pinst.selected_slot  = _pd.selected_slot;
+        _pinst.current_hotbar_index = variable_struct_exists(_pd, "current_hotbar_index") ? _pd.current_hotbar_index : 0;
         _pinst.inventory_array = _pd.inventory_array;
         _pinst.backpack_array  = _pd.backpack_array;
         _pinst.shipping_array  = _pd.shipping_array;
@@ -1303,8 +1366,12 @@ function scr_inventory_cycle_hotbars(_player = global.local_player) {
     for (var i = 0; i < _row_size; i++) {
         _player.inventory_array[_last_row_start + i] = _temp_r0[i];
     }
-    
+
+    // Cycle the visual index (0, 1, 2)
+    _player.current_hotbar_index = (_player.current_hotbar_index + 1) mod 3;
+
     // Network Sync
+
     if (global.net_role != NET_ROLE.NONE && instance_exists(obj_net) && obj_net.is_connected) {
         for (var i = 0; i < _total_hotbar; i++) {
             net_send_inventory_update(_player.player_id, 0, i, _player.inventory_array[i]);

@@ -127,7 +127,7 @@ global.animal_data = {
     cow:     { move_speed: 0.5,  hp: 5, max_hp: 5, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["milk_reg", "milk_large", "steak"],                              crafting_drops: ["cow_hide_red","cow_hide_orange","cow_hide_yellow","cow_hide_green","cow_hide_blue","cow_hide_lilac","cow_hide_purple","cow_hide_turquoise","cow_hide_pink","cow_hide_lime","cow_hide_amber","cow_hide_brown","cow_hide_black","cow_hide_white"] },
     duck:    { move_speed: 0.9,  hp: 2, max_hp: 2, variants: ["full_black","full_yellow","mallad","mallad_2","mallad_female","white","white_2"],                                       product_drops: ["egg_duck_reg", "egg_duck_large"],                               crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     goat:    { move_speed: 0.7,  hp: 3, max_hp: 3, variants: ["female_black","female_blonde","female_brown","female_pink","male_black","male_blonde","male_brown","male_pink"],         product_drops: ["goat_milk_reg", "goat_milk_large"],                          crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
-    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"],                                                                                                product_drops: ["chicken_leg", "egg_chicken_large_generic"],                    crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
+    ostrich: { move_speed: 0.8,  hp: 4, max_hp: 4, variants: ["black","blue","brown"],                                                                                                product_drops: ["chicken_leg", "egg_chicken_white_large", "egg_chicken_brown_large"],                    crafting_drops: ["feathers_red","feathers_orange","feathers_yellow","feathers_green","feathers_blue","feathers_lilac","feathers_purple","feathers_turquoise","feathers_pink","feathers_lime","feathers_amber","feathers_brown","feathers_black","feathers_white"] },
     pig:     { move_speed: 0.6,  hp: 3, max_hp: 3, variants: ["mud_pink","pink"],                                                                                                     product_drops: ["bacon", "steak"],                                              crafting_drops: ["pelt_red","pelt_orange","pelt_yellow","pelt_green","pelt_blue","pelt_lilac","pelt_purple","pelt_turquoise","pelt_pink","pelt_lime","pelt_amber","pelt_brown","pelt_black","pelt_white"] },
     sheep:   { move_speed: 0.55, hp: 3, max_hp: 3, variants: ["male","male_2"],                                                                                                       product_drops: ["wool"],                                                        crafting_drops: ["yarn_red","yarn_orange","yarn_yellow","yarn_green","yarn_blue","yarn_lilac","yarn_purple","yarn_turquoise","yarn_pink","yarn_lime","yarn_amber","yarn_brown","yarn_black","yarn_white"] },
 };
@@ -473,16 +473,16 @@ global.seed_data = {
     potato_seeds:       { name: "Semilla de Papa",        seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 32,  growth_time: 6, crop_base_name: "potato",       base_buy_price: 18, base_sell_price: 3 },
     onion_seeds:        { name: "Semilla de Cebolla",      seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 40,  growth_time: 6, crop_base_name: "onion",        base_buy_price: 14, base_sell_price: 2 },
     carrot_seeds:       { name: "Semilla de Zanahoria",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 48,  growth_time: 6, crop_base_name: "carrot",       base_buy_price: 14, base_sell_price: 2 },
-    blueberry_seeds:    { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 56,  growth_time: 6, crop_base_name: "blueberry",    base_buy_price: 40, base_sell_price: 8 },
+    blueberry_seeds:    { name: "Semilla de Mora Azul",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 56,  growth_time: 7, crop_base_name: "blackberry",    base_buy_price: 40, base_sell_price: 8 },
     parsnip_seeds:      { name: "Semilla de Chirivia",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 64,  growth_time: 5, crop_base_name: "parsnip",      base_buy_price: 12, base_sell_price: 2 },
     cabbage_seeds:      { name: "Semilla de Repollo",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 72,  growth_time: 7, crop_base_name: "cabbage",      base_buy_price: 18, base_sell_price: 3 },
-    cauliflower_seeds:  { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 80,  growth_time: 6, crop_base_name: "cauliflower",  base_buy_price: 28, base_sell_price: 5 },
+    cauliflower_seeds:  { name: "Semilla de Coliflor",    seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 80,  growth_time: 7, crop_base_name: "cauliflower",  base_buy_price: 28, base_sell_price: 5 },
     rice_seeds:         { name: "Semilla de Arroz",       seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 88,  growth_time: 6, crop_base_name: "rice",         base_buy_price: 22, base_sell_price: 4 },
     broccoli_seeds:     { name: "Semilla de Brocoli",     seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 96,  growth_time: 5, crop_base_name: "broccoli",     base_buy_price: 22, base_sell_price: 4 },
     asparagus_seeds:    { name: "Semilla de Esparrago",   seasons: [SEASON.SPRING], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 104, growth_time: 5, crop_base_name: "asparagus",    base_buy_price: 28, base_sell_price: 6 },
 
     // --- VERANO ---
-    tomato_seeds:        { name: "Semilla de Tomate",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 144, growth_time: 5, crop_base_name: "tomato",       base_buy_price: 20, base_sell_price: 3 },
+    tomato_seeds:        { name: "Semilla de Tomate",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 144, growth_time: 6, crop_base_name: "tomato",       base_buy_price: 20, base_sell_price: 3 },
     banana_seeds:       { name: "Semilla de Platano",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 112, growth_time: 7, crop_base_name: "banana",      base_buy_price: 30, base_sell_price: 5, is_fruit_tree: true },
     orange_seeds:       { name: "Semilla de Naranja",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 120, growth_time: 7, crop_base_name: "orange",      base_buy_price: 35, base_sell_price: 6, is_fruit_tree: true },
     mango_seeds:        { name: "Semilla de Mango",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 128, growth_time: 8, crop_base_name: "mango",       base_buy_price: 40, base_sell_price: 7, is_fruit_tree: true },
@@ -493,7 +493,7 @@ global.seed_data = {
     sunflower_seeds:     { name: "Semilla de Girasol",     seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 152, growth_time: 6, crop_base_name: "sunflower",    base_buy_price: 15, base_sell_price: 2 },
     hot_pepper_seeds:    { name: "Semilla de Chile",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 160, growth_time: 7, crop_base_name: "hot_pepper",   base_buy_price: 30, base_sell_price: 5 },
     corn_seeds:          { name: "Semilla de Maiz",        seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 168, growth_time: 8, crop_base_name: "corn",       base_buy_price: 25, base_sell_price: 4 },
-    green_pepper_seeds:  { name: "Semilla de Pimiento V.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 176, growth_time: 6, crop_base_name: "green_pepper", base_buy_price: 20, base_sell_price: 3 },
+    green_pepper_seeds:  { name: "Semilla de Pimiento V.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 176, growth_time: 8, crop_base_name: "bell_pepper", base_buy_price: 20, base_sell_price: 3 },
     melon_seeds:         { name: "Semilla de Melon",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 200, growth_time: 6, crop_base_name: "melon",        base_buy_price: 50, base_sell_price: 8 },
     watermelon_seeds:    { name: "Semilla de Sandia",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 208, growth_time: 8, crop_base_name: "watermelon",   base_buy_price: 50, base_sell_price: 8 },
     cucumber_seeds:      { name: "Semilla de Pepino",      seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 216, growth_time: 6, crop_base_name: "cucumber",     base_buy_price: 20, base_sell_price: 3 },
@@ -501,7 +501,7 @@ global.seed_data = {
     pineapple_seeds:     { name: "Semilla de Pina",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 232, growth_time: 6, crop_base_name: "pineapple",    base_buy_price: 60, base_sell_price: 10 },
     green_beans_seeds:   { name: "Semilla de Ejote",       seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 240, growth_time: 7, crop_base_name: "green_beans",  base_buy_price: 25, base_sell_price: 4 },
     adzuki_bean_seeds:   { name: "Semilla de Frijol A.",   seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 248, growth_time: 7, crop_base_name: "adzuki_bean",  base_buy_price: 30, base_sell_price: 5 },
-    wild_berry_seeds:    { name: "Semilla de Mora Silv.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 256, growth_time: 7, crop_base_name: "wild_berry",   base_buy_price: 20, base_sell_price: 3 },
+    wild_berry_seeds:    { name: "Semilla de Mora Silv.",  seasons: [SEASON.SUMMER], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 256, growth_time: 7, crop_base_name: "blackberry",   base_buy_price: 20, base_sell_price: 3 },
     wheat_seeds:         { name: "Semilla de Trigo",       seasons: [SEASON.SUMMER, SEASON.FALL], type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 264, growth_time: 6, crop_base_name: "wheat",       base_buy_price: 10, base_sell_price: 2 },
     aloe_seeds:          { name: "Semilla de Aloe",        seasons: [SEASON.SUMMER, SEASON.ALL],  type: ITEM_TYPE.SEED, sprite: sprite_crops_icons, subimg: 272, growth_time: 6, crop_base_name: "aloe",        base_buy_price: 30, base_sell_price: 5 },
 
@@ -1343,11 +1343,15 @@ global.shop_data[$ "Miraculos"] = {
         { item_key: "wild_berry_seeds",   price_money: 20, price_items: [] },
         { item_key: "wheat_seeds",        price_money: 10, price_items: [] },
         { item_key: "aloe_seeds",         price_money: 30, price_items: [] },
+        { item_key: "orange_tree_seeds",  price_money: 50, price_items: [] },
+        { item_key: "mango_tree_seeds",   price_money: 60, price_items: [] },
+        { item_key: "peach_tree_seeds",   price_money: 50, price_items: [] },
         // OTONO
         { item_key: "beetroot_seeds",     price_money: 25, price_items: [] },
         { item_key: "pumpkin_seeds",      price_money: 30, price_items: [] },
         { item_key: "grapes_seeds",       price_money: 40, price_items: [] },
         { item_key: "apple_seeds",        price_money: 30, price_items: [] },
+        { item_key: "apple_tree_seeds",   price_money: 50, price_items: [] },
     ]
 };
 

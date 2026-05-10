@@ -78,7 +78,8 @@
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" | Where-Object { $_.Name -match \"plant|stationary|bush|flower\" } | ForEach-Object { $_.Name })",
       "Bash(cat)",
       "Read(//tmp/**)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" -Directory | ForEach-Object { $_.Name } | Sort-Object)"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\malch\\\\Documents\\\\veredasdream\\\\objects\" -Directory | ForEach-Object { $_.Name } | Sort-Object)",
+      "Bash(start \"Veredas Dream.yyp\")"
     ]
   }
 }

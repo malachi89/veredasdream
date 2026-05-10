@@ -82,6 +82,7 @@ backpack_array  = array_create(max_backpack_slots, -1);
 shipping_array  = array_create(max_shipping_slots, -1);
 
 selected_slot = 0;
+current_hotbar_index = 0;
 held_item     = -1;
 
 // --- UI FLAGS PER-PLAYER ---

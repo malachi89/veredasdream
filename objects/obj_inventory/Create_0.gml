@@ -23,10 +23,12 @@ max_shipping_slots = 64;
 local_player = noone;
 
 function update_gui_positions() {
-    var _menu_w  = (total_slots * slot_size) + ((total_slots - 1) * spacing);
+    var _total_to_draw = total_slots + 1; // 10 slots + 1 indicador de hotbar
+    var _menu_w  = (_total_to_draw * slot_size) + ((_total_to_draw - 1) * spacing);
     menu_x_start = (display_get_gui_width() / 2) - (_menu_w / 2);
     menu_y_start = display_get_gui_height() - slot_size - margin_bottom;
 }
+
 
 update_gui_positions();
 

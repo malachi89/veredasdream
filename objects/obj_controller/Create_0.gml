@@ -125,6 +125,16 @@ global.bush_harvested = {};
             }
         }
         
+        if (global.weather_today == "rain") {
+            for (var _rrx = 0; _rrx < tilemap_get_width(_map_id); _rrx++) {
+                for (var _rry = 0; _rry < tilemap_get_height(_map_id); _rry++) {
+                    if (tilemap_get(_map_id, _rrx, _rry) == 72)
+                        tilemap_set(_map_id, 168, _rrx, _rry);
+                }
+            }
+            with (obj_crop) is_watered = true;
+        }
+
         // Advance Trees (Independent of watered soil)
         with (obj_tree) {
             grow();
@@ -257,6 +267,9 @@ show_selector = false;
 selector_color = c_white;
 selector_w = 1;
 selector_h = 1;
+
+crop_hover_show = false;
+crop_hover_tooltip_text = "";
 
 notifications = ds_list_create();
 

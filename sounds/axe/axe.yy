@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.8546939,
+  "duration":0.7920181,
   "exportDir":"",
   "name":"axe",
   "parent":{
