@@ -149,6 +149,9 @@ global.bush_harvested = {};
     if (global.sra_rata_state.contract_type == "daily" && global.day > global.sra_rata_state.hired_on_day) {
         global.sra_rata_state.contract_type = "none";
         global.sra_rata_state.hired_on_day = -1;
+        global.sra_rata_state.bodyguard = false;
+        global.sra_rata_state.bodyguard_hired_on_day = -1;
+        global.sra_rata_state.is_resting = false;
         with (obj_sra_rata) instance_destroy();
     }
 

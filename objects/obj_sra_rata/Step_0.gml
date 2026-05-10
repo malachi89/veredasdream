@@ -30,6 +30,96 @@ if (walk_to_farm) {
     exit;
 }
 
+// Go to rest position on farm
+if (go_to_rest) {
+    if (_room != "farm") { instance_destroy(); exit; }
+    var _tx = 670;
+    var _ty = 120;
+    if (point_distance(x, y, _tx, _ty) < wander_speed) {
+        x = _tx;
+        y = _ty;
+        dir = DIR.DOWN;
+        is_resting = true;
+        go_to_rest = false;
+    } else {
+        var _a = point_direction(x, y, _tx, _ty);
+        wander_dx = lengthdir_x(1, _a);
+        wander_dy = lengthdir_y(1, _a);
+        dir = (abs(wander_dx) >= abs(wander_dy)) ? ((wander_dx > 0) ? DIR.RIGHT : DIR.LEFT) : ((wander_dy > 0) ? DIR.DOWN : DIR.UP);
+        var _nx = x + wander_dx * wander_speed;
+        var _ny = y + wander_dy * wander_speed;
+        if (!place_meeting(_nx, _ny, obj_collision)) {
+            x = _nx; y = _ny; _moving = true;
+        } else { _moving = false; }
+    }
+    frame_anim += _moving ? 0.15 : 0.1;
+    if (frame_anim >= frames_walk) frame_anim = 0;
+    var _sra_dir_start = [0, 9, 6, 3];
+    image_index = _sra_dir_start[dir] + floor(frame_anim);
+    depth = -bbox_bottom;
+    exit;
+}
+
+// Bodyguard mode: follow player and attack on command
+if (global.sra_rata_state.bodyguard && instance_exists(global.local_player)) {
+    var _p = global.local_player;
+    var _p_spd = _p.move_speed;
+    if (_p.is_riding)
+        _p_spd = (_p.state == STATE.RUN) ? _p.move_speed_run * 1.8 : _p.move_speed_run * 1.2;
+    else
+        _p_spd = (_p.state == STATE.RUN) ? _p.move_speed_run : _p.move_speed;
+    var _bg_spd = _p_spd * 0.87;
+
+    bodyguard_attack_timer--;
+    var _target = global.sra_rata_bodyguard_target;
+    if (_target != noone && instance_exists(_target) && variable_instance_exists(_target, "hp") && _target.hp > 0) {
+        var _bd = point_distance(x, y, _target.x, _target.y);
+        if (_bd > 30) {
+            var _ba = point_direction(x, y, _target.x, _target.y);
+            wander_dx = lengthdir_x(1, _ba);
+            wander_dy = lengthdir_y(1, _ba);
+            var _bnx = x + wander_dx * _bg_spd;
+            var _bny = y + wander_dy * _bg_spd;
+            if (!place_meeting(_bnx, _bny, obj_collision)) {
+                x = _bnx; y = _bny; _moving = true;
+                if (abs(wander_dx) >= abs(wander_dy))
+                    dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+                else
+                    dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+            } else { _moving = false; }
+        } else {
+            _moving = false;
+            if (bodyguard_attack_timer <= 0) {
+                with (_target) { hp -= 9; hurt_flash_timer = 15; }
+                bodyguard_attack_timer = 30;
+            }
+        }
+    } else {
+        global.sra_rata_bodyguard_target = noone;
+        var _pd = point_distance(x, y, _p.x, _p.y);
+        if (_pd > 48) {
+            var _pa = point_direction(x, y, _p.x, _p.y);
+            wander_dx = lengthdir_x(1, _pa);
+            wander_dy = lengthdir_y(1, _pa);
+            var _pnx = x + wander_dx * _bg_spd;
+            var _pny = y + wander_dy * _bg_spd;
+            if (!place_meeting(_pnx, _pny, obj_collision)) {
+                x = _pnx; y = _pny; _moving = true;
+                if (abs(wander_dx) >= abs(wander_dy))
+                    dir = (wander_dx > 0) ? DIR.RIGHT : DIR.LEFT;
+                else
+                    dir = (wander_dy > 0) ? DIR.DOWN : DIR.UP;
+            } else { _moving = false; }
+        } else { _moving = false; }
+    }
+    frame_anim += _moving ? 0.15 : 0.1;
+    if (frame_anim >= frames_walk) frame_anim = 0;
+    var _sra_dir_start = [0, 9, 6, 3];
+    image_index = _sra_dir_start[dir] + floor(frame_anim);
+    depth = -bbox_bottom;
+    exit;
+}
+
 if (_room == "farm") {
     if (global.sra_rata_state.contract_type == "none" ||
         (global.sra_rata_state.contract_type == "daily" && global.day != global.sra_rata_state.hired_on_day)) {

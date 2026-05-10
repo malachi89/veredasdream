@@ -7,7 +7,7 @@ dir = DIR.DOWN;
 frame_anim = 0;
 frames_walk = 3;
 
-is_resting = false;
+is_resting = global.sra_rata_state.is_resting;
 
 wander_speed   = 0.5;
 wander_timer   = 0;
@@ -26,3 +26,6 @@ work_fail_target = noone;
 work_fail_timer = 0;
 
 walk_to_farm = false;
+
+bodyguard_attack_timer = 0;
+go_to_rest = false;

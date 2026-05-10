@@ -569,6 +569,7 @@ if (_p.sra_dialog_open) {
         draw_set_color(c_aqua);
         draw_text_transformed_color(_dbx1 + 16, _dby1 + 155, global.sra_rata_dialogs.daily_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
         draw_text_transformed_color(_dbx1 + 16, _dby1 + 185, global.sra_rata_dialogs.lifetime_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 215, global.sra_rata_dialogs.bodyguard_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
         draw_set_halign(fa_right);
         draw_set_valign(fa_bottom);
         draw_set_color(c_silver);
@@ -617,6 +618,9 @@ if (_p.sra_dialog_open) {
         draw_set_color(c_aqua);
         draw_text_transformed_color(_dbx1 + 16, _dby1 + 120, global.sra_rata_dialogs.farm_rest_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
         draw_text_transformed_color(_dbx1 + 16, _dby1 + 150, global.sra_rata_dialogs.farm_work_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        if (global.sra_rata_state.contract_type == "lifetime") {
+            draw_text_transformed_color(_dbx1 + 16, _dby1 + 180, global.sra_rata_dialogs.farm_bodyguard_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        }
         draw_set_halign(fa_right);
         draw_set_valign(fa_bottom);
         draw_set_color(c_silver);
@@ -633,6 +637,74 @@ if (_p.sra_dialog_open) {
         draw_set_valign(fa_top);
         draw_set_color(c_red);
         draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_work, 1.3, 1.3, 0, c_red, c_red, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 13) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_lime);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_bodyguard_on, 1.3, 1.3, 0, c_lime, c_lime, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 14) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_orange);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_bodyguard_off, 1.3, 1.3, 0, c_orange, c_orange, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 20) {
+        draw_set_valign(fa_top);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.bodyguard_ask, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_color(c_aqua);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 120, global.sra_rata_dialogs.bodyguard_dismiss_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Salir", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 21) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_lime);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.bodyguard_dismissed, 1.3, 1.3, 0, c_lime, c_lime, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 30) {
+        draw_set_valign(fa_top);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_ask, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_color(c_aqua);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 120, global.sra_rata_dialogs.farm_rest_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 150, global.sra_rata_dialogs.lifetime_work_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 180, global.sra_rata_dialogs.lifetime_follow_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Salir", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 31) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_orange);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_rest, 1.3, 1.3, 0, c_orange, c_orange, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 32) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_aqua);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.lifetime_work, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 33) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_lime);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_bodyguard_on, 1.3, 1.3, 0, c_lime, c_lime, c_white, c_white, 1.0);
         draw_set_halign(fa_right);
         draw_set_valign(fa_bottom);
         draw_set_color(c_silver);

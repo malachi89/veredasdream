@@ -1024,8 +1024,14 @@ function scr_apply_loaded_game(_save_data) {
 
     if (variable_struct_exists(_save_data, "sra_rata_state")) {
         global.sra_rata_state = _save_data.sra_rata_state;
+        if (!variable_struct_exists(global.sra_rata_state, "bodyguard"))
+            global.sra_rata_state[$ "bodyguard"] = false;
+        if (!variable_struct_exists(global.sra_rata_state, "bodyguard_hired_on_day"))
+            global.sra_rata_state[$ "bodyguard_hired_on_day"] = -1;
+        if (!variable_struct_exists(global.sra_rata_state, "is_resting"))
+            global.sra_rata_state[$ "is_resting"] = false;
     } else {
-        global.sra_rata_state = { contract_type: "none", hired_on_day: -1 };
+        global.sra_rata_state = { contract_type: "none", hired_on_day: -1, bodyguard: false, bodyguard_hired_on_day: -1, is_resting: false };
     }
 
     // Migrar guardados v1 -> v2
@@ -1430,6 +1436,29 @@ function scr_count_item(_key, _player = global.local_player) {
         if (is_struct(_s) && _s.key == _key) _total += _s.quantity;
     }
     return _total;
+}
+
+function scr_get_player_max_weapon_level(_tool_type) {
+    var _player = global.local_player;
+    if (!instance_exists(_player)) return 1;
+    var _max_level = 0;
+    for (var i = 0; i < _player.total_slots; i++) {
+        var _slot = _player.inventory_array[i];
+        if (is_struct(_slot)) {
+            var _wdata = global.weapon_data[$ _slot.key];
+            if (_wdata != undefined && _wdata.tool_type == _tool_type && _wdata.level > _max_level)
+                _max_level = _wdata.level;
+        }
+    }
+    for (var i = 0; i < _player.max_backpack_slots; i++) {
+        var _slot = _player.backpack_array[i];
+        if (is_struct(_slot)) {
+            var _wdata = global.weapon_data[$ _slot.key];
+            if (_wdata != undefined && _wdata.tool_type == _tool_type && _wdata.level > _max_level)
+                _max_level = _wdata.level;
+        }
+    }
+    return max(_max_level, 1);
 }
 
 function scr_remove_item(_key, _qty, _player = global.local_player) {

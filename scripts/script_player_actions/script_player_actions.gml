@@ -490,8 +490,10 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
 
                                     if (random(1) < 0.03) {
                                         // 3% de encontrar un arma enterrada
-                                        var _w_type  = choose("sword", "bow");
-                                        var _w_level = irandom(9) + 1;
+                                        var _w_type = choose("sword", "bow");
+                                        var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+                                        var _player_level = scr_get_player_max_weapon_level(_tool_type);
+                                        var _w_level = min(_player_level + 1, 10);
                                         inventory_drop_item(_w_type + "_" + string(_w_level), 1, _drop_x, _drop_y, 15);
                                     } else if (random(1) < _tier_stats.treasure_chance) {
                                         var _gkey = global.gemstone_pool[irandom(array_length(global.gemstone_pool) - 1)];
@@ -585,6 +587,7 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                     var _pre_hp = _hit.hp;
                     _hit.hp -= _sword_damage;
                     _hit.hurt_flash_timer = 15;
+                    if (global.sra_rata_state.bodyguard) global.sra_rata_bodyguard_target = _hit;
                     if (variable_instance_exists(_hit, "snd_hurt") && _hit.snd_hurt != undefined) audio_play_sound(_hit.snd_hurt, 1, false);
                     if (_was_wild || _was_farm) scr_animal_hurt_sound();
 
@@ -603,7 +606,9 @@ function scr_use_item(_item_data, _gx, _gy, _anim_only = false, _send_network = 
                                     }
                                     if (variable_struct_exists(_edata, "weapon_drop_chance") && random(1) < _edata.weapon_drop_chance) {
                                         var _wtype = choose("sword", "bow");
-                                        var _wlevel = ceil(10 * power(random(1), 2));
+                                        var _tool_type = _wtype == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+                                        var _player_level = scr_get_player_max_weapon_level(_tool_type);
+                                        var _wlevel = min(_player_level + 1, 10);
                                         array_push(_drops, { key: _wtype + "_" + string(_wlevel), qty: 1 });
                                     }
                                 }

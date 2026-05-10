@@ -1244,24 +1244,40 @@ global.npc_data = {
 
 global.sra_rata_state = {
     contract_type: "none",
-    hired_on_day: -1
+    hired_on_day: -1,
+    bodyguard: false,
+    bodyguard_hired_on_day: -1,
+    is_resting: false
 };
+
+global.sra_rata_bodyguard_target = noone;
 
 global.sra_rata_dialogs = {
     greeting: "¡Oh! ¡Hola! Soy La Señora Rata, encantada de conocerte.\nMe encanta la vida de granja.",
     offer: "Si necesitas ayuda en tu granja,\npuedo regar cultivos, quitar piedras y maleza, y talar árboles.\n¿Qué te parece?",
     daily_option: "[1] Contrato por un día  |  1,500G",
     lifetime_option: "[2] Contrato vitalicio  |  25,000G",
+    bodyguard_option: "[3] Guardaespaldas por un día  |  3,000G",
     hired_daily: "¡Trato hecho! Hoy mismo empiezo a trabajar.",
     hired_lifetime: "¡Maravilloso! Esta granja será mi hogar.",
+    hired_bodyguard: "¡Trato hecho! Te cuidaré las espaldas.",
     no_money: "No tienes suficiente dinero. ¡Vuelve cuando tengas!",
     already_hired: "Ya estoy trabajando para ti, ¿recuerdas?",
     decline: "Como quieras. Estaré aquí si cambias de opinión.",
     farm_ask: "¿Necesitas algo?",
     farm_rest_option: "[1] Descansar por hoy",
     farm_work_option: "[2] Seguir trabajando",
+    farm_bodyguard_option: "[3] Modo guardaespaldas",
     farm_rest: "Muy bien, descansaré por hoy.",
-    farm_work: "Noooooo pos ta caray, pinchi negrero"
+    farm_work: "Noooooo pos ta caray, pinchi negrero",
+    farm_bodyguard_on: "¡A protegerte! ...aunque prefiero la granja.",
+    farm_bodyguard_off: "Bien, vuelvo a mis quehaceres.",
+    bodyguard_ask: "¿Necesitas algo más?",
+    bodyguard_dismiss_option: "[1] Es todo por hoy",
+    bodyguard_dismissed: "Muy bien, ahí estaré en el bosque si me necesitas.",
+    lifetime_follow_option: "[3] Seguirme",
+    lifetime_work_option: "[2] Ir a trabajar",
+    lifetime_work: "¡Enseguida, jefe!"
 };
 
 // --- DIALOGOS NPC ---

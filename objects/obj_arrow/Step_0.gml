@@ -22,6 +22,7 @@ if (_hit != noone) {
     audio_play_sound(sound_arrow_hit, 1, false);
     _hit.hp -= damage;
     _hit.hurt_flash_timer = 15;
+    if (global.sra_rata_state.bodyguard) global.sra_rata_bodyguard_target = _hit;
     if (variable_instance_exists(_hit, "snd_hurt") && _hit.snd_hurt != undefined) audio_play_sound(_hit.snd_hurt, 1, false);
     if (object_get_name(_hit.object_index) == "obj_wild_animal" || object_get_name(_hit.object_index) == "obj_farm_animal") scr_animal_hurt_sound();
     

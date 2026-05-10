@@ -29,8 +29,10 @@ if (hp <= 0) {
         ? _wdata_ref.weapon_drop_chance
         : (is_farm_animal ? 0 : 0.05);
     if (random(1) < _w_chance) {
-        var _w_type  = choose("sword", "bow");
-        var _w_level = ceil(10 * power(random(1), 2));
+        var _w_type = choose("sword", "bow");
+        var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+        var _player_level = scr_get_player_max_weapon_level(_tool_type);
+        var _w_level = min(_player_level + 1, 10);
         inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 15);
     }
 

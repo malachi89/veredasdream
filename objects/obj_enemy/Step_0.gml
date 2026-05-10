@@ -36,8 +36,10 @@ if (is_dying > 0) {
             inventory_drop_item(_dd[irandom(array_length(_dd) - 1)], 1, x, y, 30);
         }
         if (_d_data != undefined && variable_struct_exists(_d_data, "weapon_drop_chance") && random(1) < _d_data.weapon_drop_chance) {
-            var _w_type  = choose("sword", "bow");
-            var _w_level = ceil(10 * power(random(1), 2));
+            var _w_type = choose("sword", "bow");
+            var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+            var _player_level = scr_get_player_max_weapon_level(_tool_type);
+            var _w_level = min(_player_level + 1, 10);
             inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 30);
         }
         global.collected_items[$ enemy_key] = true;

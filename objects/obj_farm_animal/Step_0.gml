@@ -14,8 +14,10 @@ if (hp <= 0) {
     }
     // 5% de probabilidad de dropear un arma
     if (random(1) < 0.05) {
-        var _w_type  = choose("sword", "bow");
-        var _w_level = irandom(9) + 1;
+        var _w_type = choose("sword", "bow");
+        var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+        var _player_level = scr_get_player_max_weapon_level(_tool_type);
+        var _w_level = min(_player_level + 1, 10);
         inventory_drop_item(_w_type + "_" + string(_w_level), 1, x, y, 15);
     }
 

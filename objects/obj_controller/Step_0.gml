@@ -112,13 +112,19 @@ if (current_room_name != _room_name) {
 
     // La Señora Rata spawn on room entry
     with (obj_sra_rata) instance_destroy();
-    if (_room_name == "forest" && global.sra_rata_state.contract_type == "none") {
+    if (global.sra_rata_state.bodyguard && instance_exists(global.local_player)) {
+        instance_create_layer(global.local_player.x - 40, global.local_player.y, "Instances", obj_sra_rata);
+    } else if (_room_name == "forest" && global.sra_rata_state.contract_type == "none") {
         instance_create_layer(165, 40, "Instances", obj_sra_rata);
     } else if (_room_name == "farm") {
         var _hired = (global.sra_rata_state.contract_type == "lifetime") ||
             (global.sra_rata_state.contract_type == "daily" && global.day == global.sra_rata_state.hired_on_day);
         if (_hired) {
-            instance_create_layer(650, 200, "Instances", obj_sra_rata);
+            if (global.sra_rata_state.is_resting) {
+                instance_create_layer(670, 120, "Instances", obj_sra_rata);
+            } else {
+                instance_create_layer(650, 200, "Instances", obj_sra_rata);
+            }
         }
     }
     

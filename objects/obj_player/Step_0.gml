@@ -268,7 +268,23 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                 var _sra = instance_nearest(x, y, obj_sra_rata);
                 if (_sra != noone && point_distance(x, y, _sra.x, _sra.y) < 48) {
                     var _room_sra = room_get_name(room);
-                    if (_room_sra == "forest") {
+                    if (global.sra_rata_state.contract_type == "lifetime") {
+                        if (!sra_dialog_open) {
+                            sra_dialog_open = true;
+                            sra_dialog_stage = 30;
+                        } else if (sra_dialog_stage >= 31) {
+                            sra_dialog_open = false;
+                            sra_dialog_stage = 0;
+                        }
+                    } else if (global.sra_rata_state.bodyguard) {
+                        if (!sra_dialog_open) {
+                            sra_dialog_open = true;
+                            sra_dialog_stage = 20;
+                        } else if (sra_dialog_stage >= 21) {
+                            sra_dialog_open = false;
+                            sra_dialog_stage = 0;
+                        }
+                    } else if (_room_sra == "forest") {
                         if (!sra_dialog_open) {
                             sra_dialog_open = true;
                             sra_dialog_stage = 0;
@@ -659,8 +675,10 @@ if (state == STATE.ACTING) {
                     } else {
                         // 3% de probabilidad de pescar un arma
                         if (random(1) < 0.03) {
-                            var _w_type  = choose("sword", "bow");
-                            var _w_level = irandom(9) + 1;
+                            var _w_type = choose("sword", "bow");
+                            var _tool_type = _w_type == "sword" ? TOOL_TYPE.SWORD : TOOL_TYPE.BOW;
+                            var _player_level = scr_get_player_max_weapon_level(_tool_type);
+                            var _w_level = min(_player_level + 1, 10);
                             var _w_key   = _w_type + "_" + string(_w_level);
                             add_item(_w_key, 1);
                             energy -= 15;
