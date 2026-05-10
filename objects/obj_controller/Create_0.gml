@@ -143,6 +143,13 @@ global.bush_harvested = {};
 
     scr_daily_farm_spawn(_is_season_change);
 
+    // La Señora Rata: daily contract expiry
+    if (global.sra_rata_state.contract_type == "daily" && global.day > global.sra_rata_state.hired_on_day) {
+        global.sra_rata_state.contract_type = "none";
+        global.sra_rata_state.hired_on_day = -1;
+        with (obj_sra_rata) instance_destroy();
+    }
+
     if (instance_exists(global.local_player)) {
         global.local_player.hp = global.local_player.max_hp;
         global.local_player.energy = global.local_player.max_energy;

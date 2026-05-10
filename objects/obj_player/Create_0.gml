@@ -119,6 +119,9 @@ sign_panel_open  = false;
 sign_panel_title = "";
 sign_panel_items = [];
 sign_scroll      = 0;
+
+sra_dialog_open  = false;
+sra_dialog_stage = 0;
 prev_on_door = false;
 
 // --- METODOS DE INVENTARIO (migrados desde obj_inventory) ---

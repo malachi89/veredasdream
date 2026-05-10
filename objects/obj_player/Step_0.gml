@@ -263,6 +263,38 @@ if (keyboard_check_pressed(ord("E")) && !show_backpack) {
                 }
             }
 
+            // La Señora Rata interaction
+            if (!_did_interact) {
+                var _sra = instance_nearest(x, y, obj_sra_rata);
+                if (_sra != noone && point_distance(x, y, _sra.x, _sra.y) < 48) {
+                    var _room_sra = room_get_name(room);
+                    if (_room_sra == "forest") {
+                        if (!sra_dialog_open) {
+                            sra_dialog_open = true;
+                            sra_dialog_stage = 0;
+                        } else if (sra_dialog_stage == 0) {
+                            sra_dialog_stage = 1;
+                        } else if (sra_dialog_stage >= 2) {
+                            sra_dialog_open = false;
+                            sra_dialog_stage = 0;
+                        }
+                    } else if (_room_sra == "farm") {
+                        if (!sra_dialog_open) {
+                            sra_dialog_open = true;
+                            sra_dialog_stage = 10;
+                        } else if (sra_dialog_stage >= 11) {
+                            sra_dialog_open = false;
+                            sra_dialog_stage = 0;
+                        }
+                    }
+                    _did_interact = true;
+                } else if (sra_dialog_open) {
+                    sra_dialog_open = false;
+                    sra_dialog_stage = 0;
+                    _did_interact = true;
+                }
+            }
+
             // Bushes con fruta
             if (!_did_interact) {
                 var _bush = instance_nearest(x, y, obj_bush);

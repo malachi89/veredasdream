@@ -109,6 +109,18 @@ if (current_room_name != _room_name) {
             scr_restore_town_stage();
         }
     }
+
+    // La Señora Rata spawn on room entry
+    with (obj_sra_rata) instance_destroy();
+    if (_room_name == "forest" && global.sra_rata_state.contract_type == "none") {
+        instance_create_layer(165, 40, "Instances", obj_sra_rata);
+    } else if (_room_name == "farm") {
+        var _hired = (global.sra_rata_state.contract_type == "lifetime") ||
+            (global.sra_rata_state.contract_type == "daily" && global.day == global.sra_rata_state.hired_on_day);
+        if (_hired) {
+            instance_create_layer(650, 200, "Instances", obj_sra_rata);
+        }
+    }
     
     // Rain object lifecycle
     if (global.weather_today == "rain" && scr_is_outdoor_room()) {

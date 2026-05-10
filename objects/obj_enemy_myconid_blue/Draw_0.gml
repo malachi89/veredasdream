@@ -15,11 +15,6 @@ if (is_dying > 0) {
     }
 }
 
-if (_sprite != debug_last_sprite) {
-    debug_last_sprite = _sprite;
-    show_debug_message("myconid: sprite changed -> " + sprite_get_name(_sprite) + " | state=" + string(state) + " dir=" + string(dir));
-}
-
 var _fpd = sprite_get_number(_sprite) / 4;
 var _dir_index = 0;
 switch (dir) {
@@ -32,11 +27,6 @@ switch (dir) {
 var _frame = floor(frame_anim) mod _fpd;
 if (_frame < 0) _frame += _fpd;
 var _si = _dir_index * _fpd + _frame;
-
-if (debug_last_si != _si || debug_last_sprite != _sprite) {
-    debug_last_si = _si;
-    show_debug_message("  draw: sprite=" + sprite_get_name(_sprite) + " total_frames=" + string(sprite_get_number(_sprite)) + " fpd=" + string(_fpd) + " dir_idx=" + string(_dir_index) + " frame=" + string(_frame) + " subimg=" + string(_si));
-}
 
 draw_sprite_ext(_sprite, _si, x + 1.2, y + 1, 1, 1, 0, c_black, 0.4);
 draw_sprite_ext(_sprite, _si, x, y, 1, 1, 0, _blend, 1);

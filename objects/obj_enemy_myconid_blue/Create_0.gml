@@ -21,5 +21,3 @@ if (_d != undefined) {
 }
 anim_frames = sprite_get_number(sprite_idle) / 4;
 hurt_anim_timer = 0;
-debug_last_sprite = -1;
-debug_last_si = -1;

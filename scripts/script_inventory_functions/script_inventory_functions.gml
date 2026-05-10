@@ -940,7 +940,8 @@ function scr_save_game() {
         pending_farm_event: global.pending_farm_event,
         pending_farm_event_enemies: global.pending_farm_event_enemies,
         farm_event_scheduled_day: global.farm_event_scheduled_day,
-        farm_event_type: global.farm_event_type
+        farm_event_type: global.farm_event_type,
+        sra_rata_state: global.sra_rata_state
     };
     scr_write_text_file(global.save_file_path, json_stringify(_save_data));
     if (global.save_slot > 0) scr_slot_write_info(global.save_slot);
@@ -1020,6 +1021,12 @@ function scr_apply_loaded_game(_save_data) {
     global.pending_farm_event_enemies = variable_struct_exists(_save_data, "pending_farm_event_enemies") ? _save_data.pending_farm_event_enemies : [];
     global.farm_event_scheduled_day   = variable_struct_exists(_save_data, "farm_event_scheduled_day")   ? _save_data.farm_event_scheduled_day   : -1;
     global.farm_event_type            = variable_struct_exists(_save_data, "farm_event_type")            ? _save_data.farm_event_type            : "";
+
+    if (variable_struct_exists(_save_data, "sra_rata_state")) {
+        global.sra_rata_state = _save_data.sra_rata_state;
+    } else {
+        global.sra_rata_state = { contract_type: "none", hired_on_day: -1 };
+    }
 
     // Migrar guardados v1 -> v2
     var _players_arr;

@@ -531,6 +531,115 @@ if (_p.dialog_open) {
     draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
 }
 
+// === SEÑORA RATA DIALOG ===
+if (_p.sra_dialog_open) {
+    var _dgw   = display_get_gui_width();
+    var _dgh   = display_get_gui_height();
+    var _dbw   = _dgw - 80;
+    var _dbx1  = 40;
+    var _dby1  = _dgh - 260;
+    var _dbx2  = _dbx1 + _dbw;
+    var _dby2  = _dby1 + 240;
+
+    draw_set_alpha(0.88);
+    draw_roundrect_color_ext(_dbx1, _dby1, _dbx2, _dby2, 10, 10, c_dkgray, c_dkgray, false);
+    draw_set_alpha(1.0);
+    draw_roundrect_color_ext(_dbx1, _dby1, _dbx2, _dby2, 10, 10, c_white, c_white, true);
+    draw_set_font(fnt_pixel_operator);
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    draw_set_color(c_yellow);
+    draw_text_transformed_color(_dbx1 + 16, _dby1 + 12, "La Señora Rata", 1.8, 1.8, 0, c_yellow, c_yellow, c_orange, c_orange, 1.0);
+    draw_set_color(c_white);
+    draw_line(_dbx1 + 10, _dby1 + 50, _dbx2 - 10, _dby1 + 50);
+
+    if (_p.sra_dialog_stage == 0) {
+        draw_set_valign(fa_top);
+        var _greeting = global.sra_rata_dialogs.greeting;
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, _greeting, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Continuar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 1) {
+        draw_set_valign(fa_top);
+        var _offer = global.sra_rata_dialogs.offer;
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, _offer, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_color(c_aqua);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 155, global.sra_rata_dialogs.daily_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 185, global.sra_rata_dialogs.lifetime_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Salir", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 2) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_lime);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.hired_daily, 1.3, 1.3, 0, c_lime, c_lime, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 6) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_lime);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.hired_lifetime, 1.3, 1.3, 0, c_lime, c_lime, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 3) {
+        draw_set_valign(fa_top);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.decline, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 4) {
+        draw_set_valign(fa_top);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.already_hired, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 5) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_red);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.no_money, 1.3, 1.3, 0, c_red, c_red, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 10) {
+        draw_set_valign(fa_top);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_ask, 1.3, 1.3, 0, c_white, c_white, c_white, c_white, 1.0);
+        draw_set_color(c_aqua);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 120, global.sra_rata_dialogs.farm_rest_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 150, global.sra_rata_dialogs.farm_work_option, 1.3, 1.3, 0, c_aqua, c_aqua, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[Esc] Salir", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 11) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_orange);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_rest, 1.3, 1.3, 0, c_orange, c_orange, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    } else if (_p.sra_dialog_stage == 12) {
+        draw_set_valign(fa_top);
+        draw_set_color(c_red);
+        draw_text_transformed_color(_dbx1 + 16, _dby1 + 70, global.sra_rata_dialogs.farm_work, 1.3, 1.3, 0, c_red, c_red, c_white, c_white, 1.0);
+        draw_set_halign(fa_right);
+        draw_set_valign(fa_bottom);
+        draw_set_color(c_silver);
+        draw_text_transformed(_dbx2 - 14, _dby2 - 18, "[E] Cerrar", 1.1, 1.1, 0);
+    }
+}
+
 // === TIENDA ===
 if (_p.shop_open) {
     var _gw  = display_get_gui_width();

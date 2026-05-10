@@ -13,6 +13,65 @@ if (_p.sign_panel_open) {
     exit;
 }
 
+// === SEÑORA RATA DIALOG ===
+if (_p.sra_dialog_open) {
+    if (keyboard_check_pressed(vk_escape)) {
+        if (_p.sra_dialog_stage == 1) {
+            _p.sra_dialog_stage = 3;
+        } else {
+            _p.sra_dialog_open = false;
+            _p.sra_dialog_stage = 0;
+        }
+    } else if (_p.sra_dialog_stage == 1) {
+        if (keyboard_check_pressed(ord("1"))) {
+            if (global.sra_rata_state.contract_type == "lifetime") {
+                _p.sra_dialog_stage = 4;
+            } else if (_p.money >= 800) {
+                _p.money -= 800;
+                global.sra_rata_state.contract_type = "daily";
+                global.sra_rata_state.hired_on_day = global.day;
+                scr_notify("La Señora Rata contratada por un día");
+                with (obj_sra_rata) instance_destroy();
+                _p.sra_dialog_stage = 2;
+            } else {
+                _p.sra_dialog_stage = 5;
+            }
+        } else if (keyboard_check_pressed(ord("2"))) {
+            if (global.sra_rata_state.contract_type == "lifetime") {
+                _p.sra_dialog_stage = 4;
+            } else if (_p.money >= 25000) {
+                _p.money -= 25000;
+                global.sra_rata_state.contract_type = "lifetime";
+                global.sra_rata_state.hired_on_day = global.day;
+                scr_notify("La Señora Rata contratada vitalicia");
+                with (obj_sra_rata) instance_destroy();
+                _p.sra_dialog_stage = 6;
+            } else {
+                _p.sra_dialog_stage = 5;
+            }
+        }
+    } else if (_p.sra_dialog_stage == 10) {
+        if (keyboard_check_pressed(vk_escape)) {
+            _p.sra_dialog_open = false;
+            _p.sra_dialog_stage = 0;
+        } else if (keyboard_check_pressed(ord("1"))) {
+            var _sra = instance_nearest(_p.x, _p.y, obj_sra_rata);
+            if (_sra != noone) _sra.is_resting = true;
+            _p.sra_dialog_stage = 11;
+        } else if (keyboard_check_pressed(ord("2"))) {
+            var _sra = instance_nearest(_p.x, _p.y, obj_sra_rata);
+            if (_sra != noone) _sra.is_resting = false;
+            _p.sra_dialog_stage = 12;
+        }
+    } else if (_p.sra_dialog_stage >= 11) {
+        if (keyboard_check_pressed(vk_escape)) {
+            _p.sra_dialog_open = false;
+            _p.sra_dialog_stage = 0;
+        }
+    }
+    exit;
+}
+
 // === DIALOGO ===
 if (_p.dialog_open) {
     if (keyboard_check_pressed(vk_escape)) _p.dialog_open = false;

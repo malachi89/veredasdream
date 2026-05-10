@@ -1242,6 +1242,28 @@ global.npc_data = {
     Andres:     { name: "Andrés",    skin: 3, eye_type: "male",   eye_color: "black",  hair_style: "sebastian",  hair_color: "ginger", clothes_color: "red",    dialog_id: -1 },
 };
 
+global.sra_rata_state = {
+    contract_type: "none",
+    hired_on_day: -1
+};
+
+global.sra_rata_dialogs = {
+    greeting: "¡Oh! ¡Hola! Soy La Señora Rata, encantada de conocerte.\nMe encanta la vida de granja.",
+    offer: "Si necesitas ayuda en tu granja,\npuedo regar cultivos, quitar piedras y maleza, y talar árboles.\n¿Qué te parece?",
+    daily_option: "[1] Contrato por un día  |  800G",
+    lifetime_option: "[2] Contrato vitalicio  |  25,000G",
+    hired_daily: "¡Trato hecho! Hoy mismo empiezo a trabajar.",
+    hired_lifetime: "¡Maravilloso! Esta granja será mi hogar.",
+    no_money: "No tienes suficiente dinero. ¡Vuelve cuando tengas!",
+    already_hired: "Ya estoy trabajando para ti, ¿recuerdas?",
+    decline: "Como quieras. Estaré aquí si cambias de opinión.",
+    farm_ask: "¿Necesitas algo?",
+    farm_rest_option: "[1] Descansar por hoy",
+    farm_work_option: "[2] Seguir trabajando",
+    farm_rest: "Muy bien, descansaré por hoy.",
+    farm_work: "Noooooo pos ta caray, pinchi negrero"
+};
+
 // --- DIALOGOS NPC ---
 // Organizados por fase del town (ver script_town_progression)
 global.npc_dialogues = [
